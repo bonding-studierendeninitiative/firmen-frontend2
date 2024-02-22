@@ -1,10 +1,18 @@
 /** @type {import('tailwindcss').Config} */
 export default {
-	content: ['./src/**/*.{html,js,svelte,ts}'],
+	content: [
+		'./src/**/*.{html,js,svelte,ts}',
+		'./src/lib/@svelte',
+		'./src/routes/+layout.svelte',
+		'./src/routes/+page.svelte',
+		'./src/routes/(app)',
+		'./src/routes/(auth)'
+	],
 	theme: {
 		extend: {
 			colors: {
-				brand: '#007EC7'
+				brand: '#007EC7',
+				error: '#EF4444'
 			},
 			textColor: {
 				brand: '#007EC7'

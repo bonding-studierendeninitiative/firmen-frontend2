@@ -1,9 +1,9 @@
 <script>
-	import { Input, GradientButton } from '$lib/@svelte/components';
+	import { Input, GradientButton } from '$lib/@svelte';
 	import { goto } from '$app/navigation';
 
 	const handleRegisterClick = () => {
-		goto('/login');
+		goto('/registration-success');
 	};
 </script>
 
@@ -20,8 +20,5 @@
 	<Input classes="mt-4" placeholder="E-Mail Adresse" />
 	<Input classes="mt-4" placeholder="Passwort" />
 	<Input classes="mt-4" placeholder="Passwort bestätigen" />
-	<div class=" flex justify-end items-center mt-5 font-medium">
-		<p class=" text-brand cursor-pointer font-bold">Passwort vergessen?</p>
-	</div>
 	<GradientButton classes=" mt-5" onClick={handleRegisterClick}>Konto erstellen</GradientButton>
 </div>
