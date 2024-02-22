@@ -1,1 +1,1 @@
-export { default as GradientButton } from './Button.svelte';
+export { default as Button } from './Button.svelte';

@@ -6,3 +6,5 @@ export { default as NotificationIcon } from './NotificationIcon.svelte';
 export { default as PortraitIcon } from './PortraitsIcon.svelte';
 export { default as WhiteLogoIcon } from './WhiteLogoIcon.svelte';
 export { default as ColorLogoIcon } from './ColorLogoIcon.svelte';
+export { default as FilledCheckIcon } from './FilledCheckIcon.svelte';
+export { default as FilledCrossIcon } from './FilledCrossIcon.svelte';

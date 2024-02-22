@@ -16,7 +16,7 @@
 	};
 
 	const handleLogoutClick = () => {
-		goto('/login');
+		goto('/access-preference');
 	};
 </script>
 
