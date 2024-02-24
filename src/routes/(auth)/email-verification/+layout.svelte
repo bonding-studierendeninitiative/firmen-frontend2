@@ -1,10 +1,11 @@
 <script>
 	import { LoginWrapper } from '$lib/@svelte';
+	import { _ } from '../../../services/i18n';
 </script>
 
 <LoginWrapper
-	heading="E-Mail verifizieren"
-	subHeading="Ein Verifizierungscode wurde Ihnen zugesandt.<br> Geben Sie den Code unten ein."
+	heading={$_('auth.forgotPassword.headingVerifyEmail')}
+	subHeading={$_('auth.forgotPassword.subHeadingVerifyEmail')}
 >
 	<slot />
 </LoginWrapper>

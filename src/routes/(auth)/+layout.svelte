@@ -1,5 +1,6 @@
 <script>
 	import { ColorLogoIcon } from '$lib';
+	import { _ } from './../../services/i18n';
 </script>
 
 <div class=" flex w-full h-screen">
@@ -14,7 +15,7 @@
 		<footer class=" px-10 py-4 border-t border-solid border-stone-200 bottom-0 fixed w-3/4">
 			<div class=" flex justify-between font-semi-light text-stone-500">
 				<p>©2024 Bonding</p>
-				<p>Privacy Policy</p>
+				<p>{$_('auth.footer.privacyPolicy')}</p>
 			</div>
 		</footer>
 	</div>

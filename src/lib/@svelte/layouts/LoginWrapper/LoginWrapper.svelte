@@ -1,5 +1,4 @@
 <script>
-	import { goto } from '$app/navigation';
 	export let heading = 'Login';
 	export let subHeading = 'Geben Sie Ihre Anmeldedaten ein';
 </script>

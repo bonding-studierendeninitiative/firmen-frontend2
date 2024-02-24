@@ -1,10 +1,11 @@
 <script>
 	import { LoginWrapper } from '$lib/@svelte';
+	import { _ } from '../../../services/i18n';
 </script>
 
 <LoginWrapper
-	heading="Neues Passwort wählen."
-	subHeading="Fast fertig. <br/>Geben Sie nun Ihr neues Passwort ein."
+	heading={$_('auth.forgotPassword.headingEnterNewPassword')}
+	subHeading={$_('auth.forgotPassword.subHeadingEnterNewPassword')}
 >
 	<slot />
 </LoginWrapper>

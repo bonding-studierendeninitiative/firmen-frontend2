@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { GradientButton, Input } from '$lib/@svelte';
+	import { _ } from '../../../services/i18n';
+
 	const handleSubmitEmail = () => {
 		goto('/login-code');
 	};
@@ -11,12 +13,17 @@
 	let password: string;
 </script>
 
-<Input classes="mt-4" placeholder="E-Mail Addresse" type="email" bind:value={password} />
+<Input
+	classes="mt-4"
+	placeholder={$_('common.fields.emailPlaceholder')}
+	type="email"
+	bind:value={password}
+/>
 
-<GradientButton classes=" mt-5" onClick={handleSubmitEmail}>Continue</GradientButton>
+<GradientButton classes=" mt-5" onClick={handleSubmitEmail}>{$_('common.continue')}</GradientButton>
 <div class=" flex justify-center items-center mt-5">
-	<p class=" text-stone-500 font-normal mr-4">Kein Mitglied?</p>
+	<p class=" text-stone-500 font-normal mr-4">{$_('auth.login.notAMember')}</p>
 	<button class=" text-brand cursor-pointer font-bold" on:click={handleJoinNow}>
-		Jetzt registrieren
+		{$_('auth.login.joinNow')}
 	</button>
 </div>

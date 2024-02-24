@@ -1,10 +1,11 @@
 <script>
 	import { LoginWrapper } from '$lib/@svelte';
+	import { _ } from '../../../services/i18n';
 </script>
 
 <LoginWrapper
-	heading="Registrierung erfolgreich!"
-	subHeading="Sie können jetzt auf Ihren Account zugreifen und sich für Veranstaltungen anmelden. Wir halten Sie mit Neuigkeiten und Updates auf dem Laufenden."
+	heading={$_('auth.registration-success.heading')}
+	subHeading={$_('auth.registration-success.subHeading')}
 >
 	<slot />
 </LoginWrapper>
