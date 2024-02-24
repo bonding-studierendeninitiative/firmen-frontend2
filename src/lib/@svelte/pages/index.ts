@@ -1,1 +1,1 @@
-export * from './AccessPreference';
+export {};

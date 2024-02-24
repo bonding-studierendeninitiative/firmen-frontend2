@@ -1,10 +1,11 @@
 <script>
 	import { LoginWrapper } from '$lib/@svelte';
+	import { _ } from '../../../services/i18n';
 </script>
 
 <LoginWrapper
-	heading="Passwort zurücksetzen"
-	subHeading="Wir senden Ihnen per E-Mail eine Anleitung zum Zurücksetzen Ihres Passworts."
+	heading={$_('auth.forgotPassword.heading')}
+	subHeading={$_('auth.forgotPassword.subHeading')}
 >
 	<slot />
 </LoginWrapper>
