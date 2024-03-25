@@ -51,7 +51,7 @@
 	/>
 </div>
 
-<GradientButton classes=" mt-5" onClick={handleSubmitResetPassword}
+<GradientButton classes=" mt-5 w-full" onClick={handleSubmitResetPassword}
 	>{$_('auth.forgotPassword.resetPasswordButton')}</GradientButton
 >
 <div class=" flex justify-center items-center mt-5">
