@@ -32,6 +32,12 @@ export default {
 			},
 			fontWeight: {
 				'semi-light': 400
+			},
+			boxShadow: {
+				custom: '0px 4px 8px -2px rgba(16, 24, 40, 0.06)'
+			},
+			borderRadius: {
+				custom: '1.25rem'
 			}
 		}
 	},

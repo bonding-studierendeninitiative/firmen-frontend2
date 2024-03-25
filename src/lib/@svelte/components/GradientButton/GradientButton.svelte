@@ -6,7 +6,7 @@
 <button
 	on:click={onClick}
 	style="background: linear-gradient(180deg, rgba(255, 255, 255, 0.30) 0%, rgba(255, 255, 255, 0.00) 100%), #007EC7;"
-	class={'flex justify-center items-center relative w-full px-4 py-3 space-x-4 rounded-lg text-white '.concat(
+	class={'flex justify-center items-center relative w-full px-4 py-3 space-x-4 rounded-lg text-white text-sm '.concat(
 		classes
 	)}
 >

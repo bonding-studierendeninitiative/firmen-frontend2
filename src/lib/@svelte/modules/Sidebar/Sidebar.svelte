@@ -31,7 +31,7 @@
 		/>
 	</head>
 	<body class="!bg-white lg:flex">
-		<nav class="bg-white border-b border-gray-300">
+		<nav class="bg-white border-b border-gray-300 lg:hidden">
 			<div class="flex justify-between items-center px-9 py-2">
 				<!-- Ícono de Menú -->
 				<button id="menu-button" class="lg:hidden" on:click={handleMenuToggler}>
@@ -59,7 +59,7 @@
 		<!-- Barra lateral -->
 		<div
 			id="sidebar"
-			class="lg:block hidden bg-cover bg-center h-screen w-84 fixed rounded-none border-none"
+			class="lg:block hidden bg-cover bg-center h-screen w-84 rounded-none border-none"
 			style="background-image: url('sidebar_background.png');"
 		>
 			<!-- Items -->
