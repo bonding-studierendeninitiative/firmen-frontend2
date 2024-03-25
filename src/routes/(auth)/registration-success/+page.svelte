@@ -8,4 +8,6 @@
 	};
 </script>
 
-<GradientButton classes=" mt-5" onClick={handleSubmit}>{$_('common.continue')}</GradientButton>
+<GradientButton classes=" mt-5 w-full" onClick={handleSubmit}
+	>{$_('common.continue')}</GradientButton
+>

@@ -14,5 +14,5 @@
 	</div>
 	<Input placeholder="E-Mail Addresse" />
 	<Input classes="mt-4" placeholder="Passwort" />
-	<GradientButton classes=" mt-8" onClick={handleLoginClick}>Login</GradientButton>
+	<GradientButton classes=" mt-8 w-full" onClick={handleLoginClick}>Login</GradientButton>
 </div>

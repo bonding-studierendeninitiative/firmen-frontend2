@@ -19,7 +19,7 @@
 	bind:value={password}
 />
 
-<GradientButton classes=" mt-5" onClick={handleSubmitEmail}
+<GradientButton classes=" mt-5 w-full" onClick={handleSubmitEmail}
 	>{$_('auth.forgotPassword.resetPassword')}</GradientButton
 >
 <div class=" flex justify-center items-center mt-5">

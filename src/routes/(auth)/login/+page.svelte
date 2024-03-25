@@ -22,7 +22,9 @@
 		>{$_('auth.login.forgotPassword')}</button
 	>
 </div>
-<GradientButton classes=" mt-5" onClick={handleLoginClick}>{$_('auth.login.login')}</GradientButton>
+<GradientButton classes=" mt-5 w-full" onClick={handleLoginClick}
+	>{$_('auth.login.login')}</GradientButton
+>
 <div class=" flex justify-center items-center mt-5">
 	<p class=" text-stone-500 font-normal mr-4">{$_('auth.login.notAMember')}</p>
 	<button class=" text-brand cursor-pointer font-bold" on:click={handleRegistration}>

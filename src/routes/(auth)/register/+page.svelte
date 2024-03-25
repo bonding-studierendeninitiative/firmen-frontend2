@@ -21,7 +21,7 @@
 	<Input classes="mt-4" placeholder={$_('common.fields.emailPlaceholder')} />
 	<Input classes="mt-4" placeholder={$_('common.fields.passwordPlaceholder')} />
 	<Input classes="mt-4" placeholder={$_('common.fields.confirmPassword')} />
-	<GradientButton classes=" mt-5" onClick={handleRegisterClick}
+	<GradientButton classes=" mt-5 w-full" onClick={handleRegisterClick}
 		>{$_('auth.registration.createAccount')}</GradientButton
 	>
 </div>

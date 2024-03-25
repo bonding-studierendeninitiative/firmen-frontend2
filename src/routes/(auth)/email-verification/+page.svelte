@@ -9,7 +9,7 @@
 </script>
 
 <VerificationCode />
-<GradientButton classes=" mt-5" onClick={handleSubmitCode}
+<GradientButton classes=" mt-5 w-full" onClick={handleSubmitCode}
 	>{$_('auth.forgotPassword.verifyCode')}</GradientButton
 >
 <div class=" flex justify-center items-center mt-5">
