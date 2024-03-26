@@ -89,11 +89,7 @@
 	<section class=" mt-10">
 		<div class=" flex justify-between items-center w-full mb-4">
 			<h2 class=" text-stone-950 font-extrabold text-2xl mb-4">Upcoming Events</h2>
-			<Button
-				onClick={handleViewAllEvent}
-				classes=" shadow-custom !w-24 !text-stone-500 border border-solid border-stone-200 !py-2"
-				>View All</Button
-			>
+			<Button onClick={handleViewAllEvent} classes=" shadow-custom !w-24 !py-2">View All</Button>
 		</div>
 		<div class="grid grid-cols-1 sm:grid-cols-1 md:sm:grid-cols-1 lg:sm:grid-cols-2 gap-8">
 			{#each upcomingEvents as { heading, subHeading, date, id }, index (index)}

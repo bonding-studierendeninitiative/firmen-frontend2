@@ -45,9 +45,7 @@
 				{#if notificationType === 'registrationSuccess'}
 					<GradientButton onClick={() => undefined}>Update Portrait</GradientButton
 					>{:else if notificationType === 'registrationRejected'}
-					<Button
-						onClick={onActionButtonClick}
-						classes="  shadow-custom  !text-stone-500 border border-solid border-stone-200 text-stone-800"
+					<Button onClick={onActionButtonClick} classes="  shadow-custom  text-stone-800"
 						>Contact Support</Button
 					>
 				{/if}

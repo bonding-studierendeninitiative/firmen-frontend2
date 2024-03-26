@@ -121,9 +121,7 @@
 							<h4 class=" text-sm font-normal text-stone-800">Portrait # {index + 1}</h4>
 						</div>
 					</div>
-					<Button
-						onClick={handleViewAllEvent}
-						classes=" inline shadow-custom  !text-stone-500 border border-solid border-stone-200 !py-1"
+					<Button onClick={handleViewAllEvent} classes=" inline shadow-custom !py-1"
 						>View Details</Button
 					>
 				</div>

@@ -14,3 +14,5 @@ export { default as DocumentIcon } from './DocumentIcon.svelte';
 export { default as BrandingIcon } from './BrandingIcon.svelte';
 export { default as SimpleDocumentIcon } from './SimpleDocumentIcon.svelte';
 export { default as MessageIcon } from './MessageIcon.svelte';
+export { default as SelectUp } from './SelectArrowUp.svelte';
+export { default as SelectDown } from './SelectArrowDown.svelte';
