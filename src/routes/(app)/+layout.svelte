@@ -4,7 +4,7 @@
 
 <div class=" lg:flex w-full">
 	<Sidebar />
-	<div class=" px-22 py-20 bg-white w-full">
+	<div class=" px-22 py-20 bg-white w-full h-[100vh] overflow-y-scroll">
 		<slot />
 	</div>
 </div>

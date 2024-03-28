@@ -53,7 +53,7 @@
 		<p class=" whitespace-nowrap mx-8 text-sm text-stone-400 font-medium">22 December 2023</p>
 		<hr class=" border-stone-200 w-full" />
 	</div>
-	<div class=" max-h-[550px] overflow-y-scroll">
+	<div>
 		{#each notifications as { id, content, date, type }}
 			<ActionNotificationItem
 				notificationContent={content}

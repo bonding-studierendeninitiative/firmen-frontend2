@@ -10,6 +10,9 @@ export default {
 	],
 	theme: {
 		extend: {
+			borderWidth: {
+				1: '1px'
+			},
 			colors: {
 				brand: '#007EC7',
 				error: '#EF4444'

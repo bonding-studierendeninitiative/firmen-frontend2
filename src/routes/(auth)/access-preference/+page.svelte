@@ -14,8 +14,6 @@
 <GradientButton classes=" mt-5 w-full" onClick={handleMagicClick}
 	>{$_('auth.login.loginWithMagicLink')}</GradientButton
 >
-<Button
-	onClick={handleLoginClick}
-	classes="shadow-md border border-solid border-stone-200 border-1 w-full  !text-stone-800 !font-extrabold mt-5"
+<Button onClick={handleLoginClick} classes="shadow-md  w-full !font-extrabold mt-5"
 	>{$_('auth.login.loginWithPassword')}</Button
 >

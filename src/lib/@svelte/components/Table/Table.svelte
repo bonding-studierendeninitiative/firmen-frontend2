@@ -7,11 +7,9 @@
 	<div class="w-full overflow-x-auto">
 		<table class="w-full whitespace-no-wrap">
 			<thead>
-				<tr
-					class="text-xs font-semibold tracking-wide text-left text-gray-500 uppercase border-b bg-gray-50"
-				>
+				<tr class=" tracking-wide text-left text-gray-500 border-b bg-gray-50">
 					{#each columns as head}
-						<th class="px-6 py-3">{head}</th>
+						<th class="px-6 py-3 text-sm font-normal">{head}</th>
 					{/each}
 				</tr>
 			</thead>

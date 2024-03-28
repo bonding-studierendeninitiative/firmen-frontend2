@@ -5,7 +5,7 @@
 
 <button
 	on:click={onClick}
-	class={' font-extrabold px-4 py-3 space-x-4 rounded-lg text-white text-sm w-auto '.concat(
+	class={' font-extrabold px-4 py-3 space-x-4 rounded-lg text-stone-800 text-sm w-auto border border-solid border-stone-200 '.concat(
 		classes
 	)}
 >

@@ -89,11 +89,7 @@
 	<section class=" mt-10">
 		<div class=" flex justify-between items-center w-full mb-4">
 			<h2 class=" text-stone-950 font-extrabold text-2xl mb-4">Upcoming Events</h2>
-			<Button
-				onClick={handleViewAllEvent}
-				classes=" shadow-custom !w-24 !text-stone-500 border border-solid border-stone-200 !py-2"
-				>View All</Button
-			>
+			<Button onClick={handleViewAllEvent} classes=" shadow-custom !w-24 !py-2">View All</Button>
 		</div>
 		<div class="grid grid-cols-1 sm:grid-cols-1 md:sm:grid-cols-1 lg:sm:grid-cols-2 gap-8">
 			{#each upcomingEvents as { heading, subHeading, date, id }, index (index)}
@@ -125,7 +121,7 @@
 		<section class=" mt-10">
 			<Table totalRecords={9} {columns}>
 				{#each eventList as { event, location, date, status, statusText }, index}
-					<tr>
+					<tr class={` ${index % 2 !== 0 ? 'bg-gray-50' : 'bg-white'}`}>
 						<td class=" px-6 py-4 text-grey-900 text-sm">{event}</td>
 						<td class=" px-6 py-4 text-grey-900 text-sm">{location}</td>
 						<td class=" px-6 py-4 text-grey-500 text-sm">{date}</td>
