@@ -20,7 +20,7 @@
 	</div>
 	<section class=" mt-10">
 		{#if activeTab === 0}
-			<div in:fade class=" h-20">
+			<div class=" h-20">
 				<ProfileTab />
 			</div>
 		{:else if activeTab === 1}

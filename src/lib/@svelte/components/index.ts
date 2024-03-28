@@ -10,3 +10,5 @@ export * from './NotificationItems';
 export * from './Tabs';
 export * from './Select';
 export * from './InputWithPrefix';
+export * from './BillingAddressCard';
+export * from './ButtonIcon';

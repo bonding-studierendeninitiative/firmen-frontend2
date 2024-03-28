@@ -121,7 +121,7 @@
 		<section class=" mt-10">
 			<Table totalRecords={9} {columns}>
 				{#each eventList as { event, location, date, status, statusText }, index}
-					<tr>
+					<tr class={` ${index % 2 !== 0 ? 'bg-gray-50' : 'bg-white'}`}>
 						<td class=" px-6 py-4 text-grey-900 text-sm">{event}</td>
 						<td class=" px-6 py-4 text-grey-900 text-sm">{location}</td>
 						<td class=" px-6 py-4 text-grey-500 text-sm">{date}</td>
