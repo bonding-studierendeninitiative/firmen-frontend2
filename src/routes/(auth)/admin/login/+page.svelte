@@ -3,7 +3,7 @@
 	import { goto } from '$app/navigation';
 
 	const handleLoginClick = () => {
-		goto('/dashboard');
+		goto('/admin/dashboard');
 	};
 </script>
 

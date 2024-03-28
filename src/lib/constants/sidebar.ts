@@ -5,7 +5,7 @@
 // 	NotificationIcon,
 // 	AccountIcon
 // } from '$lib/@svelte';
-interface SidebarLinkTypes {
+export interface SidebarLinkTypes {
 	label: string;
 	route: string;
 	Icon: 'DashboardIcon' | 'EventsIcon' | 'PortraitIcon' | 'NotificationIcon' | 'AccountIcon';
@@ -38,20 +38,20 @@ export const USER_SIDEBAR_LINKS: SidebarLinkTypes[] = [
 	}
 ];
 
-export const ADMIN_SIDEBAR_LINKS = [
+export const ADMIN_SIDEBAR_LINKS: SidebarLinkTypes[] = [
 	{
 		label: 'Dashboard',
-		route: '/dashboard',
+		route: '/admin/dashboard',
 		Icon: 'DashboardIcon'
 	},
 	{
 		label: 'Kategorien',
-		route: '/categories',
+		route: '/admin/categories',
 		Icon: 'EventsIcon'
 	},
 	{
 		label: 'Packages',
-		route: '/packages',
+		route: '/admin/packages',
 		Icon: 'EventsIcon'
 	},
 	{
