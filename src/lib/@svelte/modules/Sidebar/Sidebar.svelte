@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { USER_SIDEBAR_LINKS } from '$lib/constants';
+	import { ADMIN_SIDEBAR_LINKS, USER_SIDEBAR_LINKS, type SidebarLinkTypes } from '$lib/constants';
 	import * as Icons from '$lib/@svelte/icons';
 	import { page } from '$app/stores';
 	import { goto } from '$app/navigation';
@@ -18,6 +18,12 @@
 
 	const handleLogoutClick = () => {
 		goto('/access-preference');
+	};
+
+	const getSidebarData = (): SidebarLinkTypes[] => {
+		if ($page.url.pathname?.includes('admin')) {
+			return ADMIN_SIDEBAR_LINKS;
+		} else return USER_SIDEBAR_LINKS;
 	};
 </script>
 
@@ -67,7 +73,7 @@
 			<div>
 				<svelte:component this={Icons['WhiteLogoIcon']} />
 				<div class="!mt-10">
-					{#each USER_SIDEBAR_LINKS as { label, Icon, route } (label)}
+					{#each getSidebarData() as { label, Icon, route } (label)}
 						<a
 							href={route}
 							aria-label={label}
