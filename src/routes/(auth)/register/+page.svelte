@@ -1,6 +1,7 @@
 <script>
 	import { Input, GradientButton } from '$lib/@svelte';
 	import { goto } from '$app/navigation';
+	import { LoginWrapper } from '$lib/@svelte';
 	import { _ } from '../../../services/i18n';
 
 	const handleRegisterClick = () => {
@@ -8,10 +9,7 @@
 	};
 </script>
 
-<div class=" w-4/6 lg:w-3/6 xl:w-98 m-10 py-8">
-	<div class="mb-10">
-		<p class=" text-stone-950 text-3xl font-bold">{$_('auth.registration.heading')}</p>
-	</div>
+<LoginWrapper heading={$_('auth.registration.heading')}>
 	<div class="grid grid-cols-2 gap-4">
 		<Input placeholder={$_('common.fields.firstName')} />
 		<Input placeholder={$_('common.fields.lastName')} />
@@ -24,4 +22,4 @@
 	<GradientButton classes=" mt-5 w-full" onClick={handleRegisterClick}
 		>{$_('auth.registration.createAccount')}</GradientButton
 	>
-</div>
+</LoginWrapper>

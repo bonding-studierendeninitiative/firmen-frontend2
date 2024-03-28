@@ -25,6 +25,11 @@
 			return ADMIN_SIDEBAR_LINKS;
 		} else return USER_SIDEBAR_LINKS;
 	};
+	const getImagePath = (): string => {
+		if ($page.url.pathname?.includes('admin')) {
+			return '../sidebar_background.png';
+		} else return '../sidebar_background.png';
+	};
 </script>
 
 <head>
@@ -66,7 +71,7 @@
 	<div
 		id="sidebar"
 		class="lg:block hidden bg-cover bg-center h-screen w-84 rounded-none border-none"
-		style="background-image: url('sidebar_background.png');"
+		style={`background-image: url(${getImagePath()});`}
 	>
 		<!-- Items -->
 		<div class="p-6 space-y-4 h-full flex flex-col justify-between">
