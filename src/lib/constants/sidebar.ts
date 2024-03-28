@@ -8,7 +8,15 @@
 export interface SidebarLinkTypes {
 	label: string;
 	route: string;
-	Icon: 'DashboardIcon' | 'EventsIcon' | 'PortraitIcon' | 'NotificationIcon' | 'AccountIcon';
+	Icon:
+		| 'DashboardIcon'
+		| 'EventsIcon'
+		| 'PortraitIcon'
+		| 'NotificationIcon'
+		| 'AccountIcon'
+		| 'CategoriesIcon'
+		| 'PackagesIcon'
+		| 'AddonIcon';
 }
 export const USER_SIDEBAR_LINKS: SidebarLinkTypes[] = [
 	{
@@ -45,18 +53,23 @@ export const ADMIN_SIDEBAR_LINKS: SidebarLinkTypes[] = [
 		Icon: 'DashboardIcon'
 	},
 	{
-		label: 'Kategorien',
-		route: '/admin/categories',
+		label: 'Events',
+		route: '/admin/events',
 		Icon: 'EventsIcon'
+	},
+	{
+		label: 'Categories',
+		route: '/admin/categories',
+		Icon: 'CategoriesIcon'
 	},
 	{
 		label: 'Packages',
 		route: '/admin/packages',
-		Icon: 'EventsIcon'
+		Icon: 'PackagesIcon'
 	},
 	{
 		label: 'Add-ons',
 		route: 'add-ons',
-		Icon: 'EventsIcon'
+		Icon: 'AddonIcon'
 	}
 ];

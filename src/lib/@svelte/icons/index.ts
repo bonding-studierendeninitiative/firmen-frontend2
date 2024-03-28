@@ -18,3 +18,6 @@ export { default as SelectUp } from './SelectArrowUp.svelte';
 export { default as SelectDown } from './SelectArrowDown.svelte';
 export { default as PencilSquareIcon } from './PencilSquareIcon.svelte';
 export { default as TrashIcon } from './TrashIcon.svelte';
+export { default as CategoriesIcon } from './CategoriesIcon.svelte';
+export { default as PackagesIcon } from './PackagesIcon.svelte';
+export { default as AddonIcon } from './AddonIcon.svelte';

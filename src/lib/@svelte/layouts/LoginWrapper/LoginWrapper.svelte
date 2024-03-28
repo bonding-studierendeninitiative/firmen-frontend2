@@ -1,6 +1,6 @@
 <script>
-	export let heading = 'Login';
-	export let subHeading = 'Geben Sie Ihre Anmeldedaten ein';
+	export let heading = '';
+	export let subHeading = '';
 </script>
 
 <div class=" w-4/6 lg:w-3/6 xl:w-98 m-10 pb-24">
