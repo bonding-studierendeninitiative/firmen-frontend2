@@ -25,3 +25,6 @@ export { default as SearchIcon } from './SearchIcon.svelte';
 export { default as GridIcon } from './GridIcon.svelte';
 export { default as ListIcon } from './ListIcon.svelte';
 export { default as LocationIcon } from './LocationIcon.svelte';
+export { default as CrossIcon } from './CrossIcon.svelte';
+export { default as PlusIcon } from './PlusIcon.svelte';
+export { default as CompanyIcon } from './CompanyIcon.svelte';

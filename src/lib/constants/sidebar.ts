@@ -16,7 +16,8 @@ export interface SidebarLinkTypes {
 		| 'AccountIcon'
 		| 'CategoriesIcon'
 		| 'PackagesIcon'
-		| 'AddonIcon';
+		| 'AddonIcon'
+		| 'CompanyIcon';
 }
 export const USER_SIDEBAR_LINKS: SidebarLinkTypes[] = [
 	{
@@ -69,7 +70,12 @@ export const ADMIN_SIDEBAR_LINKS: SidebarLinkTypes[] = [
 	},
 	{
 		label: 'Add-ons',
-		route: 'add-ons',
+		route: '/admin/add-ons',
 		Icon: 'AddonIcon'
+	},
+	{
+		label: 'Company',
+		route: '/admin/company',
+		Icon: 'CompanyIcon'
 	}
 ];

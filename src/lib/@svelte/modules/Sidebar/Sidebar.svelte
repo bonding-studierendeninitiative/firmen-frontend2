@@ -67,10 +67,9 @@
 		</div>
 	</nav>
 
-	<!-- Barra lateral -->
 	<div
 		id="sidebar"
-		class="lg:block hidden bg-cover bg-center h-screen w-84 rounded-none border-none"
+		class="lg:block hidden bg-cover bg-center h-screen w-84 rounded-none border-none z-10"
 		style={`background-image: url(${getImagePath()});`}
 	>
 		<!-- Items -->
