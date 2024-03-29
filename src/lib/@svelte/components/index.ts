@@ -14,3 +14,6 @@ export * from './BillingAddressCard';
 export * from './ButtonIcon';
 export * from './SearchInput';
 export * from './InfoListItem';
+export * from './Link';
+export * from './Accordion';
+export * from './Badge';

@@ -1,9 +1,10 @@
 <script lang="ts">
 	export let columns: string[];
 	export let totalRecords: number | undefined;
+	export let classes: string = '';
 </script>
 
-<div class="w-full overflow-hidden rounded-lg shadow-xs">
+<div class={'w-full overflow-hidden rounded-lg shadow-xs border border-stone-200 '.concat(classes)}>
 	<div class="w-full overflow-x-auto">
 		<table class="w-full whitespace-no-wrap">
 			<thead>
