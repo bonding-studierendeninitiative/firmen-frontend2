@@ -21,3 +21,7 @@ export { default as TrashIcon } from './TrashIcon.svelte';
 export { default as CategoriesIcon } from './CategoriesIcon.svelte';
 export { default as PackagesIcon } from './PackagesIcon.svelte';
 export { default as AddonIcon } from './AddonIcon.svelte';
+export { default as SearchIcon } from './SearchIcon.svelte';
+export { default as GridIcon } from './GridIcon.svelte';
+export { default as ListIcon } from './ListIcon.svelte';
+export { default as LocationIcon } from './LocationIcon.svelte';

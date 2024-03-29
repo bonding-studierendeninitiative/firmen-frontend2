@@ -19,7 +19,7 @@
 			{:else}
 				<Button classes="mx-6" onClick={() => undefined}>Make it default</Button>
 			{/if}
-			<ButtonIcon classes="text-stone-500"><PencilSquareIcon /></ButtonIcon>
+			<button class="text-stone-500"><PencilSquareIcon /></button>
 		</span>
 	</div>
 </div>

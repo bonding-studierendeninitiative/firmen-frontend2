@@ -5,6 +5,7 @@
 	export let heading: string;
 	export let subHeading: string;
 	export let date: string;
+	export let buttonText: string = 'Register';
 	export let onRegisterClick: () => void;
 </script>
 
@@ -16,6 +17,6 @@
 			<CalenderIcon />
 			<p class=" ml-2 text-sm text-stone-800 font-medium">{date}</p>
 		</span>
-		<GradientButton classes=" !w-24" onClick={onRegisterClick}>Register</GradientButton>
+		<GradientButton classes=" !py-1.5" onClick={onRegisterClick}>{buttonText}</GradientButton>
 	</div>
 </div>
