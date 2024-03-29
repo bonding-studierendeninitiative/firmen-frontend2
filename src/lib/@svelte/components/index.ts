@@ -12,3 +12,5 @@ export * from './Select';
 export * from './InputWithPrefix';
 export * from './BillingAddressCard';
 export * from './ButtonIcon';
+export * from './SearchInput';
+export * from './InfoListItem';
