@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { SearchIcon } from '$lib';
 	import Input from '../Input/Input.svelte';
 	export let placeholder: string = '';
 	export let label: string = '';
