@@ -1,6 +1,6 @@
 <script>
-	import { Input, GradientButton } from '$lib/@svelte';
-	import { LoginWrapper } from '$lib/@svelte';
+	import { Input, GradientButton } from '$lib/@svelte/components';
+	import { LoginWrapper } from '$lib/@svelte/layouts';
 	import { goto } from '$app/navigation';
 	import { _ } from '../../../services/i18n';
 

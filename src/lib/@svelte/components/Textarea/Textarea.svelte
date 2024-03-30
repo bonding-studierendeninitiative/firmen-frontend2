@@ -18,12 +18,11 @@
 		<label class="block mb-1.5 font-medium marker:text-sm text-stone-800" for={label}>{label}</label
 		>
 	{/if}
-	<input
+	<textarea
 		id={label}
 		{placeholder}
-		{type}
-		{value}
 		bind:this={ref}
+		rows="6"
 		on:input={(e) => {
 			// @ts-ignore as value will always be present on input element
 			value = e?.target?.value;
@@ -31,7 +30,7 @@
 		}}
 		class={'rounded-lg w-full border border-solid border-gray-300 bg-white shadow-custom flex p-2 pl-3 items-center gap-2 focus:outline-none focus:ring focus:border-blue-500 text-stone-800 text-sm font-normal '.concat(
 			classes
-		)}
-	/>
+		)}>{value}</textarea
+	>
 	<ErrorMessage message={errorMessage} />
 </div>

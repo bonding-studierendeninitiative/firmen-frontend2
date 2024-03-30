@@ -1,12 +1,7 @@
 <script lang="ts">
-	import { CalenderIcon, MessageIcon } from '$lib/@svelte/icons';
-	import { GradientButton, Button } from '$lib/@svelte';
-	import FilledCheckIcon from '$lib/@svelte/icons/FilledCheckIcon.svelte';
+	import { FilledCheckIcon, MessageIcon } from '$lib/@svelte/icons';
+	import { GradientButton, Button } from '$lib/@svelte/components';
 
-	// export let heading: string;
-	// export let subHeading: string;
-	// export let date: string;
-	// export let onRegisterClick: () => void;
 	const onActionButtonClick = () => {};
 
 	export let notificationType:

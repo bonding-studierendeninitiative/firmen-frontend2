@@ -1,8 +1,7 @@
 <script lang="ts">
-	import { Accordion, Badge, GradientButton, Link, Table } from '$lib';
-	import CrossIcon from '$lib/@svelte/icons/CrossIcon.svelte';
+	import { Accordion, Badge, GradientButton, Link, Table } from '$lib/@svelte/components';
+	import { AddAddon } from '$lib/@svelte/modules';
 	import PlusIcon from '$lib/@svelte/icons/PlusIcon.svelte';
-	import SelectArrowDown from '$lib/@svelte/icons/SelectArrowDown.svelte';
 	import { fade } from 'svelte/transition';
 
 	const columns = ['Addons Name', 'Sub Addons', 'Price', 'Sale Tag', ''];
@@ -106,13 +105,14 @@
 		}
 	];
 	export let isAccordionOpen: boolean = false;
+	export let isDrawerOpen: boolean = false;
 </script>
 
 <section>
 	<div class=" flex justify-between items-center">
 		<h1 class=" text-stone-950 text-3xl font-extrabold">Addons</h1>
 		<div>
-			<GradientButton onClick={() => undefined}>Add Addons</GradientButton>
+			<GradientButton onClick={() => (isDrawerOpen = true)}>Add Addons</GradientButton>
 		</div>
 	</div>
 </section>
@@ -179,3 +179,4 @@
 		{/each}
 	</Table>
 </section>
+<AddAddon bind:isOpen={isDrawerOpen} />

@@ -1,4 +1,8 @@
 <script lang="ts">
+	export let classes: string = '';
+	export let onClick: () => void = () => {};
 </script>
 
-<button class=" text-brand no-underline font-normal text-sm"><slot /></button>
+<button on:click={onClick} class={' text-brand no-underline font-normal text-sm '.concat(classes)}
+	><slot /></button
+>

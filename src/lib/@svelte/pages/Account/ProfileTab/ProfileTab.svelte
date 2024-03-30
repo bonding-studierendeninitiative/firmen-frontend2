@@ -1,9 +1,8 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import { TrashIcon } from '$lib';
-	import Button from '$lib/@svelte/components/Button/Button.svelte';
-	import GradientButton from '$lib/@svelte/components/GradientButton/GradientButton.svelte';
-	import Input from '$lib/@svelte/components/Input/Input.svelte';
+	import { TrashIcon } from '$lib/@svelte/icons';
+	import { Button, GradientButton, Input } from '$lib/@svelte/components';
+
 	const contactInfo = {
 		firstName: '',
 		lastName: '',

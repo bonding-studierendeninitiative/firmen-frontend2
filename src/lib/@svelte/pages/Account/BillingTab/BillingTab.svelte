@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import { BillingAddressCard, Button, GradientButton, Input } from '$lib/@svelte';
+	import { BillingAddressCard, Button, GradientButton, Input } from '$lib/@svelte/components';
 
 	const billingAddresses = [{ isDefault: true }, { isDefault: false }, { isDefault: true }];
 </script>

@@ -1,7 +1,12 @@
 <script lang="ts">
 	import Tabs from '$lib/@svelte/components/Tabs/Tabs.svelte';
-	import { ProfileTab, OrganizationTab, BillingTab, ArchivedTab } from '$lib/@svelte/pages';
-	import PasswordTab from '$lib/@svelte/pages/Account/PasswordTab/PasswordTab.svelte';
+	import {
+		ProfileTab,
+		OrganizationTab,
+		BillingTab,
+		ArchivedTab,
+		PasswordTab
+	} from '$lib/@svelte/pages';
 	import { fade } from 'svelte/transition';
 
 	let activeTab = 0;

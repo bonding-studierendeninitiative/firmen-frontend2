@@ -1,5 +1,5 @@
 <script>
-	import { ColorLogoIcon } from '$lib';
+	import { ColorLogoIcon } from '$lib/@svelte/icons';
 	import { _ } from './../../services/i18n';
 </script>
 
