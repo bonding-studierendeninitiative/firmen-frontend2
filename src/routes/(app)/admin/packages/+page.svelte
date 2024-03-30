@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { GradientButton, Link, Table } from '$lib';
+	import { GradientButton, Link, Table } from '$lib/@svelte/components';
+	import { AddNewPackage } from '$lib/@svelte/modules';
 
 	const columns = ['Package Name', 'Price', ''];
 
@@ -17,13 +18,14 @@
 			price: '€850'
 		}
 	];
+	let isDrawerOpen: boolean = false;
 </script>
 
 <section>
 	<div class=" flex justify-between items-center">
 		<h1 class=" text-stone-950 text-3xl font-extrabold">Packages</h1>
 		<div>
-			<GradientButton onClick={() => undefined}>Add Package</GradientButton>
+			<GradientButton onClick={() => (isDrawerOpen = true)}>Add Package</GradientButton>
 		</div>
 	</div>
 </section>
@@ -39,3 +41,4 @@
 		{/each}
 	</Table>
 </section>
+<AddNewPackage bind:isOpen={isDrawerOpen} />

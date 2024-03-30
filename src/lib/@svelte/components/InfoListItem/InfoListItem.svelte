@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { CalenderIcon, LocationIcon } from '$lib/@svelte/icons';
-	import { GradientButton } from '$lib/@svelte';
+	import { GradientButton } from '$lib/@svelte/components';
 
 	export let heading: string;
 	export let subHeading: string;

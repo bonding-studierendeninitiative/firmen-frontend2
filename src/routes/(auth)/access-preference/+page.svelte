@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { Button, GradientButton } from '$lib/@svelte/components';
 	import { goto } from '$app/navigation';
-	import { LoginWrapper } from '$lib/@svelte';
+	import { LoginWrapper } from '$lib/@svelte/layouts';
 	import { _ } from '../../../services/i18n';
 
 	const handleRegistration = () => {

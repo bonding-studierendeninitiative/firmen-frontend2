@@ -17,3 +17,6 @@ export * from './InfoListItem';
 export * from './Link';
 export * from './Accordion';
 export * from './Badge';
+export * from './Drawer';
+export * from './Textarea';
+export * from './IconInput';

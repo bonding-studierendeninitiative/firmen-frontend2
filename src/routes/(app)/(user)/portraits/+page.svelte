@@ -1,30 +1,8 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import { NoDataFound, EventInfoBox, SimpleDocumentIcon } from '$lib/@svelte';
-	import Button from '$lib/@svelte/components/Button/Button.svelte';
-	import { Table } from '$lib/@svelte/components';
-	import Chip from '$lib/@svelte/components/Chip/Chip.svelte';
-	import ImageIcon from '$lib/@svelte/icons/ImageIcon.svelte';
-	import DocumentIcon from '$lib/@svelte/icons/DocumentIcon.svelte';
-	import BrandingIcon from '$lib/@svelte/icons/BrandingIcon.svelte';
+	import { NoDataFound, Button } from '$lib/@svelte/components';
+	import { SimpleDocumentIcon } from '$lib/@svelte/icons';
 
-	const upcomingEvents = [
-		{
-			id: '1',
-			heading: 'Tech Foundation 2023',
-			subHeading: 'Free University of Berlin',
-			date: '20 Dec, 2023'
-		},
-		{
-			id: '2',
-			heading: 'Engineer Fair 2024',
-			subHeading: 'Philipps University of Marburg',
-			date: '20 Dec, 2023'
-		}
-	];
-	const handleEventRegistration = (id: string) => {
-		console.log(id);
-	};
 	let showListings: boolean = false;
 	const handleViewAllEvent = () => {
 		goto('/events');
@@ -32,7 +10,6 @@
 	const toggleListing = () => {
 		showListings = true;
 	};
-	const columns = ['Event', 'Location', 'Date', 'Status', 'Uploads'];
 	interface EventListType {
 		event: string;
 		location: string;
@@ -40,44 +17,6 @@
 		status: 'success' | 'info';
 		statusText: string;
 	}
-
-	const eventList: EventListType[] = [
-		{
-			event: 'Tech Foundation 2023',
-			location: 'Philipps University of Marburg',
-			date: '01.12.24 - 25.12.24',
-			status: 'info',
-			statusText: 'Überprüfung'
-		},
-		{
-			event: 'Tech Foundation 2023',
-			location: 'Philipps University of Marburg',
-			date: '25.12.24',
-			status: 'success',
-			statusText: 'Bestätigt'
-		},
-		{
-			event: 'Tech Foundation 2023',
-			location: 'Free University of Berlin',
-			date: '01.12.24 - 25.12.24',
-			status: 'info',
-			statusText: 'Überprüfung'
-		},
-		{
-			event: 'Tech Foundation 2023',
-			location: 'Free University of Berlin',
-			date: '01.12.24 - 25.12.24',
-			status: 'info',
-			statusText: 'Überprüfung'
-		},
-		{
-			event: 'Tech Foundation 2023',
-			location: 'Free University of Berlin',
-			date: '01.12.24 - 25.12.24',
-			status: 'info',
-			statusText: 'Überprüfung'
-		}
-	];
 
 	const colors = ['#EA580C', '#EAB308', '#B91C1C', '#15803D', '#155E75', '#9D174D'];
 	const portraits = [

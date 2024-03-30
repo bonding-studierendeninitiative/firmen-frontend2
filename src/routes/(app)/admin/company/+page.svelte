@@ -1,6 +1,5 @@
 <script lang="ts">
-	import { Table } from '$lib';
-	import Button from '$lib/@svelte/components/Button/Button.svelte';
+	import { Table, Button } from '$lib/@svelte/components';
 
 	const columns = ['Company', 'Contact Person', 'Number', 'Email Address', 'Bookings', ''];
 

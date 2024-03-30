@@ -1,8 +1,10 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import { LoginWrapper } from '$lib/@svelte';
-	import { GradientButton, VerificationCode } from '$lib/@svelte';
+	import { LoginWrapper } from '$lib/@svelte/layouts';
+	import { GradientButton } from '$lib/@svelte/components';
+	import { VerificationCode } from '$lib/@svelte/modules';
 	import { _ } from '../../../services/i18n';
+
 	const handleSubmitCode = () => {
 		goto('/reset-password');
 	};

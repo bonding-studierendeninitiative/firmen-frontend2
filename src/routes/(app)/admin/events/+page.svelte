@@ -1,7 +1,13 @@
 <script lang="ts">
-	import { NoDataFound, EventInfoBox, GridIcon, ListIcon } from '$lib/@svelte';
-	import { ButtonIcon, InfoListItem, SearchInput, GradientButton } from '$lib/@svelte/components';
-	import { Tabs } from '$lib/@svelte/components/Tabs';
+	import {
+		EventInfoBox,
+		InfoListItem,
+		SearchInput,
+		GradientButton,
+		ButtonIcon,
+		Tabs
+	} from '$lib/@svelte/components';
+	import { GridIcon, ListIcon } from '$lib/@svelte/icons';
 
 	const upcomingEvents = [
 		{

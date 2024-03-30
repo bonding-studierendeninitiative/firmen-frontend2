@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import { GradientButton, Input, PasswordComplexityMessage, VerificationCode } from '$lib/@svelte';
+	import { GradientButton, Input, PasswordComplexityMessage } from '$lib/@svelte/components';
 	import {
 		hasLowerCase,
 		hasMinAllowedCharacters,
@@ -8,8 +8,8 @@
 		hasSpecialCharacter,
 		hasUpperCase
 	} from '$lib/validations';
+	import { LoginWrapper } from '$lib/@svelte/layouts';
 	import { _ } from '../../../services/i18n';
-	import { LoginWrapper } from '$lib/@svelte';
 
 	const handleSubmitResetPassword = () => {
 		goto('login');

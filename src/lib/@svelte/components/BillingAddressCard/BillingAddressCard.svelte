@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { PencilSquareIcon } from '$lib';
+	import { PencilSquareIcon } from '$lib/@svelte/icons';
 	import { Button } from '..';
 	import ButtonIcon from '../ButtonIcon/ButtonIcon.svelte';
 	export let isDefault: boolean;

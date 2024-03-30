@@ -1,8 +1,10 @@
 <script lang="ts">
-	import { GradientButton, Link, Table } from '$lib';
+	import { GradientButton, Link, Table } from '$lib/@svelte/components';
+	import Textarea from '$lib/@svelte/components/Textarea/Textarea.svelte';
+	import { AddCategory } from '$lib/@svelte/modules';
 
 	const columns = ['Name', ''];
-
+	let isDrawerOpen = false;
 	const categoriesList = [
 		{
 			name: 'Messe Aachen'
@@ -20,7 +22,7 @@
 	<div class=" flex justify-between items-center">
 		<h1 class=" text-stone-950 text-3xl font-extrabold">Categories</h1>
 		<div>
-			<GradientButton onClick={() => undefined}>Add Category</GradientButton>
+			<GradientButton onClick={() => (isDrawerOpen = true)}>Add Category</GradientButton>
 		</div>
 	</div>
 </section>
@@ -35,3 +37,4 @@
 		{/each}
 	</Table>
 </section>
+<AddCategory bind:isOpen={isDrawerOpen} />

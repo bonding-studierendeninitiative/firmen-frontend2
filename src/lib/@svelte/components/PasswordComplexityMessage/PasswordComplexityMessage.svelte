@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { FilledCheckIcon, FilledCrossIcon } from '$lib/@svelte';
+	import { FilledCheckIcon, FilledCrossIcon } from '$lib/@svelte/icons';
 	export let message = '';
 	export let isValid = true;
 </script>

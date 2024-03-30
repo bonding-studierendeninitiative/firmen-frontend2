@@ -1,12 +1,5 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
-	import { NoDataFound, EventInfoBox } from '$lib/@svelte';
-	import Button from '$lib/@svelte/components/Button/Button.svelte';
-	import { Table } from '$lib/@svelte/components';
-	import Chip from '$lib/@svelte/components/Chip/Chip.svelte';
-	import ImageIcon from '$lib/@svelte/icons/ImageIcon.svelte';
-	import DocumentIcon from '$lib/@svelte/icons/DocumentIcon.svelte';
-	import BrandingIcon from '$lib/@svelte/icons/BrandingIcon.svelte';
+	import { EventInfoBox } from '$lib/@svelte/components';
 
 	const upcomingEvents = [
 		{

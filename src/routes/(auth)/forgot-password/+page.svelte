@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import { GradientButton, Input } from '$lib/@svelte';
-	import { LoginWrapper } from '$lib/@svelte';
+	import { GradientButton, Input } from '$lib/@svelte/components';
+	import { LoginWrapper } from '$lib/@svelte/layouts';
 	import { _ } from '../../../services/i18n';
 	const handleSubmitEmail = () => {
 		goto('/email-verification');

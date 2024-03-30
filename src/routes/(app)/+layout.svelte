@@ -1,5 +1,5 @@
 <script>
-	import { Sidebar } from '$lib/@svelte';
+	import { Sidebar } from '$lib/@svelte/modules';
 </script>
 
 <div class=" lg:flex w-full">

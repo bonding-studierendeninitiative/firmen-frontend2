@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { ActionNotificationItem } from '$lib/@svelte';
+	import { ActionNotificationItem } from '$lib/@svelte/components';
 	interface NotificationsType {
 		id: number;
 		content: string;

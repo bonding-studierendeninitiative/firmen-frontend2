@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Table } from '$lib';
+	import { Table } from '$lib/@svelte/components';
 	import Button from '$lib/@svelte/components/Button/Button.svelte';
 
 	const columns = ['Event', 'Location', 'Date', ''];

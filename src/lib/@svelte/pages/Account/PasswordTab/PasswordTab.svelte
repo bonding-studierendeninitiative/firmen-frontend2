@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import { Button, GradientButton, Input } from '$lib/@svelte';
+	import { Button, GradientButton, Input } from '$lib/@svelte/components';
 </script>
 
 <div>

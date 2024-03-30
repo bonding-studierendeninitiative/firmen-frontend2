@@ -37,7 +37,7 @@ export default {
 				'semi-light': 400
 			},
 			boxShadow: {
-				custom: '0px 4px 8px -2px rgba(16, 24, 40, 0.06)'
+				custom: '0px 1.5px 4px -1px rgba(0, 0, 0, 0.08)'
 			},
 			borderRadius: {
 				custom: '1.25rem'
