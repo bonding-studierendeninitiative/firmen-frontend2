@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
 	import {
 		EventInfoBox,
 		InfoListItem,
@@ -8,6 +9,7 @@
 		Tabs
 	} from '$lib/@svelte/components';
 	import { GridIcon, ListIcon } from '$lib/@svelte/icons';
+	import { EventDetails } from '$lib/@svelte/modules';
 
 	const upcomingEvents = [
 		{
@@ -48,6 +50,7 @@
 		}
 	];
 
+	let isDrawerOpen = false;
 	let activeTab = 0;
 	const tabHeadings = ['Published', 'Unpublished', 'Archived'];
 
@@ -56,7 +59,11 @@
 	};
 
 	const handleEventRegistration = (id: string) => {
-		console.log(id);
+		if (activeTab !== 1) {
+			goto('/admin/events/applies/' + id);
+		} else {
+			isDrawerOpen = true;
+		}
 	};
 
 	let isListView: boolean = false;
@@ -68,9 +75,11 @@
 			<h1 class=" text-stone-950 text-3xl font-extrabold">Events</h1>
 			<h4 class=" text-stone-500">Have a look at recent events for showcasing your company!</h4>
 		</div>
-		<div>
-			<GradientButton onClick={() => undefined}>Publish New Events</GradientButton>
-		</div>
+		{#if activeTab !== 1}
+			<div>
+				<GradientButton onClick={() => (activeTab = 1)}>Publish New Events</GradientButton>
+			</div>
+		{/if}
 	</div>
 	<div class=" mt-12">
 		<Tabs {tabHeadings} {activeTab} {handleTabChange} />
@@ -107,9 +116,10 @@
 						{subHeading}
 						{date}
 						onRegisterClick={() => handleEventRegistration(id)}
-						buttonText="View Applies"
+						buttonText={activeTab !== 1 ? 'View Applies' : 'View Details'}
 					/>
 				{/each}
 			</div>{/if}
 	</section>
 </div>
+<EventDetails bind:isOpen={isDrawerOpen} />

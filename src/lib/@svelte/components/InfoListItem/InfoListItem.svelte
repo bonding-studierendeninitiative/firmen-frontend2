@@ -1,11 +1,11 @@
 <script lang="ts">
 	import { CalenderIcon, LocationIcon } from '$lib/@svelte/icons';
 	import { GradientButton } from '$lib/@svelte/components';
-
+	export let showButton = true;
 	export let heading: string;
 	export let subHeading: string;
 	export let date: string;
-	export let onRegisterClick: () => void;
+	export let onRegisterClick: (() => void) | undefined = undefined;
 </script>
 
 <div class=" p-4 shadow-custom rounded-md border border-solid border-stone-200">
@@ -23,6 +23,10 @@
 				</span>
 			</div>
 		</div>
-		<GradientButton classes=" !py-1.5" onClick={onRegisterClick}>View Applies</GradientButton>
+		{#if showButton}
+			<GradientButton classes=" !py-1.5" onClick={() => onRegisterClick?.()}
+				>View Applies</GradientButton
+			>
+		{/if}
 	</div>
 </div>

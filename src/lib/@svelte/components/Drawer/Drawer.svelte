@@ -5,6 +5,7 @@
 	import Button from '../Button/Button.svelte';
 	import GradientButton from '../GradientButton/GradientButton.svelte';
 
+	export let hasActions: boolean = true;
 	export let isOpen: boolean;
 	export let heading: string = '';
 	export let handleSubmit: () => void;
@@ -46,10 +47,12 @@
 				<section>
 					<slot />
 				</section>
-				<footer class=" flex justify-end items-center w-full">
-					<Button classes="mr-2" onClick={handleCancel}>Cancel</Button>
-					<GradientButton onClick={handleSubmit}>Save</GradientButton>
-				</footer>
+				{#if hasActions}
+					<footer class=" flex justify-end items-center w-full">
+						<Button classes="mr-2" onClick={handleCancel}>Cancel</Button>
+						<GradientButton onClick={handleSubmit}>Save</GradientButton>
+					</footer>
+				{/if}
 			</div>
 		</div>
 	</div>

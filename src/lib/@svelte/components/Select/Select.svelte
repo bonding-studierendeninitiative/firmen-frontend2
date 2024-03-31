@@ -13,7 +13,7 @@
 	let listOpen = false;
 </script>
 
-<div>
+<div class=" w-full">
 	{#if label}
 		<label class=" block mb-1 font-medium marker:text-sm text-stone-800" for={label}>{label}</label>
 	{/if}

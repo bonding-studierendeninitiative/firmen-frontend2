@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { Table, Button } from '$lib/@svelte/components';
+	import { CompanyDetails } from '$lib/@svelte/modules';
 
 	const columns = ['Company', 'Contact Person', 'Number', 'Email Address', 'Bookings', ''];
 
@@ -89,6 +90,8 @@
 			bookings: '15'
 		}
 	];
+
+	let isDrawerOpen: boolean = false;
 </script>
 
 <div>
@@ -105,10 +108,13 @@
 					<td class=" px-6 py-4 text-grey-500 text-sm">{email}</td>
 					<td class=" px-6 py-4 text-grey-500 text-sm">{bookings}</td>
 					<td class=" px-6 py-4"
-						><Button classes=" !py-1.5 !px-4 " onClick={() => undefined}>View Details</Button></td
+						><Button classes=" !py-1.5 !px-4 " onClick={() => (isDrawerOpen = true)}
+							>View Details</Button
+						></td
 					>
 				</tr>
 			{/each}
 		</Table>
 	</section>
 </div>
+<CompanyDetails isOpen={isDrawerOpen} />
