@@ -27,7 +27,7 @@
 	};
 	const getImagePath = (): string => {
 		if ($page.url.pathname?.includes('admin')) {
-			return '../sidebar_background.png';
+			return '../../../sidebar_background.png';
 		} else return '../sidebar_background.png';
 	};
 </script>

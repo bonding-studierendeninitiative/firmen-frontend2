@@ -14,7 +14,9 @@
 		>
 		<div class="relative">
 			<Input {placeholder} />
-			<div class="absolute inset-y-0 end-0 flex items-center pe-3 pointer-events-none">
+			<div
+				class="absolute inset-y-0 end-0 flex items-center pe-3 pointer-events-none text-slate-400"
+			>
 				<slot name="icon" />
 			</div>
 		</div>

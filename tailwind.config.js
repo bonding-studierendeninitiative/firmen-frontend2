@@ -15,10 +15,12 @@ export default {
 			},
 			colors: {
 				brand: '#007EC7',
-				error: '#EF4444'
+				error: '#EF4444',
+				'brand-light': '#007EC720'
 			},
 			textColor: {
-				brand: '#007EC7'
+				brand: '#007EC7',
+				'brand-light': '#007EC720'
 			},
 			width: {
 				84: '21rem',
