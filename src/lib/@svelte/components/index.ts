@@ -21,3 +21,5 @@ export * from './Drawer';
 export * from './Textarea';
 export * from './IconInput';
 export * from './Datepicker';
+export * from './Modal';
+export * from './Checkbox';

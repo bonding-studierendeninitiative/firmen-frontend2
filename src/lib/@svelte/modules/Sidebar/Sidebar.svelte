@@ -50,7 +50,7 @@
 			</button>
 			<!-- Logo -->
 			<div class="ml-1">
-				<img src="../logo.png" alt="logo" class="h-4 w-18" />
+				<img src="./logo.png" alt="logo" class="h-4 w-18" />
 			</div>
 
 			<!-- Ícono de Notificación y Perfil -->
