@@ -30,3 +30,5 @@ export { default as PlusIcon } from './PlusIcon.svelte';
 export { default as CompanyIcon } from './CompanyIcon.svelte';
 export { default as ReturnIcon } from './ReturnIcon.svelte';
 export { default as ClockIcon } from './ClockIcon.svelte';
+export { default as OutlinedCheckIcon } from './OutlinedCheckIcon.svelte';
+export { default as OutlinedCrossIcon } from './OutlinedCrossIcon.svelte';

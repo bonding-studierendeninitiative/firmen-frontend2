@@ -2,7 +2,7 @@
 	<div class="flex justify-between items-center px-9 py-2">
 		<slot />
 		<div class="ml-1">
-			<img src="logo.png" alt="logo" class="h-4 w-18" />
+			<img src="./logo.png" alt="logo" class="h-4 w-18" />
 		</div>
 
 		<div class="space-x-4">

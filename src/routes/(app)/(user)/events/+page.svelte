@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
 	import { EventInfoBox } from '$lib/@svelte/components';
 
 	const upcomingEvents = [
@@ -42,7 +43,7 @@
 
 	const cities = ['Berlin', 'Köln', 'Düsseldorf', 'München', 'Nuremberg'];
 	const handleEventRegistration = (id: string) => {
-		console.log(id);
+		goto('events/' + id);
 	};
 </script>
 

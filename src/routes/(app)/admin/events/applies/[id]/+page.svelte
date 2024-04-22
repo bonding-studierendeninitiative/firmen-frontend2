@@ -1,6 +1,14 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import { SearchInput, ButtonIcon, Tabs, Table, NoDataFound, Chip } from '$lib/@svelte/components';
+	import {
+		SearchInput,
+		ButtonIcon,
+		Tabs,
+		Table,
+		NoDataFound,
+		Chip,
+		Modal
+	} from '$lib/@svelte/components';
 	import Select from '$lib/@svelte/components/Select/Select.svelte';
 	import {
 		BrandingIcon,
@@ -128,8 +136,15 @@
 	const toggleListing = () => {
 		showListings = true;
 	};
+
+	let isOpen = false;
+
+	const handleChipClick = (index: number, status: string) => {
+		isOpen = true;
+	};
 </script>
 
+<!-- <Modal bind:isOpen /> -->
 <div>
 	<div class=" flex justify-between items-start">
 		<div class=" flex">
@@ -188,7 +203,13 @@
 							<td class=" px-6 py-4 text-sm">{number}</td>
 							<td class=" px-6 py-4 text-sm">{email}</td>
 							<td class=" px-6 py-4 text-sm"><p class=" m-0 p-0 text-gray-500">{date}</p></td>
-							<td class=" px-6 py-4"><Chip status={statusText} variant={status} /></td>
+							<td class=" px-6 py-4"
+								><Chip
+									status={statusText}
+									variant={status}
+									handleChipClick={() => handleChipClick(index, status)}
+								/></td
+							>
 							<td class=" px-6 py-4 flex">
 								<button><ImageIcon /> </button>
 								<button><DocumentIcon /> </button>
