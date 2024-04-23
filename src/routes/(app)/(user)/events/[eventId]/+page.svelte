@@ -1,5 +1,8 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
+	import { page } from '$app/stores';
 	import { GradientButton, Button } from '$lib/@svelte/components';
+	import Breadcrumb from '$lib/@svelte/components/Breadcrumb/Breadcrumb.svelte';
 	import Checkbox from '$lib/@svelte/components/Checkbox/Checkbox.svelte';
 	import Chip from '$lib/@svelte/components/Chip/Chip.svelte';
 	import {
@@ -12,6 +15,8 @@
 	export let heading = 'Tech Foundation 2024';
 	export let mainDate = 'Freitag, 17 März, 2024';
 	export let mainLocation = 'Lanxess Arena';
+
+	const { eventId } = $page.params;
 
 	const packageDetails: any = [
 		{
@@ -89,8 +94,19 @@
 			]
 		}
 	];
+	const handleNextStep = () => {
+		goto(`/events/${eventId}/event-registration`);
+	};
 </script>
 
+<div class="mb-10">
+	<Breadcrumb
+		breadcrumbPaths={[
+			{ text: 'Events', path: '/events' },
+			{ text: 'Tech Foundation 2024', path: '' }
+		]}
+	/>
+</div>
 <div>
 	<div class=" flex justify-between items-start">
 		<div class=" flex">
@@ -110,7 +126,7 @@
 			</div>
 		</div>
 		<div>
-			<GradientButton onClick={() => undefined}>Register Now</GradientButton>
+			<GradientButton onClick={handleNextStep}>Register Now</GradientButton>
 		</div>
 	</div>
 	<div class=" my-10">
@@ -166,7 +182,7 @@
 			</thead>
 			<tbody>
 				{#each packageDetails as pkg (pkg)}
-					<tr>
+					<tr class="even:bg-stone-50">
 						<td class="  p-3 border border-stone-200 text-sm">{pkg.feature}</td>
 						<td class=" p-3 border border-stone-200">
 							<div class="flex justify-center items-center">
@@ -253,6 +269,6 @@
 		</div>
 	</section>
 	<footer class=" flex mt-6 justify-end items-center">
-		<GradientButton onClick={() => undefined}>Continue</GradientButton>
+		<GradientButton onClick={handleNextStep}>Continue</GradientButton>
 	</footer>
 </div>

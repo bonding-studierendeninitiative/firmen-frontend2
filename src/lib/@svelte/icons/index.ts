@@ -32,3 +32,4 @@ export { default as ReturnIcon } from './ReturnIcon.svelte';
 export { default as ClockIcon } from './ClockIcon.svelte';
 export { default as OutlinedCheckIcon } from './OutlinedCheckIcon.svelte';
 export { default as OutlinedCrossIcon } from './OutlinedCrossIcon.svelte';
+export { default as DropzoneIcon } from './DropzoneIcon.svelte';
