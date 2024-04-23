@@ -23,3 +23,4 @@ export * from './IconInput';
 export * from './Datepicker';
 export * from './Modal';
 export * from './Checkbox';
+export * from './Breadcrumb';

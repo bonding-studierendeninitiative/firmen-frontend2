@@ -7,15 +7,16 @@
 <div class="flex items-center">
 	<input
 		bind:checked
-		id="checked-checkbox"
+		id={label}
 		type="checkbox"
 		value=""
-		class="w-4 h-4 text-brand bg-gray-100 border-gray-300 rounded"
+		class="w-4 h-4 text-brand bg-gray-100 border-gray-300 rounded cursor-pointer"
 	/>
 	{#if label}
 		<label
-			for="checked-checkbox"
-			class={'ms-4 text-sm font-medium text-stone-800 '.concat(labelClasses)}>{label}</label
+			for={label}
+			class={'ms-4 text-sm font-medium text-stone-800 cursor-pointer '.concat(labelClasses)}
+			>{label}</label
 		>
 	{/if}
 </div>
