@@ -2,13 +2,15 @@
 	import { goto } from '$app/navigation';
 	import { NoDataFound, Button } from '$lib/@svelte/components';
 	import { SimpleDocumentIcon } from '$lib/@svelte/icons';
+	import AddPortrait from '$lib/@svelte/modules/AddPortrait/AddPortrait.svelte';
 
 	let showListings: boolean = false;
 	const handleViewAllEvent = () => {
 		goto('/events');
 	};
 	const toggleListing = () => {
-		showListings = true;
+		// showListings = true;
+		isDrawerOpen = true;
 	};
 	interface EventListType {
 		event: string;
@@ -27,6 +29,8 @@
 		'Jura',
 		'Wirstchafts'
 	];
+
+	let isDrawerOpen = false;
 </script>
 
 <div>
@@ -68,3 +72,4 @@
 		</section>
 	{/if}
 </div>
+<AddPortrait bind:isOpen={isDrawerOpen} bind:showListings />

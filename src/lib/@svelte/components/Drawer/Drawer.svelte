@@ -35,7 +35,7 @@
 				duration: 300,
 				easing: cubicOut
 			}}
-			class=" fixed p-6 inset-y-0 right-0 flex flex-col w-[556px] bg-white border-r h-screen"
+			class=" fixed p-6 inset-y-0 right-0 flex flex-col w-[556px] bg-white border-r h-screen max-h-[100vh] overflow-auto"
 		>
 			<div class="flex items-center justify-between pb-6 pt-2 border-b">
 				<span class=" font-bold text-stone-800 text-xl">{heading}</span>
@@ -44,9 +44,7 @@
 				</button>
 			</div>
 			<div class="pt-6 flex flex-col justify-between h-full">
-				<section>
-					<slot />
-				</section>
+				<slot />
 				{#if hasActions}
 					<footer class=" flex justify-end items-center w-full">
 						<Button classes="mr-2" onClick={handleCancel}>Cancel</Button>
