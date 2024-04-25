@@ -11,6 +11,7 @@
 
 	export let notificationContent: string = '';
 	export const notificationDate: Date | null = null;
+	export let handleUpdatePortrait: (() => void) | undefined = undefined;
 
 	const getNotificationIcon = (notificationType: string) => {
 		switch (notificationType) {
@@ -38,7 +39,7 @@
 			</h3>
 			<div class=" py-2">
 				{#if notificationType === 'registrationSuccess'}
-					<GradientButton onClick={() => undefined}>Update Portrait</GradientButton
+					<GradientButton onClick={() => handleUpdatePortrait?.()}>Update Portrait</GradientButton
 					>{:else if notificationType === 'registrationRejected'}
 					<Button onClick={onActionButtonClick} classes="  shadow-custom  text-stone-800"
 						>Contact Support</Button

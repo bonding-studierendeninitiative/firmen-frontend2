@@ -22,9 +22,13 @@
 		showChevron
 		bind:listOpen
 		{placeholder}
+		class=" placeholder-red-800"
 		containerStyles="box-shadow: 0px 1.5px 4px -1px rgba(0, 0, 0, 0.08); height:20px !important;"
 		--height="38px"
 	>
+		<!-- <div slot="item" let:item let:index>
+			{index}: {item.label}
+		</div> -->
 		<div slot="chevron-icon" class=" text-stone-400">
 			{#if listOpen}
 				<SelectUp />
