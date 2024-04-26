@@ -11,7 +11,6 @@ interface SetupI18nOptions {
 
 function setupI18n({ withLocale }: SetupI18nOptions = { withLocale: 'en' }): Promise<void> {
 	const messagesFileUrl = MESSAGE_FILE_URL_TEMPLATE.replace('{locale}', withLocale);
-	console.log({ messagesFileUrl });
 	return fetch(messagesFileUrl)
 		.then((response) => response.json())
 		.then((messages) => {

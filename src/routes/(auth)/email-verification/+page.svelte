@@ -3,7 +3,7 @@
 	import { LoginWrapper } from '$lib/@svelte/layouts';
 	import { GradientButton } from '$lib/@svelte/components';
 	import { VerificationCode } from '$lib/@svelte/modules';
-	import { _ } from '../../../services/i18n';
+	import { _ } from '@services';
 
 	const handleSubmitCode = () => {
 		goto('/reset-password');
