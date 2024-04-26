@@ -1,6 +1,6 @@
 <script>
 	import { ColorLogoIcon } from '$lib/@svelte/icons';
-	import { _ } from './../../services/i18n';
+	import { _ } from '@services';
 </script>
 
 <div class=" flex w-full h-screen">

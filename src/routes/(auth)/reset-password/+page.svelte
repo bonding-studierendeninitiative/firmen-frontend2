@@ -9,7 +9,7 @@
 		hasUpperCase
 	} from '$lib/validations';
 	import { LoginWrapper } from '$lib/@svelte/layouts';
-	import { _ } from '../../../services/i18n';
+	import { _ } from '@services';
 
 	const handleSubmitResetPassword = () => {
 		goto('login');

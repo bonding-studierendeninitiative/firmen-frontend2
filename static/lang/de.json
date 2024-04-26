@@ -1,7 +1,59 @@
 {
 	"auth": {
 		"login": {
-			"login": "Login"
+			"heading": "german",
+			"subHeading": "Enter your login details",
+			"forgotPassword": "Forgot Password?",
+			"login": "Login",
+			"notAMember": "Not a Member?",
+			"joinNow": "Join Now",
+			"codePlaceholder": "Code",
+			"loginWithMagicLink": "Login with Magic Link",
+			"loginWithPassword": "Login with Password"
+		},
+		"registration": {
+			"heading": "Registration",
+			"subHeading": "Enter your login details",
+			"createAccount": "Create Account"
+		},
+		"forgotPassword": {
+			"heading": "Reset Password",
+			"subHeading": "Instructions with Steps to Reset Password will be Sent to Your Email",
+			"resetPassword": "Reset Password",
+			"backToLogin": "Back to Login",
+			"headingVerifyEmail": "Verify Email",
+			"subHeadingVerifyEmail": "A verification code has been sent to you.\nEnter the code below.",
+			"verifyCode": "Verify Code",
+			"resend": "Resend Code",
+			"headingEnterNewPassword": "Enter New Password",
+			"subHeadingEnterNewPassword": "Almost Finished. \nNow Enter Your New Password.",
+			"aLowerCaseLetter": "A Lowercase Letter",
+			"aSpecialCharacter": "A Special Character",
+			"anUpperCaseLetter": "An Uppercase Letter",
+			"atLeast8Characters": "At Least 8 Characters",
+			"aNumber": "A Number",
+			"resetPasswordButton": "Reset Password"
+		},
+		"registration-success": {
+			"heading": "Registered Successfully",
+			"subHeading": "You can now access your account and register for events. We'll keep you up to date with news and updates",
+			"createAccount": "Create Account"
+		},
+		"footer": {
+			"privacyPolicy": "Privacy Policy"
 		}
+	},
+	"common": {
+		"fields": {
+			"emailPlaceholder": "Email Address",
+			"passwordPlaceholder": "Password",
+			"codePlaceholder": "Code",
+			"firstName": "First Name",
+			"lastName": "Last Name",
+			"companyName": "Company Name",
+			"phoneNumber": "Phone Number",
+			"confirmPassword": "Confirm Password"
+		},
+		"continue": "Continue"
 	}
 }

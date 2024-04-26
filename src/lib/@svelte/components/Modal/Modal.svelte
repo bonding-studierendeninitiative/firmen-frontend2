@@ -40,7 +40,7 @@
 						e.preventDefault();
 						e.stopPropagation();
 					}}
-					class="py-10 px-10 transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg"
+					class="py-10 px-10 transform cursor-default overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg"
 				>
 					<slot />
 				</div>

@@ -7,7 +7,8 @@
 		Table,
 		NoDataFound,
 		Chip,
-		Modal
+		Modal,
+		GradientButton
 	} from '$lib/@svelte/components';
 	import Select from '$lib/@svelte/components/Select/Select.svelte';
 	import {
@@ -18,6 +19,7 @@
 		CalenderIcon,
 		LocationIcon
 	} from '$lib/@svelte/icons';
+	import toast from 'svelte-french-toast';
 
 	let activeTab = 0;
 	let showListings: boolean = false;
@@ -142,9 +144,30 @@
 	const handleChipClick = (index: number, status: string) => {
 		isOpen = true;
 	};
+
+	const handleUpdateStatus = () => {
+		isOpen = false;
+		toast.success('status updated successfully');
+	};
 </script>
 
-<!-- <Modal bind:isOpen /> -->
+<Modal bind:isOpen>
+	<div class=" flex flex-col justify-center items-center">
+		<div class=" text-start">
+			<h2 class=" text-stone-950 font-extrabold text-base">Status Update</h2>
+			<p class="mt-2 text-stone-500 text-base">
+				Vielen Dank, dass Sie Ihr Porträt für diese Veranstaltung aktualisiert haben. Sie können
+				Ihre Daten auf der Veranstaltungsseite überprüfen.
+			</p>
+		</div>
+		<div class="my-6 w-full">
+			<Select placeholder="Update Status"></Select>
+		</div>
+	</div>
+	<footer class=" flex items-center justify-end">
+		<GradientButton classes="!py-1.5" onClick={handleUpdateStatus}>Update</GradientButton>
+	</footer>
+</Modal>
 <div>
 	<div class=" flex justify-between items-start">
 		<div class=" flex">
@@ -207,6 +230,7 @@
 								><Chip
 									status={statusText}
 									variant={status}
+									classes="cursor-pointer"
 									handleChipClick={() => handleChipClick(index, status)}
 								/></td
 							>
