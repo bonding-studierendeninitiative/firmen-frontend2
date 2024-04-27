@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { _ } from '@services';
 	import { goto } from '$app/navigation';
 	import {
 		ActionNotificationItem,
@@ -58,7 +59,9 @@
 </script>
 
 <section>
-	<h1 class=" text-stone-950 text-3xl font-extrabold">Notifications</h1>
+	<h1 class=" text-stone-950 text-3xl font-extrabold">
+		{$_('user-pages.notifications.notifications')}
+	</h1>
 </section>
 <section class="mt-10 mb-4">
 	<div class="mb-6 flex justify-center items-center">
@@ -80,18 +83,20 @@
 <Modal bind:isOpen={isUpdatePortraitModalOpen}>
 	<div class=" flex flex-col justify-center items-center">
 		<div class=" text-start">
-			<h2 class=" text-stone-950 font-extrabold text-base">Add Portrait</h2>
+			<h2 class=" text-stone-950 font-extrabold text-base">
+				{$_('user-pages.notifications.addPortrait')}
+			</h2>
 			<p class="mt-2 text-stone-500 text-base">
-				Please select any one of your portraits for this event <span class=" text-stone-900"
-					>Tech Foundation 2023</span
-				> process this forward for our team to review and verify.
+				{$_('user-pages.notifications.pleaseSelectPortrait')}
+				<span class=" text-stone-900">Tech Foundation 2023</span>
+				{$_('user-pages.notifications.processThisForward')}
 			</p>
 		</div>
 		<div class="my-6 w-full">
-			<Select placeholder="Select Portrait"></Select>
+			<Select placeholder={$_('user-pages.notifications.selectPortrait')}></Select>
 			<div class=" w-full flex justify-start items-center">
 				<Link classes=" flex items-center !font-semibold mt-4" onClick={() => goto('/portraits')}
-					><PlusIcon classes="mr-2" />New Portrait</Link
+					><PlusIcon classes="mr-2" />{$_('user-pages.notifications.newPortrait')}</Link
 				>
 			</div>
 		</div>
@@ -102,7 +107,7 @@
 			onClick={() => {
 				isSuccessModalOpen = true;
 				isUpdatePortraitModalOpen = false;
-			}}>Update</GradientButton
+			}}>{$_('common.update')}</GradientButton
 		>
 	</footer>
 </Modal>
@@ -110,14 +115,17 @@
 	<div class=" flex flex-col justify-center items-center">
 		<p class=" text-xl"><FilledCheckIcon /></p>
 		<div class=" my-6 text-center">
-			<h2 class=" text-stone-950 font-extrabold text-base">Portrait Updated</h2>
+			<h2 class=" text-stone-950 font-extrabold text-base">
+				{$_('user-pages.notifications.portraitUpdated')}
+			</h2>
 			<p class="mt-2 text-stone-500 text-base">
-				Thank you for updating your portrait for this event. You can review your details on events
-				page.
+				{$_('user-pages.notifications.portraitUpdatedNote')}
 			</p>
 		</div>
 	</div>
 	<footer class=" flex items-center justify-center">
-		<GradientButton classes="!py-1.5" onClick={() => goto('/events')}>View Events</GradientButton>
+		<GradientButton classes="!py-1.5" onClick={() => goto('/events')}
+			>{$_('common.viewEvents')}</GradientButton
+		>
 	</footer>
 </Modal>

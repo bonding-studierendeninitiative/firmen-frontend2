@@ -1,11 +1,12 @@
 <script lang="ts">
-	const activeTabStyle = '  border-b-2 border-brand !text-brand';
+	import { _ } from '@services';
 
 	export let tabHeadings: string[];
 	export let activeTab: number;
 	export let handleTabChange: (index: number) => void;
-
 	export let hasBorder: boolean = true;
+
+	const activeTabStyle = '  border-b-2 border-brand !text-brand';
 </script>
 
 <div class={`bg-white ${hasBorder ? 'border-b-2 border-stone-200' : ''}`}>
@@ -18,7 +19,7 @@
 						index === activeTab ? activeTabStyle : ''
 					)}
 				>
-					{tabHeading}
+					{$_(`tab-headings.${tabHeading}`)}
 				</button>
 			{/each}
 		</div>

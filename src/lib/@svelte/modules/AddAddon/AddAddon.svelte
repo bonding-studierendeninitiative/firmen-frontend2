@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { _ } from '@services';
 	import { Drawer, IconInput, Input, Link, Select, Textarea } from '$lib/@svelte/components';
 	import PlusIcon from '$lib/@svelte/icons/PlusIcon.svelte';
 	import TrashIcon from '$lib/@svelte/icons/TrashIcon.svelte';
@@ -19,22 +20,22 @@
 
 <Drawer
 	bind:isOpen
-	heading="New Addons"
+	heading={$_('admin-pages.addons.newAddons')}
 	handleSubmit={() => {
 		isOpen = false;
 	}}
 >
 	<div class="grid grid-cols-1 gap-4 w-full max-h-[590px] overflow-y-scroll">
-		<Input label="Addon Name" />
+		<Input label={$_('admin-pages.addons.addonName')} />
 		<div class="grid grid-cols-2 gap-4 w-full">
-			<IconInput label="Price" placeholder="0000">
+			<IconInput label={$_('admin-pages.addons.price')} placeholder="0000">
 				<span slot="icon" class=" text-stone-500">€</span>
 			</IconInput>
-			<IconInput label="Sale Tag">
+			<IconInput label={$_('admin-pages.addons.saleTag')}>
 				<span slot="icon" class=" text-stone-500">%</span>
 			</IconInput>
 		</div>
-		<Textarea label="Package Information" />
+		<Textarea label={$_('admin-pages.addons.packageInformation')} />
 		<hr />
 		<section>
 			{#each subAddons as subAddon, index (subAddon)}
@@ -43,8 +44,8 @@
 						class="absolute right-0 top-0 text-red-400 text-xs"
 						on:click={() => handleRemoveAddon(index)}><TrashIcon /></button
 					>
-					<Input label="Sub Add-on Name" />
-					<IconInput label="Price">
+					<Input label={$_('admin-pages.addons.subAddonName')} />
+					<IconInput label={$_('admin-pages.addons.price')}>
 						<span slot="icon" class=" text-stone-500">€</span>
 					</IconInput>
 				</div>
@@ -52,7 +53,7 @@
 		</section>
 		<div>
 			<Link classes=" flex items-center !font-semibold" onClick={handleAddSubAddon}
-				><PlusIcon classes="mr-2" />Add Sub Addon</Link
+				><PlusIcon classes="mr-2" />{$_('admin-pages.addons.addSubAddon')}</Link
 			>
 		</div>
 	</div>

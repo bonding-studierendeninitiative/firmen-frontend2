@@ -1,10 +1,11 @@
 <script lang="ts">
+	import { _ } from '@services';
 	import { Accordion, Badge, GradientButton, Link, Table } from '$lib/@svelte/components';
 	import { AddAddon } from '$lib/@svelte/modules';
 	import PlusIcon from '$lib/@svelte/icons/PlusIcon.svelte';
 	import { fade } from 'svelte/transition';
 
-	const columns = ['Addons Name', 'Sub Addons', 'Price', 'Sale Tag', ''];
+	const columns = ['addonsName', 'subAddons', 'price', 'saleTag', ''];
 
 	const addonList = [
 		{
@@ -110,9 +111,11 @@
 
 <section>
 	<div class=" flex justify-between items-center">
-		<h1 class=" text-stone-950 text-3xl font-extrabold">Addons</h1>
+		<h1 class=" text-stone-950 text-3xl font-extrabold">{$_('common.addons')}</h1>
 		<div>
-			<GradientButton onClick={() => (isDrawerOpen = true)}>Add Addons</GradientButton>
+			<GradientButton onClick={() => (isDrawerOpen = true)}
+				>{$_('admin-pages.addons.addAddons')}</GradientButton
+			>
 		</div>
 	</div>
 </section>
@@ -148,7 +151,9 @@
 								><p class=" p-0 m-o flex items-center justify-end"><Badge>{tag}</Badge></p></td
 							>
 							<td class="w-[190px] px-6 py-4 text-grey-500 text-sm text-end">
-								<span class=" p-0 m-o flex items-center justify-end"><Link>Edit</Link></span></td
+								<span class=" p-0 m-o flex items-center justify-end"
+									><Link>{$_('common.edit')}</Link></span
+								></td
 							>
 						</tr>
 

@@ -1,9 +1,10 @@
 <script lang="ts">
+	import { _ } from '@services';
 	import { Button } from '$lib/@svelte/components';
 
 	export let portraitsInfo = [
-		{ name: 'Portrait Document #1', branch: 'Branche - Engineering' },
-		{ name: 'Portrait Document #2', branch: 'Branche - Telecommunications' }
+		{ name: 'Portrait Document #1', branch: 'Engineering' },
+		{ name: 'Portrait Document #2', branch: 'Telecommunications' }
 	];
 </script>
 
@@ -18,10 +19,12 @@
 				</div>
 				<div class=" flex flex-col ml-4">
 					<h3 class=" text-sm font-medium text-stone-800">{name}</h3>
-					<h4 class=" text-sm font-medium text-stone-500">{branch}</h4>
+					<h4 class=" text-sm font-medium text-stone-500">{$_('common.branch')} - {branch}</h4>
 				</div>
 			</div>
-			<Button onClick={() => undefined} classes=" inline shadow-custom !py-1">Download</Button>
+			<Button onClick={() => undefined} classes=" inline shadow-custom !py-1"
+				>{$_('common.download')}</Button
+			>
 		</div>
 	{/each}
 </section>

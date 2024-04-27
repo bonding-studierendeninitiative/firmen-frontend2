@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { _ } from '@services';
 	import Tabs from '$lib/@svelte/components/Tabs/Tabs.svelte';
 	import {
 		ProfileTab,
@@ -10,7 +11,7 @@
 	import { fade } from 'svelte/transition';
 
 	let activeTab = 0;
-	const tabHeadings = ['Profile', 'Organization', 'Password', 'Billing', 'Archived'];
+	const tabHeadings = ['profile', 'organization', 'password', 'billing', 'archived'];
 
 	const handleTabChange = (tabIndex: number) => {
 		activeTab = tabIndex;
@@ -18,8 +19,8 @@
 </script>
 
 <div>
-	<h1 class=" text-stone-950 text-3xl font-extrabold">Account</h1>
-	<h4 class=" text-stone-500">Update your profile and organization details here.</h4>
+	<h1 class=" text-stone-950 text-3xl font-extrabold">{$_('user-pages.accounts.account')}</h1>
+	<h4 class=" text-stone-500">{$_('user-pages.accounts.accountSubHeading')}</h4>
 	<div class=" mt-12">
 		<Tabs {tabHeadings} {activeTab} {handleTabChange} />
 	</div>

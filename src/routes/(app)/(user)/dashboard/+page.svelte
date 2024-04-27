@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { _ } from '@services';
 	import { goto } from '$app/navigation';
 	import { NoDataFound, EventInfoBox, Button, Table, Chip } from '$lib/@svelte/components';
 	import { ImageIcon, DocumentIcon, BrandingIcon } from '$lib/@svelte/icons';
@@ -18,7 +19,7 @@
 		}
 	];
 	const handleEventRegistration = (id: string) => {
-		console.log(id);
+		goto('/events/' + id);
 	};
 	let showListings: boolean = false;
 	const handleViewAllEvent = () => {
@@ -27,12 +28,11 @@
 	const toggleListing = () => {
 		showListings = true;
 	};
-	const columns = ['Event', 'Location', 'Date', 'Status', 'Uploads'];
+	const columns = ['event', 'location', 'date', 'status', 'uploads'];
 	interface EventListType {
 		event: string;
 		location: string;
 		date: string;
-		status: 'success' | 'info';
 		statusText: string;
 	}
 
@@ -41,50 +41,49 @@
 			event: 'Tech Foundation 2023',
 			location: 'Philipps University of Marburg',
 			date: '01.12.24 - 25.12.24',
-			status: 'info',
-			statusText: 'Überprüfung'
+			statusText: 'rejected'
 		},
 		{
 			event: 'Tech Foundation 2023',
 			location: 'Philipps University of Marburg',
 			date: '25.12.24',
-			status: 'success',
-			statusText: 'Bestätigt'
+			statusText: 'confirmed'
 		},
 		{
 			event: 'Tech Foundation 2023',
 			location: 'Free University of Berlin',
 			date: '01.12.24 - 25.12.24',
-			status: 'info',
-			statusText: 'Überprüfung'
+			statusText: 'rejected'
 		},
 		{
 			event: 'Tech Foundation 2023',
 			location: 'Free University of Berlin',
 			date: '01.12.24 - 25.12.24',
-			status: 'info',
-			statusText: 'Überprüfung'
+			statusText: 'confirmed'
 		},
 		{
 			event: 'Tech Foundation 2023',
 			location: 'Free University of Berlin',
 			date: '01.12.24 - 25.12.24',
-			status: 'info',
-			statusText: 'Überprüfung'
+			statusText: 'verification'
 		}
 	];
 </script>
 
 <div>
-	<h1 class=" text-stone-950 text-3xl font-extrabold">Dashboard</h1>
+	<h1 class=" text-stone-950 text-3xl font-extrabold">{$_('user-pages.dashboard.dashboard')}</h1>
 	<h4 class=" text-stone-500">
-		Welcome back! James. Have a look at any recent change to your bonding projects!
+		{$_('user-pages.dashboard.subHeading', { values: { name: 'James' } })}
 	</h4>
 
 	<section class=" mt-10">
 		<div class=" flex justify-between items-center w-full mb-4">
-			<h2 class=" text-stone-950 font-extrabold text-2xl mb-4">Upcoming Events</h2>
-			<Button onClick={handleViewAllEvent} classes=" shadow-custom !w-24 !py-2">View All</Button>
+			<h2 class=" text-stone-950 font-extrabold text-2xl mb-4">
+				{$_('user-pages.dashboard.upcomingEvents')}
+			</h2>
+			<Button onClick={handleViewAllEvent} classes=" shadow-custom !w-24 !py-2"
+				>{$_('common.viewAll')}</Button
+			>
 		</div>
 		<div class="grid grid-cols-1 sm:grid-cols-1 md:sm:grid-cols-1 lg:sm:grid-cols-2 gap-8">
 			{#each upcomingEvents as { heading, subHeading, date, id }, index (index)}
@@ -101,13 +100,15 @@
 	{#if !showListings}
 		<section class=" mt-10">
 			<div class=" flex justify-between items-center w-full mb-4">
-				<h2 class=" text-stone-950 font-extrabold text-2xl mb-4">Registered Events</h2>
+				<h2 class=" text-stone-950 font-extrabold text-2xl mb-4">
+					{$_('user-pages.dashboard.registeredEvents')}
+				</h2>
 			</div>
 			<div class="mt-2">
 				<NoDataFound
-					heading="No events registered yet!"
-					subHeading="There are no events to display yet. Please register a event for your company"
-					buttonText="View Events"
+					heading={$_('user-pages.dashboard.noEventsRegistered')}
+					subHeading={$_('user-pages.dashboard.noEventsRegisteredDetail')}
+					buttonText={$_('common.viewEvents')}
 					onButtonClick={toggleListing}
 				/>
 			</div>
@@ -115,12 +116,12 @@
 	{:else}
 		<section class=" mt-10">
 			<Table totalRecords={9} {columns}>
-				{#each eventList as { event, location, date, status, statusText }, index}
+				{#each eventList as { event, location, date, statusText }, index}
 					<tr class={` ${index % 2 !== 0 ? 'bg-gray-50' : 'bg-white'}`}>
 						<td class=" px-6 py-4 text-grey-900 text-sm">{event}</td>
 						<td class=" px-6 py-4 text-grey-900 text-sm">{location}</td>
 						<td class=" px-6 py-4 text-grey-500 text-sm">{date}</td>
-						<td class=" px-6 py-4"><Chip status={statusText} variant={status} /></td>
+						<td class=" px-6 py-4"><Chip status={statusText} variant={statusText} /></td>
 						<td class=" px-6 py-4">
 							<button><ImageIcon /> </button>
 							<button><DocumentIcon /> </button>

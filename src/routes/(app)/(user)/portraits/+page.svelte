@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { _ } from '@services';
 	import { goto } from '$app/navigation';
 	import { NoDataFound, Button } from '$lib/@svelte/components';
 	import { SimpleDocumentIcon } from '$lib/@svelte/icons';
@@ -9,7 +10,6 @@
 		goto('/events');
 	};
 	const toggleListing = () => {
-		// showListings = true;
 		isDrawerOpen = true;
 	};
 	interface EventListType {
@@ -34,16 +34,16 @@
 </script>
 
 <div>
-	<h1 class=" text-stone-950 text-3xl font-extrabold">Portraits</h1>
-	<h4 class=" text-stone-500">Have a look at recent events for showcasing your company</h4>
+	<h1 class=" text-stone-950 text-3xl font-extrabold">{$_('user-pages.portraits.portraits')}</h1>
+	<h4 class=" text-stone-500">{$_('user-pages.portraits.portraitsSubHeading')}</h4>
 
 	{#if !showListings}
 		<section class=" mt-10">
 			<div class="mt-2">
 				<NoDataFound
-					heading="No events registered yet!"
-					subHeading="There are no portraits profiles to display yet. Please create a new portrait and use to register to your favorite events."
-					buttonText="New Portrait"
+					heading={$_('user-pages.portraits.noPortraitsFound')}
+					subHeading={$_('user-pages.portraits.noPortraitsFoundDescription')}
+					buttonText={$_('user-pages.portraits.newPortrait')}
 					onButtonClick={toggleListing}
 				/>
 			</div>
@@ -61,11 +61,13 @@
 						</div>
 						<div class=" flex flex-col ml-4">
 							<h3 class=" text-base font-extrabold text-stone-800">{portrait}</h3>
-							<h4 class=" text-sm font-normal text-stone-800">Portrait # {index + 1}</h4>
+							<h4 class=" text-sm font-normal text-stone-800">
+								{$_('user-pages.portraits.portrait')} # {index + 1}
+							</h4>
 						</div>
 					</div>
 					<Button onClick={handleViewAllEvent} classes=" inline shadow-custom !py-1"
-						>View Details</Button
+						>{$_('common.viewDetails')}</Button
 					>
 				</div>
 			{/each}

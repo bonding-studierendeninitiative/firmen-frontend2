@@ -1,11 +1,12 @@
 <script lang="ts">
+	import { _ } from '@services';
 	import { CalenderIcon } from '$lib/@svelte/icons';
 	import { GradientButton } from '$lib/@svelte/components';
 
 	export let heading: string;
 	export let subHeading: string;
 	export let date: string;
-	export let buttonText: string = 'Register';
+	export let buttonText: string = 'register';
 	export let onRegisterClick: () => void;
 </script>
 
@@ -17,6 +18,8 @@
 			<CalenderIcon />
 			<p class=" ml-2 text-sm text-stone-800 font-medium">{date}</p>
 		</span>
-		<GradientButton classes=" !py-1.5" onClick={onRegisterClick}>{buttonText}</GradientButton>
+		<GradientButton classes=" !py-1.5" onClick={onRegisterClick}
+			>{$_(`common.${buttonText}`)}</GradientButton
+		>
 	</div>
 </div>

@@ -7,7 +7,7 @@
 		{ value: 'en', label: 'en' },
 		{ value: 'de', label: 'de' }
 	];
-	let value = { value: 'de', label: 'de' };
+	let value = { value: 'en', label: 'en' };
 	let listOpen = false;
 	const handleLangChange = (e: any) => {
 		const lang = e.detail.value ?? 'en';
@@ -25,10 +25,12 @@
 		searchable={false}
 		on:select={handleLangChange}
 		inputStyles=" text-align:center"
-		containerStyles="box-shadow: 0px 1.5px 4px -1px rgba(0, 0, 0, 0.08); height:40px !important; "
 		--height="28px"
 		--font-size="14px"
 		--selected-item-padding="0px"
+		--border="none"
+		--border-focused="none"
+		--border-hover="none"
 	>
 		<div slot="chevron-icon" class=" text-stone-400 text-xs">
 			{#if listOpen}

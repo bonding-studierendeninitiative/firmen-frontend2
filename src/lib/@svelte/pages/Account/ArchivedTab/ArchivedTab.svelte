@@ -1,8 +1,9 @@
 <script lang="ts">
+	import { _ } from '@services';
 	import { Table } from '$lib/@svelte/components';
 	import Button from '$lib/@svelte/components/Button/Button.svelte';
 
-	const columns = ['Event', 'Location', 'Date', ''];
+	const columns = ['event', 'location', 'date', ''];
 	interface EventListType {
 		event: string;
 		location: string;
@@ -40,7 +41,9 @@
 
 <div>
 	<section>
-		<h2 class=" text-stone-800 text-lg font-extrabold">Archived Events</h2>
+		<h2 class=" text-stone-800 text-lg font-extrabold">
+			{$_('user-pages.accounts.archivedEvents')}
+		</h2>
 	</section>
 	<section class=" mt-10">
 		<Table totalRecords={9} {columns}>
@@ -50,7 +53,9 @@
 					<td class=" px-6 py-4 text-grey-900 text-sm">{location}</td>
 					<td class=" px-6 py-4 text-grey-500 text-sm">{date}</td>
 					<td class=" px-6 py-4"
-						><Button classes=" !py-1.5 !px-4 " onClick={() => undefined}>View Details</Button></td
+						><Button classes=" !py-1.5 !px-4 " onClick={() => undefined}
+							>{$_('common.viewDetails')}</Button
+						></td
 					>
 				</tr>
 			{/each}

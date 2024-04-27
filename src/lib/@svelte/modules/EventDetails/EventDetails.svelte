@@ -1,45 +1,45 @@
 <script lang="ts">
+	import { _ } from '@services';
 	import { Datepicker, Drawer, Input, Select, Badge } from '$lib/@svelte/components';
 
 	export let isOpen: boolean = false;
 
-	const packages = ['Light', 'Standard', 'Premium'];
+	const packages = ['light', 'standard', 'premium'];
 	const addons = ['Onlinewerbung-Paket', 'Printwerbung-Paket', 'Bonding-Tüte', 'Sonstiges'];
 </script>
 
 <Drawer
 	bind:isOpen
-	heading="Event Details"
+	heading={$_('admin-pages.events.eventDetails')}
 	handleSubmit={() => {
 		isOpen = false;
 	}}
 	hasActions={false}
 >
 	<div class="grid grid-cols-1 gap-4 w-full max-h-[690px] overflow-y-scroll">
-		<Input label="Event Name" />
+		<Input label={$_('admin-pages.events.eventName')} />
 		<div class="grid grid-cols-2 gap-4 w-full">
-			<Select label="City" />
-			<Input label="Street & Number" />
+			<Select label={$_('common.city')} />
+			<Input label={$_('admin-pages.events.street&Number')} />
 		</div>
-		<Input label="Name of University" />
+		<Input label={$_('admin-pages.events.nameOfUniversity')} />
 		<div class="grid grid-cols-2 gap-4 w-full">
-			<Datepicker label="Start Date" />
-			<Datepicker label="End Date" />
+			<Datepicker label={$_('admin-pages.events.startDate')} />
+			<Datepicker label={$_('admin-pages.events.endDate')} />
 		</div>
 		<div class="grid grid-cols-2 gap-4 w-full mt-0">
-			<Datepicker label="Time Start" type="time" />
-			<Datepicker label="Time End" type="time" />
+			<Datepicker label={$_('admin-pages.events.startTime')} type="time" />
+			<Datepicker label={$_('admin-pages.events.endTime')} type="time" />
 		</div>
-		<Select label="Specialties" />
-		<Select label="Event template (optional)" />
-		<Select label="City" />
-		<Select label="Packages" />
+		<Select label={$_('admin-pages.events.specialties')} />
+		<Select label={$_('admin-pages.events.eventTemplate')} />
+		<Select label={$_('common.packages')} />
 		<div class=" flex items-center flex-wrap gap-1">
 			{#each packages as pkg (pkg)}
-				<Badge isClearable>{pkg}</Badge>
+				<Badge isClearable>{$_(`common.${pkg}`)}</Badge>
 			{/each}
 		</div>
-		<Select label="Addons" />
+		<Select label={$_('common.addons')} />
 		<div class=" flex items-center flex-wrap gap-1">
 			{#each addons as addon (addon)}
 				<div class=" mr-2">

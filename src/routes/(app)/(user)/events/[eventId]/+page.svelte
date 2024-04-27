@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { _ } from '@services';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import { GradientButton, Button } from '$lib/@svelte/components';
@@ -102,7 +103,7 @@
 <div class="mb-10">
 	<Breadcrumb
 		breadcrumbPaths={[
-			{ text: 'Events', path: '/events' },
+			{ text: 'events', path: '/events' },
 			{ text: 'Tech Foundation 2024', path: '' }
 		]}
 	/>
@@ -126,14 +127,14 @@
 			</div>
 		</div>
 		<div>
-			<GradientButton onClick={handleNextStep}>Register Now</GradientButton>
+			<GradientButton onClick={handleNextStep}>{$_('common.registerNow')}</GradientButton>
 		</div>
 	</div>
 	<div class=" my-10">
 		<hr />
 	</div>
 	<section>
-		<h4 class=" font-extrabold text-sm text-stone-900">Overview</h4>
+		<h4 class=" font-extrabold text-sm text-stone-900">{$_('user-pages.events.overview')}</h4>
 		<p class=" mt-2 text-stone-500 font-normal text-sm">
 			Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
 			labore et dolore magna aliqua. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
@@ -151,7 +152,7 @@
 		</div>
 	</div>
 	<section class=" my-10">
-		<h4 class=" font-extrabold text-sm text-stone-900">Packages</h4>
+		<h4 class=" font-extrabold text-sm text-stone-900">{$_('common.packages')}</h4>
 		<p class=" mt-2 text-stone-500 font-normal text-sm">
 			Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
 			labore et dolore magna aliqua.
@@ -162,19 +163,19 @@
 					<th class=" w-2/5"></th>
 					<th class=" w-1/5 p-3">
 						<div>
-							<p class=" text-brand text-sm font-medium">Light</p>
+							<p class=" text-brand text-sm font-medium">{$_('common.light')}</p>
 							<p class=" font-extrabold text-2xl mt-2">2.500,00€</p>
 						</div>
 					</th>
 					<th class=" w-1/5 p-3">
 						<div>
-							<p class=" text-brand text-sm font-medium">Standard</p>
+							<p class=" text-brand text-sm font-medium">{$_('common.standard')}</p>
 							<p class=" font-extrabold text-2xl mt-2">3.200,00€</p>
 						</div>
 					</th>
 					<th class=" w-1/5 p-3">
 						<div>
-							<p class=" text-brand text-sm font-medium">Premium</p>
+							<p class=" text-brand text-sm font-medium">{$_('common.premium')}</p>
 							<p class=" font-extrabold text-2xl mt-2">5.700,00€</p>
 						</div>
 					</th>
@@ -218,18 +219,22 @@
 					<td class=" p-3">
 						<div class=" flex justify-center items-center">
 							<GradientButton onClick={() => undefined} classes="!py-1.5 !px-4"
-								>Selected</GradientButton
+								>{$_('common.selected')}</GradientButton
 							>
 						</div>
 					</td>
 					<td class=" p-3">
 						<div class=" flex justify-center items-center">
-							<Button onClick={() => undefined} classes="!py-1.5 !px-4">Select</Button>
+							<Button onClick={() => undefined} classes="!py-1.5 !px-4"
+								>{$_('common.select')}</Button
+							>
 						</div>
 					</td>
 					<td class=" p-3">
 						<div class=" flex justify-center items-center">
-							<Button onClick={() => undefined} classes="!py-1.5 !px-4">Select</Button>
+							<Button onClick={() => undefined} classes="!py-1.5 !px-4"
+								>{$_('common.select')}</Button
+							>
 						</div>
 					</td>
 				</tr>
@@ -237,13 +242,11 @@
 		</table>
 	</section>
 	<section>
-		<h4 class=" font-extrabold text-sm text-stone-900">Additional Marketing Services</h4>
+		<h4 class=" font-extrabold text-sm text-stone-900">
+			{$_('user-pages.events.additionalMarketingServices')}
+		</h4>
 		<p class=" mt-2 text-stone-500 font-normal text-sm">
-			(Alle Preise verstehen sich zuzüglich der jeweils gültigen gesetzlichen Umsatzsteuer) - Bitte
-			beachten Sie, dass aus Gründen der Exklusivität und der limitierten Druckflächen nur eine
-			begrenzte Anzahl von Firmenlogos abgedruckt werden kann. Zudem behält sich der Veranstalter
-			vor, Werbemittel bei zu geringem Interesse oder aus Gründen nicht gegebener Umsetzbarkeit
-			auszusetzen.
+			{$_('user-pages.events.additionalMarketingServicesDescription')}
 		</p>
 		<div class=" border border-stone-200 w-full rounded-lg mt-6">
 			<div>
@@ -269,6 +272,6 @@
 		</div>
 	</section>
 	<footer class=" flex mt-6 justify-end items-center">
-		<GradientButton onClick={handleNextStep}>Continue</GradientButton>
+		<GradientButton onClick={handleNextStep}>{$_('common.continue')}</GradientButton>
 	</footer>
 </div>

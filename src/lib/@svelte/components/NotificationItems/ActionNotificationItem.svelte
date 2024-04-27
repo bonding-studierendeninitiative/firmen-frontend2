@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { _ } from '@services';
 	import { FilledCheckIcon, MessageIcon } from '$lib/@svelte/icons';
 	import { GradientButton, Button } from '$lib/@svelte/components';
 
@@ -39,10 +40,11 @@
 			</h3>
 			<div class=" py-2">
 				{#if notificationType === 'registrationSuccess'}
-					<GradientButton onClick={() => handleUpdatePortrait?.()}>Update Portrait</GradientButton
+					<GradientButton onClick={() => handleUpdatePortrait?.()}
+						>{$_('user-pages.notifications.updatePortrait')}</GradientButton
 					>{:else if notificationType === 'registrationRejected'}
 					<Button onClick={onActionButtonClick} classes="  shadow-custom  text-stone-800"
-						>Contact Support</Button
+						>{$_('user-pages.notifications.contactSupport')}</Button
 					>
 				{/if}
 			</div>

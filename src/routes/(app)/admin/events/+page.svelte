@@ -10,6 +10,7 @@
 	} from '$lib/@svelte/components';
 	import { GridIcon, ListIcon } from '$lib/@svelte/icons';
 	import { EventDetails } from '$lib/@svelte/modules';
+	import { _ } from '@services';
 
 	const upcomingEvents = [
 		{
@@ -52,7 +53,7 @@
 
 	let isDrawerOpen = false;
 	let activeTab = 0;
-	const tabHeadings = ['Published', 'Unpublished', 'Archived'];
+	const tabHeadings = ['published', 'unpublished', 'archived'];
 
 	const handleTabChange = (tabIndex: number) => {
 		activeTab = tabIndex;
@@ -72,12 +73,14 @@
 <div>
 	<div class=" flex justify-between items-end">
 		<div>
-			<h1 class=" text-stone-950 text-3xl font-extrabold">Events</h1>
-			<h4 class=" text-stone-500">Have a look at recent events for showcasing your company!</h4>
+			<h1 class=" text-stone-950 text-3xl font-extrabold">{$_('admin-pages.events.heading')}</h1>
+			<h4 class=" text-stone-500">{$_('admin-pages.events.subHeading')}</h4>
 		</div>
 		{#if activeTab !== 1}
 			<div>
-				<GradientButton onClick={() => (activeTab = 1)}>Publish New Events</GradientButton>
+				<GradientButton onClick={() => (activeTab = 1)}
+					>{$_('admin-pages.events.publishNewEvents')}</GradientButton
+				>
 			</div>
 		{/if}
 	</div>
@@ -85,7 +88,7 @@
 		<Tabs {tabHeadings} {activeTab} {handleTabChange} />
 	</div>
 	<section class=" mt-10 flex justify-between w-full">
-		<SearchInput placeholder="Search" />
+		<SearchInput placeholder={$_('common.search')} />
 		<div>
 			<ButtonIcon
 				onClick={() => (isListView = false)}
@@ -105,6 +108,9 @@
 						{subHeading}
 						{date}
 						onRegisterClick={() => handleEventRegistration(id)}
+						buttonText={activeTab !== 1
+							? $_('admin-pages.events.viewApplies')
+							: $_('common.viewDetails')}
 					/>
 				{/each}
 			</div>
@@ -116,7 +122,9 @@
 						{subHeading}
 						{date}
 						onRegisterClick={() => handleEventRegistration(id)}
-						buttonText={activeTab !== 1 ? 'View Applies' : 'View Details'}
+						buttonText={activeTab !== 1
+							? $_('admin-pages.events.viewApplies')
+							: $_('common.viewDetails')}
 					/>
 				{/each}
 			</div>{/if}

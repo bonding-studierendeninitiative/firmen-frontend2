@@ -3,6 +3,7 @@
 	import * as Icons from '$lib/@svelte/icons';
 	import { page } from '$app/stores';
 	import { goto } from '$app/navigation';
+	import { _ } from '@services';
 
 	$: activeUrl = $page.url.pathname;
 
@@ -84,7 +85,7 @@
 							class={`relative px-4 py-3 flex items-center space-x-4 rounded-lg text-white ${checkCurrentPath(route, activeUrl) ? 'bg-brand' : ''}`}
 						>
 							<svelte:component this={Icons[Icon]} />
-							<span class="-mr-1 font-medium">{label}</span>
+							<span class="-mr-1 font-medium">{$_(`sidebar.${label}`)}</span>
 						</a>
 					{/each}
 				</div>
@@ -94,7 +95,7 @@
 				on:click={handleLogoutClick}
 			>
 				<svelte:component this={Icons['LogoutIcon']} />
-				<span>Logout</span>
+				<span>{$_(`sidebar.logout`)}</span>
 			</button>
 		</div>
 	</div>

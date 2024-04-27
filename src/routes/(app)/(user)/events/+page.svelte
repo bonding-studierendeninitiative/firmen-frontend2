@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { _ } from '@services';
 	import { goto } from '$app/navigation';
 	import { EventInfoBox } from '$lib/@svelte/components';
 
@@ -48,8 +49,8 @@
 </script>
 
 <div>
-	<h1 class=" text-stone-950 text-3xl font-extrabold">Events</h1>
-	<h4 class=" text-stone-500">Have a look at recent events for showcasing your company!</h4>
+	<h1 class=" text-stone-950 text-3xl font-extrabold">{$_('user-pages.events.events')}</h1>
+	<h4 class=" text-stone-500">{$_('user-pages.events.eventsSubHeading')}</h4>
 	<section class=" mt-10">
 		{#each cities as city}
 			<label

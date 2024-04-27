@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { _ } from '@services';
 	import { PencilSquareIcon } from '$lib/@svelte/icons';
 	import { Button } from '..';
 	import ButtonIcon from '../ButtonIcon/ButtonIcon.svelte';
@@ -15,9 +16,13 @@
 		<span class=" flex items-center justify-end">
 			<!-- <GradientButton classes="px-6" onClick={() => undefined}>Details</GradientButton> -->
 			{#if isDefault}
-				<div class=" bg-stone-200 mx-6 text-slate-700 rounded-lg py-1.5 px-4">Default</div>
+				<div class=" bg-stone-200 mx-6 text-slate-700 rounded-lg py-1.5 px-4">
+					{$_('user-pages.accounts.default')}
+				</div>
 			{:else}
-				<Button classes="mx-6" onClick={() => undefined}>Make it default</Button>
+				<Button classes="mx-6" onClick={() => undefined}
+					>{$_('user-pages.accounts.makeItDefault')}</Button
+				>
 			{/if}
 			<button class="text-stone-500"><PencilSquareIcon /></button>
 		</span>

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { _ } from '@services';
 	import { goto } from '$app/navigation';
 
 	export let breadcrumbPaths: { text: string; path: string }[] = [];
@@ -15,8 +16,10 @@
 								goto(breadcrumbPath.path);
 							}
 						}}
-						class={`text-sm hover:text-brand  ${index !== breadcrumbPaths.length - 1 ? 'text-stone-500' : 'text-brand'}`}
-						>{breadcrumbPath.text}</button
+						class={`text-sm hover:text-brand capitalize  ${index !== breadcrumbPaths.length - 1 ? 'text-stone-500' : 'text-brand'}`}
+						>{$_(`breadcrumbs.${breadcrumbPath.text}`, {
+							default: breadcrumbPath.text
+						})}</button
 					>
 					{#if index !== breadcrumbPaths.length - 1}
 						<svg

@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
+	import { _ } from '@services';
 	import {
 		SearchInput,
-		ButtonIcon,
 		Tabs,
 		Table,
 		NoDataFound,
@@ -26,20 +26,20 @@
 	export let heading = 'Tech Foundation 2024';
 	export let mainDate = 'Freitag, 17 März, 2024';
 	export let mainLocation = 'Lanxess Arena';
-	const tabHeadings = ['All', 'New Applies', 'Confirmed Applies', 'Declined Applies'];
+	const tabHeadings = ['all', 'newApplies', 'confirmedApplies', 'declinedApplies'];
 
 	const handleTabChange = (tabIndex: number) => {
 		activeTab = tabIndex;
 	};
 
 	const columns = [
-		'Pursue',
-		'Contact Person',
-		'Number',
-		'Email Address',
-		'Date',
-		'Status',
-		'Uploads'
+		'company',
+		'contactPerson',
+		'number',
+		'emailAddress',
+		'date',
+		'status',
+		'uploads'
 	];
 
 	const eventList: any = [
@@ -49,8 +49,7 @@
 			number: '+01 0000 0000 00',
 			email: 'john@company.com',
 			date: '01.12.24 ',
-			status: 'info',
-			statusText: 'Überprüfung'
+			statusText: 'verification'
 		},
 		{
 			company: 'Microsoft',
@@ -58,8 +57,7 @@
 			number: '+01 0000 0000 00',
 			email: 'john@company.com',
 			date: '25.12.24',
-			status: 'success',
-			statusText: 'Bestätigt'
+			statusText: 'verification'
 		},
 		{
 			company: 'Facebook',
@@ -67,8 +65,7 @@
 			number: '+01 0000 0000 00',
 			email: 'john@company.com',
 			date: '01.12.24 ',
-			status: 'info',
-			statusText: 'Überprüfung'
+			statusText: 'confirmed'
 		},
 		{
 			company: 'Apple',
@@ -76,8 +73,7 @@
 			number: '+01 0000 0000 00',
 			email: 'john@company.com',
 			date: '01.12.24 ',
-			status: 'info',
-			statusText: 'Überprüfung'
+			statusText: 'rejected'
 		},
 		{
 			company: 'Dell',
@@ -85,8 +81,7 @@
 			number: '+01 0000 0000 00',
 			email: 'john@company.com',
 			date: '01.12.24 ',
-			status: 'info',
-			statusText: 'Überprüfung'
+			statusText: 'confirmed'
 		},
 		{
 			company: 'Google Inc',
@@ -94,8 +89,7 @@
 			number: '+01 0000 0000 00',
 			email: 'john@company.com',
 			date: '01.12.24 ',
-			status: 'info',
-			statusText: 'Überprüfung'
+			statusText: 'rejected'
 		},
 		{
 			company: 'Microsoft',
@@ -103,8 +97,7 @@
 			number: '+01 0000 0000 00',
 			email: 'john@company.com',
 			date: '25.12.24',
-			status: 'success',
-			statusText: 'Bestätigt'
+			statusText: 'confirmed'
 		},
 		{
 			company: 'Facebook',
@@ -112,8 +105,7 @@
 			number: '+01 0000 0000 00',
 			email: 'john@company.com',
 			date: '01.12.24 ',
-			status: 'info',
-			statusText: 'Überprüfung'
+			statusText: 'rejected'
 		},
 		{
 			company: 'Apple',
@@ -121,8 +113,7 @@
 			number: '+01 0000 0000 00',
 			email: 'john@company.com',
 			date: '01.12.24 ',
-			status: 'info',
-			statusText: 'Überprüfung'
+			statusText: 'rejected'
 		},
 		{
 			company: 'Dell',
@@ -130,8 +121,7 @@
 			number: '+01 0000 0000 00',
 			email: 'john@company.com',
 			date: '01.12.24 ',
-			status: 'info',
-			statusText: 'Überprüfung'
+			statusText: 'rejected'
 		}
 	];
 
@@ -154,18 +144,21 @@
 <Modal bind:isOpen>
 	<div class=" flex flex-col justify-center items-center">
 		<div class=" text-start">
-			<h2 class=" text-stone-950 font-extrabold text-base">Status Update</h2>
+			<h2 class=" text-stone-950 font-extrabold text-base">
+				{$_('admin-pages.events.statusUpdate')}
+			</h2>
 			<p class="mt-2 text-stone-500 text-base">
-				Vielen Dank, dass Sie Ihr Porträt für diese Veranstaltung aktualisiert haben. Sie können
-				Ihre Daten auf der Veranstaltungsseite überprüfen.
+				{$_('admin-pages.events.statusUpdateText')}
 			</p>
 		</div>
 		<div class="my-6 w-full">
-			<Select placeholder="Update Status"></Select>
+			<Select placeholder={$_('admin-pages.events.updateStatus')}></Select>
 		</div>
 	</div>
 	<footer class=" flex items-center justify-end">
-		<GradientButton classes="!py-1.5" onClick={handleUpdateStatus}>Update</GradientButton>
+		<GradientButton classes="!py-1.5" onClick={handleUpdateStatus}
+			>{$_('common.update')}</GradientButton
+		>
 	</footer>
 </Modal>
 <div>
@@ -197,12 +190,12 @@
 		<Tabs {tabHeadings} {activeTab} {handleTabChange} />
 	</div>
 	<section class=" mt-10 flex justify-between w-full">
-		<SearchInput placeholder="Search" />
+		<SearchInput placeholder={$_('common.search')} />
 		<div class=" w-full max-w-[540px] flex items-center justify-end">
 			<div class=" mr-3 w-full">
-				<Select placeholder="Addons" />
+				<Select placeholder={$_('common.addons')} />
 			</div>
-			<Select placeholder="Packages" />
+			<Select placeholder={$_('common.packages')} />
 		</div>
 	</section>
 
@@ -210,9 +203,9 @@
 		{#if !showListings}
 			<section class=" mt-10">
 				<NoDataFound
-					heading="No applies found!"
-					subHeading="There are no applies to display yet."
-					buttonText="Back to Events"
+					heading={$_('admin-pages.events.noAppliesFound')}
+					subHeading={$_('admin-pages.events.noDataToDisplay')}
+					buttonText={$_('admin-pages.events.backToEvents')}
 					onButtonClick={toggleListing}
 				/>
 			</section>
@@ -229,7 +222,7 @@
 							<td class=" px-6 py-4"
 								><Chip
 									status={statusText}
-									variant={status}
+									variant={statusText}
 									classes="cursor-pointer"
 									handleChipClick={() => handleChipClick(index, status)}
 								/></td
