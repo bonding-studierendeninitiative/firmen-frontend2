@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { _ } from '@services';
 	import { Drawer, Tabs } from '$lib/@svelte/components';
 	import { fade } from 'svelte/transition';
 	import { CompanyInformationTab } from './components';
@@ -8,7 +9,7 @@
 	export let isOpen: boolean = false;
 
 	let activeTab = 0;
-	const tabHeadings = ['Company Information', 'Portraits', 'Bookings'];
+	const tabHeadings = ['companyInformation', 'portraits', 'bookings'];
 
 	const handleTabChange = (tabIndex: number) => {
 		activeTab = tabIndex;
@@ -17,28 +18,30 @@
 
 <Drawer
 	bind:isOpen
-	heading="Company Details"
+	heading={$_('admin-pages.companies.companyDetails')}
 	handleSubmit={() => {
 		isOpen = false;
 	}}
 	hasActions={false}
 >
-	<div class="grid grid-cols-1 gap-4 w-full">
-		<Tabs hasBorder={false} {tabHeadings} {activeTab} {handleTabChange} />
+	<div>
+		<div class="grid grid-cols-1 gap-4 w-full">
+			<Tabs hasBorder={false} {tabHeadings} {activeTab} {handleTabChange} />
+		</div>
+		<section class=" mt-10 max-h-[590px] overflow-y-scroll">
+			{#if activeTab === 0}
+				<div>
+					<CompanyInformationTab />
+				</div>
+			{:else if activeTab === 1}
+				<div in:fade>
+					<PortraitsTab />
+				</div>
+			{:else if activeTab === 2}
+				<div in:fade>
+					<BookingsTab />
+				</div>
+			{/if}
+		</section>
 	</div>
-	<section class=" mt-10 max-h-[590px] overflow-y-scroll">
-		{#if activeTab === 0}
-			<div>
-				<CompanyInformationTab />
-			</div>
-		{:else if activeTab === 1}
-			<div in:fade>
-				<PortraitsTab />
-			</div>
-		{:else if activeTab === 2}
-			<div in:fade>
-				<BookingsTab />
-			</div>
-		{/if}
-	</section>
 </Drawer>

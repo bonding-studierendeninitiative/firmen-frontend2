@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { _ } from '@services';
+
 	export let columns: string[];
 	export let totalRecords: number | undefined;
 	export let classes: string = '';
@@ -10,7 +12,8 @@
 			<thead>
 				<tr class=" tracking-wide text-left text-gray-500 border-b bg-gray-50">
 					{#each columns as head}
-						<th class="px-6 py-3 text-sm font-normal">{head}</th>
+						<th class="px-6 py-3 text-sm font-normal">{head ? $_(`table-headings.${head}`) : ''}</th
+						>
 					{/each}
 				</tr>
 			</thead>

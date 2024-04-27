@@ -1,14 +1,20 @@
 <script lang="ts">
+	import { _ } from '@services';
+
 	export let status: string;
-	export let variant: 'success' | 'info' | 'brand';
+	export let variant: any;
 	export let classes: string = '';
 
 	const getStylesByVariant = () => {
 		switch (variant) {
 			case 'success':
-				return 'text-orange-500 bg-orange-100';
-			case 'info':
+			case 'confirmed':
 				return 'text-green-600 bg-green-50';
+			case 'info':
+			case 'verification':
+				return 'text-orange-500 bg-orange-100';
+			case 'rejected':
+				return 'text-red-500 bg-red-100';
 			case 'brand':
 				return 'text-brand bg-brand bg-opacity-5';
 
@@ -25,5 +31,5 @@
 		getStylesByVariant()
 	) + ' '.concat(classes)}
 >
-	{status}
+	{$_(`status-text.${status}`)}
 </p>

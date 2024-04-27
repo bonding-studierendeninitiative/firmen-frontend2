@@ -21,27 +21,27 @@ export interface SidebarLinkTypes {
 }
 export const USER_SIDEBAR_LINKS: SidebarLinkTypes[] = [
 	{
-		label: 'Dashboard',
+		label: 'dashboard',
 		route: '/dashboard',
 		Icon: 'DashboardIcon'
 	},
 	{
-		label: 'Events',
+		label: 'events',
 		route: '/events',
 		Icon: 'EventsIcon'
 	},
 	{
-		label: 'Portraits',
+		label: 'portraits',
 		route: '/portraits',
 		Icon: 'PortraitIcon'
 	},
 	{
-		label: 'Notifications',
+		label: 'notifications',
 		route: '/notifications',
 		Icon: 'NotificationIcon'
 	},
 	{
-		label: 'Account',
+		label: 'account',
 		route: '/account',
 		Icon: 'AccountIcon'
 	}
@@ -49,32 +49,32 @@ export const USER_SIDEBAR_LINKS: SidebarLinkTypes[] = [
 
 export const ADMIN_SIDEBAR_LINKS: SidebarLinkTypes[] = [
 	{
-		label: 'Dashboard',
+		label: 'dashboard',
 		route: '/admin/dashboard',
 		Icon: 'DashboardIcon'
 	},
 	{
-		label: 'Events',
+		label: 'events',
 		route: '/admin/events',
 		Icon: 'EventsIcon'
 	},
 	{
-		label: 'Categories',
+		label: 'categories',
 		route: '/admin/categories',
 		Icon: 'CategoriesIcon'
 	},
 	{
-		label: 'Packages',
+		label: 'packages',
 		route: '/admin/packages',
 		Icon: 'PackagesIcon'
 	},
 	{
-		label: 'Add-ons',
+		label: 'addons',
 		route: '/admin/add-ons',
 		Icon: 'AddonIcon'
 	},
 	{
-		label: 'Company',
+		label: 'company',
 		route: '/admin/company',
 		Icon: 'CompanyIcon'
 	}

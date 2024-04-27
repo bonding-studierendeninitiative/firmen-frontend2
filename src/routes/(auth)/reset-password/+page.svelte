@@ -27,11 +27,11 @@
 >
 	<Input
 		classes="mt-4"
-		placeholder={$_('common.fields.passwordPlaceholder')}
+		placeholder={$_('auth-fields.passwordPlaceholder')}
 		type="password"
 		bind:value={password}
 	/>
-	<Input classes="mt-4" placeholder={$_('common.fields.confirmPassword')} type="password" />
+	<Input classes="mt-4" placeholder={$_('auth-fields.confirmPassword')} type="password" />
 
 	<div class="grid grid-cols-2 gap-4 mt-4">
 		<PasswordComplexityMessage

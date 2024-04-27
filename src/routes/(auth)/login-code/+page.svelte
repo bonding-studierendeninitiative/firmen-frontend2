@@ -17,7 +17,7 @@
 <LoginWrapper heading={$_('auth.login.heading')} subHeading={$_('auth.login.subHeading')}>
 	<Input
 		classes="mt-4"
-		placeholder={$_('common.fields.codePlaceholder')}
+		placeholder={$_('auth-fields.codePlaceholder')}
 		type="number"
 		bind:value={password}
 	/>

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { _ } from '@services';
 	import CrossIcon from '$lib/@svelte/icons/CrossIcon.svelte';
 	import { cubicOut } from 'svelte/easing';
 	import { fade, fly } from 'svelte/transition';
@@ -47,8 +48,8 @@
 				<slot />
 				{#if hasActions}
 					<footer class=" flex justify-end items-center w-full">
-						<Button classes="mr-2" onClick={handleCancel}>Cancel</Button>
-						<GradientButton onClick={handleSubmit}>Save</GradientButton>
+						<Button classes="mr-2" onClick={handleCancel}>{$_('common.cancel')}</Button>
+						<GradientButton onClick={handleSubmit}>{$_('common.save')}</GradientButton>
 					</footer>
 				{/if}
 			</div>

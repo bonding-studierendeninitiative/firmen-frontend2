@@ -1,8 +1,9 @@
 <script lang="ts">
+	import { _ } from '@services';
 	import { Table, Button } from '$lib/@svelte/components';
 	import { CompanyDetails } from '$lib/@svelte/modules';
 
-	const columns = ['Company', 'Contact Person', 'Number', 'Email Address', 'Bookings', ''];
+	const columns = ['company', 'contactPerson', 'number', 'emailAddress', 'bookings', ''];
 
 	const eventList = [
 		{
@@ -92,11 +93,17 @@
 	];
 
 	let isDrawerOpen: boolean = false;
+
+	const handleViewDetails = (index: number) => {
+		isDrawerOpen = true;
+	};
 </script>
 
 <div>
 	<section>
-		<h1 class=" text-stone-950 text-3xl font-extrabold">All Companies</h1>
+		<h1 class=" text-stone-950 text-3xl font-extrabold">
+			{$_('admin-pages.companies.allCompanies')}
+		</h1>
 	</section>
 	<section class=" mt-10">
 		<Table totalRecords={9} {columns}>
@@ -108,8 +115,8 @@
 					<td class=" px-6 py-4 text-grey-500 text-sm">{email}</td>
 					<td class=" px-6 py-4 text-grey-500 text-sm">{bookings}</td>
 					<td class=" px-6 py-4"
-						><Button classes=" !py-1.5 !px-4 " onClick={() => (isDrawerOpen = true)}
-							>View Details</Button
+						><Button classes=" !py-1.5 !px-4 " onClick={() => handleViewDetails(index)}
+							>{$_('common.viewDetails')}</Button
 						></td
 					>
 				</tr>
@@ -117,4 +124,4 @@
 		</Table>
 	</section>
 </div>
-<CompanyDetails isOpen={isDrawerOpen} />
+<CompanyDetails bind:isOpen={isDrawerOpen} />

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { _ } from '@services';
 	import { GradientButton, Modal, Input, Select, Checkbox, Chip } from '$lib/@svelte/components';
 	import Dropzone from 'svelte-file-dropzone';
 	import { DropzoneIcon, CrossIcon, FilledCheckIcon } from '$lib/@svelte/icons';
@@ -67,20 +68,25 @@
 	<div class=" flex flex-col justify-center items-center">
 		<p class=" text-xl"><FilledCheckIcon /></p>
 		<div class=" my-6 text-center">
-			<h2 class=" text-stone-950 font-extrabold text-base">Registration Completed</h2>
+			<h2 class=" text-stone-950 font-extrabold text-base">
+				{$_('user-pages.events.registrationCompleted')}
+			</h2>
 			<p class="mt-2 text-stone-500 text-base">
-				Thank you for registering for this event. Our team will verify your information and process
-				your request. Once approved, you’ll receive a confirmation email.
+				{$_('user-pages.events.registrationCompletedDescription')}
 			</p>
 		</div>
 	</div>
 	<footer class=" flex items-center justify-center">
-		<GradientButton classes="!py-1.5" onClick={() => goto('/events')}>View Events</GradientButton>
+		<GradientButton classes="!py-1.5" onClick={() => goto('/events')}
+			>{$_('common.viewEvents')}</GradientButton
+		>
 	</footer>
 </Modal>
 <div>
 	<div class=" flex justify-between items-start">
-		<h3 class=" text-xl font-extrabold text-stone-800">Registration Form</h3>
+		<h3 class=" text-xl font-extrabold text-stone-800">
+			{$_('user-pages.events.registrationForm')}
+		</h3>
 		<button><CrossIcon /></button>
 	</div>
 	<div class=" my-6">
@@ -88,44 +94,44 @@
 	</div>
 
 	<div class=" grid grid-cols-1 gap-4">
-		<h4 class=" font-extrabold text-sm text-stone-900">Company Information</h4>
-		<Input placeholder="Company Name" />
-		<Input placeholder="Address" />
+		<h4 class=" font-extrabold text-sm text-stone-900">
+			{$_('user-pages.events.companyInformation')}
+		</h4>
+		<Input placeholder={$_('user-pages.events.companyName')} />
+		<Input placeholder={$_('user-pages.events.address')} />
 		<div class="grid grid-cols-2 gap-4">
-			<Select placeholder="City" />
-			<Select placeholder="State" />
+			<Select placeholder={$_('user-pages.events.city')} />
+			<Select placeholder={$_('user-pages.events.state')} />
 		</div>
-		<Input placeholder="Contact Person" />
-		<Input placeholder="Number" />
-		<Input placeholder="Email Address" />
+		<Input placeholder={$_('user-pages.events.contactPerson')} />
+		<Input placeholder={$_('user-pages.events.number')} />
+		<Input placeholder={$_('user-pages.events.emailAddress')} />
 	</div>
 
 	<section class=" my-10">
-		<h4 class=" font-extrabold text-sm text-stone-900">Packages</h4>
+		<h4 class=" font-extrabold text-sm text-stone-900">{$_('common.packages')}</h4>
 		<p class=" mt-2 text-stone-500 font-normal text-sm">
-			Select one or multiple packages for the event registration. The payment shall be made once the
-			information is verified and approved.
+			{$_('user-pages.events.packageDescription')}
 		</p>
 		<div class=" border border-stone-200 w-full rounded-lg mt-6">
 			<div class=" px-3 py-4 flex justify-between items-center border-b border-stone-200">
-				<Checkbox label="Light Plan" labelClasses=" !font-extrabold" />
+				<Checkbox label={$_('common.lightPlan')} labelClasses=" !font-extrabold" />
 				<p class=" text-sm font-stone-800 font-extrabold">2.500,00€</p>
 			</div>
 			<div class=" px-3 py-4 flex justify-between items-center border-b border-stone-200">
-				<Checkbox label="Standard Plan" labelClasses=" !font-extrabold" />
+				<Checkbox label={$_('common.standardPlan')} labelClasses=" !font-extrabold" />
 				<p class=" text-sm font-stone-800 font-extrabold">2.500,00€</p>
 			</div>
 			<div class=" px-3 py-4 flex justify-between items-center border-b border-stone-200">
-				<Checkbox label="Premium Plan" labelClasses=" !font-extrabold" />
+				<Checkbox label={$_('common.premiumPlan')} labelClasses=" !font-extrabold" />
 				<p class=" text-sm font-stone-800 font-extrabold">2.500,00€</p>
 			</div>
 		</div>
 	</section>
 	<section>
-		<h4 class=" font-extrabold text-sm text-stone-900">Addons</h4>
+		<h4 class=" font-extrabold text-sm text-stone-900">{$_('common.addons')}</h4>
 		<p class=" mt-2 text-stone-500 font-normal text-sm">
-			Select one or multiple packages for the event registration. The payment shall be made once the
-			information is verified and approved.
+			{$_('user-pages.events.addonsDescription')}
 		</p>
 		<div class=" border border-stone-200 w-full rounded-lg mt-6">
 			<div>
@@ -159,37 +165,37 @@
 			<div class=" flex justify-center items-center flex-col">
 				<DropzoneIcon />
 				<p class="mt-5 text-base text-opacity-85 text-black font-medium">
-					Click or drag file to this area to upload
+					{$_('user-pages.events.dragAndDropHeading')}
 				</p>
 				<p class="text-black text-sm text-opacity-45 font-normal">
-					Support for a single or bulk upload.
+					{$_('user-pages.events.dragAndDropText')}
 				</p>
 			</div></Dropzone
 		>
 	</section>
 	<section class="my-6">
 		<div class="flex items-center justify-between mb-3">
-			<p class="text-sm font-medium text-stone-800">Event Fee</p>
+			<p class="text-sm font-medium text-stone-800">{$_('user-pages.events.eventFee')}</p>
 			<p class="text-sm font-extrabold text-stone-800">€400</p>
 		</div>
 		<div class="flex items-center justify-between mb-3">
-			<p class="text-sm font-medium text-stone-800">Total Addons</p>
+			<p class="text-sm font-medium text-stone-800">{$_('user-pages.events.totalAddons')}</p>
 			<p class="text-sm font-extrabold text-stone-800">€0</p>
 		</div>
 		<div class="flex items-center justify-between">
-			<p class="text-sm font-medium text-stone-800">Taxes</p>
+			<p class="text-sm font-medium text-stone-800">{$_('user-pages.events.taxes')}</p>
 			<p class="text-sm font-extrabold text-stone-800">€0</p>
 		</div>
 		<div class=" my-4">
 			<hr />
 		</div>
 		<div class="flex items-center justify-between mb-6">
-			<p class="text-sm font-medium text-stone-800">Total</p>
+			<p class="text-sm font-medium text-stone-800">{$_('user-pages.events.total')}</p>
 			<p class="text-sm font-extrabold text-stone-800">€400</p>
 		</div>
-		<Checkbox label="I agree to Bonding privacy and policy" />
+		<Checkbox label={$_('user-pages.events.undertakingText')} />
 	</section>
 	<footer class=" flex mt-6 justify-end items-center">
-		<GradientButton onClick={handleFormSubmit}>Submit</GradientButton>
+		<GradientButton onClick={handleFormSubmit}>{$_('common.submit')}</GradientButton>
 	</footer>
 </div>

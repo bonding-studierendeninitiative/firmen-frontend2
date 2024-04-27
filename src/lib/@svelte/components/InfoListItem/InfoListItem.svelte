@@ -5,6 +5,7 @@
 	export let heading: string;
 	export let subHeading: string;
 	export let date: string;
+	export let buttonText: string;
 	export let onRegisterClick: (() => void) | undefined = undefined;
 </script>
 
@@ -25,7 +26,7 @@
 		</div>
 		{#if showButton}
 			<GradientButton classes=" !py-1.5" onClick={() => onRegisterClick?.()}
-				>View Applies</GradientButton
+				>{buttonText}</GradientButton
 			>
 		{/if}
 	</div>
