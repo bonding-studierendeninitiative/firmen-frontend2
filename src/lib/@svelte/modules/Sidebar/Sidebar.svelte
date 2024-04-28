@@ -18,7 +18,7 @@
 	};
 
 	const handleLogoutClick = () => {
-		goto('/access-preference');
+		goto('/login-email');
 	};
 
 	const getSidebarData = (): SidebarLinkTypes[] => {

@@ -2,6 +2,7 @@
 	import Input from '../Input/Input.svelte';
 	export let placeholder: string = '';
 	export let label: string = '';
+	export let iconType: '' | 'startIcon' | 'endIcon' = '';
 </script>
 
 <div>
@@ -13,17 +14,21 @@
 		<label for="default-search" class="mb-2 text-sm font-medium text-gray-900 sr-only">Search</label
 		>
 		<div class="relative">
-			<div
-				class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none text-slate-400"
-			>
-				<slot name="icon-start" />
-			</div>
-			<Input {placeholder} />
-			<div
-				class="absolute inset-y-0 end-0 flex items-center pe-3 pointer-events-none text-slate-400"
-			>
-				<slot name="icon" />
-			</div>
+			{#if iconType === 'startIcon'}
+				<div
+					class="absolute inset-y-0 start-0 my-2 flex items-center ps-3 pointer-events-none text-slate-400 border-r border-slate-200 w-20"
+				>
+					<slot name="icon-start" />
+				</div>
+			{:else}
+				<div
+					class="absolute inset-y-0 end-0 flex items-center pe-3 pointer-events-none text-slate-400"
+				>
+					<slot name="icon" />
+				</div>
+			{/if}
+
+			<Input {placeholder} classes={`${iconType === 'startIcon' ? '!pl-22' : 'pr-8'}`} />
 		</div>
 	</div>
 </div>

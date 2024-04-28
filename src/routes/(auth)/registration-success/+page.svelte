@@ -5,7 +5,7 @@
 	import { _ } from '@services';
 
 	const handleSubmit = () => {
-		goto('/access-preference');
+		goto('/login-email');
 	};
 </script>
 

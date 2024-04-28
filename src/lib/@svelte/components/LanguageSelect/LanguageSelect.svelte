@@ -1,7 +1,8 @@
 <script lang="ts">
 	import { SelectDown, SelectUp } from '$lib/@svelte/icons';
 	import Select from 'svelte-select';
-	import { setupI18n } from '@services';
+	import { setupI18n, locale } from '@services';
+	import { onMount } from 'svelte';
 
 	let items = [
 		{ value: 'en', label: 'en' },
@@ -13,6 +14,13 @@
 		const lang = e.detail.value ?? 'en';
 		setupI18n({ withLocale: lang });
 	};
+	onMount(() => {
+		if ($locale === 'de') {
+			value = { value: 'de', label: 'de' };
+		} else {
+			value = { value: 'en', label: 'en' };
+		}
+	});
 </script>
 
 <div class=" w-18">

@@ -74,6 +74,7 @@
 		"save": "Save",
 		"cancel": "Cancel",
 		"viewDetails": "View Details",
+		"viewApplies": "View Applies",
 		"download": "Download",
 		"branch": "Branch",
 		"viewAll": "View All",
@@ -85,7 +86,8 @@
 		"submit": "Submit",
 		"yes": "Yes",
 		"no": "No",
-		"upload": "Upload"
+		"upload": "Upload",
+		"showResults": "Show Results"
 	},
 	"sidebar": {
 		"dashboard": "Dashboard",

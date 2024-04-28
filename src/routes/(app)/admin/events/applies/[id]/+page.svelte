@@ -8,7 +8,8 @@
 		NoDataFound,
 		Chip,
 		Modal,
-		GradientButton
+		GradientButton,
+		CheckboxSelect
 	} from '$lib/@svelte/components';
 	import Select from '$lib/@svelte/components/Select/Select.svelte';
 	import {
@@ -42,6 +43,21 @@
 		'uploads'
 	];
 
+	const addonsMainItems = [
+		{ label: 'Onlinewerbung-Paket', value: 'Onlinewerbung-Paket', count: 120 },
+		{ label: 'Printwerbung-Paket', value: 'Printwerbung-Paket', count: 80 }
+	];
+	const packagesMainItems = [
+		{ label: 'light', value: 'light', count: 120 },
+		{ label: 'standard', value: 'standard', count: 120 },
+		{ label: 'premium', value: 'premium', count: 120 }
+	];
+	const addonsOtherItems = [
+		{ label: 'Bonding-Infomails', value: 'Bonding-Infomails', count: 2 },
+		{ label: 'Messewebsite', value: 'Messewebsite', count: 0 },
+		{ label: 'SocialMe.-Firmenvorstellung', value: 'SocialMe.-Firmenvorstellung', count: 100 },
+		{ label: 'Flyer', value: 'Flyer', count: 150 }
+	];
 	const eventList: any = [
 		{
 			company: 'Google Inc',
@@ -191,11 +207,20 @@
 	</div>
 	<section class=" mt-10 flex justify-between w-full">
 		<SearchInput placeholder={$_('common.search')} />
-		<div class=" w-full max-w-[540px] flex items-center justify-end">
+		<div class="  max-w-[540px] flex items-center justify-end">
 			<div class=" mr-3 w-full">
-				<Select placeholder={$_('common.addons')} />
+				<CheckboxSelect
+					placeholder={$_('common.addons')}
+					width="289px"
+					mainItems={addonsMainItems}
+					otherItems={addonsOtherItems}
+				/>
 			</div>
-			<Select placeholder={$_('common.packages')} />
+			<CheckboxSelect
+				placeholder={$_('common.packages')}
+				width="215px"
+				mainItems={packagesMainItems}
+			/>
 		</div>
 	</section>
 

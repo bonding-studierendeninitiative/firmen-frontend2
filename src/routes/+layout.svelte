@@ -2,7 +2,7 @@
 	import { onMount } from 'svelte';
 	import { Toaster } from 'svelte-french-toast';
 	import '../app.css';
-	import { setupI18n, isLocaleLoaded, locale, dir } from '@services';
+	import { setupI18n, isLocaleLoaded, dir } from '@services';
 
 	onMount(() => {
 		document.dir = $dir;

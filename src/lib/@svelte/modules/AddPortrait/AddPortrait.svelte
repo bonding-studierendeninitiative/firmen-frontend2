@@ -103,13 +103,13 @@
 				<Select placeholder={$_('user-pages.portraits.cities')} />
 			</div>
 			<hr class=" border border-stone-200 my-2" />
-			<IconInput label={$_('user-pages.portraits.numberOfEmployees')}>
+			<IconInput iconType="startIcon" label={$_('user-pages.portraits.numberOfEmployees')}>
 				<span slot="icon-start">{$_('user-pages.portraits.inland')}</span>
 			</IconInput>
-			<IconInput>
+			<IconInput iconType="startIcon">
 				<span slot="icon-start">{$_('user-pages.portraits.eu')}</span>
 			</IconInput>
-			<IconInput>
+			<IconInput iconType="startIcon">
 				<span slot="icon-start">{$_('user-pages.portraits.global')}</span>
 			</IconInput>
 			<Input label={$_('user-pages.portraits.universityGraduates')} />

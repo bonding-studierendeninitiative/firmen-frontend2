@@ -122,9 +122,7 @@
 						{subHeading}
 						{date}
 						onRegisterClick={() => handleEventRegistration(id)}
-						buttonText={activeTab !== 1
-							? $_('admin-pages.events.viewApplies')
-							: $_('common.viewDetails')}
+						buttonText={activeTab !== 1 ? 'viewApplies' : 'viewDetails'}
 					/>
 				{/each}
 			</div>{/if}
