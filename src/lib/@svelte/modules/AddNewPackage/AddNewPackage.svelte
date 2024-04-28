@@ -30,7 +30,7 @@
 	<div class="grid grid-cols-1 gap-4 w-full max-h-[590px] overflow-y-scroll">
 		<Input label={$_('admin-pages.packages.packageName')} />
 		<div class="grid grid-cols-2 gap-4 w-full">
-			<IconInput label={$_('admin-pages.packages.price')} placeholder="0000">
+			<IconInput iconType="endIcon" label={$_('admin-pages.packages.price')} placeholder="0000">
 				<span slot="icon" class=" text-stone-500">€</span>
 			</IconInput>
 			<Select label={$_('admin-pages.packages.taxes')} />

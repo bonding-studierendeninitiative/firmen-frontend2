@@ -2,13 +2,18 @@
 	import Input from '../Input/Input.svelte';
 	export let prefixText: string = '';
 	export let placeholder: string = '';
+	export let pl: string = '24';
 </script>
 
-<div class=" flex max-h-[40px]">
+<div class="relative">
 	<div
-		class=" border border-solid border-gray-300 shadow-md flex justify-center items-center rounded-l-lg p-4 text-stone-400 bg-stone-50"
+		class="absolute inset-y-0 start-0 my-2 flex items-center pointer-events-none text-slate-400 border-r border-slate-200 w-20"
 	>
-		{prefixText}
+		<div
+			class=" h-[37px] border border-solid border-gray-300 flex justify-center items-center rounded-l-lg p-4 text-stone-400 bg-stone-50"
+		>
+			{prefixText}
+		</div>
 	</div>
-	<Input classes=" !rounded-l-none  !border-l-0" {placeholder} />
+	<Input {placeholder} classes={`!pl-${pl}`} />
 </div>

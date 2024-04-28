@@ -1,12 +1,14 @@
 <script>
+	import { LanguageSelect } from '$lib/@svelte/components';
 	import { ColorLogoIcon } from '$lib/@svelte/icons';
 	import { _ } from '@services';
 </script>
 
 <div class=" flex w-full h-screen">
 	<div class=" w-3/4 flex-row">
-		<nav class=" px-10 py-4 border-b border-solid border-stone-200">
+		<nav class=" px-10 py-4 border-b border-solid border-stone-200 relative">
 			<ColorLogoIcon />
+			<div class=" right-4 top-2 absolute"><LanguageSelect /></div>
 		</nav>
 		<div class=" flex justify-center items-center h-5/6">
 			<slot />
