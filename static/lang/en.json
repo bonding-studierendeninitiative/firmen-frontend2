@@ -54,7 +54,13 @@
 		"confirmPassword": "Confirm Password"
 	},
 	"validation-messages": {
-		"moreThan8Characters": "Your new password must be more than 8 characters."
+		"moreThan8Characters": "Your new password must be more than 8 characters.",
+		"required": "This field is required",
+		"passwordNotMatched": "Password doesn't match",
+		"invalidEmail": "Invalid Email"
+	},
+	"success-messages": {
+		"registeredSuccessfully": "An email was send to you to confirm the registration"
 	},
 	"common": {
 		"continue": "Continue",
@@ -87,7 +93,8 @@
 		"yes": "Yes",
 		"no": "No",
 		"upload": "Upload",
-		"showResults": "Show Results"
+		"showResults": "Show Results",
+		"somethingWentWrong": "Something went wrong, Please try again"
 	},
 	"sidebar": {
 		"dashboard": "Dashboard",

@@ -1,9 +1,10 @@
 <script lang="ts">
+	import { _ } from '@services';
 	export let message: string = '';
 </script>
 
 {#if message}
-	<p class=" mt-2 text-stone-500 font-normal text-sm">
-		{message}
+	<p class=" h-1 pt-0.5 text-red-500 font-normal text-sm">
+		{$_(`validation-messages.${message}`)}
 	</p>
 {/if}

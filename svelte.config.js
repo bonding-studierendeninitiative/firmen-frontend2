@@ -12,7 +12,11 @@ const config = {
 		// If your environment is not supported or you settled on a specific environment, switch out the adapter.
 		// See https://kit.svelte.dev/docs/adapters for more information about adapters.
 		alias: {
-			'@services': './src/services'
+			'@services': './src/services',
+			'@api': './src/lib/api',
+			'@api-routes': './src/lib/api/apiRoutes.ts',
+			'@schema': './src/lib/schemas',
+			'@constant': './src/lib/constants'
 		},
 		adapter: adapter()
 	}
