@@ -25,11 +25,7 @@
 				{$_('user-pages.accounts.newPassword')}
 			</div>
 			<div class="col-span-3">
-				<Input
-					placeholder="***********"
-					type="password"
-					errorMessage={$_('validation-messages.moreThan8Characters')}
-				/>
+				<Input placeholder="***********" type="password" errorMessage="moreThan8Characters" />
 			</div>
 		</div>
 		<div class="grid grid-cols-1 sm:grid-cols-4 gap-4 py-6 border-b-1 border-slate-200">
