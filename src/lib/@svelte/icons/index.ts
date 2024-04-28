@@ -34,3 +34,5 @@ export { default as OutlinedCheckIcon } from './OutlinedCheckIcon.svelte';
 export { default as OutlinedCrossIcon } from './OutlinedCrossIcon.svelte';
 export { default as DropzoneIcon } from './DropzoneIcon.svelte';
 export { default as CloudUploadIcon } from './CloudUploadIcon.svelte';
+export { default as EyeIcon } from './EyeIcon.svelte';
+export { default as CrossEyeIcon } from './CrossEyeIcon.svelte';

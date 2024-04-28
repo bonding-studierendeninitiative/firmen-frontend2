@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { _ } from '@services';
+	import Cookies from 'js-cookie';
 	import { Input, GradientButton } from '$lib/@svelte/components';
 	import { goto } from '$app/navigation';
 	import { LoginWrapper } from '$lib/@svelte/layouts';
@@ -33,6 +34,16 @@
 		errors = formatZodErrors(validate);
 	};
 	const handleRegisterClick = async () => {
+		document.cookie = 'username=John Doe';
+		const cookie = {
+			nickname: 'response.data.nickname',
+			email: 'response.data.email',
+			token: 'response.data.accessToken'
+		};
+		Cookies.set('user', btoa(JSON.stringify(cookie)));
+
+		goto('/registration-success');
+		return;
 		isSubmitted = true;
 		validateData();
 		if (errors) return;
@@ -88,12 +99,14 @@
 			placeholder={$_('auth-fields.passwordPlaceholder')}
 			bind:value={formData.password}
 			errorMessage={errors?.password}
+			type="password"
 		/>
 		<Input
 			classes="mt-4"
 			placeholder={$_('auth-fields.confirmPassword')}
 			bind:value={formData.cPassword}
 			errorMessage={errors?.cPassword}
+			type="password"
 		/>
 		<GradientButton classes=" mt-5 w-full" onClick={handleRegisterClick}
 			>{$_('auth.registration.createAccount')}</GradientButton
