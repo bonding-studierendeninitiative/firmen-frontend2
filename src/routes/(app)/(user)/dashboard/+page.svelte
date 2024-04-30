@@ -81,7 +81,7 @@
 			<h2 class=" text-stone-950 font-extrabold text-2xl mb-4">
 				{$_('user-pages.dashboard.upcomingEvents')}
 			</h2>
-			<Button onClick={handleViewAllEvent} classes=" shadow-custom !w-24 !py-2"
+			<Button onClick={handleViewAllEvent} classes=" shadow-custom  !py-2"
 				>{$_('common.viewAll')}</Button
 			>
 		</div>

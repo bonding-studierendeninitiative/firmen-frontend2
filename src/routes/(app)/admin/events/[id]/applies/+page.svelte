@@ -155,6 +155,10 @@
 		isOpen = false;
 		toast.success('status updated successfully');
 	};
+
+	const handleRowClick = (id: number) => {
+		goto(`/admin/events/${id}/event-details`);
+	};
 </script>
 
 <Modal bind:isOpen>
@@ -238,7 +242,10 @@
 			<section class=" mt-10">
 				<Table totalRecords={9} {columns}>
 					{#each eventList as { company, contact, number, email, date, status, statusText }, index}
-						<tr class={` ${index % 2 !== 0 ? 'bg-gray-50' : 'bg-white'}`}>
+						<tr
+							on:click={() => handleRowClick(index)}
+							class={` cursor-pointer ${index % 2 !== 0 ? 'bg-gray-50' : 'bg-white'}`}
+						>
 							<td class=" px-6 py-4 text-sm">{company}</td>
 							<td class=" px-6 py-4 text-sm">{contact}</td>
 							<td class=" px-6 py-4 text-sm">{number}</td>

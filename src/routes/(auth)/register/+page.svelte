@@ -34,13 +34,13 @@
 		errors = formatZodErrors(validate);
 	};
 	const handleRegisterClick = async () => {
-		document.cookie = 'username=John Doe';
-		const cookie = {
-			nickname: 'response.data.nickname',
-			email: 'response.data.email',
-			token: 'response.data.accessToken'
-		};
-		Cookies.set('user', btoa(JSON.stringify(cookie)));
+		// document.cookie = 'username=John Doe';
+		// const cookie = {
+		// 	nickname: 'response.data.nickname',
+		// 	email: 'response.data.email',
+		// 	token: 'response.data.accessToken'
+		// };
+		// Cookies.set('user', btoa(JSON.stringify(cookie)));
 
 		goto('/registration-success');
 		return;

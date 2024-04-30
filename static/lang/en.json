@@ -94,7 +94,8 @@
 		"no": "No",
 		"upload": "Upload",
 		"showResults": "Show Results",
-		"somethingWentWrong": "Something went wrong, Please try again"
+		"somethingWentWrong": "Something went wrong, Please try again",
+		"exportFiles": "Export Files"
 	},
 	"sidebar": {
 		"dashboard": "Dashboard",
@@ -125,7 +126,9 @@
 		"profile": "Profile",
 		"organization": "Organization",
 		"password": "Password",
-		"billing": "Billing"
+		"billing": "Billing",
+		"portrait": "Portrait",
+		"uploads": "Uploads"
 	},
 	"table-headings": {
 		"company": "Company",
@@ -249,7 +252,9 @@
 			"city": "City",
 			"zipCode": "Zip Code",
 			"contactPerson": "Contact Person for Graduates",
-			"name": "name",
+			"contactPersonStudents": "Contact Person for Students",
+			"name": "Name",
+			"companyName": "Company Name",
 			"phoneNumber": "Phone Number",
 			"emailAddress": "Email Address",
 			"website": "Website",
@@ -261,7 +266,9 @@
 			"fileInstructions": "SVG, PNG, JPG or GIF (max. 800x400px)",
 			"companyLogo": "Company Logo",
 			"logoInstructions": "Upload image under 5MB. PNG, JPEG, GIF. The images must be 500x500 pixels",
-			"portraitAddedSuccessMessage": "Portrait Added Successfully"
+			"portraitAddedSuccessMessage": "Portrait Added Successfully",
+			"portraitDocumentFile": "Portrait Document File",
+			"portraitUpload": "Portrait Upload"
 		},
 		"events": {
 			"events": "Events",
