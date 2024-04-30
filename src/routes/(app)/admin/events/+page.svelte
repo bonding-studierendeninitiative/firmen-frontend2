@@ -61,7 +61,7 @@
 
 	const handleEventRegistration = (id: string) => {
 		if (activeTab !== 1) {
-			goto('/admin/events/applies/' + id);
+			goto(`/admin/events/${id}/applies/`);
 		} else {
 			isDrawerOpen = true;
 		}

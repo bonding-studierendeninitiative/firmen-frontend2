@@ -11,12 +11,10 @@
 		>
 	{/if}
 	<div class=" w-full">
-		<label for="default-search" class="mb-2 text-sm font-medium text-gray-900 sr-only">Search</label
-		>
 		<div class="relative">
 			{#if iconType === 'startIcon'}
 				<div
-					class="absolute inset-y-0 start-0 my-2 flex items-center ps-3 pointer-events-none text-slate-400 border-r border-slate-200 w-20"
+					class="absolute inset-y-0 z-10 start-0 my-2 flex items-center ps-3 pointer-events-none text-slate-400 border-r border-slate-200 w-20"
 				>
 					<slot name="icon-start" />
 				</div>

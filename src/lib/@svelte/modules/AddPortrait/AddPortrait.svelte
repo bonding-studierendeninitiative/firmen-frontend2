@@ -178,12 +178,19 @@
 			</div>
 			<div class=" grid grid-cols-1 gap-2">
 				<Input
+					label={$_('user-pages.portraits.contactPersonStudents')}
+					placeholder={$_('user-pages.portraits.name')}
+				/>
+				<Input placeholder={$_('user-pages.portraits.phoneNumber')} />
+				<Input placeholder={$_('user-pages.portraits.emailAddress')} />
+			</div>
+			<div class=" grid grid-cols-1 gap-2">
+				<Input
 					label={$_('user-pages.portraits.contactPerson')}
 					placeholder={$_('user-pages.portraits.name')}
 				/>
 				<Input placeholder={$_('user-pages.portraits.phoneNumber')} />
 				<Input placeholder={$_('user-pages.portraits.emailAddress')} />
-				<Input placeholder={$_('user-pages.portraits.website')} />
 			</div>
 			<Input label={$_('user-pages.portraits.miscellaneous')} />
 			<footer class=" mt-10 flex justify-between items-center mb-4">
