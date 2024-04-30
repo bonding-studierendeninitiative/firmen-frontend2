@@ -334,16 +334,47 @@
 			"packageName": "Paketname",
 			"price": "Preis",
 			"taxes": "Steuern",
-			"serviceTitle": "Titel des Dienstes",
-			"serviceDescription": "Beschreibung des Dienstes",
-			"packageIncludes": "Paket enthält",
-			"addService": "Dienst hinzufügen",
-			"addServiceDescription": "Beschreibung hinzufügen",
-			"uploadServiceIcon": "Dienstsymbol hochladen",
-			"serviceName": "Name des Dienstes",
-			"serviceIcon": "Dienstsymbol",
-			"selectFile": "Datei auswählen",
-			"selectImage": "Bild auswählen"
+			"serviceTitle": "Servicetitel",
+			"included": "Inklusive",
+			"addNewService": "Neuen Service hinzufügen",
+			"digit": "Ziffer"
+		},
+		"categories": {
+			"addCategory": "Kategorie hinzufügen",
+			"newCategory": "Neue Kategorie",
+			"categoryName": "Kategoriename",
+			"categoryInformation": "Kategorieninformation",
+			"selectPackages": "Pakete auswählen",
+			"selectAddons": "Zusatzfunktionen auswählen"
+		},
+		"events": {
+			"heading": "Veranstaltungen",
+			"subHeading": "Schauen Sie sich aktuelle Veranstaltungen an, um Ihr Unternehmen zu präsentieren!",
+			"publishNewEvents": "Neue Veranstaltungen veröffentlichen",
+			"viewApplies": "Bewerbungen anzeigen",
+			"viewDetails": "Details anzeigen",
+			"noAppliesFound": "Keine Bewerbungen gefunden",
+			"noDataToDisplay": "Es liegen noch keine Bewerbungen vor.",
+			"backToEvents": "Zurück zu den Veranstaltungen",
+			"verification": "Überprüfung",
+			"confirmed": "Bestätigt",
+			"rejected": "Abgelehnt",
+			"statusUpdate": "Statusaktualisierung",
+			"statusUpdateText": "Vielen Dank für die Aktualisierung Ihres Porträts für diese Veranstaltung. Sie können Ihre Details auf der Veranstaltungsseite überprüfen.",
+			"updateStatus": "Status aktualisieren",
+			"eventDetails": "Veranstaltungsdetails",
+			"eventName": "Veranstaltungsname",
+			"street&Number": "Straße & Nummer",
+			"nameOfUniversity": "Name der Universität",
+			"startDate": "Startdatum",
+			"endDate": "Enddatum",
+			"startTime": "Startzeit",
+			"endTime": "Endzeit",
+			"specialties": "Besonderheiten",
+			"eventTemplate": "Veranstaltungsvorlage (optional)"
+		},
+		"dashboard": {
+			"dashboard": "Dashboard"
 		}
 	}
 }
