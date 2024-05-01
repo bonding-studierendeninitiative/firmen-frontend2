@@ -1,8 +1,16 @@
 <script lang="ts">
-	import Input from '../Input/Input.svelte';
+	import { ErrorMessage } from '../ErrorMessage';
+
+	type HandleInputType = undefined | { (e: any): void };
 	export let placeholder: string = '';
 	export let label: string = '';
+	export let type: 'number' | 'text' | 'email' | 'password' = 'text';
+	export let errorMessage: string = '';
+	export let classes = '';
 	export let iconType: '' | 'startIcon' | 'endIcon' = '';
+	export let value = '';
+	export let handleInput: HandleInputType = undefined;
+	export let ref: any = null;
 </script>
 
 <div>
@@ -20,13 +28,28 @@
 				</div>
 			{:else}
 				<div
-					class="absolute inset-y-0 end-0 flex items-center pe-3 pointer-events-none text-slate-400"
+					class="absolute inset-y-0 z-50 end-0 flex items-center pe-3 pointer-events-none text-slate-400"
 				>
 					<slot name="icon" />
 				</div>
 			{/if}
 
-			<Input {placeholder} classes={`${iconType === 'startIcon' ? '!pl-22' : 'pr-8'}`} />
+			<input
+				id={label}
+				{placeholder}
+				{type}
+				{value}
+				bind:this={ref}
+				on:input={(e) => {
+					// @ts-ignore as value will always be present on input element
+					value = e?.target?.value;
+					handleInput?.(e);
+				}}
+				class={'rounded-lg overflow-visible w-full border border-solid border-gray-300 bg-white shadow-custom flex p-2 pl-3 items-center gap-2 focus:outline-none  text-stone-800 text-sm font-normal '.concat(
+					classes
+				)}
+			/>
 		</div>
+		<ErrorMessage message={errorMessage} />
 	</div>
 </div>

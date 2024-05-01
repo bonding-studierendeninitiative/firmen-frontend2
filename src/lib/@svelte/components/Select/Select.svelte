@@ -1,9 +1,13 @@
 <script lang="ts">
 	import { SelectDown, SelectUp } from '$lib/@svelte/icons';
 	import Select from 'svelte-select';
+	import { ErrorMessage } from '../ErrorMessage';
 
+	export let errorMessage: string = '';
 	export let placeholder: string = '';
 	export let label: string = '';
+	export let value: any = null;
+	export let isMultiple: boolean = false;
 
 	let items = [
 		{ value: 'one', label: 'One' },
@@ -21,10 +25,13 @@
 		{items}
 		showChevron
 		bind:listOpen
+		inputStyles=" padding:0px"
+		bind:value
 		{placeholder}
 		class=" placeholder-red-800"
-		containerStyles="box-shadow: 0px 1.5px 4px -1px rgba(0, 0, 0, 0.08); height:20px !important;"
+		containerStyles="box-shadow: 0px 1.5px 4px -1px rgba(0, 0, 0, 0.08);"
 		--height="38px"
+		multiple={isMultiple}
 	>
 		<!-- <div slot="item" let:item let:index>
 			{index}: {item.label}
@@ -37,4 +44,5 @@
 			{/if}
 		</div>
 	</Select>
+	<ErrorMessage message={errorMessage} />
 </div>

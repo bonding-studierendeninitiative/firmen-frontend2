@@ -46,6 +46,7 @@
 			</div>
 			<div class="pt-6 flex flex-col justify-between h-full">
 				<slot />
+
 				{#if hasActions}
 					<footer class=" flex justify-end items-center w-full">
 						<Button classes="mr-2" onClick={handleCancel}>{$_('common.cancel')}</Button>

@@ -4,7 +4,7 @@
 </script>
 
 {#if message}
-	<p class=" h-1 pt-0.5 text-red-500 font-normal text-sm">
+	<p class=" text-red-500 font-normal text-sm">
 		{$_(`validation-messages.${message}`)}
 	</p>
 {/if}

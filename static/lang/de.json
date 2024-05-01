@@ -56,6 +56,9 @@
 	"validation-messages": {
 		"moreThan8Characters": "Ihr neues Passwort muss mehr als 8 Zeichen lang sein.",
 		"required": "Dieses Feld ist erforderlich",
+		"Required": "Dieses Feld ist erforderlich",
+		"greaterStartDate": "Startdatum muss später als Enddatum sein",
+		"greaterStartTime": "Startzeit muss später als Endzeit sein",
 		"passwordNotMatched": "Passwort stimmt nicht überein",
 		"invalidEmail": "Ungültige E-Mail"
 	},

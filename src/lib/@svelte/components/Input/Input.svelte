@@ -35,7 +35,7 @@
 				value = e?.target?.value;
 				handleInput?.(e);
 			}}
-			class={'rounded-lg overflow-visible w-full border border-solid border-gray-300 bg-white shadow-custom flex p-2 pl-3 items-center gap-2 focus:outline-none focus:ring focus:border-blue-500 text-stone-800 text-sm font-normal '.concat(
+			class={'rounded-lg overflow-visible w-full border border-solid border-gray-300 bg-white shadow-custom flex p-2 pl-3 items-center gap-2 focus:outline-none  text-stone-800 text-sm font-normal '.concat(
 				classes
 			)}
 		/>

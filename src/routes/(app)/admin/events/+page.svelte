@@ -128,4 +128,4 @@
 			</div>{/if}
 	</section>
 </div>
-<EventDetails bind:isOpen={isDrawerOpen} />
+<EventDetails bind:isOpen={isDrawerOpen} showActions />
