@@ -31,8 +31,8 @@ export const USER_SIDEBAR_LINKS: SidebarLinkTypes[] = [
 		Icon: 'EventsIcon'
 	},
 	{
-		label: 'portraits',
-		route: '/portraits',
+		label: 'catalogue-data',
+		route: '/catalogue-data',
 		Icon: 'PortraitIcon'
 	},
 	{

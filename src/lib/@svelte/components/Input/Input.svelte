@@ -1,8 +1,7 @@
 <script lang="ts">
 	import CrossEyeIcon from '$lib/@svelte/icons/CrossEyeIcon.svelte';
-	import CrossIcon from '$lib/@svelte/icons/CrossIcon.svelte';
 	import EyeIcon from '$lib/@svelte/icons/EyeIcon.svelte';
-	import { ErrorMessage } from '../ErrorMessage';
+	import { Input, Helper, Label } from 'flowbite-svelte';
 
 	type HandleInputType = undefined | { (e: any): void };
 
@@ -11,31 +10,44 @@
 	export let type: 'number' | 'text' | 'email' | 'password' = 'text';
 	export let value: string = '';
 	export let ref: any = null;
+	export let name: string = '';
 	export let handleInput: HandleInputType = undefined;
 	export let errorMessage: string = '';
 	export let label: string = '';
+	export let required: boolean = false;
+	export let hintText: string = '';
+
 	let showPassword = false;
 	let isToggled = false;
 </script>
 
 <div>
 	{#if label}
-		<label class="block mb-1.5 font-medium marker:text-sm text-stone-800" for={label}>{label}</label
-		>
+		<Label class="block mb-1.5 font-medium text-stone-800" for={name}>{label}
+			{#if required}
+				<span class="text-pink-500">*</span>
+			{/if}
+		</Label>
+	{/if}
+	{#if hintText}
+		<Helper class="mb-2" color="gray">{hintText}</Helper>
 	{/if}
 	<div class="relative">
-		<input
-			id={label}
+		<Input
+			id={name}
+			{...$$restProps}
 			{placeholder}
 			{type}
 			{value}
+			{name}
+			{required}
 			bind:this={ref}
 			on:input={(e) => {
-				// @ts-ignore as value will always be present on input element
+				// @ts-expect-error as value will always be present on input element
 				value = e?.target?.value;
 				handleInput?.(e);
 			}}
-			class={'rounded-lg overflow-visible w-full border border-solid border-gray-300 bg-white shadow-custom flex p-2 pl-3 items-center gap-2 focus:outline-none  text-stone-800 text-sm font-normal '.concat(
+			class={'rounded-lg overflow-visible w-full border border-solid border-gray-300 bg-white shadow-custom flex p-2 pl-3 items-center gap-2 focus:outline-brand text-stone-800 text-sm font-normal '.concat(
 				classes
 			)}
 		/>
@@ -47,7 +59,9 @@
 							showPassword = false;
 							type = 'password';
 							isToggled = true;
-						}}><CrossEyeIcon /></button
+						}}>
+						<CrossEyeIcon />
+					</button
 					>
 				{:else}
 					<button
@@ -55,11 +69,13 @@
 							showPassword = true;
 							type = 'text';
 							isToggled = true;
-						}}><EyeIcon /></button
+						}}>
+						<EyeIcon />
+					</button
 					>
 				{/if}
 			</div>
 		{/if}
-		<ErrorMessage message={errorMessage} />
+		<Helper color="red">{errorMessage}</Helper>
 	</div>
 </div>

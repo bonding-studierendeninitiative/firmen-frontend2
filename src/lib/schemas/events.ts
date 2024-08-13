@@ -1,0 +1,20 @@
+import * as v from 'valibot';
+
+const APIEvent = v.object({
+	id: v.string(),
+	name: v.string(),
+	projectHSG: v.string(),
+	dateFrom: v.string(),
+	dateTo: v.string(),
+	location: v.string()
+});
+
+export const GetEventsResponseSchema = v.object({
+	events: v.array(APIEvent),
+	totalElements: v.number(),
+	totalPages: v.number()
+});
+export type GetEventsResponse = v.InferOutput<typeof GetEventsResponseSchema>;
+
+export const GetEventResponseSchema = APIEvent;
+export type GetEventResponse = v.InferOutput<typeof GetEventResponseSchema>;

@@ -28,7 +28,7 @@
 		}}
 	>
 		<button class="fixed inset-0 transition-opacity" on:click={toggleDrawer}>
-			<div class="absolute inset-0 bg-black opacity-50"></div>
+			<span class="absolute inset-0 bg-black opacity-50"></span>
 		</button>
 		<div
 			transition:fly={{
@@ -38,12 +38,13 @@
 			}}
 			class=" fixed p-6 inset-y-0 right-0 flex flex-col w-[556px] bg-white border-r h-screen max-h-[100vh] overflow-auto"
 		>
-			<div class="flex items-center justify-between pb-6 pt-2 border-b">
+			<div class="flex items-center justify-between pb-6 pt-2">
 				<span class=" font-bold text-stone-800 text-xl">{heading}</span>
 				<button class="text-stone-400 focus:outline-none" on:click={toggleDrawer}>
 					<CrossIcon />
 				</button>
 			</div>
+			<hr class=" -mx-6" />
 			<div class="pt-6 flex flex-col justify-between h-full">
 				<slot />
 

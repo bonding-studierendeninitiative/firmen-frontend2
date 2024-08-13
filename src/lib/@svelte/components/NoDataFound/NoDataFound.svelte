@@ -9,6 +9,6 @@
 
 <div class=" py-10 flex flex-col justify-center items-center bg-stone-50">
 	<h2 class=" text-base font-extrabold text-stone-950">{heading}</h2>
-	<p class=" w-2/6 text-center text-stone-500">{subHeading}</p>
+	<p class="text-balance w-2/6 text-center text-stone-500">{subHeading}</p>
 	<GradientButton classes="mt-6 " onClick={onButtonClick}>{buttonText}</GradientButton>
 </div>

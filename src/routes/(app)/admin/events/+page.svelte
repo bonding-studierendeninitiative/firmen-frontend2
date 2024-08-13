@@ -1,55 +1,36 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
+	import type { PageServerData } from './$types';
 	import {
-		EventInfoBox,
-		InfoListItem,
-		SearchInput,
 		GradientButton,
-		ButtonIcon,
 		Tabs
 	} from '$lib/@svelte/components';
-	import { GridIcon, ListIcon } from '$lib/@svelte/icons';
 	import { EventDetails } from '$lib/@svelte/modules';
 	import { _ } from '@services';
+	import PublishedEventsTab from '$lib/@svelte/pages/Admin/Events/PublishedEventsTab.svelte';
+	import UnpublishedEventsTab from '$lib/@svelte/pages/Admin/Events/UnpublishedEventsTab.svelte';
 
-	const upcomingEvents = [
-		{
-			id: '1',
-			heading: 'Tech Foundation 2023',
-			subHeading: 'Free University of Berlin',
-			date: '20 Dec, 2023'
-		},
-		{
-			id: '2',
-			heading: 'Engineer Fair 2024',
-			subHeading: 'Philipps University of Marburg',
-			date: '20 Dec, 2023'
-		},
-		{
-			id: '1',
-			heading: 'Tech Foundation 2023',
-			subHeading: 'Free University of Berlin',
-			date: '20 Dec, 2023'
-		},
-		{
-			id: '2',
-			heading: 'Engineer Fair 2024',
-			subHeading: 'Philipps University of Marburg',
-			date: '20 Dec, 2023'
-		},
-		{
-			id: '1',
-			heading: 'Tech Foundation 2023',
-			subHeading: 'Free University of Berlin',
-			date: '20 Dec, 2023'
-		},
-		{
-			id: '2',
-			heading: 'Engineer Fair 2024',
-			subHeading: 'Philipps University of Marburg',
-			date: '20 Dec, 2023'
-		}
-	];
+	export let data: PageServerData;
+
+	const mapEvent = (event: {
+		id: string
+		name: string
+		projectHSG: string
+		dateFrom: string
+		dateTo: string
+		location: string
+	}) => {
+		return {
+			id: event.id,
+			heading: event.name,
+			subHeading: event.location,
+			date: event.dateFrom
+		};
+	};
+
+	const publishedEvents = data.publishedEvents?.map(mapEvent) || [];
+	const unpublishedEvents = data.unpublishedEvents?.map(mapEvent) || [];
+	const archivedEvents = data.archivedEvents?.map(mapEvent) || [];
 
 	let isDrawerOpen = false;
 	let activeTab = 0;
@@ -61,7 +42,7 @@
 
 	const handleEventRegistration = (id: string) => {
 		if (activeTab !== 1) {
-			goto(`/admin/events/${id}/applies/`);
+			goto(`/admin/events/${id}/registrations/`);
 		} else {
 			isDrawerOpen = true;
 		}
@@ -79,7 +60,7 @@
 		{#if activeTab !== 1}
 			<div>
 				<GradientButton onClick={() => (activeTab = 1)}
-					>{$_('admin-pages.events.publishNewEvents')}</GradientButton
+				>{$_('admin-pages.events.publishNewEvents')}</GradientButton
 				>
 			</div>
 		{/if}
@@ -87,45 +68,14 @@
 	<div class=" mt-12">
 		<Tabs {tabHeadings} {activeTab} {handleTabChange} />
 	</div>
-	<section class=" mt-10 flex justify-between w-full">
-		<SearchInput placeholder={$_('common.search')} />
-		<div>
-			<ButtonIcon
-				onClick={() => (isListView = false)}
-				classes={` mr-1 ${!isListView ? '!text-brand' : ''}`}><GridIcon /></ButtonIcon
-			>
-			<ButtonIcon onClick={() => (isListView = true)} classes={`${isListView ? '!text-brand' : ''}`}
-				><ListIcon /></ButtonIcon
-			>
-		</div>
-	</section>
-	<section class=" mt-6">
-		{#if isListView}
-			<div class="grid grid-cols-1 gap-8">
-				{#each upcomingEvents as { heading, subHeading, date, id }, index (index)}
-					<InfoListItem
-						{heading}
-						{subHeading}
-						{date}
-						onRegisterClick={() => handleEventRegistration(id)}
-						buttonText={activeTab !== 1
-							? $_('admin-pages.events.viewApplies')
-							: $_('common.viewDetails')}
-					/>
-				{/each}
-			</div>
-		{:else}
-			<div class="grid grid-cols-1 sm:grid-cols-1 md:sm:grid-cols-1 lg:sm:grid-cols-2 gap-8">
-				{#each upcomingEvents as { heading, subHeading, date, id }, index (index)}
-					<EventInfoBox
-						{heading}
-						{subHeading}
-						{date}
-						onRegisterClick={() => handleEventRegistration(id)}
-						buttonText={activeTab !== 1 ? 'viewApplies' : 'viewDetails'}
-					/>
-				{/each}
-			</div>{/if}
-	</section>
+	{#if activeTab === 0}
+		<PublishedEventsTab {publishedEvents} {handleEventRegistration} {isListView} />
+	{/if}
+	{#if activeTab === 1}
+		<UnpublishedEventsTab {unpublishedEvents} {handleEventRegistration} {isListView} />
+	{/if}
+	{#if activeTab === 2}
+		<PublishedEventsTab {archivedEvents} {handleEventRegistration} {isListView} />
+	{/if}
 </div>
 <EventDetails bind:isOpen={isDrawerOpen} showActions />

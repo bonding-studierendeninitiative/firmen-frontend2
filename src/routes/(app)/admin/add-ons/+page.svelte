@@ -4,109 +4,34 @@
 	import { AddAddon } from '$lib/@svelte/modules';
 	import PlusIcon from '$lib/@svelte/icons/PlusIcon.svelte';
 	import { fade } from 'svelte/transition';
+	import type { PageServerData } from './$types';
+	import { Helper, Pagination } from 'flowbite-svelte';
+	import { goto } from '$app/navigation';
 
 	const columns = ['addonsName', 'subAddons', 'price', 'saleTag', ''];
 
-	const addonList = [
-		{
-			addon: 'Onlinewerbung-Paket',
-			subAddon: '4',
-			price: '€850',
-			tag: '10%',
-			details: [
-				{
-					addon: 'Onlinewerbung-Paket',
-					price: '€350'
-				},
-				{
-					addon: 'Onlinewerbung-Paket',
-					price: '€200'
-				},
-				{
-					addon: 'Onlinewerbung-Paket',
-					price: '€100'
-				},
-				{
-					addon: 'Onlinewerbung-Paket',
-					price: '€200'
-				}
-			]
-		},
-		{
-			addon: 'Printwerbung-Paket',
-			subAddon: '4',
-			price: '€850',
-			tag: '10%',
-			details: [
-				{
-					addon: 'Printwerbung-Paket',
-					price: '€350'
-				},
-				{
-					addon: 'Printwerbung-Paket',
-					price: '€200'
-				},
-				{
-					addon: 'Printwerbung-Paket',
-					price: '€100'
-				},
-				{
-					addon: 'Printwerbung-Paket',
-					price: '€200'
-				}
-			]
-		},
-		{
-			addon: 'Sonstiges',
-			subAddon: '4',
-			price: '€850',
-			tag: '10%',
-			details: [
-				{
-					addon: 'Sonstiges',
-					price: '€350'
-				},
-				{
-					addon: 'Sonstiges',
-					price: '€200'
-				},
-				{
-					addon: 'Sonstiges',
-					price: '€100'
-				},
-				{
-					addon: 'Sonstiges',
-					price: '€200'
-				}
-			]
-		},
-		{
-			addon: 'Bonding-Tüte',
-			subAddon: '4',
-			price: '€850',
-			tag: '10%',
-			details: [
-				{
-					addon: 'Bonding-Tüte',
-					price: '€350'
-				},
-				{
-					addon: 'Bonding-Tüte',
-					price: '€200'
-				},
-				{
-					addon: 'Bonding-Tüte',
-					price: '€100'
-				},
-				{
-					addon: 'Bonding-Tüte',
-					price: '€200'
-				}
-			]
-		}
-	];
+	export let data: PageServerData;
+	$: addonPackageTemplates = data.addonPackageTemplates;
 	export let isAccordionOpen: boolean = false;
 	export let isDrawerOpen: boolean = false;
+	$: page = data.addonPackageTemplatesPage|| 0;
+	$: totalPages = data.addonPackageTemplatesPageCount || 0;
+	$: pages = new Array(totalPages || 0).fill(0).map((_, index) => ({
+		name: `${index + 1}`,
+		href: `?page=${index}`,
+		active: index === page
+	}));
+
+	const gotoPreviousPage = () => {
+		if (page && page > 0) {
+			goto(`?page=${page - 1}`);
+		}
+	};
+	const gotoNextPage = () => {
+		if (page !== undefined && page < totalPages - 1) {
+			goto(`?page=${page + 1}`);
+		}
+	};
 </script>
 
 <section>
@@ -114,74 +39,86 @@
 		<h1 class=" text-stone-950 text-3xl font-extrabold">{$_('common.addons')}</h1>
 		<div>
 			<GradientButton onClick={() => (isDrawerOpen = true)}
-				>{$_('admin-pages.addons.addAddons')}</GradientButton
+			>{$_('admin-pages.addons.addAddons')}</GradientButton
 			>
 		</div>
 	</div>
 </section>
 
-<section class=" mt-10">
-	<Table totalRecords={9} {columns} classes=" w-[1000px] overflow-x-scroll">
-		{#each addonList as { addon, subAddon, price, tag, details }, index}
-			<tr class={`w-full ${index % 2 !== 0 ? 'bg-gray-50' : 'bg-white'}`}>
-				<td colspan="5">
-					<Accordion>
-						<tr
-							slot="header"
-							on:click={() => (isAccordionOpen = !isAccordionOpen)}
-							class={`w-full ${index % 2 !== 0 ? 'bg-gray-50' : 'bg-white'}`}
-						>
-							<td class=" w-[300px] px-6 py-4 text-grey-900 text-sm">
-								<div class=" flex items-center">
+{#if addonPackageTemplates}
+	<section class=" mt-10 flex flex-col gap-y-4">
+		<Table totalRecords={9} {columns} classes=" w-[1000px] overflow-x-scroll">
+			{#each addonPackageTemplates as { title, description, price, label, addons }, index}
+				<tr class={`w-full ${index % 2 !== 0 ? 'bg-gray-50' : 'bg-white'}`}>
+					<td colspan="5">
+						<Accordion>
+							<tr
+								slot="header"
+								on:click={() => (isAccordionOpen = !isAccordionOpen)}
+								class={`w-full ${index % 2 !== 0 ? 'bg-gray-50' : 'bg-white'}`}
+							>
+								<td class="px-6 py-4 text-grey-900 text-sm">
+									<div class=" flex items-center">
 									<span class="transition group-open:rotate-45 mr-2">
 										<PlusIcon />
 									</span>
-									{addon}
-								</div>
-							</td>
-							<td class="w-[80px] py-4 text-grey-900 text-sm"
+										{title}
+									</div>
+								</td>
+								<td class="py-4 text-grey-900 text-sm"
 								><p class=" p-0 m-o flex items-center justify-center font-extrabold">
-									{subAddon}
+									{description}
 								</p></td
-							>
-							<td class="w-[220px] py-4 text-grey-900 text-sm"
+								>
+								<td class="py-4 text-grey-900 text-sm"
 								><p class=" p-0 m-o flex items-center justify-end font-extrabold">{price}</p></td
-							>
-							<td class="w-[180px] py-4 text-grey-900 text-sm"
-								><p class=" p-0 m-o flex items-center justify-end"><Badge>{tag}</Badge></p></td
-							>
-							<td class="w-[190px] px-6 py-4 text-grey-500 text-sm text-end">
+								>
+								<td class="py-4 text-grey-900 text-sm"
+								>
+									<p class=" p-0 m-o flex items-center justify-end">
+										<Badge>{label}</Badge>
+									</p>
+								</td
+								>
+								<td class="w-[190px] px-6 py-4 text-grey-500 text-sm text-end">
 								<span class=" p-0 m-o flex items-center justify-end"
-									><Link>{$_('common.edit')}</Link></span
+								><Link>{$_('common.edit')}</Link></span
 								></td
-							>
-						</tr>
+								>
+							</tr>
 
-						<table
-							slot="details"
-							in:fade
-							class="p-0 m-0 text-neutral-600 group-open:animate-fadeIn"
-						>
-							{#each details as { addon, price }}
-								<tr on:click={() => (isAccordionOpen = !isAccordionOpen)}>
-									<td class=" w-[300px] !pl-16 py-4 text-grey-900 text-sm">
-										<div class=" flex items-center">
-											{addon}
-										</div>
-									</td>
-									<td class="w-[80px] py-4 text-grey-900 text-sm"
-										><p class=" p-0 m-o flex items-center justify-center"></p></td
-									>
-									<td class="w-[220px] py-4 text-grey-900 text-sm"
-										><p class=" p-0 m-o flex items-center justify-end">{price}</p></td
-									>
-								</tr>
-							{/each}
-						</table>
-					</Accordion>
-				</td>
-			</tr>
-		{/each}
-	</Table>
-</section>
-<AddAddon bind:isOpen={isDrawerOpen} />
+							<table
+								slot="details"
+								in:fade
+								class="p-0 m-0 text-neutral-600 group-open:animate-fadeIn"
+							>
+								{#each addons as { title, price, label, description }}
+									<tr on:click={() => (isAccordionOpen = !isAccordionOpen)}>
+										<td class=" w-[300px] !pl-16 py-4 text-grey-900 text-sm">
+											<div class=" flex items-center">
+												<span>{title}</span>
+											</div>
+										</td>
+										<td class="w-[80px] py-4 text-grey-900 text-sm">
+												<Badge>{label}</Badge>
+										</td>
+										<td class="w-[220px] py-4 text-grey-900 text-sm">
+											<p class=" p-0 m-o flex items-center justify-end">{price}</p>
+										</td>
+									</tr>
+									<tr>
+										<td>
+											<Helper>{description}</Helper>
+										</td>
+									</tr>
+								{/each}
+							</table>
+						</Accordion>
+					</td>
+				</tr>
+			{/each}
+		</Table>
+		<Pagination on:previous={gotoPreviousPage} on:next={gotoNextPage} large {pages} />
+	</section>
+{/if}
+<AddAddon validated={data.form} bind:isOpen={isDrawerOpen} />

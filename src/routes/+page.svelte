@@ -4,6 +4,6 @@
 
 	onMount(() => {
 		// Redirect to another route when the component is mounted
-		goto('/dashboard');
+		goto('/organizations');
 	});
 </script>

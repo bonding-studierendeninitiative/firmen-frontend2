@@ -1,19 +1,30 @@
 <script lang="ts">
-	import Input from '../Input/Input.svelte';
-	export let prefixText: string = '';
-	export let placeholder: string = '';
-	export let pl: string = '24';
-</script>
+	import { ButtonGroup, InputAddon, Input, Label, type SizeType } from 'flowbite-svelte';
 
-<div class="relative">
-	<div
-		class="absolute inset-y-0 start-0 my-2 flex items-center pointer-events-none text-slate-400 border-r border-slate-200 w-20"
-	>
-		<div
-			class=" h-[37px] border border-solid border-gray-300 flex justify-center items-center rounded-l-lg p-4 text-stone-400 bg-stone-50"
-		>
-			{prefixText}
-		</div>
-	</div>
-	<Input {placeholder} classes={`!pl-${pl}`} />
+	export let prefixText: string = '';
+	export let label: string = '';
+	export let name: string = '';
+	export let size: SizeType = 'md';
+	export let required: boolean = false;
+	export let addonClass: string = '';
+	export let value: string = '';
+</script>
+<div>
+	{#if label}
+		<Label class="block mb-1.5 font-medium text-stone-800" for={name}>{label}
+			{#if required}
+				<span class="text-pink-500">*</span>
+			{/if}
+		</Label>
+	{/if}
+	<ButtonGroup {size} class="w-full">
+		<InputAddon class={addonClass}>{prefixText}</InputAddon>
+		<Input
+			on:change={(e) => console.log(e)}
+			id={name}
+			{name}
+			{required}
+			bind:value={value}
+			{...$$restProps} />
+	</ButtonGroup>
 </div>

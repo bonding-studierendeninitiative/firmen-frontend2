@@ -2,8 +2,9 @@
 	import { ADMIN_SIDEBAR_LINKS, USER_SIDEBAR_LINKS, type SidebarLinkTypes } from '$lib/constants';
 	import * as Icons from '$lib/@svelte/icons';
 	import { page } from '$app/stores';
-	import { goto } from '$app/navigation';
 	import { _ } from '@services';
+	import { signOut } from '@auth/sveltekit/client';
+	import { currentOrganization } from '$lib/stores/organizationStore';
 
 	$: activeUrl = $page.url.pathname;
 
@@ -11,14 +12,10 @@
 		return currentRoute.includes(route);
 	};
 	const handleMenuToggler = () => {
-		var sidebar = document.getElementById('sidebar');
+		const sidebar = document.getElementById('sidebar');
 		sidebar?.classList.toggle('hidden');
 		sidebar?.classList.toggle('fixed');
 		sidebar?.classList.toggle('lg:block');
-	};
-
-	const handleLogoutClick = () => {
-		goto('/login-email');
 	};
 
 	const getSidebarData = (): SidebarLinkTypes[] => {
@@ -28,22 +25,18 @@
 	};
 	const getImagePath = (): string => {
 		if ($page.url.pathname?.includes('admin')) {
-			return '../../../sidebar_background.png';
-		} else return '../../sidebar_background.png';
+			return '/sidebar_background.png';
+		} else return '/sidebar_background.png';
+	};
+	const getSidebarLink = ({ route }: { route: string }): string => {
+		if ($page.url.pathname?.includes('admin')) {
+			return route;
+		} else return `/${$currentOrganization?.organizationSlug}${route}`;
 	};
 </script>
 
-<head>
-	<meta charset="UTF-8" />
-	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-	<title>Bonding</title>
-	<link
-		rel="stylesheet"
-		href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta2/css/all.min.css"
-	/>
-</head>
 <div class=" !bg-white lg:flex">
-	<nav class="bg-white border-b border-gray-300 lg:hidden">
+	<nav class="bg-white border-b border-gray-300 lg:hidden"> <!-- Mobile Navbar -->
 		<div class="flex justify-between items-center px-9 py-2">
 			<!-- Ícono de Menú -->
 			<button id="menu-button" class="lg:hidden" on:click={handleMenuToggler}>
@@ -51,7 +44,7 @@
 			</button>
 			<!-- Logo -->
 			<div class="ml-1">
-				<img src="logo.png" alt="logo" class="h-4 w-18" />
+				<img src="/logo.png" alt="logo" class="h-4 w-18" />
 			</div>
 
 			<!-- Ícono de Notificación y Perfil -->
@@ -78,11 +71,14 @@
 			<div>
 				<svelte:component this={Icons['WhiteLogoIcon']} />
 				<div class="!mt-10">
+					<slot />
+				</div>
+				<div class="!mt-5">
 					{#each getSidebarData() as { label, Icon, route } (label)}
 						<a
-							href={route}
+							href={getSidebarLink({route})}
 							aria-label={label}
-							class={`relative px-4 py-3 flex items-center space-x-4 rounded-lg text-white ${checkCurrentPath(route, activeUrl) ? 'bg-brand' : ''}`}
+							class={`relative px-4 py-3 flex items-center space-x-4 rounded-lg text-white ${checkCurrentPath(getSidebarLink({route}), activeUrl) ? 'bg-brand' : ''}`}
 						>
 							<svelte:component this={Icons[Icon]} />
 							<span class="-mr-1 font-medium">{$_(`sidebar.${label}`)}</span>
@@ -91,8 +87,8 @@
 				</div>
 			</div>
 			<button
+				on:click|preventDefault={() => signOut()}
 				class="px-4 py-3 flex items-center space-x-4 rounded-md text-white group"
-				on:click={handleLogoutClick}
 			>
 				<svelte:component this={Icons['LogoutIcon']} />
 				<span>{$_(`sidebar.logout`)}</span>

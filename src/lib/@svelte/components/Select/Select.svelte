@@ -1,48 +1,41 @@
 <script lang="ts">
-	import { SelectDown, SelectUp } from '$lib/@svelte/icons';
-	import Select from 'svelte-select';
-	import { ErrorMessage } from '../ErrorMessage';
+	import { Label, Helper, Select } from 'flowbite-svelte';
 
 	export let errorMessage: string = '';
-	export let placeholder: string = '';
 	export let label: string = '';
+	export let name: string = '';
 	export let value: any = null;
-	export let isMultiple: boolean = false;
+	export let required: boolean = false;
 
-	let items = [
-		{ value: 'one', label: 'One' },
-		{ value: 'two', label: 'Two' },
-		{ value: 'three', label: 'Three' }
+	export let items: {
+		value: string;
+		name: string;
+	}[] = [
+		{ value: 'one', name: 'One' },
+		{ value: 'two', name: 'Two' },
+		{ value: 'three', name: 'Three' }
 	];
-	let listOpen = false;
+	export let handleInput: ((e: any) => void) = () => {
+	};
 </script>
 
 <div class=" w-full">
 	{#if label}
-		<label class=" block mb-1 font-medium marker:text-sm text-stone-800" for={label}>{label}</label>
+		<Label class="block mb-1 font-medium text-stone-800" for={name}>{label}
+			{#if required}
+				<span class="text-pink-500">*</span>
+			{/if}
+		</Label>
 	{/if}
 	<Select
+		on:change={handleInput}
 		{items}
-		showChevron
-		bind:listOpen
-		inputStyles=" padding:0px"
+		id={name}
+		name={name}
 		bind:value
-		{placeholder}
+		{required}
 		class=" placeholder-red-800"
-		containerStyles="box-shadow: 0px 1.5px 4px -1px rgba(0, 0, 0, 0.08);"
-		--height="38px"
-		multiple={isMultiple}
-	>
-		<!-- <div slot="item" let:item let:index>
-			{index}: {item.label}
-		</div> -->
-		<div slot="chevron-icon" class=" text-stone-400">
-			{#if listOpen}
-				<SelectUp />
-			{:else}
-				<SelectDown />
-			{/if}
-		</div>
-	</Select>
-	<ErrorMessage message={errorMessage} />
+		{...$$restProps}
+	/>
+	<Helper class="text-red-500">{errorMessage}</Helper>
 </div>

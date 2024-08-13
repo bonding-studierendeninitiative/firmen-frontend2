@@ -68,7 +68,7 @@
 		<div class="grid grid-cols-1 sm:grid-cols-4 gap-4 py-6 border-b-1 border-slate-200">
 			<div class="col-span-1 text-stone-800 text-sm font-extrabold">Linkedin</div>
 			<div class="col-span-3">
-				<InputWithPrefix prefixText="https://www.linkedin.com/" placeholder="Linkedin" pl="60" />
+				<InputWithPrefix prefixText="https://www.linkedin.com/" placeholder="Linkedin" />
 			</div>
 		</div>
 	</section>

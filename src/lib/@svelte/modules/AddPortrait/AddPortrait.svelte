@@ -1,25 +1,25 @@
 <script lang="ts">
 	import { _ } from '@services';
-	import { Drawer, Input, Select, Badge, Button } from '$lib/@svelte/components';
-	import Checkbox from '$lib/@svelte/components/Checkbox/Checkbox.svelte';
-	import GradientButton from '$lib/@svelte/components/GradientButton/GradientButton.svelte';
-	import IconInput from '$lib/@svelte/components/IconInput/IconInput.svelte';
-	import Textarea from '$lib/@svelte/components/Textarea/Textarea.svelte';
-	import { CloudUploadIcon, DropzoneIcon } from '$lib/@svelte/icons';
+	import {
+		Drawer,
+		Input,
+		InputWithPrefix,
+		Button,
+		Textarea,
+		MultiSelect,
+		GradientButton, TextField
+	} from '$lib/@svelte/components';
+	import { CloudUploadIcon } from '$lib/@svelte/icons';
 	import Dropzone from 'svelte-file-dropzone';
-	import toast from 'svelte-french-toast';
+	import { superForm, type SuperValidated, type Infer } from 'sveltekit-superforms';
+	import { page } from '$app/stores';
+	import type { CreatePortraitTemplateRequest } from '$lib/services/portraitTemplates';
+	import { toast } from 'svelte-french-toast';
+	import { invalidate } from '$app/navigation';
+	import { faker } from '@faker-js/faker';
+	import { disciplines } from '@constant';
 
 	export let isOpen: boolean = false;
-	export let showListings: boolean;
-
-	const disciplines = [
-		'Bauingenieurwesen',
-		'Elektrotechnik',
-		'Informatik',
-		'Kommunikationswissenschaften',
-		'Maschinenbau',
-		'Technische Informatik'
-	];
 
 	let currentStep = 1;
 	let files: any = {
@@ -27,242 +27,264 @@
 		rejected: []
 	};
 
-	$: isOpen, (currentStep = 1);
+	$: isOpen ? (currentStep = 1) : null;
 
 	function handleFilesSelect(e: any) {
 		const { acceptedFiles, fileRejections } = e.detail;
 		files.accepted = [...files.accepted, ...acceptedFiles];
 		files.rejected = [...files.rejected, ...fileRejections];
 	}
-	const handleSavePortrait = () => {
-		toast.success($_('user-pages.portraits.portraitAddedSuccessMessage'));
-		isOpen = false;
-		showListings = true;
-	};
+
+	export let validated: SuperValidated<Infer<CreatePortraitTemplateRequest>>;
+	const superform = superForm(validated, {
+		onUpdate: async ({ result }) => {
+			if (result.status === 200) {
+				isOpen = false;
+				await invalidate('app:catalogue-data-portraits');
+				toast.success($_('user-pages.portraits.portraitAddedSuccessMessage'));
+			} else {
+				console.log(result);
+			}
+		}
+	});
+	const { form, constraints, enhance, errors } = superform;
 </script>
 
 <Drawer
 	bind:isOpen
 	heading={$_('user-pages.portraits.portrait')}
 	handleSubmit={() => {
-		isOpen = false;
+		console.log("Handle submit was called");
 	}}
 	hasActions={false}
 >
-	{#if currentStep === 1}
-		<div class="grid grid-cols-1 gap-y-4 w-full">
-			<Input label={$_('user-pages.portraits.nameOfPortrait')} />
-			<Input label={$_('user-pages.portraits.comments')} />
-			<Select
-				label={$_('user-pages.portraits.branch')}
-				placeholder={$_('user-pages.portraits.selectAnyBranch')}
-			/>
-			<Input label={$_('user-pages.portraits.company')} />
-			<Input label={$_('user-pages.portraits.companyOrganizationChart')} />
-			<Textarea label={$_('user-pages.portraits.products')} />
-			<div>
-				<label class="block mb-1.5 font-medium marker:text-sm text-stone-800" for="Locations"
-					>{$_('user-pages.portraits.locations')}</label
-				>
-				<div
-					id="Locations"
-					class=" grid grid-cols-3 gap-x-4 border border-stone-200 py-2 px-3 rounded-lg mb-2"
-				>
-					<div class=" border-r border-stone-200">
-						<Checkbox label={$_('user-pages.portraits.all')} />
-					</div>
-					<div class=" border-r border-stone-200">
-						<Checkbox label={$_('user-pages.portraits.inland')} />
-					</div>
-					<div class=" border-r border-stone-200">
-						<Checkbox label={$_('user-pages.portraits.international')} />
-					</div>
-				</div>
-				<Select placeholder={$_('user-pages.portraits.cities')} />
-			</div>
-			<hr class=" border border-stone-200 my-2" />
+	<Button onClick={() => {
+		form.set({
+		industry: disciplines[Math.floor(Math.random()*disciplines.length)].value,
+		title: faker.lorem.sentence(),
+		products: faker.lorem.sentence(),
+		displayName: faker.lorem.sentence(),
+		comment: faker.lorem.sentence(),
+		revenue_germany: faker.number.int({ min: 0, max: 500000 }).toString(),
+		revenue_europe: faker.number.int({ min: 0, max: 1000000 }).toString(),
+		revenue_worldwide: faker.number.int({ min: 0, max: 2000000 }).toString(),
+		contactAddress: faker.location.streetAddress(),
+		contactPersonStudents: faker.person.fullName(),
+		contactPersonGraduates: faker.person.fullName(),
+		locations_worldwide: faker.number.int({ min: 0, max: 10000 }).toString(),
+		locations_europe: faker.number.int({ min: 0, max: 10000 }).toString(),
+		locations_germany: faker.number.int({ min: 0, max: 10000 }).toString(),
+		employees_worldwide: faker.number.int({ min: 0, max: 10000 }).toString(),
+		employees_europe: faker.number.int({ min: 0, max: 10000 }).toString(),
+		employees_germany: faker.number.int({ min: 0, max: 10000 }).toString(),
+		website: faker.internet.domainName(),
+		additionalInformation: faker.lorem.sentence(),
+		offersThesis: faker.datatype.boolean(),
+		entryOptions: faker.lorem.sentence(),
+		desiredDisciplines: faker.lorem.sentence(),
+		graduates: faker.number.int({ min: 0, max: 10000 }).toString(),
+		offersOutOfCountryWork: faker.datatype.boolean(),
+		offersInternships: faker.datatype.boolean(),
+		})
+	}}>Generate random data
+	</Button>
+	<form action="?/createPortrait" method="post" use:enhance>
+		{#if currentStep === 1}
+			<div class="grid grid-cols-1 gap-y-4 w-full">
+				<Input name="displayName" hintText={$_('user-pages.portraits.nameOfPortrait')}
+							 label={$_('user-pages.portraits.nameOfPortrait')} bind:value={$form.displayName}
+							 {...$constraints.displayName} />
 
-			<div>
-				<label class="block mb-1.5 font-medium marker:text-sm text-stone-800" for="salesVolume"
-					>{$_('user-pages.portraits.salesVolume')}</label
-				>
-				<div
-					id="salesVolume"
-					class=" grid grid-cols-3 gap-x-4 border border-stone-200 py-2 px-3 rounded-lg mb-2"
-				>
-					<div class=" border-r border-stone-200">
-						<Checkbox label={$_('user-pages.portraits.all')} />
-					</div>
-					<div class=" border-r border-stone-200">
-						<Checkbox label={$_('user-pages.portraits.inland')} />
-					</div>
-					<div class=" border-r border-stone-200">
-						<Checkbox label={$_('user-pages.portraits.international')} />
-					</div>
-				</div>
-				<Select placeholder={$_('user-pages.portraits.cities')} />
-			</div>
-			<hr class=" border border-stone-200 my-2" />
-			<IconInput iconType="startIcon" label={$_('user-pages.portraits.numberOfEmployees')}>
-				<span slot="icon-start">{$_('user-pages.portraits.inland')}</span>
-			</IconInput>
-			<IconInput iconType="startIcon">
-				<span slot="icon-start">{$_('user-pages.portraits.eu')}</span>
-			</IconInput>
-			<IconInput iconType="startIcon">
-				<span slot="icon-start">{$_('user-pages.portraits.global')}</span>
-			</IconInput>
-			<Input label={$_('user-pages.portraits.universityGraduates')} />
-			<Input label={$_('user-pages.portraits.desiredDisciplines')} />
-			<div class=" flex items-center flex-wrap gap-1">
-				{#each disciplines as discipline (discipline)}
-					<div class=" mr-2">
-						<Badge isClearable>{discipline}</Badge>
-					</div>
-				{/each}
-			</div>
-			<Textarea label={$_('user-pages.portraits.entryOpportunities')} />
-			<div>
-				<label class="block mb-1.5 font-medium marker:text-sm text-stone-800" for="Locations"
-					>{$_('user-pages.portraits.internships')}</label
-				>
-				<div
-					id="Locations"
-					class=" grid grid-cols-2 gap-x-4 border border-stone-200 px-3 rounded-lg mb-2"
-				>
-					<div class=" border-r border-stone-200">
-						<Checkbox label={$_('common.yes')} labelClasses="py-2" />
-					</div>
-					<div><Checkbox label={$_('common.no')} labelClasses="py-2" /></div>
-				</div>
-			</div>
-			<div>
-				<label class="block mb-1.5 font-medium marker:text-sm text-stone-800" for="study"
-					>{$_('user-pages.portraits.studyDiploma')}
-				</label>
-				<div
-					id="study"
-					class=" grid grid-cols-2 gap-x-4 border border-stone-200 px-3 rounded-lg mb-2"
-				>
-					<div class=" border-r border-stone-200">
-						<Checkbox label={$_('common.yes')} labelClasses="py-2" />
-					</div>
-					<div><Checkbox label={$_('common.no')} labelClasses="py-2" /></div>
-				</div>
-			</div>
-			<div>
-				<label class="block mb-1.5 font-medium marker:text-sm text-stone-800" for="Locations"
-					>{$_('user-pages.portraits.foreignAssignment')}</label
-				>
-				<div
-					id="Locations"
-					class=" grid grid-cols-2 gap-x-4 border border-stone-200 px-3 rounded-lg mb-2"
-				>
-					<div class=" border-r border-stone-200">
-						<Checkbox label={$_('common.yes')} labelClasses="py-2" />
-					</div>
-					<div><Checkbox label={$_('common.no')} labelClasses="py-2" /></div>
-				</div>
-			</div>
-			<hr class=" border border-stone-200 my-2" />
-			<div class=" grid grid-cols-1 gap-2">
-				<Input
-					label={$_('user-pages.portraits.contactAddress')}
-					placeholder={$_('user-pages.portraits.companyAddress')}
+				<TextField {superform} field="graduates" label={$_('user-pages.portraits.graduates')} />
+
+				<Textarea name="comment" label={$_('user-pages.portraits.comments')} bind:value={$form.comment}
+									{...$constraints.comment} />
+				<hr />
+				<Input name="title" label={$_('user-pages.portraits.title')} bind:value={$form.title}
+							 {...$constraints.title} />
+				<MultiSelect
+					name="industry"
+					items={disciplines}
+					label={$_('user-pages.portraits.branch')}
+					placeholder={$_('user-pages.portraits.selectAnyBranch')}
+					bind:value={$form.industry}
+					errorMessage={$errors.industry?.join('\n')}
+					{...$constraints.industry}
 				/>
-				<Input placeholder={$_('user-pages.portraits.branch')} />
-				<div class=" grid grid-cols-2 gap-x-2">
-					<Input placeholder={$_('user-pages.portraits.city')} />
-					<Input placeholder={$_('user-pages.portraits.zipCode')} />
+				<Textarea name="products" label={$_('user-pages.portraits.products')} bind:value={$form.products}
+									{...$constraints.products} />
+
+
+				<InputWithPrefix
+					size="sm"
+					addonClass="min-w-14"
+					name="revenue_germany"
+					bind:value={$form.revenue_germany}
+					{...$constraints.revenue_germany}
+					label={$_('user-pages.portraits.revenue')}
+					prefixText={$_('user-pages.portraits.inland')} />
+				<InputWithPrefix
+					size="sm"
+					addonClass="min-w-14"
+					name="revenue_europe" bind:value={$form.revenue_europe} {...$constraints.revenue_europe}
+					prefixText={$_('user-pages.portraits.eu')} />
+				<InputWithPrefix
+					size="sm"
+					addonClass="min-w-14"
+					name="revenue_worldwide" bind:value={$form.revenue_worldwide} {...$constraints.revenue_worldwide}
+					prefixText={$_('user-pages.portraits.global')} />
+
+
+				<InputWithPrefix
+					size="sm"
+					addonClass="min-w-14"
+					name="revenue_germany"
+					bind:value={$form.locations_germany}
+					{...$constraints.locations_germany}
+					label={$_('user-pages.portraits.locations')}
+					prefixText={$_('user-pages.portraits.inland')} />
+				<InputWithPrefix
+					size="sm"
+					addonClass="min-w-14"
+					name="locations_europe" bind:value={$form.locations_europe} {...$constraints.locations_europe}
+					prefixText={$_('user-pages.portraits.eu')} />
+				<InputWithPrefix
+					size="sm"
+					addonClass="min-w-14"
+					name="locations_worldwide" bind:value={$form.locations_worldwide} {...$constraints.locations_worldwide}
+					prefixText={$_('user-pages.portraits.global')} />
+				<InputWithPrefix
+					size="sm"
+					addonClass="min-w-14"
+					prefixText={$_('user-pages.portraits.inland')}
+					name="employees_germany"
+					bind:value={$form.employees_germany}
+					{...$constraints.employees_germany}
+					label={$_('user-pages.portraits.numberOfEmployees')} />
+				<InputWithPrefix
+					size="sm"
+					addonClass="min-w-14"
+					prefixText={$_('user-pages.portraits.eu')}
+					name="employees_europe" bind:value={$form.employees_europe} {...$constraints.employees_europe}
+				/>
+				<InputWithPrefix
+					size="sm"
+					addonClass="min-w-14"
+					prefixText={$_('user-pages.portraits.global')}
+					name="employees_worldwide" bind:value={$form.employees_worldwide} {...$constraints.employees_worldwide} />
+				<hr />
+				<div class=" grid grid-cols-1 gap-2">
+					<Input
+						name="contactAddress"
+						bind:value={$form.contactAddress}
+						{...$constraints.contactAddress}
+						label={$_('user-pages.portraits.contactAddress')}
+						placeholder={$_('user-pages.portraits.companyAddress')}
+					/>
+					<Input placeholder={$_('user-pages.portraits.branch')} />
+					<div class=" grid grid-cols-2 gap-x-2">
+						<Input placeholder={$_('user-pages.portraits.city')} />
+						<Input placeholder={$_('user-pages.portraits.zipCode')} />
+					</div>
 				</div>
-			</div>
-			<div class=" grid grid-cols-1 gap-2">
-				<Input
-					label={$_('user-pages.portraits.contactPersonStudents')}
+				<Textarea
+					name="contactPersonStudents"
+					label={$_('user-pages.portraits.contactPerson')}
 					placeholder={$_('user-pages.portraits.name')}
+					bind:value={$form.contactPersonStudents}
+					{...$constraints.contactPersonStudents}
 				/>
-				<Input placeholder={$_('user-pages.portraits.phoneNumber')} />
-				<Input placeholder={$_('user-pages.portraits.emailAddress')} />
-			</div>
-			<div class=" grid grid-cols-1 gap-2">
-				<Input
+				<Textarea
+					name="contactPersonGraduates"
+					bind:value={$form.contactPersonGraduates}
+					{...$constraints.contactPersonGraduates}
 					label={$_('user-pages.portraits.contactPerson')}
 					placeholder={$_('user-pages.portraits.name')}
 				/>
-				<Input placeholder={$_('user-pages.portraits.phoneNumber')} />
-				<Input placeholder={$_('user-pages.portraits.emailAddress')} />
-			</div>
-			<Input label={$_('user-pages.portraits.miscellaneous')} />
-			<footer class=" mt-10 flex justify-between items-center mb-4">
-				<p class=" text-sm text-stone-500">{$_('user-pages.portraits.lastEdited')}: 27 Dec 2023</p>
-				<div class=" flex items-center">
-					<Button
-						classes="mr-2"
-						onClick={() => {
+				<InputWithPrefix
+					prefixText="https://"
+					name="website"
+					bind:value={$form.website}
+					{...$constraints.website}
+					label={$_('user-pages.portraits.website')}
+				/>
+				<Textarea name="additionalInformation" bind:value={$form.additionalInformation}
+									{...$constraints.additionalInformation}
+									label={$_('user-pages.portraits.additionalInformation')} />
+
+
+				<footer class=" mt-10 flex justify-between items-center mb-4">
+					<p class=" text-sm text-stone-500">{$_('user-pages.portraits.lastEdited')}: 27 Dec 2023</p>
+					<div class=" flex items-center">
+						<Button
+							classes="mr-2"
+							onClick={() => {
 							isOpen = false;
 						}}
 						>{$_('common.cancel')}
-					</Button>
-					<GradientButton onClick={() => (currentStep = 2)}>{$_('common.save')}</GradientButton>
-				</div>
-			</footer>
-		</div>
-	{:else}
-		<div class="w-full h-full flex flex-col justify-between">
-			<div>
+						</Button>
+						<GradientButton type="submit">{$_('common.save')}</GradientButton>
+					</div>
+				</footer>
+			</div>
+		{:else}
+			<div class="w-full h-full flex flex-col justify-between">
 				<div>
-					<label class="block mb-3 font-medium marker:text-sm text-stone-800" for="Locations"
+					<div>
+						<label class="block mb-3 font-medium marker:text-sm text-stone-800" for="Locations"
 						>{$_('user-pages.portraits.uploadPDF')}</label
-					>
-					<Dropzone
-						disableDefaultStyles
-						containerClasses=" border border-dashed border-gray-300 py-4 bg-gray-50"
-						on:drop={handleFilesSelect}
-					>
-						<div class="  flex justify-center items-center flex-col">
-							<CloudUploadIcon />
-							<p class="mt-5 text-sm text-gray-500 font-normal">
-								<span class=" text-brand">{$_('user-pages.portraits.clickToUpload')}</span>
-								{$_('user-pages.portraits.orDragAndDrop')}
-							</p>
-							<p class="text-gray-500 text-sm font-normal">
-								{$_('user-pages.portraits.fileInstructions')}
-							</p>
-						</div></Dropzone
-					>
-				</div>
-				<div class="w-full">
-					<label class="block my-3 font-medium marker:text-sm text-stone-800" for="Locations"
-						>{$_('user-pages.portraits.companyLogo')}</label
-					>
-					<div class=" flex">
-						<img src="user.png" alt="User" />
-						<div class=" flex flex-col ml-4">
-							<div>
-								<Button onClick={() => undefined} classes="mb-3 !py-1.5"
-									>{$_('common.upload')}</Button
-								>
+						>
+						<Dropzone
+							disableDefaultStyles
+							containerClasses=" border border-dashed border-gray-300 py-4 bg-gray-50"
+							on:drop={handleFilesSelect}
+						>
+							<div class="  flex justify-center items-center flex-col">
+								<CloudUploadIcon />
+								<p class="mt-5 text-sm text-gray-500 font-normal">
+									<span class=" text-brand">{$_('user-pages.portraits.clickToUpload')}</span>
+									{$_('user-pages.portraits.orDragAndDrop')}
+								</p>
+								<p class="text-gray-500 text-sm font-normal">
+									{$_('user-pages.portraits.fileInstructions')}
+								</p>
 							</div>
-							<p class="text-gray-500 text-sm font-normal">
-								{$_('user-pages.portraits.logoInstructions')}
-							</p>
+						</Dropzone
+						>
+					</div>
+					<div class="w-full">
+						<label class="block my-3 font-medium marker:text-sm text-stone-800" for="Locations"
+						>{$_('user-pages.portraits.companyLogo')}</label
+						>
+						<div class=" flex">
+							<img src="user.png" alt="User" />
+							<div class=" flex flex-col ml-4">
+								<div>
+									<Button onClick={() => undefined} classes="mb-3 !py-1.5"
+									>{$_('common.upload')}</Button
+									>
+								</div>
+								<p class="text-gray-500 text-sm font-normal">
+									{$_('user-pages.portraits.logoInstructions')}
+								</p>
+							</div>
 						</div>
 					</div>
 				</div>
-			</div>
-			<footer class=" mt-10 flex justify-between items-center mb-4">
-				<p class=" text-sm text-stone-500">{$_('user-pages.portraits.lastEdited')}: 27 Dec 2023</p>
-				<div class=" flex items-center">
-					<Button
-						classes="mr-2"
-						onClick={() => {
+				<footer class=" mt-10 flex justify-between items-center mb-4">
+					<p class=" text-sm text-stone-500">{$_('user-pages.portraits.lastEdited')}: 27 Dec 2023</p>
+					<div class=" flex items-center">
+						<Button
+							classes="mr-2"
+							onClick={() => {
 							isOpen = false;
 						}}
 						>{$_('common.cancel')}
-					</Button>
-					<GradientButton onClick={handleSavePortrait}>{$_('common.save')}</GradientButton>
-				</div>
-			</footer>
-		</div>
-	{/if}
+						</Button>
+						<GradientButton type="submit" form={$page.form}>{$_('common.save')}</GradientButton>
+					</div>
+				</footer>
+			</div>
+		{/if}
+	</form>
 </Drawer>

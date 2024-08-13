@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { _ } from '@services';
 
-	export let columns: string[];
+	export let columns: any[];
 	export let totalRecords: number | undefined;
 	export let classes: string = '';
 </script>

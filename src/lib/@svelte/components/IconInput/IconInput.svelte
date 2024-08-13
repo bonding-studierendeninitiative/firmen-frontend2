@@ -1,7 +1,10 @@
 <script lang="ts">
 	import { ErrorMessage } from '../ErrorMessage';
+	import { clsx } from 'clsx';
+	import { cn } from '@/utils';
 
 	type HandleInputType = undefined | { (e: any): void };
+	export let required: boolean = false;
 	export let placeholder: string = '';
 	export let label: string = '';
 	export let type: 'number' | 'text' | 'email' | 'password' = 'text';
@@ -11,11 +14,17 @@
 	export let value = '';
 	export let handleInput: HandleInputType = undefined;
 	export let ref: any = null;
+
+	export let name: string = '';
 </script>
 
-<div>
+<div class={cn("flex-grow", $$restProps.disabled && "opacity-50")}>
 	{#if label}
-		<label class="block mb-1.5 font-medium marker:text-sm text-stone-800" for={label}>{label}</label
+		<label class="block mb-1.5 font-medium marker:text-sm text-stone-800" for={label}>{label}
+			{#if required}
+				<span class="text-pink-500">*</span>
+			{/if}
+		</label
 		>
 	{/if}
 	<div class=" w-full">
@@ -36,18 +45,22 @@
 
 			<input
 				id={label}
+				{name}
 				{placeholder}
 				{type}
 				{value}
+				{required}
 				bind:this={ref}
 				on:input={(e) => {
-					// @ts-ignore as value will always be present on input element
+					// @ts-expect-error as value will always be present on input element
 					value = e?.target?.value;
 					handleInput?.(e);
 				}}
-				class={'rounded-lg overflow-visible w-full border border-solid border-gray-300 bg-white shadow-custom flex p-2 pl-3 items-center gap-2 focus:outline-none  text-stone-800 text-sm font-normal '.concat(
+				class={cn(
+					'rounded-lg overflow-visible w-full border border-solid border-gray-300 bg-white shadow-custom flex p-2 pl-3 items-center gap-2 focus:outline-none  text-stone-800 text-sm font-normal ',
 					classes
 				)}
+				{...$$restProps}
 			/>
 		</div>
 		<ErrorMessage message={errorMessage} />

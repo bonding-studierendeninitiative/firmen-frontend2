@@ -1,7 +1,6 @@
 <script lang="ts">
-	import CrossIcon from '$lib/@svelte/icons/CrossIcon.svelte';
 	import { cubicOut } from 'svelte/easing';
-	import { fade, fly } from 'svelte/transition';
+	import { fade } from 'svelte/transition';
 
 	export let isOpen: boolean;
 
