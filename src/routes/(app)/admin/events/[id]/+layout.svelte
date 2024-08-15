@@ -1,9 +1,10 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { CalenderIcon, LocationIcon, ReturnIcon } from '@/@svelte/icons';
-	import { LinkTabs } from '@/@svelte/components';
+	import { LinkTabs, Spinner } from '@/@svelte/components';
 	import type { LayoutServerData } from './$types';
-	import { page } from '$app/stores';
+	import { page, navigating } from '$app/stores';
+	import { fade } from 'svelte/transition';
 
 	$: activeUrl = $page.url.pathname;
 
@@ -13,6 +14,11 @@
 		href: `/admin/events/${data.event?.id}/registrations`,
 		name: 'registrations'
 	}, { name: 'buy-options', href: `/admin/events/${data.event?.id}/buy-options` }];
+
+	function getEventInfo(url?: URL) {
+		const match = url?.pathname.match(/\/events\/([^/]+)\/([^/]+)/);
+		return match ? { eventId: match[1], page: match[2] } : null;
+	}
 </script>
 
 <div>
@@ -28,15 +34,14 @@
 			<div>
 				<h4 class=" text-xl font-extrabold text-stone-800">{data.event?.name}</h4>
 				<div class=" flex mt-2">
-					<span class=" flex items-center mr-2">
-						<!-- svelte-ignore missing-declaration -->
+					<div class=" flex items-center mr-2">
 						<CalenderIcon />
 						<p class=" ml-2 text-sm text-stone-800 font-medium">{data.event?.dateFrom}</p>
-					</span>
-					<span class=" flex items-center">
+					</div>
+					<div class=" flex items-center">
 						<LocationIcon />
 						<p class=" ml-2 text-sm text-stone-800 font-medium">{data.event?.location}</p>
-					</span>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -45,6 +50,21 @@
 	<div class=" mt-12">
 		<LinkTabs {tabs} {activeTab} />
 	</div>
-
-	<slot />
+	{#if $navigating }
+		{@const fromInfo = getEventInfo($navigating?.from?.url)}
+		{@const toInfo = getEventInfo($navigating?.to?.url)}
+		{#if fromInfo && toInfo && fromInfo.eventId === toInfo.eventId && fromInfo.page !== toInfo.page}
+			<div class="grid justify-center items-center h-full text-orange-400">
+				<Spinner color="red" />
+			</div>
+		{:else}
+			<div in:fade>
+				<slot />
+			</div>
+		{/if}
+	{:else}
+		<div in:fade>
+			<slot />
+		</div>
+	{/if}
 </div>

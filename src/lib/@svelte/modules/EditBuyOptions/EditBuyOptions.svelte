@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { _ } from '@services/i18n';
-	import { superForm, type SuperValidated } from 'sveltekit-superforms';
-	import { Checkbox, GradientButton, Link } from '$lib/@svelte/components';
-	import { type UpdateBuyOptionsRequest, ValueType } from '@schema';
+	import { type Infer, superForm, type SuperValidated } from 'sveltekit-superforms';
+	import { Checkbox, Link } from '$lib/@svelte/components';
+	import { type UpdateBuyOptionRequest, ValueType } from '@schema';
 	import { TrashIcon } from '$lib/@svelte/icons';
 	import { Button } from '@/components/ui/button';
 	import * as DropdownMenu from '@/components/ui/dropdown-menu';
@@ -13,10 +13,12 @@
 	import { Textarea } from '@/components/ui/textarea';
 	import NumericInput from '@/@svelte/components/NumericInput/NumericInput.svelte';
 	import { toast } from 'svelte-french-toast';
+	import * as Table from '@/components/ui/table';
+	import { buyOptionFormTouched } from '@/stores/buyOptionStore';
 
-	export let form: SuperValidated<UpdateBuyOptionsRequest>;
+	export let form: SuperValidated<Infer<UpdateBuyOptionRequest>>;
 
-	const superform = superForm<UpdateBuyOptionsRequest>(form,
+	const superform = superForm<Infer<UpdateBuyOptionRequest>>(form,
 		{
 			dataType: 'json',
 			invalidateAll: 'force',
@@ -28,99 +30,49 @@
 				}
 			}
 		});
-	const { form: formData, enhance } = superform;
+	const { form: formData, enhance, isTainted, tainted } = superform;
 
-	const addBuyOption = (e: Event) => {
+	$: $buyOptionFormTouched = isTainted($tainted)
+
+	const removePackage = (e: Event, packageIndex: number) => {
+		e.preventDefault();
+		formData.update((oldForm) => ({
+				...oldForm,
+				packages: [
+					...oldForm.packages.slice(0, packageIndex),
+					...oldForm.packages.slice(packageIndex + 1)
+				].map((_, index) => ({ ...oldForm.packages[index], order: index }))
+			}));
+	};
+	const addPackage = (e: Event) => {
 		e.preventDefault();
 		formData.update((oldForm) => ({
 			...oldForm,
-			buyOptions: [
-				...oldForm.buyOptions,
-				{
-					name: '',
-					packages: [{
-						name: '',
-						price: 0,
-						order: 0,
-						benefits: [
-							{
-								numericValue: null,
-								booleanValue: null,
-								stringValue: null
-							}
-						]
-					}],
-					services: [{
-						name: '',
-						order: 0,
-						description: '',
-						valueType: ValueType.String
-					}]
-				}
-			]
+			packages: [...oldForm.packages, {
+				name: '',
+				description: '',
+				benefits: new Array(oldForm.services.length).fill({
+					numericValue: null,
+					booleanValue: null,
+					stringValue: null
+				}),
+				price: 0,
+				order: oldForm.packages.length
+			}]
 		}));
 	};
-	const removePackage = (e: Event, buyOptionIndex: number, packageIndex: number) => {
+	const addService = (e: Event) => {
 		e.preventDefault();
 		formData.update((oldForm) => {
-			const oldBuyOptions = [...oldForm.buyOptions];
-
-			oldBuyOptions[buyOptionIndex] = {
-				...oldBuyOptions[buyOptionIndex],
-				packages: [
-					...oldBuyOptions[buyOptionIndex].packages.slice(0, packageIndex),
-					...oldBuyOptions[buyOptionIndex].packages.slice(packageIndex + 1)
-				].map((_, index) => ({ ...oldBuyOptions[buyOptionIndex].packages[index], order: index }))
-			};
-
-			return ({
+			return {
 				...oldForm,
-				buyOptions: [...oldBuyOptions]
-			});
-		});
-	};
-	const addPackage = (e: Event, buyOptionIndex: number) => {
-		e.preventDefault();
-		formData.update((oldForm) => {
-			const oldBuyOptions = [...oldForm.buyOptions];
-
-			oldBuyOptions[buyOptionIndex] = {
-				...oldBuyOptions[buyOptionIndex],
-				packages: [...oldBuyOptions[buyOptionIndex].packages, {
+				services: [...oldForm.services, {
 					name: '',
-					price: 0,
-					order: oldBuyOptions[buyOptionIndex].packages.length,
-					benefits: new Array(oldBuyOptions[buyOptionIndex].services.length).fill({
-						numericValue: null,
-						booleanValue: null,
-						stringValue: null
-					})
-				}]
-			};
-
-			return ({
-				...oldForm,
-				buyOptions: [...oldBuyOptions]
-			});
-		});
-	};
-	const addService = (e: Event, buyOptionIndex: number) => {
-		e.preventDefault();
-		formData.update((oldForm) => {
-			const oldBuyOptions = [...oldForm.buyOptions];
-
-			oldBuyOptions[buyOptionIndex] = {
-				...oldBuyOptions[buyOptionIndex],
-				services: [
-					...oldBuyOptions[buyOptionIndex].services,
-					{
-						name: '',
-						description: '',
-						order: oldBuyOptions[buyOptionIndex].services.length,
-						valueType: ValueType.String
-					}
-				],
-				packages: oldBuyOptions[buyOptionIndex].packages.map((oldPackage) => ({
+					description: '',
+					valueType: ValueType.String,
+					order: oldForm.services.length
+				}],
+				packages: oldForm.packages.map((oldPackage) => ({
 					...oldPackage,
 					benefits: [
 						...oldPackage.benefits,
@@ -132,199 +84,184 @@
 					]
 				}))
 			};
-
-			return ({
-				...oldForm,
-				buyOptions: [...oldBuyOptions]
-			});
 		});
 	};
 </script>
 
-<form class="flex flex-col gap-6 justify-center" action="?/updateBuyOption" method="post" use:enhance>
-	{#if $formData.buyOptions }
-		{#each $formData.buyOptions as _, index}
-			<div class={' min-w-full overflow-x-scroll rounded-lg shadow-xs border border-stone-200 '}>
-				<div class="min-w-full overflow-x-auto">
-					<table class="min-w-full whitespace-no-wrap">
-						<thead>
-						<tr class="tracking-wide text-center uppercase font-semibold text-xs text-gray-500 bg-gray-50">
-							<th class="border-b" colspan="2">Buy Option</th>
-							<th class="py-1 border-b border-s" colspan="10">Packages</th>
-						</tr>
-						<tr class=" tracking-wide text-left text-gray-500 border-b bg-gray-50">
-							<th colspan="2" class="p-4 border-r">
-								<Field form={superform} name="buyOptions[${index}].name">
+<form id="edit-buy-option-form" class="flex flex-col gap-6 justify-center" action="?/updateBuyOption" method="post" use:enhance>
+	<div class={' min-w-full overflow-x-scroll rounded-lg shadow-xs border border-stone-200 '}>
+		<div class="min-w-full overflow-x-auto">
+			<Table.Root class="min-w-full whitespace-no-wrap">
+				<Table.Header>
+				<Table.Row class="bg-gray-50">
+					<Table.Head class="text-center tracking-wide uppercase font-semibold text-xs text-gray-500" colspan={2}>Buy Option</Table.Head>
+					<Table.Head class="border-s text-center tracking-wide uppercase font-semibold text-xs text-gray-500" colspan={10}>Packages</Table.Head>
+				</Table.Row>
+				<Table.Row class=" tracking-wide text-left text-gray-500 border-b bg-gray-50">
+					<Table.Head colspan={2} class="p-4 border-r">
+						<Field form={superform} name="name">
+							<Control let:attrs>
+								<Label>Buy option name</Label>
+								<Input {...attrs} bind:value={$formData.name} />
+							</Control>
+							<Description />
+							<FieldErrors />
+						</Field>
+					</Table.Head>
+					{#each $formData.packages as _, packageIndex}
+						<Table.Head class="px-4 py-3 text-sm font-normal border-r">
+							<Field form={superform} name={`packages[${packageIndex}].name`}>
+								<Control let:attrs>
+									<Label>Package name</Label>
+									<Input {...attrs} bind:value={$formData.packages[packageIndex].name} />
+								</Control>
+								<Description />
+								<FieldErrors />
+							</Field>
+							<Field form={superform} name={`packages[${packageIndex}].price`}>
+								<Control let:attrs>
+									<Label>Package price</Label>
+									<NumericInput {...attrs}
+																bind:value={$formData.packages[packageIndex].price} />
+								</Control>
+								<Description />
+								<FieldErrors />
+							</Field>
+						</Table.Head>
+					{/each}
+					<th>
+						<Link classes="inline-flex items-center" onClick={(e) => addPackage(e)}>
+							<Plus class="inline mr-2" />
+							Add package
+						</Link>
+					</th>
+				</Table.Row>
+				</Table.Header>
+				<tbody class="bg-white divide-y">
+				{#each $formData.services as _, serviceIndex}
+					<tr>
+						{#if serviceIndex === 0}
+							<td
+								class="[writing-mode:vertical-rl] rotate-180 tracking-wide text-xs font-semibold uppercase text-center p-1 border-r border-e"
+								rowspan="10">Services
+							</td>
+						{/if}
+						<td class="p-2 border-r">
+							<div class="flex items-end gap-2 justify-stretch ">
+								<Field class="flex-grow" form={superform}
+											 name={`services[${serviceIndex}].name`}>
 									<Control let:attrs>
-										<Label>Buy option name</Label>
-										<Input {...attrs} bind:value={$formData.buyOptions[index].name} />
+										<Label>Service name</Label>
+										<Input {...attrs} bind:value={$formData.services[serviceIndex].name} />
 									</Control>
 									<Description />
 									<FieldErrors />
 								</Field>
-								<Link
-									onClick={() => formData.update((formData) => ({buyOptions: [...formData.buyOptions.slice(0, index), ...formData.buyOptions.slice(index + 1)]}))}>
-									<TrashIcon classes="text-red-400" />
-								</Link>
-							</th>
-							{#each $formData.buyOptions[index].packages as _, packageIndex}
-								<th class="px-4 py-3 text-sm font-normal border-r">
-									<Field form={superform} name={`buyOptions[${index}].packages[${packageIndex}].name`}>
+								<Field class="flex flex-col gap-y-1 justify-end" form={superform}
+											 name={`services[${serviceIndex}].valueType`}>
+									<Control let:attrs>
+										<Label>Type</Label>
+										<DropdownMenu.Root>
+											<DropdownMenu.Trigger asChild let:builder>
+												<Button class="!my-2 p-2" variant="outline" builders={[builder]}>
+													{#if $formData.services[serviceIndex].valueType === 'STRING'}
+														<Type />
+													{:else if $formData.services[serviceIndex].valueType === 'BOOLEAN'}
+														<Check />
+													{:else if $formData.services[serviceIndex].valueType === 'INTEGER'}
+														<Hash />
+													{/if}
+												</Button>
+											</DropdownMenu.Trigger>
+											<DropdownMenu.Content>
+												<DropdownMenu.RadioGroup
+													{...attrs}
+													bind:value={$formData.services[serviceIndex].valueType}>
+													<DropdownMenu.RadioItem
+														value="STRING">
+														Text
+													</DropdownMenu.RadioItem>
+													<DropdownMenu.RadioItem
+														value="BOOLEAN">Enthalten
+													</DropdownMenu.RadioItem>
+													<DropdownMenu.RadioItem
+														value="INTEGER">Betrag
+													</DropdownMenu.RadioItem>
+												</DropdownMenu.RadioGroup>
+											</DropdownMenu.Content>
+										</DropdownMenu.Root>
+									</Control>
+								</Field>
+							</div>
+							<Field form={superform} name={`services[${serviceIndex}].description`}>
+								<Control let:attrs>
+									<Label>Service description</Label>
+									<Textarea {...attrs} class="min-h-fit transition-all focus:h-20 h-10 resize-none"
+														bind:value={$formData.services[serviceIndex].description} />
+								</Control>
+								<Description />
+								<FieldErrors />
+							</Field>
+						</td>
+						{#each $formData.packages as _, packageIndex}
+							<td class="py-2 px-4 align-top border-r">
+								{#if $formData.services[serviceIndex].valueType === 'INTEGER'}
+									<Field form={superform}
+												 name={`packages[${packageIndex}].benefits[${serviceIndex}].numericValue`}>
 										<Control let:attrs>
-											<Label>Package name</Label>
-											<Input {...attrs} bind:value={$formData.buyOptions[index].packages[packageIndex].name} />
-										</Control>
-										<Description />
-										<FieldErrors />
-									</Field>
-									<Field form={superform} name={`buyOptions[${index}].packages[${packageIndex}].price`}>
-										<Control let:attrs>
-											<Label>Package price</Label>
+											<Label>Value</Label>
 											<NumericInput {...attrs}
-																		bind:value={$formData.buyOptions[index].packages[packageIndex].price} />
+																		bind:value={$formData.packages[packageIndex].benefits[serviceIndex].numericValue} />
 										</Control>
 										<Description />
 										<FieldErrors />
 									</Field>
-								</th>
-							{/each}
-							<th>
-								<Link classes="inline-flex items-center" onClick={(e) => addPackage(e, index)}>
-									<Plus class="inline mr-2" />
-									Add package
-								</Link>
-							</th>
-						</tr>
-						</thead>
-						<tbody class="bg-white divide-y">
-						{#each $formData.buyOptions[index].services as _, serviceIndex}
-							<tr>
-								{#if serviceIndex === 0}
-									<td
-										class="[writing-mode:vertical-rl] rotate-180 tracking-wide text-xs font-semibold uppercase text-center p-1 border-r border-e"
-										rowspan="10">Services
-									</td>
-								{/if}
-								<td class="p-2 border-r">
-									<div class="flex items-end gap-2 justify-stretch ">
-										<Field class="flex-grow" form={superform}
-													 name={`buyOptions[${index}].services[${serviceIndex}].name`}>
-											<Control let:attrs>
-												<Label>Service name</Label>
-												<Input {...attrs} bind:value={$formData.buyOptions[index].services[serviceIndex].name} />
-											</Control>
-											<Description />
-											<FieldErrors />
-										</Field>
-										<Field class="flex flex-col gap-y-1 justify-end" form={superform}
-													 name={`buyOptions[${index}].services[${serviceIndex}].valueType`}>
-											<Control let:attrs>
-												<Label>Type</Label>
-												<DropdownMenu.Root>
-													<DropdownMenu.Trigger asChild let:builder>
-														<Button class="!my-2 p-2" variant="outline" builders={[builder]}>
-															{#if $formData.buyOptions[index].services[serviceIndex].valueType === 'STRING'}
-																<Type />
-															{:else if $formData.buyOptions[index].services[serviceIndex].valueType === 'BOOLEAN'}
-																<Check />
-															{:else if $formData.buyOptions[index].services[serviceIndex].valueType === 'INTEGER'}
-																<Hash />
-															{/if}
-														</Button>
-													</DropdownMenu.Trigger>
-													<DropdownMenu.Content>
-														<DropdownMenu.RadioGroup
-															{...attrs}
-															bind:value={$formData.buyOptions[index].services[serviceIndex].valueType}>
-															<DropdownMenu.RadioItem
-																value="STRING">
-																Text
-															</DropdownMenu.RadioItem>
-															<DropdownMenu.RadioItem
-																value="BOOLEAN">Enthalten
-															</DropdownMenu.RadioItem>
-															<DropdownMenu.RadioItem
-																value="INTEGER">Betrag
-															</DropdownMenu.RadioItem>
-														</DropdownMenu.RadioGroup>
-													</DropdownMenu.Content>
-												</DropdownMenu.Root>
-											</Control>
-										</Field>
-									</div>
-									<Field form={superform} name={`buyOptions[${index}].services[${serviceIndex}].description`}>
+								{:else if $formData.services[serviceIndex].valueType === 'BOOLEAN'}
+									<Field form={superform}
+												 name={`packages[${packageIndex}].benefits[${serviceIndex}].booleanValue`}>
 										<Control let:attrs>
-											<Label>Service description</Label>
-											<Textarea {...attrs} class="min-h-fit transition-all focus:h-20 h-10 resize-none"
-																bind:value={$formData.buyOptions[index].services[serviceIndex].description} />
+											<Label>Value</Label>
+											<Checkbox {...attrs}
+																bind:checked={$formData.packages[packageIndex].benefits[serviceIndex].booleanValue}
+											/>
 										</Control>
 										<Description />
 										<FieldErrors />
 									</Field>
-								</td>
-								{#each $formData.buyOptions[index].packages as _, packageIndex}
-									<td class="py-2 px-4 align-top border-r">
-										{#if $formData.buyOptions[index].services[serviceIndex].valueType === 'INTEGER'}
-											<Field form={superform}
-														 name={`buyOptions[${index}].packages[${packageIndex}].benefits[${serviceIndex}].numericValue`}>
-												<Control let:attrs>
-													<Label>Value</Label>
-													<NumericInput {...attrs}
-																				bind:value={$formData.buyOptions[index].packages[packageIndex].benefits[serviceIndex].numericValue} />
-												</Control>
-												<Description />
-												<FieldErrors />
-											</Field>
-										{:else if $formData.buyOptions[index].services[serviceIndex].valueType === 'BOOLEAN'}
-											<Field form={superform}
-														 name={`buyOptions[${index}].packages[${packageIndex}].benefits[${serviceIndex}].booleanValue`}>
-												<Control let:attrs>
-													<Label>Value</Label>
-													<Checkbox {...attrs}
-																		bind:checked={$formData.buyOptions[index].packages[packageIndex].benefits[serviceIndex].booleanValue}
-													/>
-												</Control>
-												<Description />
-												<FieldErrors />
-											</Field>
-										{:else if $formData.buyOptions[index].services[serviceIndex].valueType === 'STRING'}
-											<Field form={superform}
-														 name={`buyOptions[${index}].packages[${packageIndex}].benefits[${serviceIndex}].stringValue`}>
-												<Control let:attrs>
-													<Label>Value</Label>
-													<Input {...attrs}
-																 bind:value={$formData.buyOptions[index].packages[packageIndex].benefits[serviceIndex].stringValue} />
-												</Control>
-												<Description />
-												<FieldErrors />
-											</Field>
-										{/if}
+								{:else if $formData.services[serviceIndex].valueType === 'STRING'}
+									<Field form={superform}
+												 name={`packages[${packageIndex}].benefits[${serviceIndex}].stringValue`}>
+										<Control let:attrs>
+											<Label>Value</Label>
+											<Input {...attrs}
+														 bind:value={$formData.packages[packageIndex].benefits[serviceIndex].stringValue} />
+										</Control>
+										<Description />
+										<FieldErrors />
+									</Field>
+								{/if}
 
-									</td>
-								{/each}
-							</tr>
+							</td>
 						{/each}
-						</tbody>
-						<tfoot class="border-t">
-						<tr>
-							<th colspan="2" class="p-2">
-								<Link onClick={(e) => addService(e, index)}>Add Service</Link>
-							</th>
-							{#each $formData.buyOptions[index].packages as _, packageIndex}
-								<td class="text-center">
-									<Link onClick={(e) => removePackage(e, index, packageIndex)}>
-										<TrashIcon classes="text-red-400" />
-									</Link>
-								</td>
-							{/each}
-						</tr>
-						</tfoot>
-					</table>
-				</div>
-			</div>
-		{/each}
-	{/if}
-	<Link onClick={(e) => addBuyOption(e)}>Add buy option</Link>
-	<GradientButton type="submit">{$_('common.save')}</GradientButton>
+					</tr>
+				{/each}
+				</tbody>
+				<tfoot class="border-t">
+				<tr>
+					<Table.Head colspan={2} class="p-2">
+						<Link onClick={(e) => addService(e)}>Add Service</Link>
+					</Table.Head>
+					{#each $formData.packages as _, packageIndex}
+						<td class="text-center">
+							<Link onClick={(e) => removePackage(e,packageIndex)}>
+								<TrashIcon classes="text-red-400" />
+							</Link>
+						</td>
+					{/each}
+				</tr>
+				</tfoot>
+			</Table.Root>
+		</div>
+	</div>
 	<pre>{JSON.stringify($formData, null, 2)}</pre>
 </form>

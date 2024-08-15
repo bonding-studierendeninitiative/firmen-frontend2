@@ -5,15 +5,21 @@ import {
 	type CreateAddonPackageTemplateResponse,
 	CreateAddonPackageTemplateResponseSchema,
 	type GetAddonPackageTemplateResponse,
-	GetAddonPackageTemplateResponseSchema, type GetAddonPackageTemplatesResponse, GetAddonPackageTemplatesResponseSchema
+	GetAddonPackageTemplateResponseSchema,
+	type GetAddonPackageTemplatesResponse,
+	GetAddonPackageTemplatesResponseSchema
 } from '@schema/addonPackageTemplates';
 import { error } from '@sveltejs/kit';
+import type { InferInput, InferOutput } from 'valibot';
 
-export const createAddonPackageTemplate = async ({ accessToken, data: request }: {
-	accessToken: string,
-	data: CreateAddonPackageTemplateRequest
+export const createAddonPackageTemplate = async ({
+	accessToken,
+	data: request
+}: {
+	accessToken: string;
+	data: InferOutput<CreateAddonPackageTemplateRequest>;
 }) => {
-	const response = await API.post<CreateAddonPackageTemplateResponse>({
+	const response = await API.post<InferInput<CreateAddonPackageTemplateResponse>>({
 		route: '/addon-package-template',
 		token: accessToken,
 		data: request
@@ -22,11 +28,14 @@ export const createAddonPackageTemplate = async ({ accessToken, data: request }:
 	return v.parse(CreateAddonPackageTemplateResponseSchema, data);
 };
 
-export const deleteAddonPackageTemplate = async ({ accessToken, addonPackageTemplateId }: {
-	accessToken: string,
-	addonPackageTemplateId: string
+export const deleteAddonPackageTemplate = async ({
+	accessToken,
+	addonPackageTemplateId
+}: {
+	accessToken: string;
+	addonPackageTemplateId: string;
 }) => {
-	const response = await API.get<GetAddonPackageTemplateResponse>({
+	const response = await API.delete({
 		route: `/addon-package-template/${addonPackageTemplateId}`,
 		token: accessToken
 	});
@@ -36,11 +45,14 @@ export const deleteAddonPackageTemplate = async ({ accessToken, addonPackageTemp
 	}
 };
 
-export const getAddonPackageTemplate = async ({ accessToken, addonPackageTemplateId }: {
-	accessToken: string,
-	addonPackageTemplateId: string
+export const getAddonPackageTemplate = async ({
+	accessToken,
+	addonPackageTemplateId
+}: {
+	accessToken: string;
+	addonPackageTemplateId: string;
 }) => {
-	const response = await API.get<GetAddonPackageTemplateResponse>({
+	const response = await API.get<InferInput<GetAddonPackageTemplateResponse>>({
 		route: `/addon-package-template/${addonPackageTemplateId}`,
 		token: accessToken
 	});
@@ -48,11 +60,14 @@ export const getAddonPackageTemplate = async ({ accessToken, addonPackageTemplat
 	return v.parse(GetAddonPackageTemplateResponseSchema, data);
 };
 
-export const getAddonPackageTemplates = async ({ accessToken, page = 0 }: {
-	accessToken: string,
-	page?: number
-}): Promise<GetAddonPackageTemplatesResponse> => {
-	const response = await API.get<GetAddonPackageTemplatesResponse>({
+export const getAddonPackageTemplates = async ({
+	accessToken,
+	page = 0
+}: {
+	accessToken: string;
+	page?: number;
+}): Promise<InferOutput<GetAddonPackageTemplatesResponse>> => {
+	const response = await API.get<InferInput<GetAddonPackageTemplatesResponse>>({
 		route: `/addon-package-template?page=${page}&limit=6`,
 		token: accessToken
 	});

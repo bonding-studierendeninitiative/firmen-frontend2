@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { Label, Helper, Select } from 'flowbite-svelte';
+	import { cn } from '@/utils';
 
 	export let errorMessage: string = '';
 	export let label: string = '';
@@ -19,7 +20,7 @@
 	};
 </script>
 
-<div class=" w-full">
+<div>
 	{#if label}
 		<Label class="block mb-1 font-medium text-stone-800" for={name}>{label}
 			{#if required}
@@ -34,7 +35,7 @@
 		name={name}
 		bind:value
 		{required}
-		class=" placeholder-red-800"
+		class={cn(`placeholder-red-800`, $$restProps.class)}
 		{...$$restProps}
 	/>
 	<Helper class="text-red-500">{errorMessage}</Helper>

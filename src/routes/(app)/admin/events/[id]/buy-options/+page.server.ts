@@ -1,29 +1,11 @@
-import { getBuyOptions, updateBuyOption } from '$lib/services';
-import type { PageServerLoad } from './$types';
-import { superValidate } from 'sveltekit-superforms';
+import { createBuyOption } from '$lib/services';
 import { valibot } from 'sveltekit-superforms/adapters';
-import { UpdateBuyOptionsRequestSchema } from '@schema';
-import { fail } from '@sveltejs/kit';
-
-export const load: PageServerLoad = async ({ parent, params }) => {
-	const { session } = await parent();
-	if (!session?.user) return;
-
-	const buyOption = await getBuyOptions({
-		// @ts-expect-error we define accessToken in parent
-		accessToken: session?.accessToken,
-		eventId: params.id
-	});
-
-	const updateForm = await superValidate(buyOption, valibot(UpdateBuyOptionsRequestSchema));
-
-	return {
-		updateForm
-	};
-};
+import { CreateBuyOptionRequestSchema } from '@schema';
+import { superValidate } from 'sveltekit-superforms';
+import { fail, redirect } from '@sveltejs/kit';
 
 export const actions = {
-	updateBuyOption: async ({ locals, request, params }) => {
+	createBuyOption: async ({ locals, request, params }) => {
 		const session = await locals.auth();
 		// @ts-expect-error we define accessToken in parent
 		if (!session || !session.accessToken) {
@@ -31,15 +13,22 @@ export const actions = {
 			return;
 		}
 
-		const form = await superValidate(request, valibot(UpdateBuyOptionsRequestSchema));
+		const form = await superValidate(request, valibot(CreateBuyOptionRequestSchema));
 		if (!form.valid) {
 			return fail(400, { form });
 		}
 
-		await updateBuyOption({
+		const response = await createBuyOption({
 			// @ts-expect-error we define accessToken in parent
-			accessToken: session?.accessToken, data: form.data, eventId: params.id
+			accessToken: session?.accessToken,
+			data: form.data,
+			eventId: params.id
 		});
+
+		if (response.id) {
+			redirect(302, `/admin/events/${params.id}/buy-options/${response.id}`);
+		}
+
 		return {
 			form
 		};

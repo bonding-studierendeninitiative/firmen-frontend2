@@ -9,7 +9,7 @@
 	import { type Infer, intProxy, superForm, type SuperValidated } from 'sveltekit-superforms';
 	import { Field, Control, Label, Description, FieldErrors } from '@/components/ui/form';
 	import { Helper } from 'flowbite-svelte';
-	import { valibotClient } from 'sveltekit-superforms/adapters';
+	import { valibot } from 'sveltekit-superforms/adapters';
 	import { CreatePortraitTemplateRequestSchema } from '@/services';
 	import { Input } from '@/components/ui/input';
 	import { Textarea } from '@/components/ui/textarea';
@@ -34,7 +34,7 @@
 	};
 
 	const superform = superForm(validated, {
-		validators: valibotClient(CreatePortraitTemplateRequestSchema),
+		validators: valibot(CreatePortraitTemplateRequestSchema),
 		dataType: 'json',
 		onResult({ result }) {
 			if (result.type === 'success') {

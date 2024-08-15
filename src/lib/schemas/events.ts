@@ -14,7 +14,7 @@ export const GetEventsResponseSchema = v.object({
 	totalElements: v.number(),
 	totalPages: v.number()
 });
-export type GetEventsResponse = v.InferOutput<typeof GetEventsResponseSchema>;
+export type GetEventsResponse = typeof GetEventsResponseSchema;
 
 export const GetEventResponseSchema = APIEvent;
-export type GetEventResponse = v.InferOutput<typeof GetEventResponseSchema>;
+export type GetEventResponse = typeof GetEventResponseSchema;

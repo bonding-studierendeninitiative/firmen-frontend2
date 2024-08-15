@@ -4,7 +4,11 @@ import type { Handle } from '@sveltejs/kit';
 
 const protectAdmin: Handle = async ({ event, resolve }) => {
 	const session = await event.locals.auth();
-	if (!['admin', 'dev', 'bonding'].includes(session?.user?.role) && event.url.pathname.startsWith('/admin/')) {
+	if (
+		// @ts-expect-error role was added in auth
+		!['admin', 'dev', 'bonding'].includes(session?.user?.role) &&
+		event.url.pathname.startsWith('/admin/')
+	) {
 		return new Response(null, {
 			status: 302,
 			headers: {

@@ -165,7 +165,9 @@
   "status-text": {
     "verification": "Verification",
     "rejected": "Rejected",
-    "confirmed": "Confirmed"
+    "confirmed": "Confirmed",
+    "created": "Created",
+    "withdrawn": "Withdrawn"
   },
   "user-pages": {
     "accounts": {

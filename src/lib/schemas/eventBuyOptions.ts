@@ -10,29 +10,11 @@ export const GetBuyOptionsResponseSchema = v.object({
 	eventId: v.string(),
 	buyOptions: v.array(
 		v.object({
+			id: v.string(),
 			name: v.string(),
-			packages: v.array(
-				v.object({
-					name: v.string(),
-					price: v.nullable(v.number()),
-					order: v.number(),
-					benefits: v.array(
-						v.object({
-							numericValue: v.nullable(v.number()),
-							stringValue: v.nullable(v.string()),
-							booleanValue: v.nullable(v.boolean()),
-						})
-					)
-				})
-			),
-			services: v.array(
-				v.object({
-					name: v.string(),
-					description: v.nullable(v.string()),
-					order: v.number(),
-					valueType: v.enum(ValueType),
-				})
-			)
+			packagesCount: v.number(),
+			servicesCount: v.number(),
+			active: v.boolean()
 		})
 	),
 	pageNumber: v.number(),
@@ -40,6 +22,36 @@ export const GetBuyOptionsResponseSchema = v.object({
 	totalElements: v.number(),
 	totalPages: v.number()
 });
+export type GetBuyOptionsResponse = typeof GetBuyOptionsResponseSchema;
+
+export const GetBuyOptionResponseSchema = v.object({
+	id: v.string(),
+	name: v.string(),
+	packages: v.array(
+		v.object({
+			name: v.string(),
+			price: v.nullable(v.number()),
+			order: v.number(),
+			benefits: v.array(
+				v.object({
+					numericValue: v.nullable(v.number()),
+					stringValue: v.nullable(v.string()),
+					booleanValue: v.nullable(v.boolean())
+				})
+			)
+		})
+	),
+	services: v.array(
+		v.object({
+			name: v.string(),
+			description: v.nullable(v.string()),
+			order: v.number(),
+			valueType: v.enum(ValueType)
+		})
+	),
+	active: v.boolean()
+});
+export type GetBuyOptionResponse = typeof GetBuyOptionResponseSchema;
 
 export const UpdateBuyOptionsResponseSchema = v.object({
 	eventId: v.string(),
@@ -55,7 +67,7 @@ export const UpdateBuyOptionsResponseSchema = v.object({
 						v.object({
 							numericValue: v.nullable(v.number()),
 							stringValue: v.nullable(v.string()),
-							booleanValue: v.nullable(v.boolean()),
+							booleanValue: v.nullable(v.boolean())
 						})
 					)
 				})
@@ -65,16 +77,14 @@ export const UpdateBuyOptionsResponseSchema = v.object({
 					name: v.string(),
 					order: v.number(),
 					description: v.nullable(v.string()),
-					valueType: v.enum(ValueType),
+					valueType: v.enum(ValueType)
 				})
 			)
 		})
 	)
 });
 
-export type GetBuyOptionsResponse = v.InferInput<typeof GetBuyOptionsResponseSchema>;
-
-export type UpdateBuyOptionsResponse = v.InferInput<typeof UpdateBuyOptionsResponseSchema>;
+export type UpdateBuyOptionsResponse = typeof UpdateBuyOptionsResponseSchema;
 
 export const UpdateBuyOptionsRequestSchema = v.object({
 	buyOptions: v.array(
@@ -89,7 +99,7 @@ export const UpdateBuyOptionsRequestSchema = v.object({
 						v.object({
 							numericValue: v.nullable(v.number()),
 							stringValue: v.nullable(v.string()),
-							booleanValue: v.nullable(v.boolean()),
+							booleanValue: v.nullable(v.boolean())
 						})
 					)
 				})
@@ -97,7 +107,7 @@ export const UpdateBuyOptionsRequestSchema = v.object({
 			services: v.array(
 				v.object({
 					name: v.string(),
-					description: v.nullable(v.string(), ""),
+					description: v.nullable(v.string(), ''),
 					order: v.number(),
 					valueType: v.enum(ValueType)
 				})
@@ -106,4 +116,44 @@ export const UpdateBuyOptionsRequestSchema = v.object({
 	)
 });
 
-export type UpdateBuyOptionsRequest = v.InferInput<typeof UpdateBuyOptionsRequestSchema>;
+export type UpdateBuyOptionsRequest = typeof UpdateBuyOptionsRequestSchema;
+
+export const CreateBuyOptionRequestSchema = v.object({
+	name: v.pipe(
+		v.string(),
+		v.minLength(3, 'Mindestens 3 Zeichen'),
+		v.maxLength(30, 'Maximal 30 Zeichen')
+	),
+	packageCount: v.optional(v.number(), 0),
+	serviceCount: v.optional(v.number(), 0)
+});
+
+export type CreateBuyOptionRequest = typeof CreateBuyOptionRequestSchema;
+
+export const UpdateBuyOptionRequestSchema = v.object({
+	name: v.string(),
+	packages: v.array(
+		v.object({
+			name: v.string(),
+			price: v.nullable(v.number()),
+			order: v.number(),
+			benefits: v.array(
+				v.object({
+					numericValue: v.nullable(v.number()),
+					stringValue: v.nullable(v.string()),
+					booleanValue: v.nullable(v.boolean())
+				})
+			)
+		})
+	),
+	services: v.array(
+		v.object({
+			name: v.string(),
+			description: v.nullable(v.string(), ''),
+			order: v.number(),
+			valueType: v.enum(ValueType)
+		})
+	)
+});
+
+export type UpdateBuyOptionRequest = typeof UpdateBuyOptionRequestSchema;
