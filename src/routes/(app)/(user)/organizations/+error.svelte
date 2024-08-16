@@ -1,1 +1,5 @@
-<h1>Error in Organizations</h1>
+<script lang="ts">
+	import { page } from '$app/stores';
+</script>
+
+<h1>{$page.error.message}</h1>

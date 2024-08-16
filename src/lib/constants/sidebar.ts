@@ -17,7 +17,8 @@ export interface SidebarLinkTypes {
 		| 'CategoriesIcon'
 		| 'PackagesIcon'
 		| 'AddonIcon'
-		| 'CompanyIcon';
+		| 'CompanyIcon'
+		| 'SettingsIcon';
 }
 export const USER_SIDEBAR_LINKS: SidebarLinkTypes[] = [
 	{
@@ -41,9 +42,9 @@ export const USER_SIDEBAR_LINKS: SidebarLinkTypes[] = [
 		Icon: 'NotificationIcon'
 	},
 	{
-		label: 'account',
-		route: '/account',
-		Icon: 'AccountIcon'
+		label: 'settings',
+		route: '/settings',
+		Icon: 'SettingsIcon'
 	}
 ];
 

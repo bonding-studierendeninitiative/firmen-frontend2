@@ -36,3 +36,4 @@ export { default as DropzoneIcon } from './DropzoneIcon.svelte';
 export { default as CloudUploadIcon } from './CloudUploadIcon.svelte';
 export { default as EyeIcon } from './EyeIcon.svelte';
 export { default as CrossEyeIcon } from './CrossEyeIcon.svelte';
+export { default as SettingsIcon } from './SettingsIcon.svelte';

@@ -9,7 +9,8 @@
 		PasswordTab
 	} from '$lib/@svelte/pages';
 	import { fade } from 'svelte/transition';
-
+	import type { PageData } from './$types';
+	export let data: PageData;
 	let activeTab = 0;
 	const tabHeadings = ['profile', 'organization', 'password', 'billing', 'archived'];
 
@@ -27,11 +28,14 @@
 	<section class=" mt-10">
 		{#if activeTab === 0}
 			<div class=" h-20">
-				<ProfileTab />
+				<ProfileTab
+					organizationMembers={data.organizationMembers}
+					createInviteForm={data.createInviteForm}
+				/>
 			</div>
 		{:else if activeTab === 1}
 			<div in:fade>
-				<OrganizationTab />
+				<OrganizationTab editOrganizationDetailsForm={data.editOrganizationDetailsForm}/>
 			</div>
 		{:else if activeTab === 2}
 			<div in:fade>

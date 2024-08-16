@@ -3,50 +3,23 @@
 	import { goto } from '$app/navigation';
 	import { EventInfoBox } from '$lib/@svelte/components';
 	import { currentOrganization } from '$lib/stores/organizationStore';
+	import type { PageData } from './$types';
+	import { Checkbox } from '$lib/components/ui/checkbox/index.js';
+	import { Label } from '$lib/components/ui/label/index.js';
 
-	const upcomingEvents = [
-		{
-			id: '1',
-			heading: 'Tech Foundation 2023',
-			subHeading: 'Free University of Berlin',
-			date: '20 Dec, 2023'
-		},
-		{
-			id: '2',
-			heading: 'Engineer Fair 2024',
-			subHeading: 'Philipps University of Marburg',
-			date: '20 Dec, 2023'
-		},
-		{
-			id: '1',
-			heading: 'Tech Foundation 2023',
-			subHeading: 'Free University of Berlin',
-			date: '20 Dec, 2023'
-		},
-		{
-			id: '2',
-			heading: 'Engineer Fair 2024',
-			subHeading: 'Philipps University of Marburg',
-			date: '20 Dec, 2023'
-		},
-		{
-			id: '1',
-			heading: 'Tech Foundation 2023',
-			subHeading: 'Free University of Berlin',
-			date: '20 Dec, 2023'
-		},
-		{
-			id: '2',
-			heading: 'Engineer Fair 2024',
-			subHeading: 'Philipps University of Marburg',
-			date: '20 Dec, 2023'
-		}
-	];
+	export let data: PageData;
+	let events = data.events ?? [];
 
-	const cities = ['Berlin', 'Köln', 'Düsseldorf', 'München', 'Nuremberg'];
-	const handleEventRegistration = (id: string) => {
-		goto('events/' + id);
-	};
+	let cities = [...new Set(events.map(item => item.projectHSG))];
+	let checkedCities: string[] = cities;
+
+	function addItem(city: string) {
+		checkedCities = [...checkedCities, city];
+	}
+
+	function removeItem(city: string) {
+		checkedCities = checkedCities.filter((i) => i !== city);
+	}
 </script>
 
 <div>
@@ -54,24 +27,32 @@
 	<h4 class=" text-stone-500">{$_('user-pages.events.eventsSubHeading')}</h4>
 	<section class=" mt-10">
 		{#each cities as city}
-			<label
-				class=" mr-2 inline-flex items-center px-3 py-2 rounded-md border border-solid border-stone-300"
+			{@const checked = checkedCities.includes(city)}
+			<Label
+				class=" mr-2 inline-flex items-center px-3 py-3 rounded-md border border-solid border-stone-300"
 			>
-				<input type="checkbox" value={city} class="mr-2 !p-8 w-4 h-4" />
+				<Checkbox id="terms" class="mr-2" {checked} onCheckedChange={(v) => {
+                if (v) {
+                  addItem(city);
+                } else {
+                  removeItem(city);
+                }}} />
 				{city}
-			</label>
+			</Label>
 		{/each}
 	</section>
-
 	<section class=" mt-6">
 		<div class="grid grid-cols-1 sm:grid-cols-1 md:sm:grid-cols-1 lg:sm:grid-cols-2 gap-8">
-			{#each upcomingEvents as { heading, subHeading, date, id }, index (index)}
-				<EventInfoBox
-					{heading}
-					{subHeading}
-					{date}
-					href={`/${$currentOrganization?.organizationSlug}/events/${id}/event-registration`}
-				/>
+			{#each events as { name, location, dateFrom, id, projectHSG }, index (index)}
+				{#if checkedCities.includes(projectHSG)}
+					<EventInfoBox
+						heading={name}
+						subHeading={location}
+						date={dateFrom}
+						href={`/${$currentOrganization?.organizationSlug}/events/${id}/event-registration`}
+					/>
+					{/if}
+
 			{/each}
 		</div>
 	</section>

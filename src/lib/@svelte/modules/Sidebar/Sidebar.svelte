@@ -36,7 +36,8 @@
 </script>
 
 <div class=" !bg-white lg:flex">
-	<nav class="bg-white border-b border-gray-300 lg:hidden"> <!-- Mobile Navbar -->
+	<nav class="bg-white border-b border-gray-300 lg:hidden">
+		<!-- Mobile Navbar -->
 		<div class="flex justify-between items-center px-9 py-2">
 			<!-- Ícono de Menú -->
 			<button id="menu-button" class="lg:hidden" on:click={handleMenuToggler}>
@@ -70,15 +71,15 @@
 		<div class="p-6 space-y-4 h-full flex flex-col justify-between">
 			<div>
 				<svelte:component this={Icons['WhiteLogoIcon']} />
-				<div class="!mt-10">
+				<div class="!mt-5">
 					<slot />
 				</div>
 				<div class="!mt-5">
 					{#each getSidebarData() as { label, Icon, route } (label)}
 						<a
-							href={getSidebarLink({route})}
+							href={getSidebarLink({ route })}
 							aria-label={label}
-							class={`relative px-4 py-3 flex items-center space-x-4 rounded-lg text-white ${checkCurrentPath(getSidebarLink({route}), activeUrl) ? 'bg-brand' : ''}`}
+							class={`relative px-4 py-3 flex items-center space-x-4 rounded-lg text-white ${checkCurrentPath(getSidebarLink({ route }), activeUrl) ? 'bg-brand' : ''}`}
 						>
 							<svelte:component this={Icons[Icon]} />
 							<span class="-mr-1 font-medium">{$_(`sidebar.${label}`)}</span>

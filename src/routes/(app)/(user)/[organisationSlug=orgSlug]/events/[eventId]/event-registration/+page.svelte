@@ -4,7 +4,10 @@
 	import Dropzone from 'svelte-file-dropzone';
 	import { DropzoneIcon, CrossIcon, FilledCheckIcon } from '$lib/@svelte/icons';
 	import { goto } from '$app/navigation';
-
+	import type {
+		PageData
+	} from './$types';
+	export let data: PageData;
 	const marketingServices = [
 		{
 			name: 'Onlinewerbung-Paket',
@@ -65,6 +68,7 @@
 </script>
 
 <Modal bind:isOpen>
+
 	<div class=" flex flex-col justify-center items-center">
 		<p class=" text-xl"><FilledCheckIcon /></p>
 		<div class=" my-6 text-center">
@@ -94,6 +98,9 @@
 	</div>
 
 	<div class=" grid grid-cols-1 gap-4">
+		<pre>
+	{JSON.stringify(data.event, null, 2)}
+	</pre>
 		<h4 class=" font-extrabold text-sm text-stone-900">
 			{$_('user-pages.events.companyInformation')}
 		</h4>

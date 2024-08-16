@@ -165,9 +165,7 @@
   "status-text": {
     "verification": "Überprüfung",
     "rejected": "Abgelehnt",
-    "confirmed": "Bestätigt",
-    "created": "Erstellt",
-    "withdrawn": "Zurückgezogen"
+    "confirmed": "Bestätigt"
   },
   "user-pages": {
     "accounts": {

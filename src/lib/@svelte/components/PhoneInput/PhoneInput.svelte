@@ -93,12 +93,12 @@
 	const onChange = (selectedCountry: string) => {
 		dispatch('change', { option: selectedCountry });
 	};
-
-	console.log(selectedCountry);
 </script>
+
 <div>
 	{#if label}
-		<label class="block mb-1.5 font-medium marker:text-sm text-stone-800" for={name}>{label}
+		<label class="block mb-1.5 font-medium marker:text-sm text-stone-800" for={name}
+			>{label}
 			{#if required}
 				<span class="text-pink-500">*</span>
 			{/if}
@@ -107,8 +107,8 @@
 
 	<div
 		class="flex relative rounded-lg {valid
-		? ``
-		: ` ring-pink-500 dark:ring-pink-500 ring-1 focus-within:ring-offset-1 focus-within:ring-offset-pink-500/50 focus-within:ring-1`}"
+			? ``
+			: ` ring-pink-500 dark:ring-pink-500 ring-1 focus-within:ring-offset-1 focus-within:ring-offset-pink-500/50 focus-within:ring-1`}"
 	>
 		<div class="flex" use:clickOutsideAction={closeOnClickOutside}>
 			<button
@@ -125,8 +125,7 @@
 				{#if selectedCountry && selectedCountry !== null}
 					<div class="inline-flex items-center text-left">
 						<span class="flag flag-{selectedCountry.toLowerCase()} flex-shrink-0 mr-3" />
-						<span class="text-gray-600 dark:text-gray-400">+{selectedCountryDialCode}</span
-						>
+						<span class="text-gray-600 dark:text-gray-400">+{selectedCountryDialCode}</span>
 					</div>
 				{:else}
 					Please select
@@ -176,18 +175,16 @@
 									value={country.iso2}
 									type="button"
 									class="inline-flex py-2 px-4 w-full text-sm hover:bg-gray-100 dark:hover:bg-gray-600
-                             active:bg-gray-800 dark:active:bg-gray-800 overflow-hidden
+                             active:bg-gray-600 dark:active:bg-gray-800 overflow-hidden
                             {isActive
-									? 'bg-gray-600 dark:text-white'
-									: 'dark:hover:text-white dark:text-gray-400'}"
+										? 'bg-gray-600 dark:text-white'
+										: 'dark:hover:text-white dark:text-gray-400'}"
 									on:click={(e) => {
-									handleSelect(country.iso2, e);
-								}}
+										handleSelect(country.iso2, e);
+									}}
 								>
 									<div class="inline-flex items-center text-left">
-									<span
-										class="flag flag-{country.iso2.toLowerCase()} flex-shrink-0 mr-3"
-									/>
+										<span class="flag flag-{country.iso2.toLowerCase()} flex-shrink-0 mr-3" />
 										<span class="mr-2">{country.name}</span>
 										<span class="text-gray-500">+{country.dialCode}</span>
 									</div>
@@ -205,7 +202,7 @@
 			bind:detailedValue
 			bind:value
 			bind:valid
-			name={name}
+			{name}
 			{options}
 			{required}
 			class="text-sm rounded-r-lg block w-full p-2.5 focus:outline-none border border-gray-300 border-l-gray-100 dark:border-l-gray-700 dark:border-gray-600 bg-gray-50 dark:bg-gray-700

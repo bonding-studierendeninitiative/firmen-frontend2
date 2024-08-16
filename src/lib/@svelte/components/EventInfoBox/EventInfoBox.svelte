@@ -2,7 +2,7 @@
 	import { _ } from '@services';
 	import { CalenderIcon } from '$lib/@svelte/icons';
 	import { GradientLink } from '$lib/@svelte/components';
-
+	import { Button } from '@/components/ui/button';
 	export let heading: string;
 	export let subHeading: string;
 	export let date: string;
@@ -18,6 +18,7 @@
 			<CalenderIcon />
 			<p class=" ml-2 text-sm text-stone-800 font-medium">{date}</p>
 		</span>
-		<GradientLink class=" !py-1.5" {href}>{$_(`common.${buttonText}`)}</GradientLink>
+		<a {href}><Button class=" !py-1.5">{$_(`common.${buttonText}`)}</Button></a>
+
 	</div>
 </div>

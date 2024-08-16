@@ -70,7 +70,7 @@ const config = {
 				custom: '1.25rem'
 			},
 			fontFamily: {
-				sans: ['Avenir', 'Helvetica', 'Arial', 'sans-serif']
+				sans: ['Poppins','Avenir', 'AvenirLTStd', 'Helvetica', 'Arial', 'sans-serif']
 			},
 			fontSize: {
 				'3xl': '2rem'

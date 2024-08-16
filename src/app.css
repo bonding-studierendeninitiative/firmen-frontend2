@@ -2,100 +2,227 @@
 @tailwind components;
 @tailwind utilities;
 
+
+@font-face {
+	font-family: 'Poppins';
+	src: url('/font/Poppins/Poppins-Thin.ttf') format('truetype');
+	font-weight: 100;
+	font-style: normal;
+}
+
+@font-face {
+	font-family: 'Poppins';
+	src: url('/font/Poppins/Poppins-ThinItalic.ttf') format('truetype');
+	font-weight: 100;
+	font-style: italic;
+}
+
+@font-face {
+	font-family: 'Poppins';
+	src: url('/font/Poppins/Poppins-ExtraLight.ttf') format('truetype');
+	font-weight: 200;
+	font-style: normal;
+}
+
+@font-face {
+	font-family: 'Poppins';
+	src: url('/font/Poppins/Poppins-ExtraLightItalic.ttf') format('truetype');
+	font-weight: 200;
+	font-style: italic;
+}
+
+@font-face {
+	font-family: 'Poppins';
+	src: url('/font/Poppins/Poppins-Light.ttf') format('truetype');
+	font-weight: 300;
+	font-style: normal;
+}
+
+@font-face {
+	font-family: 'Poppins';
+	src: url('/font/Poppins/Poppins-LightItalic.ttf') format('truetype');
+	font-weight: 300;
+	font-style: italic;
+}
+
+@font-face {
+	font-family: 'Poppins';
+	src: url('/font/Poppins/Poppins-Regular.ttf') format('truetype');
+	font-weight: 400;
+	font-style: normal;
+}
+
+@font-face {
+	font-family: 'Poppins';
+	src: url('/font/Poppins/Poppins-Italic.ttf') format('truetype');
+	font-weight: 400;
+	font-style: italic;
+}
+
+@font-face {
+	font-family: 'Poppins';
+	src: url('/font/Poppins/Poppins-Medium.ttf') format('truetype');
+	font-weight: 500;
+	font-style: normal;
+}
+
+@font-face {
+	font-family: 'Poppins';
+	src: url('/font/Poppins/Poppins-MediumItalic.ttf') format('truetype');
+	font-weight: 500;
+	font-style: italic;
+}
+
+@font-face {
+	font-family: 'Poppins';
+	src: url('/font/Poppins/Poppins-SemiBold.ttf') format('truetype');
+	font-weight: 600;
+	font-style: normal;
+}
+
+@font-face {
+	font-family: 'Poppins';
+	src: url('/font/Poppins/Poppins-SemiBoldItalic.ttf') format('truetype');
+	font-weight: 600;
+	font-style: italic;
+}
+
+@font-face {
+	font-family: 'Poppins';
+	src: url('/font/Poppins/Poppins-Bold.ttf') format('truetype');
+	font-weight: 700;
+	font-style: normal;
+}
+
+@font-face {
+	font-family: 'Poppins';
+	src: url('/font/Poppins/Poppins-BoldItalic.ttf') format('truetype');
+	font-weight: 700;
+	font-style: italic;
+}
+
+@font-face {
+	font-family: 'Poppins';
+	src: url('/font/Poppins/Poppins-ExtraBold.ttf') format('truetype');
+	font-weight: 800;
+	font-style: normal;
+}
+
+@font-face {
+	font-family: 'Poppins';
+	src: url('/font/Poppins/Poppins-ExtraBoldItalic.ttf') format('truetype');
+	font-weight: 800;
+	font-style: italic;
+}
+
+@font-face {
+	font-family: 'Poppins';
+	src: url('/font/Poppins/Poppins-Black.ttf') format('truetype');
+	font-weight: 900;
+	font-style: normal;
+}
+
+@font-face {
+	font-family: 'Poppins';
+	src: url('/font/Poppins/Poppins-BlackItalic.ttf') format('truetype');
+	font-weight: 900;
+	font-style: italic;
+}
+
 @layer utilities {
-    ::placeholder {
-        color: var(--stone-500, #78716c) !important;
-        font-size: 14px !important;
-        font-weight: 500 !important;
-        line-height: 20px !important;
-        font-weight: normal !important;
-    }
+	::placeholder {
+		color: var(--stone-500, #78716c) !important;
+		font-size: 14px !important;
+		font-weight: 500 !important;
+		line-height: 20px !important;
+		font-weight: normal !important;
+	}
 
-    /* Hide the number input spinner */
-    input[type='number']::-webkit-inner-spin-button,
-    input[type='number']::-webkit-outer-spin-button {
-        -webkit-appearance: none;
-        margin: 0;
-    }
+	/* Hide the number input spinner */
+	input[type='number']::-webkit-inner-spin-button,
+	input[type='number']::-webkit-outer-spin-button {
+		-webkit-appearance: none;
+		margin: 0;
+	}
 
-    input[type='number'] {
-        /* Prevent scrolling on number input in Safari */
-        -moz-appearance: textfield;
-    }
+	input[type='number'] {
+		/* Prevent scrolling on number input in Safari */
+		-moz-appearance: textfield;
+	}
 }
 
 @layer base {
-    :root {
-        --background: 0 0% 100%;
-        --foreground: 0 0% 3.9%;
+	:root {
+		--background: 0 0% 100%;
+		--foreground: 0 0% 3.9%;
 
-        --muted: 0 0% 96.1%;
-        --muted-foreground: 0 0% 45.1%;
+		--muted: 0 0% 96.1%;
+		--muted-foreground: 0 0% 45.1%;
 
-        --popover: 0 0% 100%;
-        --popover-foreground: 0 0% 3.9%;
+		--popover: 0 0% 100%;
+		--popover-foreground: 0 0% 3.9%;
 
-        --card: 0 0% 100%;
-        --card-foreground: 0 0% 3.9%;
+		--card: 0 0% 100%;
+		--card-foreground: 0 0% 3.9%;
 
-        --border: 0 0% 89.8%;
-        --input: 0 0% 89.8%;
+		--border: 0 0% 89.8%;
+		--input: 0 0% 89.8%;
 
-        --primary: 0 0% 9%;
-        --primary-foreground: 0 0% 98%;
+		--primary: 0 0% 9%;
+		--primary-foreground: 0 0% 98%;
 
-        --secondary: 0 0% 96.1%;
-        --secondary-foreground: 0 0% 9%;
+		--secondary: 0 0% 96.1%;
+		--secondary-foreground: 0 0% 9%;
 
-        --accent: 0 0% 96.1%;
-        --accent-foreground: 0 0% 9%;
+		--accent: 0 0% 96.1%;
+		--accent-foreground: 0 0% 9%;
 
-        --destructive: 0 72.2% 50.6%;
-        --destructive-foreground: 0 0% 98%;
+		--destructive: 0 72.2% 50.6%;
+		--destructive-foreground: 0 0% 98%;
 
-        --ring: 0 0% 3.9%;
+		--ring: 0 0% 3.9%;
 
-        --radius: 0.5rem;
-    }
+		--radius: 0.5rem;
+	}
 
-    .dark {
-        --background: 0 0% 3.9%;
-        --foreground: 0 0% 98%;
+	.dark {
+		--background: 0 0% 3.9%;
+		--foreground: 0 0% 98%;
 
-        --muted: 0 0% 14.9%;
-        --muted-foreground: 0 0% 63.9%;
+		--muted: 0 0% 14.9%;
+		--muted-foreground: 0 0% 63.9%;
 
-        --popover: 0 0% 3.9%;
-        --popover-foreground: 0 0% 98%;
+		--popover: 0 0% 3.9%;
+		--popover-foreground: 0 0% 98%;
 
-        --card: 0 0% 3.9%;
-        --card-foreground: 0 0% 98%;
+		--card: 0 0% 3.9%;
+		--card-foreground: 0 0% 98%;
 
-        --border: 0 0% 14.9%;
-        --input: 0 0% 14.9%;
+		--border: 0 0% 14.9%;
+		--input: 0 0% 14.9%;
 
-        --primary: 0 0% 98%;
-        --primary-foreground: 0 0% 9%;
+		--primary: 0 0% 98%;
+		--primary-foreground: 0 0% 9%;
 
-        --secondary: 0 0% 14.9%;
-        --secondary-foreground: 0 0% 98%;
+		--secondary: 0 0% 14.9%;
+		--secondary-foreground: 0 0% 98%;
 
-        --accent: 0 0% 14.9%;
-        --accent-foreground: 0 0% 98%;
+		--accent: 0 0% 14.9%;
+		--accent-foreground: 0 0% 98%;
 
-        --destructive: 0 62.8% 30.6%;
-        --destructive-foreground: 0 0% 98%;
+		--destructive: 0 62.8% 30.6%;
+		--destructive-foreground: 0 0% 98%;
 
-        --ring: 0 0% 83.1%;
-    }
+		--ring: 0 0% 83.1%;
+	}
 }
 
 @layer base {
-    * {
-        @apply border-border;
-    }
+	* {
+		@apply border-border;
+	}
 
-    body {
-        @apply bg-background text-foreground;
-    }
+	body {
+		@apply bg-background text-foreground;
+	}
 }
