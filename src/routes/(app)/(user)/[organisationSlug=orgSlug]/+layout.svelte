@@ -1,17 +1,14 @@
 <script lang="ts">
 	import { Sidebar } from '$lib/@svelte/modules';
-	import { Select } from '$lib/@svelte/components';
 	import Check from 'lucide-svelte/icons/check';
 	import type { PageData } from './$types';
 	import { goto } from '$app/navigation';
-	import { onMount } from 'svelte';
 	import { currentOrganization } from '$lib/stores/organizationStore';
 	import ChevronsUpDown from 'lucide-svelte/icons/chevrons-up-down';
-	import * as Command from '$lib/components/ui/command/index.js';
-	import * as Popover from '$lib/components/ui/popover/index.js';
+	import * as Command from '$lib/components/ui/command';
+	import * as Popover from '$lib/components/ui/popover';
 	import { _ } from '@services/i18n';
-	import { Button } from '$lib/components/ui/button/index.js';
-	import Input from '@/@svelte/components/Input/Input.svelte';
+	import { Button } from '$lib/components/ui/button';
 	import PlusCircled from 'svelte-radix/PlusCircled.svelte';
 
 	import { cn } from '$lib/utils.js';

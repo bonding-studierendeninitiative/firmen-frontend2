@@ -62,7 +62,7 @@ export const getEventRegistrations = async ({
 	status?: 'PUBLISHED' | 'UNPUBLISHED' | 'ARCHIVED';
 }) => {
 	const response = await API.get<v.InferInput<typeof GetEventRegistrationsResponse>>({
-		route: `/events/${eventId}/event_registrations?page=0`,
+		route: `/event/${eventId}/event_registrations?page=0`,
 		token: accessToken
 	});
 	const data = await response.json();

@@ -23,6 +23,7 @@ export const load: LayoutServerLoad = async ({ parent, params }) => {
 
 	return {
 		buyOptions: response.buyOptions,
+		buyOptionCount: response.totalElements,
 		createForm
 	};
 };

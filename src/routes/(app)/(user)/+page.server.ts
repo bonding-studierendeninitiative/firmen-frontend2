@@ -4,15 +4,16 @@ import { superValidate } from 'sveltekit-superforms';
 import { valibot } from 'sveltekit-superforms/adapters';
 import { CreateOrganizationRequestSchema } from '@schema/createOrganization';
 import { fail } from '@sveltejs/kit';
+
 export const load: PageServerLoad = async ({ parent }) => {
 	const { session } = await parent();
 	if (!session?.user) return;
 
 	const form = await superValidate(valibot(CreateOrganizationRequestSchema));
 
-	// @ts-expect-error we define accessToken in parent
 	return {
 		form,
+		// @ts-expect-error we define accessToken in parent
 		memberships: (await getOrgMemberships({ accessToken: session?.accessToken })) ?? []
 	};
 };

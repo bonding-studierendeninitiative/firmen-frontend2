@@ -31,7 +31,6 @@ export const GetBuyOptionResponseSchema = v.object({
 		v.object({
 			name: v.string(),
 			price: v.nullable(v.number()),
-			order: v.number(),
 			benefits: v.array(
 				v.object({
 					numericValue: v.nullable(v.number()),
@@ -45,7 +44,6 @@ export const GetBuyOptionResponseSchema = v.object({
 		v.object({
 			name: v.string(),
 			description: v.nullable(v.string()),
-			order: v.number(),
 			valueType: v.enum(ValueType)
 		})
 	),
@@ -62,7 +60,6 @@ export const UpdateBuyOptionsResponseSchema = v.object({
 				v.object({
 					name: v.string(),
 					price: v.nullable(v.number()),
-					order: v.number(),
 					benefits: v.array(
 						v.object({
 							numericValue: v.nullable(v.number()),
@@ -75,7 +72,6 @@ export const UpdateBuyOptionsResponseSchema = v.object({
 			services: v.array(
 				v.object({
 					name: v.string(),
-					order: v.number(),
 					description: v.nullable(v.string()),
 					valueType: v.enum(ValueType)
 				})
@@ -94,7 +90,6 @@ export const UpdateBuyOptionsRequestSchema = v.object({
 				v.object({
 					name: v.string(),
 					price: v.nullable(v.number()),
-					order: v.number(),
 					benefits: v.array(
 						v.object({
 							numericValue: v.nullable(v.number()),
@@ -108,7 +103,6 @@ export const UpdateBuyOptionsRequestSchema = v.object({
 				v.object({
 					name: v.string(),
 					description: v.nullable(v.string(), ''),
-					order: v.number(),
 					valueType: v.enum(ValueType)
 				})
 			)
@@ -136,7 +130,6 @@ export const UpdateBuyOptionRequestSchema = v.object({
 		v.object({
 			name: v.string(),
 			price: v.nullable(v.number()),
-			order: v.number(),
 			benefits: v.array(
 				v.object({
 					numericValue: v.nullable(v.number()),
@@ -150,7 +143,6 @@ export const UpdateBuyOptionRequestSchema = v.object({
 		v.object({
 			name: v.string(),
 			description: v.nullable(v.string(), ''),
-			order: v.number(),
 			valueType: v.enum(ValueType)
 		})
 	)

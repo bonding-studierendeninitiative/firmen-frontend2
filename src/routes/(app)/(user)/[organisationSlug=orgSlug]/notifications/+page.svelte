@@ -95,9 +95,10 @@
 		<div class="my-6 w-full">
 			<Select placeholder={$_('user-pages.notifications.selectPortrait')}></Select>
 			<div class=" w-full flex justify-start items-center">
-				<Link classes=" flex items-center !font-semibold mt-4" onClick={() => goto('/portraits')}
-					><PlusIcon classes="mr-2" />{$_('user-pages.notifications.newPortrait')}</Link
-				>
+				<Link href="/portraits" class=" flex items-center !font-semibold mt-4">
+					<PlusIcon classes="mr-2" />
+					{$_('user-pages.notifications.newPortrait')}
+				</Link>
 			</div>
 		</div>
 	</div>

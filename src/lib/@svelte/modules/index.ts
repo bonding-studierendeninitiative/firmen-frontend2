@@ -5,7 +5,6 @@ export * from './AddCategory';
 export * from './AddAddon';
 export * from './AddNewPackage';
 export * from './CompanyDetails';
-export * from './EventDetails';
 export * from './DeleteBuyOption';
 export * from './CreateBuyOption';
 export * from './BuyOptionSelector';

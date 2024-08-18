@@ -4,6 +4,8 @@ import { superValidate } from 'sveltekit-superforms';
 import { valibot } from 'sveltekit-superforms/adapters';
 import { UpdateBuyOptionRequestSchema } from '@schema';
 import { fail, redirect } from '@sveltejs/kit';
+import { createEventAddonPackage, getEventAddonPackages } from '@/services/eventAddonPackages';
+import { CreateEventAddonPackageSchema } from '@schema/eventAddonPackages';
 
 export const load: PageServerLoad = async ({ parent, params }) => {
 	const { session } = await parent();
@@ -16,10 +18,20 @@ export const load: PageServerLoad = async ({ parent, params }) => {
 		eventId: params.id
 	});
 
+	const addonPackages = await getEventAddonPackages({
+		// @ts-expect-error we define accessToken in parent
+		accessToken: session?.accessToken,
+		buyOptionId: params.buyOptionId,
+		eventId: params.id
+	});
+
 	const updateForm = await superValidate(buyOption, valibot(UpdateBuyOptionRequestSchema));
+	const addonPackageForm = await superValidate(valibot(CreateEventAddonPackageSchema));
 
 	return {
-		updateForm
+		addonPackages: addonPackages.addonPackages,
+		updateForm,
+		addonPackageForm
 	};
 };
 
@@ -79,5 +91,29 @@ export const actions = {
 			// @ts-expect-error we define accessToken in parent
 			accessToken: session?.accessToken
 		});
+	},
+	createAddonPackage: async ({ locals, params, request }) => {
+		const session = await locals.auth();
+		// @ts-expect-error we define accessToken in parent
+		if (!session || !session.accessToken) {
+			fail(403);
+			return;
+		}
+
+		const form = await superValidate(request, valibot(CreateEventAddonPackageSchema));
+		if (!form.valid) {
+			return fail(400, { form });
+		}
+
+		await createEventAddonPackage({
+			// @ts-expect-error we define accessToken in parent
+			accessToken: session?.accessToken,
+			data: form.data,
+			buyOptionId: params.buyOptionId,
+			eventId: params.id
+		});
+		return {
+			form
+		};
 	}
 };

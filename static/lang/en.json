@@ -390,10 +390,11 @@
 			"pricePlaceholder": "no price",
 			"purchasable": "Purchasable",
 			"purchasableDescription": "Non purchasable addon packages are meant for grouping otherwise unrelated addons. They don't have a price.",
-			"saleTag": "Label Tag",
+			"label": "Label (optional)",
 			"packageInformation": "Package Information",
 			"addSubAddon": "Add Sub Addon",
-			"subAddonName": "Sub Addon Name"
+			"subAddonName": "Sub Addon Name",
+			"subAddonDescription": "Description of the addon (optional)"
 		},
 		"packages": {
 			"addPackage": "Add Package",

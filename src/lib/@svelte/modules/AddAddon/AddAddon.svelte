@@ -1,8 +1,9 @@
 <script lang="ts">
 	import { _ } from '@services';
-	import { Button, Checkbox, Drawer, GradientButton, Link } from '$lib/@svelte/components';
+	import { Button, Checkbox, Drawer, GradientButton } from '$lib/@svelte/components';
 	import PlusIcon from '$lib/@svelte/icons/PlusIcon.svelte';
 	import TrashIcon from '$lib/@svelte/icons/TrashIcon.svelte';
+	import { Button as ShadcnButton } from '@/components/ui/button';
 	import type {
 		CreateAddonPackageTemplateFormSchema
 	} from '@schema/addonPackageTemplates';
@@ -136,10 +137,9 @@
 			{/each}
 		</section>
 		<div>
-			<Link classes=" flex items-center !font-semibold" onClick={handleAddSubAddon}
-			>
-				<PlusIcon classes="mr-2" />{$_('admin-pages.addons.addSubAddon')}</Link
-			>
+			<ShadcnButton variant="link" class="!font-semibold" on:click={handleAddSubAddon}>
+				<PlusIcon classes="mr-2" />{$_('admin-pages.addons.addSubAddon')}
+			</ShadcnButton>
 		</div>
 		<footer class=" mt-10 flex justify-end items-center mb-4 gap-x-2">
 			<Button

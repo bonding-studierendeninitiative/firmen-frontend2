@@ -21,7 +21,7 @@ export const getBuyOptions = async ({
 	eventId: string;
 }) => {
 	const response = await API.get<InferInput<GetBuyOptionsResponse>>({
-		route: `/events/${eventId}/buy-option?page=0&limit=4&sortBy=createdAt&sortOrder=desc`,
+		route: `/event/${eventId}/buy-option?page=0&limit=4&sortBy=createdAt&sortOrder=desc`,
 		token: accessToken
 	});
 	const data = await response.json();
@@ -38,7 +38,7 @@ export const getBuyOption = async ({
 	buyOptionId: string;
 }) => {
 	const response = await API.get<InferInput<GetBuyOptionResponse>>({
-		route: `/events/${eventId}/buy-option/${buyOptionId}`,
+		route: `/event/${eventId}/buy-option/${buyOptionId}`,
 		token: accessToken
 	});
 	const data = await response.json();
@@ -55,7 +55,7 @@ export const deleteBuyOption = async ({
 	buyOptionId: string;
 }) => {
 	const response = await API.delete({
-		route: `/events/${eventId}/buy-option/${buyOptionId}`,
+		route: `/event/${eventId}/buy-option/${buyOptionId}`,
 		token: accessToken
 	});
 
@@ -74,7 +74,7 @@ export const updateBuyOptions = async ({
 	data: InferOutput<UpdateBuyOptionsRequest>;
 }) => {
 	const response = await API.put<InferInput<UpdateBuyOptionsResponse>>({
-		route: `/events/${eventId}/buy-option`,
+		route: `/event/${eventId}/buy-option`,
 		token: accessToken,
 		data: request
 	});
@@ -94,7 +94,7 @@ export const updateBuyOption = async ({
 	data: InferOutput<UpdateBuyOptionRequest>;
 }) => {
 	const response = await API.put<InferInput<GetBuyOptionResponse>>({
-		route: `/events/${eventId}/buy-option/${buyOptionId}`,
+		route: `/event/${eventId}/buy-option/${buyOptionId}`,
 		token: accessToken,
 		data: request
 	});
@@ -112,7 +112,7 @@ export const createBuyOption = async ({
 	data: InferOutput<CreateBuyOptionRequest>;
 }) => {
 	const response = await API.post<GetBuyOptionResponse>({
-		route: `/events/${eventId}/buy-option`,
+		route: `/event/${eventId}/buy-option`,
 		token: accessToken,
 		data: request
 	});
@@ -130,7 +130,7 @@ export const activateBuyOption = async ({
 	buyOptionId: string;
 }) => {
 	const response = await API.post({
-		route: `/events/${eventId}/buy-option/${buyOptionId}/activate`,
+		route: `/event/${eventId}/buy-option/${buyOptionId}/activate`,
 		token: accessToken
 	});
 	if (response.status !== 204 && response.status !== 200) {

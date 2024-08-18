@@ -11,5 +11,5 @@ export const load: LayoutServerLoad = async ({ parent, params }) => {
 		eventId: params.id
 	});
 
-	return {event};
+	return { event };
 };

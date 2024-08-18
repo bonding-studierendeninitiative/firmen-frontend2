@@ -2,7 +2,6 @@
 	import { _ } from '@services';
 	import { Table } from '$lib/@svelte/components';
 	import Button from '$lib/@svelte/components/Button/Button.svelte';
-	import EventDetails from '$lib/@svelte/modules/EventDetails/EventDetails.svelte';
 
 	const columns = ['event', 'location', 'date', ''];
 	interface EventListType {
@@ -65,4 +64,3 @@
 		</Table>
 	</section>
 </div>
-<EventDetails bind:isOpen={isEventDetailsDrawerOpen} />

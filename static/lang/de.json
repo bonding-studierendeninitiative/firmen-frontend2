@@ -370,15 +370,16 @@
     "addons": {
       "addAddons": "Zusatzfunktionen hinzufügen",
       "newAddons": "Neue Zusatzfunktionen",
-      "addonName": "Name der Zusatzfunktion",
+      "addonName": "Name des Zusatzleistungs-Pakets",
       "price": "Preis",
       "pricePlaceholder": "kein Preis",
       "purchasable": "Buchbar",
       "purchasableDescription": "Nicht-buchbare Zusatzleistungspakete dienen zur Gruppierung von mehreren, einzelnen Zusatzleistungen. Sie besitzen keinen Preis.",
-      "saleTag": "Preis",
-      "packageInformation": "Paketinformationen",
-      "addSubAddon": "Sub Add-on hinzufügen",
-      "subAddonName": "Name des Sub Add-ons"
+      "label": "Label (optional)",
+      "packageInformation": "Beschreibung des Pakets (optional)",
+      "addSubAddon": "Zusatzleistung hinzufügen",
+      "subAddonName": "Name der Zusatzleistung",
+      "subAddonDescription": "Beschreibung der Zusatzleistung (optional)"
     },
     "packages": {
       "addPackage": "Paket hinzufügen",

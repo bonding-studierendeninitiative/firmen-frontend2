@@ -1,5 +1,14 @@
 import { derived } from 'svelte/store';
-import { dictionary, locale as localeStore, _, date, time, number } from 'svelte-i18n';
+import {
+	dictionary,
+	locale as localeStore,
+	_,
+	date,
+	time,
+	number,
+	register,
+	init
+} from 'svelte-i18n';
 
 const MESSAGE_FILE_URL_TEMPLATE = '/lang/{locale}.json';
 
@@ -9,17 +18,12 @@ interface SetupI18nOptions {
 	withLocale: string;
 }
 
-function setupI18n({ withLocale }: SetupI18nOptions = { withLocale: 'en' }): Promise<void> {
+function setupI18n({ withLocale }: SetupI18nOptions = { withLocale: 'en' }) {
 	const messagesFileUrl = MESSAGE_FILE_URL_TEMPLATE.replace('{locale}', withLocale);
-	return fetch(messagesFileUrl)
-		.then((response) => response.json())
-		.then((messages) => {
-			dictionary.set({ [withLocale]: messages });
-
-			cachedLocale = withLocale;
-
-			localeStore.set(withLocale);
-		});
+	register(withLocale, async () => {
+		const response = await fetch(messagesFileUrl);
+		return await response.json();
+	});
 }
 
 function formatDate(
@@ -43,5 +47,6 @@ export {
 	date,
 	time,
 	number,
-	dictionary
+	dictionary,
+	init
 };

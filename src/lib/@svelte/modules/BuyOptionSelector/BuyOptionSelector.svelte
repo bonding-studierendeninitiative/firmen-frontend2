@@ -21,7 +21,7 @@
 	export let buyOptions: { label: string, value: string, active: boolean }[];
 	export let onSelect: (value: string) => void;
 	export let value = '';
-	export let createForm: SuperValidated<Infer<CreateBuyOptionRequest>>;
+	export let createForm: SuperValidated<Infer<CreateBuyOptionRequest>> | undefined;
 	let isDialogOpen = false;
 
 	const superform = superForm(createForm, {

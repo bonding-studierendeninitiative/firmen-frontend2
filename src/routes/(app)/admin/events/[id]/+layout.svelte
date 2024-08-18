@@ -1,19 +1,22 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import { CalenderIcon, LocationIcon, ReturnIcon } from '@/@svelte/icons';
+	import { ReturnIcon } from '@/@svelte/icons';
 	import { LinkTabs, Spinner } from '@/@svelte/components';
 	import type { LayoutServerData } from './$types';
 	import { page, navigating } from '$app/stores';
 	import { fade } from 'svelte/transition';
+	import { Event } from '@/@svelte/components';
+	import { Button } from '@/components/ui/button';
 
 	$: activeUrl = $page.url.pathname;
 
-	$: activeTab = activeUrl?.includes('/buy-options') ? 1 : 0;
+	$: activeTab = activeUrl?.includes('/details') ? 2 : activeUrl?.includes('/buy-options') ? 1 : 0;
 	export let data: LayoutServerData;
-	$: tabs = [{
-		href: `/admin/events/${data.event?.id}/registrations`,
-		name: 'registrations'
-	}, { name: 'buy-options', href: `/admin/events/${data.event?.id}/buy-options` }];
+	$: tabs = [
+		{ href: `/admin/events/${data.event?.id}/registrations`, name: 'registrations' },
+		{ name: 'buy-options', href: `/admin/events/${data.event?.id}/buy-options` }
+		// { name: 'details', href: `/admin/events/${data.event?.id}/details` }
+	];
 
 	function getEventInfo(url?: URL) {
 		const match = url?.pathname.match(/\/events\/([^/]+)\/([^/]+)/);
@@ -22,32 +25,23 @@
 </script>
 
 <div>
-	<div class=" flex justify-between items-start">
-		<div class=" flex">
-			<button
-				on:click={() => goto('/admin/events')}
-				class="  h-10 w-10 flex flex-shrink justify-center rounded-lg items-center border text-stone-400 border-stone-200 mr-6"
-			>
-				<ReturnIcon />
-			</button
-			>
-			<div>
-				<h4 class=" text-xl font-extrabold text-stone-800">{data.event?.name}</h4>
-				<div class=" flex mt-2">
-					<div class=" flex items-center mr-2">
-						<CalenderIcon />
-						<p class=" ml-2 text-sm text-stone-800 font-medium">{data.event?.dateFrom}</p>
-					</div>
-					<div class=" flex items-center">
-						<LocationIcon />
-						<p class=" ml-2 text-sm text-stone-800 font-medium">{data.event?.location}</p>
-					</div>
-				</div>
-			</div>
-		</div>
+	<div class="flex justify-between items-start">
+		<button
+			on:click={() => goto('/admin/events')}
+			class="h-10 w-10 flex flex-shrink justify-center rounded-lg items-center border text-stone-400 border-stone-200 mr-6"
+		>
+			<ReturnIcon />
+		</button>
+		<Event event={data.event} />
+		<div class="flex-grow"></div>
+		{#if data.event?.status === "UNPUBLISHED"}
+			<form action={`/admin/events/${$page.params.id}/?/publishEvent`} method="POST">
+				<Button type="submit">Publish</Button>
+			</form>
+		{/if}
 	</div>
 
-	<div class=" mt-12">
+	<div class="mt-12">
 		<LinkTabs {tabs} {activeTab} />
 	</div>
 	{#if $navigating }

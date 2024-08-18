@@ -1,8 +1,9 @@
 <script lang="ts">
-	export let classes: string = '';
-	export let onClick: (e: Event) => void = () => {};
+	import { cn } from '@/utils';
+
+	export let href: HTMLAnchorElement['href'];
 </script>
 
-<button on:click={onClick} class={' text-brand no-underline font-normal text-sm '.concat(classes)}
-	><slot /></button
->
+<a {href} class={cn(' text-brand no-underline font-normal text-sm ', $$restProps.class)}>
+	<slot />
+</a>

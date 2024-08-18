@@ -6,7 +6,6 @@
 		GradientButton,
 		IconInput,
 		Input,
-		Link,
 		Select,
 		Textarea
 	} from '$lib/@svelte/components';
@@ -159,9 +158,10 @@
 			{/each}
 		</section>
 		<div id="addServiceButton">
-			<Link classes=" flex items-center !font-semibold" onClick={handleAddService}
-				><PlusIcon classes="mr-2" />{$_('admin-pages.packages.addNewService')}</Link
-			>
+			<Button variant="link" classes=" flex items-center !font-semibold" on:click={handleAddService}>
+				<PlusIcon classes="mr-2" />
+				{$_('admin-pages.packages.addNewService')}
+			</Button>
 		</div>
 	</div>
 	<footer class=" flex justify-end items-center w-full">

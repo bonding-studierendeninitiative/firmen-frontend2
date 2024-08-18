@@ -4,8 +4,8 @@
 	import { EventInfoBox } from '$lib/@svelte/components';
 	import { currentOrganization } from '$lib/stores/organizationStore';
 	import type { PageData } from './$types';
-	import { Checkbox } from '$lib/components/ui/checkbox/index.js';
-	import { Label } from '$lib/components/ui/label/index.js';
+	import { Checkbox } from '$lib/components/ui/checkbox';
+	import { Label } from '$lib/components/ui/label';
 
 	export let data: PageData;
 	let events = data.events ?? [];

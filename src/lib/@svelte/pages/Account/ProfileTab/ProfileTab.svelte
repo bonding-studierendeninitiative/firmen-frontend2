@@ -4,7 +4,7 @@
 	import { TrashIcon } from '$lib/@svelte/icons';
 	import { GradientButton, Input, Spinner } from '$lib/@svelte/components';
 
-	import * as Table from '$lib/components/ui/table/index.js';
+	import * as Table from '$lib/components/ui/table';
 	import {
 		CreateOrgInviteRequestSchema,
 		type CreateOrgInviteRequest,
@@ -14,7 +14,7 @@
 	import DataTable from './data-table.svelte';
 
 	let inviteMemberDialogOpen = false;
-	import * as Dialog from '$lib/components/ui/dialog/index.js';
+	import * as Dialog from '$lib/components/ui/dialog';
 	import { superForm, type SuperValidated } from 'sveltekit-superforms';
 	import { valibot } from 'sveltekit-superforms/adapters';
 	import { toast } from 'svelte-french-toast';

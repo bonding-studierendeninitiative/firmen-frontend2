@@ -2,14 +2,18 @@
 	import { onMount } from 'svelte';
 	import { Toaster } from 'svelte-french-toast';
 	import '../app.css';
-	import { setupI18n, isLocaleLoaded, dir } from '@services';
+	import { setupI18n, isLocaleLoaded, dir, init } from '@services';
 	import { page } from '$app/stores';
 	import { signIn } from '@auth/sveltekit/client';
 	import { GradientButton } from '$lib/@svelte/components';
 
 	onMount(() => {
 		document.dir = $dir;
-		setupI18n({ withLocale: 'en' });
+		setupI18n({ withLocale: 'de' });
+		init({
+			initialLocale: 'de',
+			fallbackLocale: 'de'
+		})
 	});
 	const toastOptions = {
 		duration: 5000

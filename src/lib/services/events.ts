@@ -2,10 +2,11 @@ import { API } from '@api';
 import { parse, type InferInput } from 'valibot';
 import {
 	type GetEventsResponse,
-	type GetEventResponse,
 	GetEventsResponseSchema,
-	GetEventResponseSchema
+	EventDetailsResponseSchema,
+	type EventDetailsResponse
 } from '@schema';
+import { error } from '@sveltejs/kit';
 
 export const getEvents = async ({
 	accessToken,
@@ -15,7 +16,7 @@ export const getEvents = async ({
 	status: 'PUBLISHED' | 'UNPUBLISHED' | 'ARCHIVED';
 }) => {
 	const response = await API.get<InferInput<GetEventsResponse>>({
-		route: `/events?event_status=${status}&page=0&limit=4`,
+		route: `/event?event_status=${status}&page=0&limit=4`,
 		token: accessToken
 	});
 	const data = await response.json();
@@ -29,10 +30,26 @@ export const getEvent = async ({
 	accessToken: string;
 	eventId: string;
 }) => {
-	const response = await API.get<InferInput<GetEventResponse>>({
-		route: `/events/${eventId}`,
+	const response = await API.get<InferInput<EventDetailsResponse>>({
+		route: `/event/${eventId}`,
 		token: accessToken
 	});
 	const data = await response.json();
-	return parse(GetEventResponseSchema, data);
+	return parse(EventDetailsResponseSchema, data);
+};
+
+export const publishEvent = async ({
+	eventId,
+	accessToken
+}: {
+	eventId: string;
+	accessToken: string;
+}) => {
+	const response = await API.post({
+		route: `/events/${eventId}/publish`,
+		token: accessToken
+	});
+	if (response.status !== 204) {
+		error(400, response.statusText);
+	}
 };

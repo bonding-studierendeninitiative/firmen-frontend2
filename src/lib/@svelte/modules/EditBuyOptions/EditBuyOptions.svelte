@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { _ } from '@services/i18n';
 	import { type Infer, superForm, type SuperValidated } from 'sveltekit-superforms';
-	import { Checkbox, Link } from '$lib/@svelte/components';
+	import { Checkbox } from '$lib/@svelte/components';
 	import { type UpdateBuyOptionRequest, ValueType } from '@schema';
 	import { TrashIcon } from '$lib/@svelte/icons';
 	import { Button } from '@/components/ui/button';
@@ -14,7 +14,8 @@
 	import NumericInput from '@/@svelte/components/NumericInput/NumericInput.svelte';
 	import { toast } from 'svelte-french-toast';
 	import * as Table from '@/components/ui/table';
-	import { buyOptionFormTouched } from '@/stores/buyOptionStore';
+	import { Separator } from '@/components/ui/separator';
+	import { cn } from '@/utils';
 
 	export let form: SuperValidated<Infer<UpdateBuyOptionRequest>>;
 
@@ -32,17 +33,15 @@
 		});
 	const { form: formData, enhance, isTainted, tainted } = superform;
 
-	$: $buyOptionFormTouched = isTainted($tainted)
-
 	const removePackage = (e: Event, packageIndex: number) => {
 		e.preventDefault();
 		formData.update((oldForm) => ({
-				...oldForm,
-				packages: [
-					...oldForm.packages.slice(0, packageIndex),
-					...oldForm.packages.slice(packageIndex + 1)
-				].map((_, index) => ({ ...oldForm.packages[index], order: index }))
-			}));
+			...oldForm,
+			packages: [
+				...oldForm.packages.slice(0, packageIndex),
+				...oldForm.packages.slice(packageIndex + 1)
+			]
+		}));
 	};
 	const addPackage = (e: Event) => {
 		e.preventDefault();
@@ -56,8 +55,7 @@
 					booleanValue: null,
 					stringValue: null
 				}),
-				price: 0,
-				order: oldForm.packages.length
+				price: 0
 			}]
 		}));
 	};
@@ -69,8 +67,7 @@
 				services: [...oldForm.services, {
 					name: '',
 					description: '',
-					valueType: ValueType.String,
-					order: oldForm.services.length
+					valueType: ValueType.String
 				}],
 				packages: oldForm.packages.map((oldPackage) => ({
 					...oldPackage,
@@ -88,54 +85,73 @@
 	};
 </script>
 
-<form id="edit-buy-option-form" class="flex flex-col gap-6 justify-center" action="?/updateBuyOption" method="post" use:enhance>
-	<div class={' min-w-full overflow-x-scroll rounded-lg shadow-xs border border-stone-200 '}>
-		<div class="min-w-full overflow-x-auto">
+<form action="?/updateBuyOption" method="post"
+			use:enhance>
+	<div class="px-8 pt-6 pb-8 border rounded-xl flex flex-col gap-y-4">
+		<div class="flex gap-1">
+			<h3 class="font-semibold text-lg flex-grow">Buy option</h3>
+			<Button disabled={!isTainted($tainted)} variant="default"
+							type="submit">{$_('common.save')} as draft</Button>
+		</div>
+		<Field class="flex-col flex justify-start" form={superform} name="name">
+			<Control let:attrs>
+				<Label>Buy option name</Label>
+				<Input class="w-[40ch]" {...attrs} bind:value={$formData.name} />
+			</Control>
+			<Description />
+			<FieldErrors />
+		</Field>
+		<h3 class="font-semibold text-lg flex-grow">Packages</h3>
+		<div class="rounded-lg overflow-x-scroll border">
 			<Table.Root class="min-w-full whitespace-no-wrap">
 				<Table.Header>
-				<Table.Row class="bg-gray-50">
-					<Table.Head class="text-center tracking-wide uppercase font-semibold text-xs text-gray-500" colspan={2}>Buy Option</Table.Head>
-					<Table.Head class="border-s text-center tracking-wide uppercase font-semibold text-xs text-gray-500" colspan={10}>Packages</Table.Head>
-				</Table.Row>
-				<Table.Row class=" tracking-wide text-left text-gray-500 border-b bg-gray-50">
-					<Table.Head colspan={2} class="p-4 border-r">
-						<Field form={superform} name="name">
-							<Control let:attrs>
-								<Label>Buy option name</Label>
-								<Input {...attrs} bind:value={$formData.name} />
-							</Control>
-							<Description />
-							<FieldErrors />
-						</Field>
-					</Table.Head>
-					{#each $formData.packages as _, packageIndex}
-						<Table.Head class="px-4 py-3 text-sm font-normal border-r">
-							<Field form={superform} name={`packages[${packageIndex}].name`}>
+					<Table.Row class="bg-gray-50">
+						<Table.Head class="text-center tracking-wide uppercase font-semibold text-xs text-gray-500" colspan={2}>Buy
+							Option
+						</Table.Head>
+						<Table.Head class="border-s text-center tracking-wide uppercase font-semibold text-xs text-gray-500"
+												colspan={10}>Packages
+						</Table.Head>
+					</Table.Row>
+					<Table.Row class=" tracking-wide text-left text-gray-500 border-b bg-gray-50">
+						<Table.Head colspan={2} class="p-4 border-r">
+							<Field form={superform} name="name">
 								<Control let:attrs>
-									<Label>Package name</Label>
-									<Input {...attrs} bind:value={$formData.packages[packageIndex].name} />
-								</Control>
-								<Description />
-								<FieldErrors />
-							</Field>
-							<Field form={superform} name={`packages[${packageIndex}].price`}>
-								<Control let:attrs>
-									<Label>Package price</Label>
-									<NumericInput {...attrs}
-																bind:value={$formData.packages[packageIndex].price} />
+									<Label>Buy option name</Label>
+									<Input {...attrs} bind:value={$formData.name} />
 								</Control>
 								<Description />
 								<FieldErrors />
 							</Field>
 						</Table.Head>
-					{/each}
-					<th>
-						<Link classes="inline-flex items-center" onClick={(e) => addPackage(e)}>
-							<Plus class="inline mr-2" />
-							Add package
-						</Link>
-					</th>
-				</Table.Row>
+						{#each $formData.packages as _, packageIndex}
+							<Table.Head class="px-4 py-3 text-sm font-normal border-r">
+								<Field form={superform} name={`packages[${packageIndex}].name`}>
+									<Control let:attrs>
+										<Label>Package name</Label>
+										<Input {...attrs} bind:value={$formData.packages[packageIndex].name} />
+									</Control>
+									<Description />
+									<FieldErrors />
+								</Field>
+								<Field form={superform} name={`packages[${packageIndex}].price`}>
+									<Control let:attrs>
+										<Label>Package price</Label>
+										<NumericInput {...attrs}
+																	bind:value={$formData.packages[packageIndex].price} />
+									</Control>
+									<Description />
+									<FieldErrors />
+								</Field>
+							</Table.Head>
+						{/each}
+						<th>
+							<Button variant="link" classes="inline-flex items-center" on:click={(e) => addPackage(e)}>
+								<Plus class="inline mr-2" />
+								Add package
+							</Button>
+						</th>
+					</Table.Row>
 				</Table.Header>
 				<tbody class="bg-white divide-y">
 				{#each $formData.services as _, serviceIndex}
@@ -249,19 +265,22 @@
 				<tfoot class="border-t">
 				<tr>
 					<Table.Head colspan={2} class="p-2">
-						<Link onClick={(e) => addService(e)}>Add Service</Link>
+						<Button variant="link" on:click={(e) => addService(e)}>Add Service</Button>
 					</Table.Head>
 					{#each $formData.packages as _, packageIndex}
 						<td class="text-center">
-							<Link onClick={(e) => removePackage(e,packageIndex)}>
+							<Button variant="link" on:click={(e) => removePackage(e,packageIndex)}>
 								<TrashIcon classes="text-red-400" />
-							</Link>
+							</Button>
 						</td>
 					{/each}
 				</tr>
 				</tfoot>
 			</Table.Root>
 		</div>
+			<div class="flex gap-1 justify-end">
+				<Button disabled={!isTainted($tainted)} variant="default"
+								type="submit">{$_('common.save')} as draft</Button>
+			</div>
 	</div>
-	<pre>{JSON.stringify($formData, null, 2)}</pre>
 </form>

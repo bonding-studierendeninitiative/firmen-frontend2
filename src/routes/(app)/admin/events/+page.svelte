@@ -5,7 +5,6 @@
 		GradientButton,
 		Tabs
 	} from '$lib/@svelte/components';
-	import { EventDetails } from '$lib/@svelte/modules';
 	import { _ } from '@services';
 	import PublishedEventsTab from '$lib/@svelte/pages/Admin/Events/PublishedEventsTab.svelte';
 	import UnpublishedEventsTab from '$lib/@svelte/pages/Admin/Events/UnpublishedEventsTab.svelte';
@@ -78,4 +77,3 @@
 		<PublishedEventsTab {archivedEvents} {handleEventRegistration} {isListView} />
 	{/if}
 </div>
-<EventDetails bind:isOpen={isDrawerOpen} showActions />

@@ -5,7 +5,7 @@
 	import { _ } from '@services';
 	import Button from '../../components/Button/Button.svelte';
 	import GradientButton from '../../components/GradientButton/GradientButton.svelte';
-	import * as Select from '$lib/components/ui/select/index.js';
+	import * as Select from '$lib/components/ui/select';
 
 	import { page } from '$app/stores';
 	import { PhoneInput } from '$lib/@svelte/components/PhoneInput';

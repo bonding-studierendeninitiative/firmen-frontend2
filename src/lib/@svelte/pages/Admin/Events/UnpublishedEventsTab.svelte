@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { _ } from '@services';
-	import { GridIcon, ListIcon } from '$lib/@svelte/icons/index.js';
-	import { ButtonIcon, EventInfoBox, InfoListItem, SearchInput } from '$lib/@svelte/components/index.js';
+	import { GridIcon, ListIcon } from '$lib/@svelte/icons';
+	import { ButtonIcon, EventInfoBox, InfoListItem, SearchInput } from '$lib/@svelte/components';
 
 	export let unpublishedEvents: { heading: string, subHeading: string, date: string, id: string }[] = [];
 	export let handleEventRegistration = () => {

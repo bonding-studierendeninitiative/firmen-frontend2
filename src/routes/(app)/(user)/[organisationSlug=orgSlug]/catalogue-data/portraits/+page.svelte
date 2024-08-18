@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { _ } from '@services';
-	import { Button, GradientButton, NoDataFound } from '$lib/@svelte/components/index.js';
-	import { SimpleDocumentIcon } from '$lib/@svelte/icons/index.js';
+	import { Button, GradientButton, NoDataFound } from '$lib/@svelte/components';
+	import { SimpleDocumentIcon } from '$lib/@svelte/icons';
 	import { goto } from '$app/navigation';
 	import { currentOrganization } from '$lib/stores/organizationStore';
 	import dayjs from 'dayjs';
