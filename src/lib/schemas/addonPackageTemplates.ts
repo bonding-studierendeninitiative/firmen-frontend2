@@ -4,12 +4,7 @@ const AddonPackageTemplateSchema = v.object({
 	id: v.string(),
 	purchasable: v.nullable(v.boolean(), false),
 	title: v.pipe(v.string(), v.maxLength(50), v.minLength(1)),
-	price: v.pipe(v.nullable(v.number()), v.transform(input => input? Intl.NumberFormat("de-DE", {
-		style: 'currency',
-		currency: 'EUR',
-
-
-	}).format(input/100): 0)),
+	price: v.nullish(v.number(), 0),
 	description: v.nullable(v.pipe(v.string(), v.maxLength(255)), ''),
 	label: v.string(),
 	addons: v.array(
@@ -18,12 +13,7 @@ const AddonPackageTemplateSchema = v.object({
 			title: v.pipe(v.string(), v.maxLength(50), v.minLength(1)),
 			label: v.nullish(v.string()),
 			description: v.optional(v.pipe(v.string(), v.maxLength(255))),
-			price: v.pipe(v.nullable(v.number()), v.transform(input => input? Intl.NumberFormat("de-DE", {
-				style: 'currency',
-				currency: 'EUR',
-
-
-			}).format(input/100): 0))
+			price: v.nullish(v.number(), 0)
 		})
 	)
 });

@@ -12,3 +12,4 @@ export * from './organizationDetails';
 export * from './organizationMembership';
 export * from './organizationMembers';
 export * from './organizationInvite';
+export * from "./contactPersonSchema"

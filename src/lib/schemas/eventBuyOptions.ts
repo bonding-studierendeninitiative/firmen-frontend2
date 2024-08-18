@@ -29,8 +29,9 @@ export const GetBuyOptionResponseSchema = v.object({
 	name: v.string(),
 	packages: v.array(
 		v.object({
+			id: v.string(),
 			name: v.string(),
-			price: v.nullable(v.number()),
+			price: v.nullish(v.number()),
 			benefits: v.array(
 				v.object({
 					numericValue: v.nullable(v.number()),
@@ -59,7 +60,7 @@ export const UpdateBuyOptionsResponseSchema = v.object({
 			packages: v.array(
 				v.object({
 					name: v.string(),
-					price: v.nullable(v.number()),
+					price: v.nullish(v.number(), 0),
 					benefits: v.array(
 						v.object({
 							numericValue: v.nullable(v.number()),

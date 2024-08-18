@@ -7,6 +7,9 @@ import {
 	SetOrgDetailsRequest,
 	SetOrgDetailsRequestSchema
 } from '@schema';
+
+import {APP_URL} from "$env/static/private"
+
 import { fail } from '@sveltejs/kit';
 
 export const load: PageServerLoad = async ({ parent, params, url }) => {
@@ -21,7 +24,7 @@ export const load: PageServerLoad = async ({ parent, params, url }) => {
 
 	const createInviteForm = await superValidate(valibot(CreateOrgInviteRequestSchema));
 	createInviteForm.data.organizationSlug = params.organisationSlug;
-	createInviteForm.data.redirectURL = 'http://localhost:8080';
+	createInviteForm.data.redirectURL = APP_URL;
 
 	const editOrganizationDetailsForm = await superValidate(
 		organizationData,

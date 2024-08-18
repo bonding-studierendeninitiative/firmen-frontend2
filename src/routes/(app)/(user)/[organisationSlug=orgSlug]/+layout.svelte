@@ -35,7 +35,6 @@
 	}
 
 	function switchOrganization(value: string) {
-		console.log(value);
 		if (value) {
 			currentOrganization.set(orgs?.find((org) => org.organizationSlug === value));
 			goto(`/${value}/dashboard`);

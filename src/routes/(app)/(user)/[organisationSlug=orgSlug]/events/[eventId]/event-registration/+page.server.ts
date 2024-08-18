@@ -1,6 +1,6 @@
 import type { PageServerLoad } from './$types';
 import {
-	CreateEventRegistrationSchema,
+	CreateEventRegistrationSchema, generateOrgInvite,
 	getAddonPackageTemplate,
 	getBuyOption,
 	getEvent,
@@ -8,29 +8,33 @@ import {
 } from '@/services';
 import { superValidate } from 'sveltekit-superforms';
 import { valibot } from 'sveltekit-superforms/adapters';
-import { SetOrgDetailsRequestSchema } from '@schema';
+import { CreateOrgInviteRequestSchema, SetOrgDetailsRequestSchema } from '@schema';
 import { getContactPersonDetails } from '@/services/contactPerson';
 import { url } from 'valibot';
+import type {
+	Actions
+} from './$types';
+import { fail } from '@sveltejs/kit';
 
 export const load: PageServerLoad = async ({ parent, params, url }) => {
 	const { session } = await parent();
 	if (!session?.user) return;
 	const eventId = params.eventId;
 
-	// @ts-expect-error we define accessToken in parent
 	const event = await getEvent({
+		// @ts-expect-error we define accessToken in parent
 		accessToken: session?.accessToken,
 		eventId,
 		orgSlug: params.organisationSlug
 	});
-	// @ts-expect-error we define accessToken in parent
 	const buyOption = await getBuyOption({
+		// @ts-expect-error we define accessToken in parent
 		accessToken: session?.accessToken,
 		eventId,
 		buyOptionId: '688a0790-dc1b-42f4-8eb4-df0882246b04'
 	});
 
-	let selectedPackage = url.searchParams.has('selectedPackage') ? url.searchParams.get('selectedPackage') : "";
+	const selectedPackage = url.searchParams.has('selectedPackage') ? url.searchParams.get('selectedPackage') : "";
 
 	const organization = await getOrganizationDetails({
     accessToken: session?.accessToken,
@@ -50,8 +54,30 @@ export const load: PageServerLoad = async ({ parent, params, url }) => {
 	createEventRegistrationForm.data.contactPersonId = contactPerson.contactPersonId;
 
 
-	let selectedAddons: string[] = url.searchParams.has("selectedAddon")? url.searchParams.getAll('selectedAddon') : []
+	const selectedAddons: string[] = url.searchParams.has("selectedAddon")? url.searchParams.getAll('selectedAddon') : []
 
 
 	return { event, buyOption, selectedPackage, selectedAddons,  createEventRegistrationForm, orgSlug: organization.slug,  addons: [pkg, pkg2]  };
 };
+
+
+
+
+export const actions: Actions = {
+	createEventReg: async ({ locals, request }) => {
+		const session = await locals.auth();
+		// @ts-expect-error we define accessToken in parent
+		if (!session || !session.accessToken) {
+			fail(403);
+			return;
+		}
+
+		const form = await superValidate(request, valibot(CreateEventRegistrationSchema));
+		if (!form.valid) {
+			return fail(400, { form });
+		}
+		// @ts-expect-error
+		await generateOrgInvite({ accessToken: session?.accessToken, data: form.data });
+		return { form };
+	}
+}

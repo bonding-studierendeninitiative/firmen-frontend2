@@ -32,5 +32,5 @@
 <p
 	class={cn(' rounded-custom w-auto px-[10px] py-[2px] text-sm font-normal text-center  ', getStylesByVariant(), classes)}
 >
-	{$_(`status-text.${status}`)}
+	{status}
 </p>

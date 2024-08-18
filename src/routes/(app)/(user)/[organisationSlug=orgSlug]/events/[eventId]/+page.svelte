@@ -16,6 +16,7 @@
 	} from './$types';
 	import dayjs from 'dayjs';
 	import AddonList from '@/@svelte/components/AddonList/AddonList.svelte';
+	import { number } from '@services/i18n';
 
 
 	export let data: PageData;
@@ -38,7 +39,7 @@
 	<Breadcrumb.Root>
 		<Breadcrumb.List>
 			<Breadcrumb.Item>
-				<Breadcrumb.Item asChild let:attrs>
+				<Breadcrumb.Item let:attrs>
 					<a href={`/${data.orgSlug}/events`} {...attrs}>{$_('user-pages.events.events')}</a>
 				</Breadcrumb.Item>
 			</Breadcrumb.Item>
@@ -51,9 +52,6 @@
 
 
 </div>
-<pre>
-	{JSON.stringify(buyOption, null, 2)}
-	</pre>
 <div>
 	<div class=" flex justify-between items-start">
 		<div class=" flex">
@@ -79,9 +77,7 @@
 				</div>
 			</div>
 		</div>
-		<div>
-			<Button>{$_('common.registerNow')}</Button>
-		</div>
+
 	</div>
 	<div class=" my-10">
 		<hr />
@@ -108,7 +104,11 @@
 						<Table.Cell class={`w-1/${buyOption.packages.length +1} p-3`}>
 							<div>
 								<p class=" text-brand text-sm font-medium">{pkg.name}</p>
-								<p class=" font-extrabold text-2xl mt-2">{pkg.price}</p>
+								<p class=" font-extrabold text-2xl mt-2">{$number((pkg.price ?? 0) / 100, {
+									style: "currency",
+									currency: "EUR",
+									currencyDisplay: "code"
+								})}</p>
 							</div>
 						</Table.Cell>
 					{/each}

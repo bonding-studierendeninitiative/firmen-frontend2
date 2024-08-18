@@ -20,17 +20,23 @@
 	import { toast } from 'svelte-french-toast';
 	import { Control, Description, Field, FieldErrors, Label } from '@/components/ui/form';
 	import { Button } from '@/components/ui/button';
+	import LoaderCircle from 'lucide-svelte/icons/loader-circle';
 
 	export let createInviteForm: SuperValidated<CreateOrgInviteRequest> | undefined;
 	export let organizationMembers: GetOrgMembersResponse | undefined;
 
-
+	let loading = false;
 	const superform = superForm<CreateOrgInviteRequest>(createInviteForm, {
 		validators: valibot(CreateOrgInviteRequestSchema),
 		applyAction: true,
 		dataType: 'json',
 		invalidateAll: 'force',
+		onSubmit() {
+			console.log("Hasdas");
+			loading = true;
+		},
 		onResult({ result }) {
+			loading = false;
 			if (result.type === 'success') {
 				inviteMemberDialogOpen = false;
 				toast.success($_('user-pages.accounts.invitationSuccess'));
@@ -87,11 +93,19 @@
 					<footer>
 						<footer class=" flex justify-end items-center w-full">
 							<Button class="mr-2" variant="outline" on:click={() => (inviteMemberDialogOpen = false)}
-								>{$_('common.cancel')}</Button
+							>{$_('common.cancel')}</Button
 							>
-							<Button form="create-invite-form" type="submit" color="blue"
+							{#if loading}
+								<Button form="create-invite-form" disabled
+								>
+									<LoaderCircle class="mr-2 h-4 w-4 animate-spin" />{$_('user-pages.accounts.invite')}
+								</Button>
+							{:else}
+
+								<Button form="create-invite-form" type="submit"
 								>{$_('user-pages.accounts.invite')}</Button
-							>
+								>
+							{/if}
 						</footer>
 					</footer>
 				</div>

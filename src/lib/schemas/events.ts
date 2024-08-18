@@ -4,8 +4,8 @@ const APIEvent = v.object({
 	id: v.string(),
 	name: v.string(),
 	projectHSG: v.string(),
-	dateFrom: v.nullable(v.string()),
-	dateTo: v.nullable(v.string()),
+	dateFrom: v.string(),
+	dateTo: v.nullish(v.string()),
 	location: v.string()
 });
 

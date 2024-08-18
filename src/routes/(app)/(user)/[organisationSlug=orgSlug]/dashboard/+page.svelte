@@ -54,7 +54,7 @@
 					heading={name}
 					subHeading={location}
 					date={dateFrom}
-					href={`/${$currentOrganization?.organizationSlug}/events/${id}/event-registration`}
+					href={`/${$currentOrganization?.organizationSlug}/events/${id}`}
 				/>
 			{/each}
 		</div>

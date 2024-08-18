@@ -5,10 +5,12 @@ interface ApiParams {
 	image?: FormDataEntryValue | null;
 }
 
+import {PUBLIC_BACKEND_HOST} from "$env/static/public"
+
 type GetParams = Omit<ApiParams, 'data'>;
 
 export const API = {
-	baseUrl: 'https://backend-firmen5.bunnyenv.com/api/v2',
+	baseUrl: PUBLIC_BACKEND_HOST,
 	get: <T>(params: GetParams): Promise<TypedResponse<T>> => {
 		try {
 			return fetch(API.baseUrl + params.route, {

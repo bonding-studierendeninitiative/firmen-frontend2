@@ -6,6 +6,7 @@
 	import Dropzone from 'svelte-file-dropzone';
 	import { DropzoneIcon, CrossIcon, FilledCheckIcon } from '$lib/@svelte/icons';
 	import * as Breadcrumb from '$lib/components/ui/breadcrumb/index.js';
+	import { number } from '@services/i18n';
 
 	import { Checkbox } from '$lib/components/ui/checkbox/index.js';
 	import { Label } from '$lib/components/ui/label/index.js';
@@ -69,16 +70,15 @@
 	}
 
 	function getSelectedAddonsPrice(addonsList, selectedAddons) {
-		const parsePrice = (price) => parseFloat(price.replace('.', '').replace(',', '.').replace(' €', ''));
 
 		return selectedAddons.reduce((sum, addonId) => {
 			for (let item of addonsList) {
 				if (item.id === addonId) {
-					sum += parsePrice(item.price);
+					sum += item.price;
 				}
 				for (let addon of item.addons) {
 					if (addon.id === addonId) {
-						sum += parsePrice(addon.price);
+						sum += addon.price;
 					}
 				}
 			}
@@ -98,6 +98,7 @@
 	const handleFormSubmit = () => {
 		isOpen = true;
 	};
+	let termsAccepted = false;
 
 </script>
 
@@ -123,25 +124,27 @@
 	</footer>
 </Modal>
 <div>
-	<Breadcrumb.Root>
-		<Breadcrumb.List>
-			<Breadcrumb.Item>
-				<Breadcrumb.Item asChild let:attrs>
-					<a href={`/${data.orgSlug}/events`} {...attrs}>{$_('user-pages.events.events')}</a>
+	<div class="mb-10">
+		<Breadcrumb.Root>
+			<Breadcrumb.List>
+				<Breadcrumb.Item>
+					<Breadcrumb.Item let:attrs>
+						<a href={`/${data.orgSlug}/events`} {...attrs}>{$_('user-pages.events.events')}</a>
+					</Breadcrumb.Item>
 				</Breadcrumb.Item>
-			</Breadcrumb.Item>
-			<Breadcrumb.Separator />
-			<Breadcrumb.Item>
-				<Breadcrumb.Item asChild let:attrs>
-					<a href={`/${data.orgSlug}/events/${data.event.id}`} {...attrs}>{data.event.name}</a>
+				<Breadcrumb.Separator />
+				<Breadcrumb.Item>
+					<Breadcrumb.Item let:attrs>
+						<a href={`/${data.orgSlug}/events/${data.event.id}`} {...attrs}>{data.event.name}</a>
+					</Breadcrumb.Item>
 				</Breadcrumb.Item>
-			</Breadcrumb.Item>
-			<Breadcrumb.Separator />
-			<Breadcrumb.Item>
-				<Breadcrumb.Page>{$_('user-pages.events.event-registration.registration')}</Breadcrumb.Page>
-			</Breadcrumb.Item>
-		</Breadcrumb.List>
-	</Breadcrumb.Root>
+				<Breadcrumb.Separator />
+				<Breadcrumb.Item>
+					<Breadcrumb.Page>{$_('user-pages.events.event-registration.registration')}</Breadcrumb.Page>
+				</Breadcrumb.Item>
+			</Breadcrumb.List>
+		</Breadcrumb.Root>
+	</div>
 	<div class=" flex justify-between items-start">
 		<h3 class=" text-xl font-extrabold text-stone-800">
 			{$_('user-pages.events.registrationForm')}
@@ -155,9 +158,6 @@
 	</div>
 
 	<div class=" grid grid-cols-1 gap-4">
-		<pre>
-	{JSON.stringify("translatedAGBessage", null, 2)}
-	</pre>
 
 		<form action="?/createEventRegistration" method="post" use:enhance>
 			<h4 class=" font-extrabold text-sm text-stone-900 mb-6">
@@ -430,7 +430,11 @@
 							{pkg.name}
 						</Label>
 					</div>
-					<p class=" text-sm font-stone-800 font-extrabold">{pkg.price}</p>
+					<p class=" text-sm font-stone-800 font-extrabold">{$number((pkg.price ?? 0) / 100, {
+						style: "currency",
+						currency: "EUR",
+						currencyDisplay: "code"
+					})}</p>
 				</div>
 			{/each}
 
@@ -462,18 +466,30 @@
 	<section class="my-6">
 		<div class="flex items-center justify-between mb-3">
 			<p class="text-sm font-medium text-stone-800">{$_('user-pages.events.eventFee')}</p>
-			<p class="text-sm font-extrabold text-stone-800">{selectedPackagePrice}</p>
+			<p class="text-sm font-extrabold text-stone-800">{$number((selectedPackagePrice ?? 0) / 100, {
+				style: "currency",
+				currency: "EUR",
+				currencyDisplay: "code"
+			})}</p>
 		</div>
 		<div class="flex items-center justify-between mb-3">
 			<p class="text-sm font-medium text-stone-800">{$_('user-pages.events.additionalMarketingServices')}</p>
-			<p class="text-sm font-extrabold text-stone-800">{selectedAddonPrice}</p>
+			<p class="text-sm font-extrabold text-stone-800">{$number((selectedAddonPrice ?? 0) / 100, {
+				style: "currency",
+				currency: "EUR",
+				currencyDisplay: "code"
+			})}</p>
 		</div>
 		<div class=" my-4">
 			<hr />
 		</div>
 		<div class="flex items-center justify-between mb-6">
 			<p class="text-sm font-medium text-stone-800">{$_('user-pages.events.total')}</p>
-			<p class="text-sm font-extrabold text-stone-800">asdad</p>
+			<p class="text-sm font-extrabold text-stone-800">{$number(((selectedPackagePrice + selectedAddonPrice) ?? 0) / 100, {
+				style: "currency",
+				currency: "EUR",
+				currencyDisplay: "code"
+			})}</p>
 		</div>
 		<div class="flex items-center justify-end space-x-2 w-full">
 
@@ -486,11 +502,11 @@
 				{@html $_("user-pages.events.undertakingText")}
 				</div>
 			</Label>
-			<Checkbox id="terms" aria-labelledby="terms-label" />
+			<Checkbox bind:checked={termsAccepted} id="terms" aria-labelledby="terms-label" />
 		</div>
 	</section>
 	<footer class=" flex mt-6 justify-end items-center">
-		<Button onClick={handleFormSubmit}>{$_('common.submit')}</Button>
+		<Button disabled={!termsAccepted || data.selectedPackage === ""} onClick={handleFormSubmit}>{$_('common.submit')}</Button>
 	</footer>
 
 </div>
