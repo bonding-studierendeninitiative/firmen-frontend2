@@ -1,17 +1,29 @@
 import * as v from 'valibot';
 
 const AddonPackageTemplateSchema = v.object({
+	id: v.string(),
 	purchasable: v.nullable(v.boolean(), false),
 	title: v.pipe(v.string(), v.maxLength(50), v.minLength(1)),
-	price: v.nullable(v.number()),
+	price: v.pipe(v.nullable(v.number()), v.transform(input => input? Intl.NumberFormat("de-DE", {
+		style: 'currency',
+		currency: 'EUR',
+
+
+	}).format(input/100): 0)),
 	description: v.nullable(v.pipe(v.string(), v.maxLength(255)), ''),
 	label: v.string(),
 	addons: v.array(
 		v.object({
+			id: v.string(),
 			title: v.pipe(v.string(), v.maxLength(50), v.minLength(1)),
-			label: v.string(),
+			label: v.nullish(v.string()),
 			description: v.optional(v.pipe(v.string(), v.maxLength(255))),
-			price: v.optional(v.number())
+			price: v.pipe(v.nullable(v.number()), v.transform(input => input? Intl.NumberFormat("de-DE", {
+				style: 'currency',
+				currency: 'EUR',
+
+
+			}).format(input/100): 0))
 		})
 	)
 });

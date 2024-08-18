@@ -1,11 +1,8 @@
 <script lang="ts">
 	import { _ } from '@services';
-	import { goto } from '$app/navigation';
-	import { page } from '$app/stores';
-	import { GradientButton, Button } from '$lib/@svelte/components';
-	import Breadcrumb from '../../../../../../lib/@svelte/components/Breadcrumb/Breadcrumb.svelte';
-	import Checkbox from '../../../../../../lib/@svelte/components/Checkbox/Checkbox.svelte';
-	import Chip from '../../../../../../lib/@svelte/components/Chip/Chip.svelte';
+	import { Button } from '@/components/ui/button';
+	import * as Breadcrumb from '$lib/components/ui/breadcrumb/index.js';
+
 	import {
 		OutlinedCheckIcon,
 		OutlinedCrossIcon,
@@ -13,121 +10,77 @@
 		LocationIcon
 	} from '$lib/@svelte/icons';
 
-	export let heading = 'Tech Foundation 2024';
-	export let mainDate = 'Freitag, 17 März, 2024';
-	export let mainLocation = 'Lanxess Arena';
+	import * as Table from '$lib/components/ui/table/index.js';
+	import type {
+		PageData
+	} from './$types';
+	import dayjs from 'dayjs';
+	import AddonList from '@/@svelte/components/AddonList/AddonList.svelte';
 
-	const { eventId } = $page.params;
 
-	const packageDetails: any = [
-		{
-			feature:
-				'4m×2m Messestand mit Mobiliar Internetzugang Portrait in Katalog & Website Verpflegung am Stand warmes Mittagsbuffet Einladung zu der Abendveranstaltung',
-			light: true,
-			standard: true,
-			premium: true
-		},
-		{ feature: 'Imageanzeige im Katalog', light: true, standard: true, premium: true },
-		{ feature: 'Credits für bonding Jobwall.de*', light: false, standard: false, premium: true },
-		{
-			feature: 'Unternehmenslogoplatzierung auf der Website der RWTH**',
-			light: true,
-			standard: false,
-			premium: true
-		},
-		{ feature: 'Logo auf Banner im Studicafé', light: true, standard: true, premium: true },
-		{
-			feature: 'SocialMedia-Post nach Ihrer Gestal- tung',
-			light: false,
-			standard: true,
-			premium: true
-		},
-		{
-			feature: 'Logo auf Großflächenplakaten (Campus/Stadt)',
-			light: false,
-			standard: true,
-			premium: true
-		},
-		{
-			feature: 'Direktmailing an 3 Studiengänge der Dean‘s List***',
-			light: false,
-			standard: true,
-			premium: true
-		}
-	];
-	const marketingServices = [
-		{
-			name: 'Onlinewerbung-Paket',
-			totalAmount: '1.105€',
-			subServices: [
-				{ name: 'Bonding-Infomails', amount: '100€' },
-				{ name: 'Messewebsite', amount: '100€' },
-				{ name: 'SocialMe.-Firmenvorstellung', amount: '100€' }
-			]
-		},
-		{
-			name: 'Printwerbung-Paket',
-			totalAmount: '1.105€',
-			subServices: [
-				{ name: 'Flyer', amount: '100€' },
-				{ name: 'Großflächenplakate', amount: '100€' },
-				{ name: 'A0-Plakate', amount: '100€' },
-				{ name: 'Exklusive CityLights', amount: '100€' }
-			]
-		},
-		{
-			name: 'Bonding-Tüte',
-			totalAmount: '1.105€',
-			subServices: [
-				{ name: 'Logoplatzierung', amount: '100€' },
-				{ name: 'Flyer -/ Postkarteneinlage', amount: '100€' },
-				{ name: 'Exklusive Imageanzeige', amount: '100€' },
-				{ name: 'Give-Away-Einlage', amount: '100€' }
-			]
-		},
-		{
-			name: 'Sonstiges',
-			totalAmount: '1.105€',
-			subServices: [
-				{ name: 'Messezeltbanner', amount: '100€' },
-				{ name: 'Coffee-To-Go-Becher', amount: '100€' },
-				{ name: 'Exklusive Buswerbung', amount: '100€' }
-			]
-		}
-	];
-	const handleNextStep = () => {
-		goto(`/events/${eventId}/event-registration`);
-	};
+	export let data: PageData;
+	const event = data.event ?? {};
+	const buyOption = data.buyOption ?? {};
+	const addons = data.packages ?? [];
+
+	let selectedPackageID = '';
+	let selectedAddonsURL = ""
+	let selectedAddons: string[] = []
+
+
+	$: selectedAddonsURL = selectedAddons.length == 0? "" : "&selectedAddon=" + selectedAddons.join("&selectedAddon=")
+
+
+
 </script>
 
 <div class="mb-10">
-	<Breadcrumb
-		breadcrumbPaths={[
-			{ text: 'events', path: '/events' },
-			{ text: 'Tech Foundation 2024', path: '' }
-		]}
-	/>
+	<Breadcrumb.Root>
+		<Breadcrumb.List>
+			<Breadcrumb.Item>
+				<Breadcrumb.Item asChild let:attrs>
+					<a href={`/${data.orgSlug}/events`} {...attrs}>{$_('user-pages.events.events')}</a>
+				</Breadcrumb.Item>
+			</Breadcrumb.Item>
+			<Breadcrumb.Separator />
+			<Breadcrumb.Item>
+				<Breadcrumb.Page>{event.name}</Breadcrumb.Page>
+			</Breadcrumb.Item>
+		</Breadcrumb.List>
+	</Breadcrumb.Root>
+
+
 </div>
+<pre>
+	{JSON.stringify(buyOption, null, 2)}
+	</pre>
 <div>
 	<div class=" flex justify-between items-start">
 		<div class=" flex">
 			<div>
-				<h4 class=" text-xl font-extrabold text-stone-800">{heading}</h4>
+				<h4 class=" text-xl font-extrabold text-stone-800">{event.name}</h4>
 				<div class=" flex mt-2">
 					<span class=" flex items-center mr-2">
-						<!-- svelte-ignore missing-declaration -->
 						<CalenderIcon />
-						<p class=" ml-2 text-sm text-stone-800 font-medium">{mainDate}</p>
+						{#if event.dateTo && (dayjs(event.dateFrom) !== dayjs(event.dateTo))}
+							<p class=" ml-2 text-sm text-stone-800 font-medium">{dayjs(event.dateFrom).format('DD.MM.YYYY')}
+								- {dayjs(event.dateTo).format('DD.MM.YYYY')}</p>
+							{:else }
+							<p class=" ml-2 text-sm text-stone-800 font-medium">{dayjs(event.dateFrom).format('DD.MM.YYYY')}</p>
+							{/if}
+
+
+
 					</span>
 					<span class=" flex items-center">
 						<LocationIcon />
-						<p class=" ml-2 text-sm text-stone-800 font-medium">{mainLocation}</p>
+						<p class=" ml-2 text-sm text-stone-800 font-medium">{event.location}</p>
 					</span>
 				</div>
 			</div>
 		</div>
 		<div>
-			<GradientButton onClick={handleNextStep}>{$_('common.registerNow')}</GradientButton>
+			<Button>{$_('common.registerNow')}</Button>
 		</div>
 	</div>
 	<div class=" my-10">
@@ -136,142 +89,85 @@
 	<section>
 		<h4 class=" font-extrabold text-sm text-stone-900">{$_('user-pages.events.overview')}</h4>
 		<p class=" mt-2 text-stone-500 font-normal text-sm">
-			Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
-			labore et dolore magna aliqua. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-			eiusmod tempor incididunt ut labore et dolore magna aliqua. Lorem ipsum dolor sit amet,
-			consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna
-			aliqua. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
-			incididunt ut labore et dolore magna aliqua
+			{event.descriptionNotes}
 		</p>
 	</section>
-	<div class=" my-10 grid grid-cols-2 gap-5 h-[280px] w-full">
-		<img alt="event" class=" object-fill rounded-lg h-full" src="/event1.png" />
-		<div class=" grid grid-cols-1 grid-rows-2 gap-3">
-			<img alt="event" class="object-fill rounded-lg h-full" src="/event2.png" />
-			<img alt="event" class="object-fill rounded-lg h-full" src="/event3.png" />
-		</div>
+	<div class=" my-10">
+		<hr />
 	</div>
 	<section class=" my-10">
 		<h4 class=" font-extrabold text-sm text-stone-900">{$_('common.packages')}</h4>
 		<p class=" mt-2 text-stone-500 font-normal text-sm">
-			Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
-			labore et dolore magna aliqua.
+			{$_('user-pages.events.packageOverview')}
 		</p>
-		<table class=" w-full mt-6 rounded-lg">
-			<thead>
-				<tr>
-					<th class=" w-2/5"></th>
-					<th class=" w-1/5 p-3">
-						<div>
-							<p class=" text-brand text-sm font-medium">{$_('common.light')}</p>
-							<p class=" font-extrabold text-2xl mt-2">2.500,00€</p>
-						</div>
-					</th>
-					<th class=" w-1/5 p-3">
-						<div>
-							<p class=" text-brand text-sm font-medium">{$_('common.standard')}</p>
-							<p class=" font-extrabold text-2xl mt-2">3.200,00€</p>
-						</div>
-					</th>
-					<th class=" w-1/5 p-3">
-						<div>
-							<p class=" text-brand text-sm font-medium">{$_('common.premium')}</p>
-							<p class=" font-extrabold text-2xl mt-2">5.700,00€</p>
-						</div>
-					</th>
-				</tr>
-			</thead>
-			<tbody>
-				{#each packageDetails as pkg (pkg)}
-					<tr class="even:bg-stone-50">
-						<td class="  p-3 border border-stone-200 text-sm">{pkg.feature}</td>
-						<td class=" p-3 border border-stone-200">
-							<div class="flex justify-center items-center">
-								{#if pkg.light}
-									<OutlinedCheckIcon />
-								{:else}
-									<OutlinedCrossIcon />
-								{/if}
+		<Table.Root class=" w-full mt-6 rounded-lg">
+			<Table.Header>
+				<Table.Row>
+					<Table.Cell class={`w-1/${buyOption.packages.length +1}`}></Table.Cell>
+					{#each buyOption.packages as pkg}
+						<Table.Cell class={`w-1/${buyOption.packages.length +1} p-3`}>
+							<div>
+								<p class=" text-brand text-sm font-medium">{pkg.name}</p>
+								<p class=" font-extrabold text-2xl mt-2">{pkg.price}</p>
 							</div>
-						</td>
-						<td class="  p-3 border border-stone-200">
-							<div class="flex justify-center items-center">
-								{#if pkg.standard}
-									<OutlinedCheckIcon />
-								{:else}
-									<OutlinedCrossIcon />
-								{/if}
-							</div>
-						</td>
-						<td class=" p-3 border border-stone-200">
-							<div class="flex justify-center items-center">
-								{#if pkg.premium}
-									<OutlinedCheckIcon />
-								{:else}
-									<OutlinedCrossIcon />
-								{/if}
-							</div>
-						</td>
-					</tr>
-				{/each}
-				<tr>
-					<td></td>
-					<td class=" p-3">
-						<div class=" flex justify-center items-center">
-							<GradientButton onClick={() => undefined} classes="!py-1.5 !px-4"
-								>{$_('common.selected')}</GradientButton
-							>
-						</div>
-					</td>
-					<td class=" p-3">
-						<div class=" flex justify-center items-center">
-							<Button onClick={() => undefined} classes="!py-1.5 !px-4"
-								>{$_('common.select')}</Button
-							>
-						</div>
-					</td>
-					<td class=" p-3">
-						<div class=" flex justify-center items-center">
-							<Button onClick={() => undefined} classes="!py-1.5 !px-4"
-								>{$_('common.select')}</Button
-							>
-						</div>
-					</td>
-				</tr>
-			</tbody>
-		</table>
-	</section>
-	<section>
-		<h4 class=" font-extrabold text-sm text-stone-900">
-			{$_('user-pages.events.additionalMarketingServices')}
-		</h4>
-		<p class=" mt-2 text-stone-500 font-normal text-sm">
-			{$_('user-pages.events.additionalMarketingServicesDescription')}
-		</p>
-		<div class=" border border-stone-200 w-full rounded-lg mt-6">
-			<div>
-				<!-- marketingServices -->
-				{#each marketingServices as marketingService (marketingService)}
-					<div class=" border-b border-stone-200">
-						<div class=" px-3 py-4 flex justify-between items-center">
-							<div class=" flex items-center">
-								<Checkbox label={marketingService.name} labelClasses=" !font-extrabold" />
-								<Chip variant="brand" classes="ml-2" status="15%" />
-							</div>
-							<p class=" text-sm font-stone-800 font-extrabold">{marketingService.totalAmount}</p>
-						</div>
-						{#each marketingService.subServices as subService}
-							<div class=" px-3 py-4 flex items-center justify-between ml-8">
-								<Checkbox label={subService.name} />
-								<p class=" text-sm font-stone-800 font-medium">{subService.amount}</p>
-							</div>
+						</Table.Cell>
+					{/each}
+				</Table.Row>
+			</Table.Header>
+			<Table.Body>
+				{#each buyOption.services as service, index (index)}
+					<Table.Row class="even:bg-stone-50">
+						<Table.Cell class="  p-3 border border-stone-200 text-sm">{service.name}</Table.Cell>
+						{#each buyOption.packages as pkg}
+							<Table.Cell
+								class={selectedPackageID === pkg.id ? "p-3 border border-stone-200 bg-slate-300" : "p-3 border border-stone-200"}>
+								<div class="flex justify-center items-center">
+									{#if service.valueType === "BOOLEAN"}
+										{#if pkg.benefits[index].booleanValue}
+											<OutlinedCheckIcon />
+										{:else}
+											<OutlinedCrossIcon />
+										{/if}
+									{/if}
+									{#if service.valueType === "INTEGER"}
+										{pkg.benefits[index].numericValue}
+									{/if}
+
+									{#if service.valueType === "STRING"}
+										{pkg.benefits[index].stringValue}
+									{/if}
+								</div>
+							</Table.Cell>
 						{/each}
-					</div>
+
+					</Table.Row>
 				{/each}
-			</div>
-		</div>
+				<Table.Row>
+					<Table.Cell></Table.Cell>
+					{#each buyOption.packages as pkg}
+						<Table.Cell class=" p-3">
+							<div class=" flex justify-center items-center">
+								<Button on:click={() => selectedPackageID=pkg.id}
+												variant={selectedPackageID === pkg.id? "default" : "outline"} classes="!py-1.5 !px-4"
+								>{$_('common.select')}</Button
+								>
+							</div>
+						</Table.Cell>
+					{/each}
+
+				</Table.Row>
+			</Table.Body>
+		</Table.Root>
 	</section>
+
+	<AddonList {addons}  bind:selectedAddons={selectedAddons} />
 	<footer class=" flex mt-6 justify-end items-center">
-		<GradientButton onClick={handleNextStep}>{$_('common.continue')}</GradientButton>
+		{#if selectedPackageID !== ""}
+			<a aria-disabled="true" href={`${event.id}/event-registration?selectedPackage=${selectedPackageID + selectedAddonsURL}`}>
+				<Button>{$_('common.continue')}</Button>
+			</a>
+		{:else }
+			<Button disabled={true}>{$_('common.continue')}</Button>
+		{/if}
 	</footer>
 </div>

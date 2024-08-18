@@ -1,5 +1,31 @@
 import { API } from '@api';
 import * as v from 'valibot';
+import type { Infer } from 'sveltekit-superforms';
+
+export const CreateEventRegistrationSchema = v.object({
+	eventId: v.pipe(v.string(), v.nonEmpty()),
+	organizationId: v.pipe(v.string(), v.nonEmpty()),
+	contactPersonId: v.pipe(v.string(), v.nonEmpty()),
+	contractLegalEntityName: v.pipe(v.string(), v.nonEmpty("Legal name required")),
+	contractAddressStreet: v.pipe(v.string(), v.nonEmpty("Street required")),
+	contractAddressZipCode: v.pipe(v.string(), v.nonEmpty("Zip Code required")),
+	contractAddressCity: v.pipe(v.string(), v.nonEmpty("City required")),
+	contractAddressCountry: v.pipe(v.string(), v.nonEmpty("Country required")),
+	billingOrganizationName: v.optional(v.string(), ""),
+	billingStreet: v.optional(v.string(), ""),
+	billingZipCode: v.optional(v.string(), ""),
+	billingCity: v.optional(v.string(), ""),
+	billingCountry: v.optional(v.string(), ""),
+	billingVat: v.optional(v.string(), ""),
+	billingReference: v.optional(v.string(), ""),
+	packageId: v.optional(v.string(), ""),
+	selectedAddonPackages: v.array(v.string()),
+	selectedAddons: v.array(v.string()),
+	participationNote: v.optional(v.string(), ""),
+	language: v.optional(v.string(), "ENGLISH"),
+})
+
+export type CreateEventRegistration = Infer<typeof CreateEventRegistrationSchema>;
 
 export const EventRegistrationSchema = v.object({
 	id: v.string(),
