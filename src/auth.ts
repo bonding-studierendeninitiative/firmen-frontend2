@@ -10,6 +10,7 @@ import {
 
 
 export const { handle } = SvelteKitAuth({
+	trustHost: true,
 	providers: [
 		Auth0({
 			id: 'auth0',
