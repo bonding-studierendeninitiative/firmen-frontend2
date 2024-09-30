@@ -1,12 +1,13 @@
-import { generateOrgInvite, getOrganizationDetails, getOrganizationMembers, setOrgDetails } from '@/services';
+import {
+	generateOrgInvite,
+	getOrganizationDetails,
+	getOrganizationMembers,
+	setOrgDetails
+} from '@/services';
 import type { Actions, PageServerLoad } from './$types';
 import { superValidate } from 'sveltekit-superforms';
 import { valibot } from 'sveltekit-superforms/adapters';
-import {
-	CreateOrgInviteRequestSchema,
-	SetOrgDetailsRequest,
-	SetOrgDetailsRequestSchema
-} from '@schema';
+import { CreateOrgInviteRequestSchema, SetOrgDetailsRequestSchema } from '@schema';
 
 import {APP_URL} from "$env/static/private"
 
@@ -57,11 +58,11 @@ export const actions: Actions = {
 		if (!form.valid) {
 			return fail(400, { form });
 		}
-		// @ts-expect-error
+		// @ts-expect-error  we define accessToken in parent
 		await generateOrgInvite({ accessToken: session?.accessToken, data: form.data });
 		return { form };
 	},
-	updateOrg: async ({ locals, request,params }) => {
+	updateOrg: async ({ locals, request, params }) => {
 		const session = await locals.auth();
 		// @ts-expect-error we define accessToken in parent
 		if (!session || !session.accessToken) {
@@ -73,8 +74,12 @@ export const actions: Actions = {
 		if (!form.valid) {
 			return fail(400, { form });
 		}
-		// @ts-expect-error
-		await setOrgDetails({ accessToken: session?.accessToken, orgSlug: params.organisationSlug, data: form.data });
+		await setOrgDetails({
+			// @ts-expect-error we define accessToken in parent
+			accessToken: session?.accessToken,
+			orgSlug: params.organisationSlug,
+			data: form.data
+		});
 		return { form };
 	}
 };

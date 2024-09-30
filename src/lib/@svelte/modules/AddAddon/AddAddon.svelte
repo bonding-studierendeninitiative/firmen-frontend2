@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { _ } from '@services';
-	import { Button, Checkbox, Drawer, GradientButton } from '$lib/@svelte/components';
+	import { Checkbox, Drawer } from '$lib/@svelte/components';
 	import PlusIcon from '$lib/@svelte/icons/PlusIcon.svelte';
 	import TrashIcon from '$lib/@svelte/icons/TrashIcon.svelte';
 	import { Button as ShadcnButton } from '@/components/ui/button';
@@ -142,13 +142,10 @@
 			</ShadcnButton>
 		</div>
 		<footer class=" mt-10 flex justify-end items-center mb-4 gap-x-2">
-			<Button
-				onClick={() => {
-							isOpen = false;
-						}}
-			>{$_('common.cancel')}
-			</Button>
-			<GradientButton type="submit">{$_('common.save')}</GradientButton>
+			<ShadcnButton variant="outline" on:click={() => { isOpen = false; }}>
+				{$_('common.cancel')}
+			</ShadcnButton>
+			<ShadcnButton variant="gradient" type="submit">{$_('common.save')}</ShadcnButton>
 		</footer>
 		<pre>{JSON.stringify($form, null, 2)}</pre>
 	</form>

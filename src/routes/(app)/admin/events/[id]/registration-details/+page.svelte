@@ -1,22 +1,17 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { _ } from '@services';
-	import { GradientButton, Tabs, Button } from '$lib/@svelte/components';
-	import Select from '$lib/@svelte/components/Select/Select.svelte';
+	import { Tabs } from '$lib/@svelte/components';
 	import {
-		BrandingIcon,
-		DocumentIcon,
 		ReturnIcon,
-		ImageIcon,
 		CalenderIcon,
 		LocationIcon
 	} from '$lib/@svelte/icons';
-	import toast from 'svelte-french-toast';
 	import { CompanyInformationTab, PortraitTab } from '$lib/@svelte/pages';
 	import UploadsTab from '$lib/@svelte/pages/Events/UploadsTab/UploadsTab.svelte';
+	import { Button } from '@/components/ui/button';
 
 	let activeTab = 0;
-	let showListings: boolean = false;
 	export let heading = 'Tech Foundation 2024';
 	export let mainDate = 'Freitag, 17 März, 2024';
 	export let mainLocation = 'Lanxess Arena';
@@ -45,24 +40,23 @@
 		<div>
 			<h4 class=" text-xl font-extrabold text-stone-800">{heading}</h4>
 			<div class=" flex mt-2">
-				<span class=" flex items-center mr-2">
-					<!-- svelte-ignore missing-declaration -->
+				<div class=" flex items-center mr-2">
 					<CalenderIcon />
 					<p class=" ml-2 text-sm text-stone-800 font-medium">{mainDate}</p>
-				</span>
-				<span class=" flex items-center">
+				</div>
+				<div class=" flex items-center">
 					<LocationIcon />
 					<p class=" ml-2 text-sm text-stone-800 font-medium">{mainLocation}</p>
-				</span>
+				</div>
 			</div>
 		</div>
 		<div class=" flex items-center">
-			<Button classes=" mr-2 !py-1.5 !px-4" onClick={() => undefined}
-				>{$_('common.exportFiles')}</Button
-			>
-			<GradientButton classes=" !py-1.5 !px-4" onClick={() => undefined}
-				>{$_('common.edit')}</GradientButton
-			>
+			<Button variant="outline" class=" mr-2 !py-1.5 !px-4" on:click={() => undefined}>
+				{$_('common.exportFiles')}
+			</Button>
+			<Button variant="gradient" class=" !py-1.5 !px-4" on:click={() => undefined}>
+				{$_('common.edit')}
+			</Button>
 		</div>
 	</div>
 	<hr class=" border-t border-stone-200 my-6" />

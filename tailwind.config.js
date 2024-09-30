@@ -1,10 +1,11 @@
-import { fontFamily } from 'tailwindcss/defaultTheme';
+import generated from '@tailwindcss/container-queries';
 
 /** @type {import('tailwindcss').Config} */
 const config = {
 	darkMode: ['class'],
 	content: ['./src/**/*.{html,js,svelte,ts}'],
 	safelist: ['dark'],
+	plugins: [generated],
 	theme: {
 		container: {
 			center: true,
@@ -70,7 +71,7 @@ const config = {
 				custom: '1.25rem'
 			},
 			fontFamily: {
-				sans: ['Poppins','Avenir', 'AvenirLTStd', 'Helvetica', 'Arial', 'sans-serif']
+				sans: ['Poppins', 'Avenir', 'AvenirLTStd', 'Helvetica', 'Arial', 'sans-serif']
 			},
 			fontSize: {
 				'3xl': '2rem'

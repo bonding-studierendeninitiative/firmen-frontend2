@@ -41,7 +41,7 @@ export const GetEventAddonPackageResponseSchema = EventAddonPackageSchema;
 export type GetEventAddonPackageResponse = typeof GetEventAddonPackageResponseSchema;
 
 export const GetEventAddonPackagesResponseSchema = v.object({
-	addonPackages: v.array(EventAddonPackageSchema),
+	addonPackages: v.array(v.intersect([EventAddonPackageSchema, v.object({ id: v.string() })])),
 	totalElements: v.number(),
 	totalPages: v.number(),
 	pageNumber: v.number(),
@@ -49,3 +49,9 @@ export const GetEventAddonPackagesResponseSchema = v.object({
 });
 
 export type GetEventAddonPackagesResponse = typeof GetEventAddonPackagesResponseSchema;
+
+export const deleteEventAddonPackage = v.object({
+	addonPackageId: v.string()
+});
+
+export type DeleteEventAddonPackage = typeof deleteEventAddonPackage;

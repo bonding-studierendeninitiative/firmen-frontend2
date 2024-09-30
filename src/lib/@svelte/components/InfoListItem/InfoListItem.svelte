@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { GradientButton } from '$lib/@svelte/components';
 	import { Event } from '@/@svelte/components/Event';
+	import { Button } from '@/components/ui/button';
 	export let showButton = true;
 	export let heading: string;
 	export let subHeading: string;
@@ -13,9 +13,9 @@
 	<div class=" flex justify-between items-start">
 		<Event event={{dateFrom: date, location: subHeading, name: heading}} />
 		{#if showButton}
-			<GradientButton classes=" !py-1.5" onClick={() => onRegisterClick?.()}
-				>{buttonText}</GradientButton
-			>
+			<Button size="sm" variant="secondary" class="!py-1.5" on:click={() => onRegisterClick?.()}>
+				{buttonText}
+			</Button>
 		{/if}
 	</div>
 </div>

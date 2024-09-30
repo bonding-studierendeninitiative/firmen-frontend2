@@ -46,7 +46,7 @@ export const publishEvent = async ({
 	accessToken: string;
 }) => {
 	const response = await API.post({
-		route: `/events/${eventId}/publish`,
+		route: `/event/${eventId}/publish`,
 		token: accessToken
 	});
 	if (response.status !== 204) {

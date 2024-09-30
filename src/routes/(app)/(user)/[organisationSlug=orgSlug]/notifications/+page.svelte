@@ -3,12 +3,13 @@
 	import { goto } from '$app/navigation';
 	import {
 		ActionNotificationItem,
-		GradientButton,
 		Link,
 		Modal,
 		Select
 	} from '$lib/@svelte/components';
 	import { FilledCheckIcon, PlusIcon } from '$lib/@svelte/icons';
+	import { Button } from '@/components/ui/button';
+
 	interface NotificationsType {
 		id: number;
 		content: string;
@@ -103,18 +104,21 @@
 		</div>
 	</div>
 	<footer class=" flex items-center justify-end">
-		<GradientButton
-			classes="!py-1.5"
-			onClick={() => {
+		<Button
+			class="!py-1.5"
+			variant="gradient" on:click={() => {
 				isSuccessModalOpen = true;
 				isUpdatePortraitModalOpen = false;
-			}}>{$_('common.update')}</GradientButton
-		>
+			}}>
+			{$_('common.update')}
+		</Button>
 	</footer>
 </Modal>
 <Modal bind:isOpen={isSuccessModalOpen}>
 	<div class=" flex flex-col justify-center items-center">
-		<p class=" text-xl"><FilledCheckIcon /></p>
+		<p class=" text-xl">
+			<FilledCheckIcon />
+		</p>
 		<div class=" my-6 text-center">
 			<h2 class=" text-stone-950 font-extrabold text-base">
 				{$_('user-pages.notifications.portraitUpdated')}
@@ -125,8 +129,8 @@
 		</div>
 	</div>
 	<footer class=" flex items-center justify-center">
-		<GradientButton classes="!py-1.5" onClick={() => goto('/events')}
-			>{$_('common.viewEvents')}</GradientButton
-		>
+		<Button class="!py-1.5" variant="gradient" on:click={() => goto('/events')}>
+			{$_('common.viewEvents')}
+		</Button>
 	</footer>
 </Modal>

@@ -14,8 +14,6 @@
 	import NumericInput from '@/@svelte/components/NumericInput/NumericInput.svelte';
 	import { toast } from 'svelte-french-toast';
 	import * as Table from '@/components/ui/table';
-	import { Separator } from '@/components/ui/separator';
-	import { cn } from '@/utils';
 
 	export let form: SuperValidated<Infer<UpdateBuyOptionRequest>>;
 
@@ -146,7 +144,7 @@
 							</Table.Head>
 						{/each}
 						<th>
-							<Button variant="link" classes="inline-flex items-center" on:click={(e) => addPackage(e)}>
+							<Button variant="link" class="inline-flex items-center" on:click={(e) => addPackage(e)}>
 								<Plus class="inline mr-2" />
 								Add package
 							</Button>

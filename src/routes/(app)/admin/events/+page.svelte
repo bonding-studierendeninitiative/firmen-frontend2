@@ -1,13 +1,11 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import type { PageServerData } from './$types';
-	import {
-		GradientButton,
-		Tabs
-	} from '$lib/@svelte/components';
+	import { Tabs } from '$lib/@svelte/components';
 	import { _ } from '@services';
 	import PublishedEventsTab from '$lib/@svelte/pages/Admin/Events/PublishedEventsTab.svelte';
 	import UnpublishedEventsTab from '$lib/@svelte/pages/Admin/Events/UnpublishedEventsTab.svelte';
+	import { Button } from '@/components/ui/button';
 
 	export let data: PageServerData;
 
@@ -15,8 +13,8 @@
 		id: string
 		name: string
 		projectHSG: string
-		dateFrom: string
-		dateTo: string
+		dateFrom: string | null
+		dateTo: string | null
 		location: string
 	}) => {
 		return {
@@ -39,14 +37,6 @@
 		activeTab = tabIndex;
 	};
 
-	const handleEventRegistration = (id: string) => {
-		if (activeTab !== 1) {
-			goto(`/admin/events/${id}/registrations/`);
-		} else {
-			isDrawerOpen = true;
-		}
-	};
-
 	let isListView: boolean = false;
 </script>
 
@@ -58,9 +48,9 @@
 		</div>
 		{#if activeTab !== 1}
 			<div>
-				<GradientButton onClick={() => (activeTab = 1)}
-				>{$_('admin-pages.events.publishNewEvents')}</GradientButton
-				>
+				<Button variant="gradient" on:click={() => (activeTab = 1)}>
+					{$_('admin-pages.events.publishNewEvents')}
+				</Button>
 			</div>
 		{/if}
 	</div>
@@ -68,12 +58,26 @@
 		<Tabs {tabHeadings} {activeTab} {handleTabChange} />
 	</div>
 	{#if activeTab === 0}
-		<PublishedEventsTab {publishedEvents} {handleEventRegistration} {isListView} />
+		<PublishedEventsTab {publishedEvents} handleEventRegistration={(id) => {
+			if (activeTab !== 1) {
+				goto(`/admin/events/${id}/registrations/`);
+			} else {
+				isDrawerOpen = true;
+			}
+		}} {isListView} />
 	{/if}
 	{#if activeTab === 1}
-		<UnpublishedEventsTab {unpublishedEvents} {handleEventRegistration} {isListView} />
+		<UnpublishedEventsTab {unpublishedEvents} handleEventRegistration={(id) => {
+				goto(`/admin/events/${id}/registrations/`);
+		}} {isListView} />
 	{/if}
 	{#if activeTab === 2}
-		<PublishedEventsTab {archivedEvents} {handleEventRegistration} {isListView} />
+		<PublishedEventsTab publishedEvents={archivedEvents} handleEventRegistration={(id) => {
+			if (activeTab !== 1) {
+				goto(`/admin/events/${id}/registrations/`);
+			} else {
+				isDrawerOpen = true;
+			}
+		}} {isListView} />
 	{/if}
 </div>

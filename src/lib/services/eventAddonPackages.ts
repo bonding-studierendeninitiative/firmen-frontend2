@@ -34,13 +34,17 @@ export const createEventAddonPackage = async ({
 
 export const deleteEventAddonPackage = async ({
 	accessToken,
-	addonPackageId
+	addonPackageId,
+	buyOptionId,
+	eventId
 }: {
 	accessToken: string;
 	addonPackageId: string;
+	eventId: string;
+	buyOptionId: string;
 }) => {
 	const response = await API.delete({
-		route: `/addon-package-template/${addonPackageId}`,
+		route: `/event/${eventId}/buy-option/${buyOptionId}/addon-package/${addonPackageId}`,
 		token: accessToken
 	});
 

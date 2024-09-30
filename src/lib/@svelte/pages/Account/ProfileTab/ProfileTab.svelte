@@ -2,7 +2,7 @@
 	import { _ } from '@services';
 	import { goto } from '$app/navigation';
 	import { TrashIcon } from '$lib/@svelte/icons';
-	import { GradientButton, Input, Spinner } from '$lib/@svelte/components';
+	import { Input, Spinner } from '$lib/@svelte/components';
 
 	import * as Table from '$lib/components/ui/table';
 	import {

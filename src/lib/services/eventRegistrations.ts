@@ -27,6 +27,24 @@ export const CreateEventRegistrationSchema = v.object({
 
 export type CreateEventRegistration = Infer<typeof CreateEventRegistrationSchema>;
 
+const EventRegistrationAddonPackageSchema = v.object({
+	purchasable: v.nullable(v.boolean(), false),
+	title: v.pipe(v.string(), v.maxLength(50), v.minLength(1)),
+	price: v.nullable(v.number()),
+	description: v.nullable(v.pipe(v.string(), v.maxLength(255)), ''),
+	label: v.string(),
+	selected: v.boolean(),
+	addons: v.array(
+		v.object({
+			title: v.pipe(v.string(), v.maxLength(50), v.minLength(1)),
+			label: v.string(),
+			selected: v.boolean(),
+			description: v.optional(v.pipe(v.string(), v.maxLength(255))),
+			price: v.optional(v.number())
+		})
+	)
+});
+
 export const EventRegistrationSchema = v.object({
 	id: v.string(),
 	createdAt: v.pipe(v.string(), v.isoTimestamp()),
@@ -66,7 +84,8 @@ export const EventRegistrationSchema = v.object({
 			code: v.number(),
 			text: v.string()
 		})
-	)
+	),
+	addonPackages: v.array(EventRegistrationAddonPackageSchema)
 });
 
 export type EventRegistration = typeof EventRegistrationSchema;

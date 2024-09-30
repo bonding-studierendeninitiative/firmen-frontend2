@@ -5,6 +5,7 @@
 	import { _ } from '@services';
 	import { signOut } from '@auth/sveltekit/client';
 	import { currentOrganization } from '$lib/stores/organizationStore';
+	import { cn } from '@/utils';
 
 	$: activeUrl = $page.url.pathname;
 
@@ -19,17 +20,22 @@
 	};
 
 	const getSidebarData = (): SidebarLinkTypes[] => {
-		if ($page.url.pathname?.includes('admin')) {
+		if (isAdmin()) {
 			return ADMIN_SIDEBAR_LINKS;
 		} else return USER_SIDEBAR_LINKS;
 	};
+
+	function isAdmin() {
+		return $page.url.pathname?.includes('admin');
+	}
+
 	const getImagePath = (): string => {
-		if ($page.url.pathname?.includes('admin')) {
+		if (isAdmin()) {
 			return '/sidebar_background.png';
 		} else return '/sidebar_background.png';
 	};
 	const getSidebarLink = ({ route }: { route: string }): string => {
-		if ($page.url.pathname?.includes('admin')) {
+		if (isAdmin()) {
 			return route;
 		} else return `/${$currentOrganization?.organizationSlug}${route}`;
 	};
@@ -64,7 +70,7 @@
 
 	<div
 		id="sidebar"
-		class="lg:block hidden bg-cover bg-center h-screen w-84 rounded-none border-none z-10"
+		class={cn("lg:block hidden bg-cover bg-center h-screen w-84 rounded-none border-none z-10",isAdmin() && "grayscale")}
 		style={`background-image: url(${getImagePath()});`}
 	>
 		<!-- Items -->

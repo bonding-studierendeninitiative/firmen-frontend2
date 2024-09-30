@@ -13,7 +13,7 @@
 </script>
 
 <div>
-	<h4 class=" text-xl font-extrabold text-stone-800">{event?.name}</h4>
+	<h4 class=" text-xl font-semibold text-stone-800">{event?.name}</h4>
 	<div class=" flex mt-2">
 		<div class=" flex items-center mr-2">
 			<CalenderIcon />

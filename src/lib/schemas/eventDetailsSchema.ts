@@ -19,7 +19,7 @@ export const EventDetailsResponseSchema = v.object({
 	additionalLink: v.nullish(v.string()),
 	createdAt: v.pipe(v.string(), v.isoTimestamp()),
 	modifiedAt: v.nullish(v.pipe(v.string(), v.isoTimestamp())),
-	addons: v.array(v.object({})),
+	addons: v.nullish(v.array(v.object({}))),
 	packages: v.array(v.object({}))
 });
 

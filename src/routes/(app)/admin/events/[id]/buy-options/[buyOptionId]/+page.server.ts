@@ -4,7 +4,11 @@ import { superValidate } from 'sveltekit-superforms';
 import { valibot } from 'sveltekit-superforms/adapters';
 import { UpdateBuyOptionRequestSchema } from '@schema';
 import { fail, redirect } from '@sveltejs/kit';
-import { createEventAddonPackage, getEventAddonPackages } from '@/services/eventAddonPackages';
+import {
+	createEventAddonPackage,
+	deleteEventAddonPackage,
+	getEventAddonPackages
+} from '@/services/eventAddonPackages';
 import { CreateEventAddonPackageSchema } from '@schema/eventAddonPackages';
 
 export const load: PageServerLoad = async ({ parent, params }) => {
@@ -18,7 +22,7 @@ export const load: PageServerLoad = async ({ parent, params }) => {
 		eventId: params.id
 	});
 
-	const addonPackages = await getEventAddonPackages({
+	const { addonPackages } = await getEventAddonPackages({
 		// @ts-expect-error we define accessToken in parent
 		accessToken: session?.accessToken,
 		buyOptionId: params.buyOptionId,
@@ -26,12 +30,12 @@ export const load: PageServerLoad = async ({ parent, params }) => {
 	});
 
 	const updateForm = await superValidate(buyOption, valibot(UpdateBuyOptionRequestSchema));
-	const addonPackageForm = await superValidate(valibot(CreateEventAddonPackageSchema));
+	const createAddonPackageForm = await superValidate(valibot(CreateEventAddonPackageSchema));
 
 	return {
-		addonPackages: addonPackages.addonPackages,
+		addonPackages,
 		updateForm,
-		addonPackageForm
+		createAddonPackageForm
 	};
 };
 
@@ -115,5 +119,29 @@ export const actions = {
 		return {
 			form
 		};
+	},
+	deleteAddonPackage: async ({ locals, params: { buyOptionId, id }, request }) => {
+		const session = await locals.auth();
+		// @ts-expect-error we define accessToken in parent
+		if (!session || !session.accessToken) {
+			fail(403);
+			return;
+		}
+
+		const form = await request.formData();
+
+		const addonPackageId = form.get('addonPackageId') ?? null;
+		if (!addonPackageId || typeof addonPackageId !== 'string') {
+			fail(400, { form });
+			return;
+		}
+
+		await deleteEventAddonPackage({
+			// @ts-expect-error we define accessToken in parent
+			accessToken: session?.accessToken,
+			addonPackageId,
+			buyOptionId,
+			eventId: id
+		});
 	}
 };

@@ -4,13 +4,12 @@
 	import toast from 'svelte-french-toast';
 	import {
 		BillingAddressCard,
-		Button,
-		GradientButton,
 		Input,
 		Modal
 	} from '$lib/@svelte/components';
 	import { FilledCheckIcon } from '$lib/@svelte/icons';
 	import CrossIcon from '$lib/@svelte/icons/CrossIcon.svelte';
+	import { Button } from '@/components/ui/button';
 
 	const billingAddresses = [{ isDefault: true }, { isDefault: false }, { isDefault: true }];
 	let isAddAddressModalOpen = false;
@@ -99,12 +98,12 @@
 	</section>
 	<footer>
 		<div class=" flex justify-between items-center my-6 pb-6">
-			<GradientButton onClick={() => (isAddAddressModalOpen = true)}
-				>{$_('user-pages.accounts.addBillingAddress')}</GradientButton
+			<Button variant="gradient" on:click={() => (isAddAddressModalOpen = true)}
+				>{$_('user-pages.accounts.addBillingAddress')}</Button
 			>
 			<div class=" flex justify-between items-center">
-				<Button onClick={() => goto('/dashboard')} classes=" mr-8">{$_('common.cancel')}</Button>
-				<GradientButton onClick={() => goto('/dashboard')}>{$_('common.save')}</GradientButton>
+				<Button variant="secondary" on:click={() => goto('/dashboard')} class=" mr-8">{$_('common.cancel')}</Button>
+				<Button variant="gradient" on:click={() => goto('/dashboard')}>{$_('common.save')}</Button>
 			</div>
 		</div>
 	</footer>
@@ -131,11 +130,11 @@
 		</div>
 	</div>
 	<footer class=" flex items-center justify-end">
-		<Button classes="mr-2" onClick={() => (isAddAddressModalOpen = false)}
+		<Button variant="secondary" class="mr-2" on:click={() => (isAddAddressModalOpen = false)}
 			>{$_('common.cancel')}</Button
 		>
-		<GradientButton onClick={handleAddBillingAddress}
-			>{$_('user-pages.accounts.addAddress')}</GradientButton
+		<Button variant="gradient" on:click={handleAddBillingAddress}
+			>{$_('user-pages.accounts.addAddress')}</Button
 		>
 	</footer>
 </Modal>

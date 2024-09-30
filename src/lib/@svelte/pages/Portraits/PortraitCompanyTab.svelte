@@ -1,12 +1,13 @@
 <script lang="ts">
 	import { _ } from '@services';
 	import { goto } from '$app/navigation';
-	import { Button, GradientButton, Input, InputWithPrefix, MultiSelect, Textarea } from '$lib/@svelte/components';
+	import { Input, InputWithPrefix, MultiSelect, Textarea } from '$lib/@svelte/components';
 	import { PortraitCompanyDetailsSchema } from '$lib/services/portraitTemplates';
 	import { Helper } from 'flowbite-svelte';
 	import { disciplines } from '@constant';
 	import { type Infer, superForm, type SuperValidated } from 'sveltekit-superforms';
 	import { toast } from 'svelte-french-toast';
+	import { Button } from '@/components/ui/button';
 
 	export let data: SuperValidated<Infer<typeof PortraitCompanyDetailsSchema>>;
 
@@ -117,8 +118,8 @@
 		<footer>
 			<div class=" flex justify-end items-center my-6 pb-6">
 				<div class=" flex justify-between items-center">
-					<Button onClick={() => goto('/dashboard')} classes=" mr-8">{$_('common.cancel')}</Button>
-					<GradientButton type="submit">{$_('common.save')}</GradientButton>
+					<Button variant="secondary" on:click={() => goto('/dashboard')} class=" mr-8">{$_('common.cancel')}</Button>
+					<Button variant="gradient" type="submit">{$_('common.save')}</Button>
 				</div>
 			</div>
 		</footer>

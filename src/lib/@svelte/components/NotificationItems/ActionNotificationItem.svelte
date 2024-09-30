@@ -1,9 +1,16 @@
 <script lang="ts">
 	import { _ } from '@services';
 	import { FilledCheckIcon, MessageIcon } from '$lib/@svelte/icons';
-	import { GradientButton, Button } from '$lib/@svelte/components';
+	import { Button } from '$lib/@svelte/components';
+	import { Button as ShadcnButton } from '@/components/ui/button';
 
-	const onActionButtonClick = () => {};
+	import relativeTime from 'dayjs/plugin/relativeTime';
+	import dayjs from 'dayjs';
+
+	dayjs.extend(relativeTime);
+
+	const onActionButtonClick = () => {
+	};
 
 	export let notificationType:
 		| 'registrationSuccess'
@@ -40,15 +47,16 @@
 			</h3>
 			<div class=" py-2">
 				{#if notificationType === 'registrationSuccess'}
-					<GradientButton onClick={() => handleUpdatePortrait?.()}
-						>{$_('user-pages.notifications.updatePortrait')}</GradientButton
-					>{:else if notificationType === 'registrationRejected'}
-					<Button onClick={onActionButtonClick} classes="  shadow-custom  text-stone-800"
-						>{$_('user-pages.notifications.contactSupport')}</Button
-					>
+					<ShadcnButton variant="gradient" on:click={() => handleUpdatePortrait?.()}>
+						{$_('user-pages.notifications.updatePortrait')}
+					</ShadcnButton>
+				{:else if notificationType === 'registrationRejected'}
+					<Button onClick={onActionButtonClick} classes="  shadow-custom  text-stone-800">
+						{$_('user-pages.notifications.contactSupport')}
+					</Button>
 				{/if}
 			</div>
-			<p class="mt-2 text-sm text-stone-400 font-medium">40 mins ago</p>
+			<p class="mt-2 text-sm text-stone-400 font-medium">{dayjs(notificationDate).fromNow(true) ?? "40 minutes ago"}</p>
 		</div>
 	</div>
 </div>

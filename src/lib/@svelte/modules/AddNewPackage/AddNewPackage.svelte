@@ -1,9 +1,7 @@
 <script lang="ts">
 	import { _ } from '@services';
 	import {
-		Button,
 		Drawer,
-		GradientButton,
 		IconInput,
 		Input,
 		Select,
@@ -13,6 +11,7 @@
 	import type { PackageFieldTypes } from '@schema';
 	import { formatZodErrors } from '$lib/utils/formatZodErrors';
 	import { PlusIcon, TrashIcon } from '$lib/@svelte/icons';
+	import { Button } from '@/components/ui/button';
 
 	export let isOpen: boolean = false;
 
@@ -158,14 +157,14 @@
 			{/each}
 		</section>
 		<div id="addServiceButton">
-			<Button variant="link" classes=" flex items-center !font-semibold" on:click={handleAddService}>
+			<Button variant="link" class=" flex items-center !font-semibold" on:click={handleAddService}>
 				<PlusIcon classes="mr-2" />
 				{$_('admin-pages.packages.addNewService')}
 			</Button>
 		</div>
 	</div>
 	<footer class=" flex justify-end items-center w-full">
-		<Button classes="mr-2" onClick={handleCancel}>{$_('common.cancel')}</Button>
-		<GradientButton onClick={handleFormSubmit}>{$_('common.save')}</GradientButton>
+		<Button class="mr-2" on:click={handleCancel}>{$_('common.cancel')}</Button>
+		<Button variant="gradient" on:click={handleFormSubmit}>{$_('common.save')}</Button>
 	</footer>
 </Drawer>

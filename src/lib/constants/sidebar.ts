@@ -60,21 +60,6 @@ export const ADMIN_SIDEBAR_LINKS: SidebarLinkTypes[] = [
 		Icon: 'EventsIcon'
 	},
 	{
-		label: 'categories',
-		route: '/admin/categories',
-		Icon: 'CategoriesIcon'
-	},
-	{
-		label: 'packages',
-		route: '/admin/packages',
-		Icon: 'PackagesIcon'
-	},
-	{
-		label: 'addons',
-		route: '/admin/add-ons',
-		Icon: 'AddonIcon'
-	},
-	{
 		label: 'company',
 		route: '/admin/company',
 		Icon: 'CompanyIcon'

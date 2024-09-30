@@ -1,5 +1,6 @@
 import type { Infer } from 'sveltekit-superforms';
 import * as v from 'valibot';
+import { GetOrgDetailsResponse } from '@schema/organizationDetails';
 
 export const CreateOrganizationRequestSchema = v.object({
 	name: v.pipe(
@@ -32,24 +33,18 @@ export const CreateOrganizationRequestSchema = v.object({
 export type CreateOrganizationRequest = Infer<typeof CreateOrganizationRequestSchema>;
 
 export const CreateOrganizationResponse = v.object({
-	createdOrganization: v.object({
-		id: v.string(),
-		slug: v.string(),
-		name: v.string(),
-		organizationEmail: v.string(),
-		organizationPhone: v.string(),
-		organizationWebsite: v.nullish(v.string()),
-		defaultBillingAddressId: v.nullish(v.string()),
-		organizationAddress: v.object({
-			street: v.string(),
-			country: v.string(),
-			zipCode: v.string(),
-			city: v.optional(v.string())
-		}),
-		createdAt: v.pipe(v.string(), v.isoTimestamp()),
-		modifiedAt: v.nullable(v.pipe(v.string(), v.isoTimestamp()))
-	}),
+	createdOrganization: GetOrgDetailsResponse,
 	creator: v.string()
 });
 
 export type CreateOrganizationResponse = Infer<typeof CreateOrganizationResponse>;
+
+export const getOrganizationsResponse = v.object({
+	organizations: v.array(GetOrgDetailsResponse),
+	pageNumber: v.number(),
+	pageSize: v.number(),
+	totalPages: v.number(),
+	totalElements: v.number()
+});
+
+export type GetOrganizationsResponse = Infer<typeof getOrganizationsResponse>;

@@ -1,34 +1,60 @@
 <script lang="ts">
-	import { _ } from '@services/i18n.js';
+	import { _ } from '@services/i18n';
 	import * as Dialog from '@/components/ui/dialog';
-	import { Button, Control, Description, Field, FieldErrors, Label } from '@/components/ui/form';
+	import { Button } from '@/components/ui/button';
 	import { Minus, Plus } from 'lucide-svelte';
-	import { GradientButton } from '@/@svelte/components';
-	import { Input } from '@/components/ui/input';
-	import { superForm, type SuperValidated } from 'sveltekit-superforms';
-	import { toast } from 'svelte-french-toast';
+	import { type Infer, superForm, type SuperValidated } from 'sveltekit-superforms';
 	import type { CreateBuyOptionRequest } from '@schema';
+	import { Control, Description, Field, FieldErrors, Label } from '@/components/ui/form';
+	import { Input } from '@/components/ui/input';
+	import { toast } from 'svelte-french-toast';
+	import { page } from '$app/stores';
 
-	let isOpen = false;
-	export let createForm: SuperValidated<CreateBuyOptionRequest>;
+	export let createForm: SuperValidated<Infer<CreateBuyOptionRequest>>;
+	export let isDialogOpen = false;
 
 	const superform = superForm(createForm, {
 		onResult({ result }) {
 			if (result.type === 'redirect') {
-				isOpen = false;
+				isDialogOpen = false;
 			} else if (result.type === 'error') {
 				toast.error(result.error.message);
 			}
 		}
 	});
 	const { form: formData, enhance } = superform;
+
+	function decreaseServicesCount(e: Event) {
+		e.preventDefault();
+		if ($formData.serviceCount > 0) {
+			$formData.serviceCount = $formData.serviceCount - 1;
+		}
+	}
+
+	function decreasePackagesCount(e: Event) {
+		e.preventDefault();
+		if ($formData.packageCount > 0) {
+			$formData.packageCount = $formData.packageCount - 1;
+		}
+	}
+
+	function increaseServicesCount(e: Event) {
+		e.preventDefault();
+		if ($formData.packageCount > 0) {
+			$formData.packageCount = $formData.packageCount + 1;
+		}
+	}
+
+	function increasePackagesCount(e: Event) {
+		e.preventDefault();
+		if ($formData.packageCount > 0) {
+			$formData.packageCount = $formData.packageCount + 1;
+		}
+	}
 </script>
 
-<Dialog.Root bind:open={isOpen}>
+<Dialog.Root bind:open={isDialogOpen}>
 	<Dialog.Overlay />
-	<Dialog.Trigger asChild>
-		<Button variant="outline" on:click={() => (isOpen = true)}>Add Buy Option&hellip;</Button>
-	</Dialog.Trigger>
 	<Dialog.Content>
 		<Dialog.Header>
 			<Dialog.Title>Buy Option</Dialog.Title>
@@ -36,7 +62,8 @@
 				Enter the buy option details
 			</Dialog.Description>
 		</Dialog.Header>
-		<form class="flex flex-col gap-y-4" method="post" action="?/createBuyOption" use:enhance>
+		<form class="flex flex-col gap-y-4" method="post"
+					action={`/admin/events/${$page.params.id}/buy-options/?/createBuyOption`} use:enhance>
 
 			<Field form={superform} name="name">
 				<Control let:attrs>
@@ -67,13 +94,7 @@
 								size="icon"
 								class="h-10 w-10 text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800"
 								disabled={$formData.packageCount <= 0}
-								on:click={(e) => {
-										e.preventDefault();
-										if ($formData.packageCount > 0) {
-										$formData.packageCount = $formData.packageCount - 1;
-									}
-									}
-									}
+								on:click={decreasePackagesCount}
 							>
 								<Minus class="h-5 w-5" />
 							</Button>
@@ -89,13 +110,7 @@
 								size="icon"
 								class="h-10 w-10 text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800"
 								disabled={$formData.packageCount >= 10}
-								on:click={(e) => {
-										e.preventDefault();
-										if ($formData.packageCount < 10) {
-										$formData.packageCount = $formData.packageCount + 1;
-									}
-									}
-									}
+								on:click={increasePackagesCount}
 							>
 								<Plus class="h-5 w-5" />
 							</Button>
@@ -117,13 +132,7 @@
 								size="icon"
 								class="h-10 w-10 text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800"
 								disabled={$formData.serviceCount <= 0}
-								on:click={(e) => {
-										e.preventDefault();
-										if ($formData.serviceCount > 0) {
-										$formData.serviceCount = $formData.serviceCount - 1;
-									}
-									}
-									}
+								on:click={decreaseServicesCount}
 							>
 								<Minus class="h-5 w-5" />
 							</Button>
@@ -139,13 +148,7 @@
 								size="icon"
 								class="h-10 w-10 text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800"
 								disabled={$formData.serviceCount >= 10}
-								on:click={(e) => {
-										e.preventDefault();
-										if ($formData.serviceCount < 10) {
-										$formData.serviceCount = $formData.serviceCount + 1;
-									}
-									}
-									}
+								on:click={increaseServicesCount}
 							>
 								<Plus class="h-5 w-5" />
 							</Button>
@@ -157,7 +160,7 @@
 			</Field>
 
 			<Dialog.Footer>
-				<GradientButton type="submit">{$_('common.save')}</GradientButton>
+				<Button variant="gradient" type="submit">{$_('common.save')}</Button>
 			</Dialog.Footer>
 		</form>
 	</Dialog.Content>

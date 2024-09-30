@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { _ } from '@services';
-	import { Button, GradientButton, NoDataFound } from '$lib/@svelte/components';
+	import { Button, NoDataFound } from '$lib/@svelte/components';
+	import { Button as ShadcnButton } from '@/components/ui/button';
 	import { SimpleDocumentIcon } from '$lib/@svelte/icons';
 	import { goto } from '$app/navigation';
 	import { currentOrganization } from '$lib/stores/organizationStore';
@@ -24,7 +25,7 @@
 	const colors = ['#EA580C', '#EAB308', '#B91C1C', '#15803D', '#155E75', '#9D174D'];
 
 	$: portraits = data.portraitTemplates || [];
-	$: groupedPortraits = groupBy(portraits, (portrait) => dayjs(portrait.lastModifiedAt).get("year") ?? "2024-01-01");
+	$: groupedPortraits = groupBy(portraits, (portrait) => dayjs(portrait.lastModifiedAt).get('year') ?? '2024-01-01');
 	$: page = data.portraitTemplatePage || 0;
 	$: totalPages = data.portraitTemplatePageCount || 0;
 	$: pages = new Array(totalPages || 0).fill(0).map((_, index) => ({
@@ -51,7 +52,7 @@
 
 <div class="flex justify-between items-center">
 	<div class="h-8 w-2/3 border-2 border-slate-400 rounded"></div>
-	<GradientButton onClick={openDrawer} classes="m-0">{$_('user-pages.portraits.newPortrait')}</GradientButton>
+	<ShadcnButton variant="gradient" on:click={openDrawer} class="m-0">{$_('user-pages.portraits.newPortrait')}</ShadcnButton>
 </div>
 {#if portraits.length < 1}
 	<section class=" mt-4">

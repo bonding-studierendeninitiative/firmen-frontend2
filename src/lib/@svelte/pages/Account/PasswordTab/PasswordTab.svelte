@@ -1,7 +1,8 @@
 <script lang="ts">
 	import { _ } from '@services';
 	import { goto } from '$app/navigation';
-	import { Button, GradientButton, Input } from '$lib/@svelte/components';
+	import { Input } from '$lib/@svelte/components';
+	import { Button } from '@/components/ui/button';
 </script>
 
 <div>
@@ -41,9 +42,9 @@
 	<footer>
 		<div class=" flex justify-end items-center my-6 pb-6">
 			<div class=" flex justify-between items-center">
-				<Button onClick={() => goto('/dashboard')} classes=" mr-8">{$_('common.cancel')}</Button>
-				<GradientButton onClick={() => goto('/dashboard')}
-					>{$_('user-pages.accounts.updatePassword')}</GradientButton
+				<Button variant="secondary" on:click={() => goto('/dashboard')} class=" mr-8">{$_('common.cancel')}</Button>
+				<Button variant="gradient" on:click={() => goto('/dashboard')}
+					>{$_('user-pages.accounts.updatePassword')}</Button
 				>
 			</div>
 		</div>

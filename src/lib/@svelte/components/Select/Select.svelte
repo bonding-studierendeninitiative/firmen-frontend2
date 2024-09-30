@@ -35,7 +35,7 @@
 		name={name}
 		bind:value
 		{required}
-		class={cn(`placeholder-red-800`, $$restProps.class)}
+		class={cn(`placeholder-red-800`, $$props.class)}
 		{...$$restProps}
 	/>
 	<Helper class="text-red-500">{errorMessage}</Helper>

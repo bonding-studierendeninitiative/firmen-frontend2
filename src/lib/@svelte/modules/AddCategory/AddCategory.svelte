@@ -1,10 +1,11 @@
 <script lang="ts">
 	import { _ } from '@services';
-	import { Button, Drawer, GradientButton, Input, Select, Textarea } from '$lib/@svelte/components';
+	import { Drawer, Input, Select, Textarea } from '$lib/@svelte/components';
 	export let isOpen: boolean = false;
 	import { addCategorySchema } from '@schema';
 	import type { categoryFieldTypes } from '@schema';
 	import { formatZodErrors } from '$lib/utils/formatZodErrors';
+	import { Button } from '@/components/ui/button';
 
 	let isSubmitted = false;
 	const initialData: categoryFieldTypes = {
@@ -85,7 +86,7 @@
 		/>
 	</div>
 	<footer class=" flex justify-end items-center w-full">
-		<Button classes="mr-2" onClick={handleCancel}>{$_('common.cancel')}</Button>
-		<GradientButton onClick={handleFormSubmit}>{$_('common.save')}</GradientButton>
+		<Button variant="secondary" class="mr-2" on:click={handleCancel}>{$_('common.cancel')}</Button>
+		<Button variant="gradient" on:click={handleFormSubmit}>{$_('common.save')}</Button>
 	</footer>
 </Drawer>

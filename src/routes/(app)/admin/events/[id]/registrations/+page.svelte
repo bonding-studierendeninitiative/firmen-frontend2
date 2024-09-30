@@ -4,13 +4,14 @@
 	import relativeTime from 'dayjs/plugin/relativeTime';
 	import {
 		NoDataFound,
-		Modal,
-		GradientButton,
+		Modal
 	} from '$lib/@svelte/components';
 	import Select from '$lib/@svelte/components/Select/Select.svelte';
 	import toast from 'svelte-french-toast';
 	import dayjs from 'dayjs';
 	import DataTable from './data-table.svelte';
+	import { Button } from '@/components/ui/button';
+	import SuperDebug from 'sveltekit-superforms';
 
 	dayjs.extend(relativeTime);
 
@@ -39,8 +40,8 @@
 		</div>
 	</div>
 	<footer class=" flex items-center justify-end">
-		<GradientButton classes="!py-1.5" onClick={handleUpdateStatus}
-		>{$_('common.update')}</GradientButton
+		<Button variant="gradient" class="!py-1.5" on:click={handleUpdateStatus}
+		>{$_('common.update')}</Button
 		>
 	</footer>
 </Modal>
@@ -59,4 +60,5 @@
 			<DataTable data={data.eventRegistrations} />
 		</section>
 	{/if}
+	<SuperDebug data={data.eventRegistrations} />
 </section>

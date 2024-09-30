@@ -1,8 +1,9 @@
 <script lang="ts">
 	import { _ } from '@services';
 	import { Button } from '@/components/ui/button';
-	import * as Breadcrumb from '$lib/components/ui/breadcrumb/index.js';
+	import * as Breadcrumb from '$lib/components/ui/breadcrumb';
 
+	import { page } from '$app/stores';
 	import {
 		OutlinedCheckIcon,
 		OutlinedCrossIcon,
@@ -10,7 +11,7 @@
 		LocationIcon
 	} from '$lib/@svelte/icons';
 
-	import * as Table from '$lib/components/ui/table/index.js';
+	import * as Table from '$lib/components/ui/table';
 	import type {
 		PageData
 	} from './$types';
@@ -18,19 +19,15 @@
 	import AddonList from '@/@svelte/components/AddonList/AddonList.svelte';
 	import { number } from '@services/i18n';
 
-
 	export let data: PageData;
-	const event = data.event ?? {};
-	const buyOption = data.buyOption ?? {};
-	const addons = data.packages ?? [];
+	let { buyOption, event, packages: addons }: PageData = data;
 
 	let selectedPackageID = '';
-	let selectedAddonsURL = ""
-	let selectedAddons: string[] = []
+	let selectedAddonsURL = '';
+	let selectedAddons: string[] = [];
 
 
-	$: selectedAddonsURL = selectedAddons.length == 0? "" : "&selectedAddon=" + selectedAddons.join("&selectedAddon=")
-
+	$: selectedAddonsURL = selectedAddons.length == 0 ? '' : '&selectedAddon=' + selectedAddons.join('&selectedAddon=');
 
 
 </script>
@@ -39,9 +36,9 @@
 	<Breadcrumb.Root>
 		<Breadcrumb.List>
 			<Breadcrumb.Item>
-				<Breadcrumb.Item let:attrs>
-					<a href={`/${data.orgSlug}/events`} {...attrs}>{$_('user-pages.events.events')}</a>
-				</Breadcrumb.Item>
+				<Breadcrumb.Link href={`/${$page.params.organizationSlug}/events`}>
+					{$_('user-pages.events.events')}
+				</Breadcrumb.Link>>
 			</Breadcrumb.Item>
 			<Breadcrumb.Separator />
 			<Breadcrumb.Item>
@@ -58,22 +55,19 @@
 			<div>
 				<h4 class=" text-xl font-extrabold text-stone-800">{event.name}</h4>
 				<div class=" flex mt-2">
-					<span class=" flex items-center mr-2">
+					<div class=" flex items-center mr-2">
 						<CalenderIcon />
 						{#if event.dateTo && (dayjs(event.dateFrom) !== dayjs(event.dateTo))}
 							<p class=" ml-2 text-sm text-stone-800 font-medium">{dayjs(event.dateFrom).format('DD.MM.YYYY')}
 								- {dayjs(event.dateTo).format('DD.MM.YYYY')}</p>
-							{:else }
+						{:else }
 							<p class=" ml-2 text-sm text-stone-800 font-medium">{dayjs(event.dateFrom).format('DD.MM.YYYY')}</p>
-							{/if}
-
-
-
-					</span>
-					<span class=" flex items-center">
+						{/if}
+					</div>
+					<div class=" flex items-center">
 						<LocationIcon />
 						<p class=" ml-2 text-sm text-stone-800 font-medium">{event.location}</p>
-					</span>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -148,9 +142,9 @@
 						<Table.Cell class=" p-3">
 							<div class=" flex justify-center items-center">
 								<Button on:click={() => selectedPackageID=pkg.id}
-												variant={selectedPackageID === pkg.id? "default" : "outline"} classes="!py-1.5 !px-4"
-								>{$_('common.select')}</Button
-								>
+												variant={selectedPackageID === pkg.id? "default" : "outline"} class="!py-1.5 !px-4">
+									{$_('common.select')}
+								</Button>
 							</div>
 						</Table.Cell>
 					{/each}
@@ -160,10 +154,11 @@
 		</Table.Root>
 	</section>
 
-	<AddonList {addons}  bind:selectedAddons={selectedAddons} />
+	<AddonList {addons} bind:selectedAddons={selectedAddons} />
 	<footer class=" flex mt-6 justify-end items-center">
 		{#if selectedPackageID !== ""}
-			<a aria-disabled="true" href={`${event.id}/event-registration?selectedPackage=${selectedPackageID + selectedAddonsURL}`}>
+			<a aria-disabled="true"
+				 href={`${event.id}/event-registration?selectedPackage=${selectedPackageID + selectedAddonsURL}`}>
 				<Button>{$_('common.continue')}</Button>
 			</a>
 		{:else }

@@ -13,7 +13,8 @@ import {
 	type AcceptInviteRequest,
 	AcceptInviteRequestSchema,
 	type SetOrgDetailsRequest,
-	SetOrgDetailsRequestSchema
+	SetOrgDetailsRequestSchema,
+	getOrganizationsResponse
 } from '@schema';
 import { error } from '@sveltejs/kit';
 import * as v from 'valibot';
@@ -235,4 +236,19 @@ export const createOrganization = async ({
 		// @ts-expect-error the error likely has a message
 		error(e.status || 500, e.message);
 	}
+};
+
+export const getOrgs = async ({
+	accessToken,
+	page = 0
+}: {
+	accessToken: string;
+	page?: number;
+}) => {
+	const response = await API.get({
+		route: `/organization?page=${page}`,
+		token: accessToken
+	});
+	const responseData = await response.json();
+	return v.parse(getOrganizationsResponse, responseData);
 };

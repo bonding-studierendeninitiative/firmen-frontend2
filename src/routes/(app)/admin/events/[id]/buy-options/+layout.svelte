@@ -4,7 +4,7 @@
 	import { navigating, page } from '$app/stores';
 	import { goto } from '$app/navigation';
 	import { fade } from 'svelte/transition';
-	import { DeleteBuyOption, BuyOptionSelector } from '@/@svelte/modules';
+	import { DeleteBuyOption, BuyOptionSelector, CreateBuyOption } from '@/@svelte/modules';
 	import { Button } from '@/components/ui/button';
 
 	export let data: LayoutServerData;
@@ -16,13 +16,15 @@
 		active: buyOption.active
 	})) ?? [];
 
+	let isDialogOpen = false;
+
 	$: activeBuyOption = data.buyOptions?.find(buyOption => buyOption.active);
 </script>
 
 <section class="mt-6 flex flex-col gap-y-4">
 	{#if data.buyOptionCount > 0 }
 		<nav class="flex justify-between gap-x-2">
-			<BuyOptionSelector createForm={data.createForm} buyOptions={items} value={$page.params.buyOptionId}
+			<BuyOptionSelector bind:isDialogOpen buyOptions={items} value={$page.params.buyOptionId}
 												 onSelect={(value) => goto(`/admin/events/${$page.params.id}/buy-options/${value}`)} />
 			<DeleteBuyOption />
 			<div class="flex-grow" />
@@ -40,6 +42,7 @@
 			</div>
 		{/if}
 	{:else}
-		<NoDataFound onButtonClick="" buttonText="Create a new buy option&hellip;" heading="This event does not have any buy options yet." subHeading="Create a buy option now to enable organizations to sign up to this event." />
+		<NoDataFound onButtonClick={() => isDialogOpen = true} buttonText="Create a new buy option&hellip;" heading="This event does not have any buy options yet." subHeading="Create a buy option now to enable organizations to sign up to this event." />
 	{/if}
 </section>
+<CreateBuyOption bind:isDialogOpen createForm={data.createForm} />

@@ -11,12 +11,14 @@ export const GetOrgDetailsResponse = v.object({
 	defaultBillingAddressId: v.nullish(v.string()),
 	organizationAddress: v.object({
 		street: v.string(),
+		extendedAddress: v.nullable(v.string()),
 		country: v.pipe(v.string(), v.length(2, 'Must be 2 characters')),
 		zipCode: v.string(),
 		locality: v.string()
 	}),
 	createdAt: v.nullable(v.pipe(v.string(), v.isoTimestamp())),
-	modifiedAt: v.pipe(v.string(), v.isoTimestamp())
+	modifiedAt: v.pipe(v.string(), v.isoTimestamp()),
+	organizationType: v.nullish(v.string())
 });
 
 export const SetOrgDetailsRequestSchema = v.object({
@@ -31,7 +33,7 @@ export const SetOrgDetailsRequestSchema = v.object({
 		country: v.pipe(v.string(), v.length(2, 'Must be 2 characters')),
 		zipCode: v.string(),
 		locality: v.string()
-	}),
+	})
 });
 
 export type SetOrgDetailsRequest = Infer<typeof SetOrgDetailsRequestSchema>;

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { _ } from '@services';
-	import { GradientButton, Modal, Input, Select, Checkbox, Chip } from '$lib/@svelte/components';
+	import { Modal, Input, Select, Checkbox, Chip } from '$lib/@svelte/components';
 	import Dropzone from 'svelte-file-dropzone';
 	import { DropzoneIcon, CrossIcon, FilledCheckIcon } from '$lib/@svelte/icons';
 	import { goto } from '$app/navigation';

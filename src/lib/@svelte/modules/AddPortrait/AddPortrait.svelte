@@ -4,10 +4,9 @@
 		Drawer,
 		Input,
 		InputWithPrefix,
-		Button,
 		Textarea,
 		MultiSelect,
-		GradientButton, TextField
+		TextField
 	} from '$lib/@svelte/components';
 	import { CloudUploadIcon } from '$lib/@svelte/icons';
 	import Dropzone from 'svelte-file-dropzone';
@@ -18,6 +17,7 @@
 	import { invalidate } from '$app/navigation';
 	import { faker } from '@faker-js/faker';
 	import { disciplines } from '@constant';
+	import { Button } from '@/components/ui/button';
 
 	export let isOpen: boolean = false;
 
@@ -58,33 +58,33 @@
 	}}
 	hasActions={false}
 >
-	<Button onClick={() => {
+	<Button variant="secondary" on:click={() => {
 		form.set({
-		industry: disciplines[Math.floor(Math.random()*disciplines.length)].value,
-		title: faker.lorem.sentence(),
-		products: faker.lorem.sentence(),
-		displayName: faker.lorem.sentence(),
-		comment: faker.lorem.sentence(),
-		revenue_germany: faker.number.int({ min: 0, max: 500000 }).toString(),
-		revenue_europe: faker.number.int({ min: 0, max: 1000000 }).toString(),
-		revenue_worldwide: faker.number.int({ min: 0, max: 2000000 }).toString(),
-		contactAddress: faker.location.streetAddress(),
-		contactPersonStudents: faker.person.fullName(),
-		contactPersonGraduates: faker.person.fullName(),
-		locations_worldwide: faker.number.int({ min: 0, max: 10000 }).toString(),
-		locations_europe: faker.number.int({ min: 0, max: 10000 }).toString(),
-		locations_germany: faker.number.int({ min: 0, max: 10000 }).toString(),
-		employees_worldwide: faker.number.int({ min: 0, max: 10000 }).toString(),
-		employees_europe: faker.number.int({ min: 0, max: 10000 }).toString(),
-		employees_germany: faker.number.int({ min: 0, max: 10000 }).toString(),
-		website: faker.internet.domainName(),
-		additionalInformation: faker.lorem.sentence(),
-		offersThesis: faker.datatype.boolean(),
-		entryOptions: faker.lorem.sentence(),
-		desiredDisciplines: faker.lorem.sentence(),
-		graduates: faker.number.int({ min: 0, max: 10000 }).toString(),
-		offersOutOfCountryWork: faker.datatype.boolean(),
-		offersInternships: faker.datatype.boolean(),
+			industry: disciplines[Math.floor(Math.random()*disciplines.length)].value,
+			title: faker.lorem.sentence(),
+			products: faker.lorem.sentence(),
+			displayName: faker.lorem.sentence(),
+			comment: faker.lorem.sentence(),
+			revenue_germany: faker.number.int({ min: 0, max: 500000 }).toString(),
+			revenue_europe: faker.number.int({ min: 0, max: 1000000 }).toString(),
+			revenue_worldwide: faker.number.int({ min: 0, max: 2000000 }).toString(),
+			contactAddress: faker.location.streetAddress(),
+			contactPersonStudents: faker.person.fullName(),
+			contactPersonGraduates: faker.person.fullName(),
+			locations_worldwide: faker.number.int({ min: 0, max: 10000 }).toString(),
+			locations_europe: faker.number.int({ min: 0, max: 10000 }).toString(),
+			locations_germany: faker.number.int({ min: 0, max: 10000 }).toString(),
+			employees_worldwide: faker.number.int({ min: 0, max: 10000 }).toString(),
+			employees_europe: faker.number.int({ min: 0, max: 10000 }).toString(),
+			employees_germany: faker.number.int({ min: 0, max: 10000 }).toString(),
+			website: faker.internet.domainName(),
+			additionalInformation: faker.lorem.sentence(),
+			offersThesis: faker.datatype.boolean(),
+			entryOptions: faker.lorem.sentence(),
+			desiredDisciplines: faker.lorem.sentence(),
+			graduates: faker.number.int({ min: 0, max: 10000 }).toString(),
+			offersOutOfCountryWork: faker.datatype.boolean(),
+			offersInternships: faker.datatype.boolean()
 		})
 	}}>Generate random data
 	</Button>
@@ -217,13 +217,14 @@
 					<p class=" text-sm text-stone-500">{$_('user-pages.portraits.lastEdited')}: 27 Dec 2023</p>
 					<div class=" flex items-center">
 						<Button
-							classes="mr-2"
-							onClick={() => {
+							variant="secondary"
+							class="mr-2"
+							on:click={() => {
 							isOpen = false;
 						}}
 						>{$_('common.cancel')}
 						</Button>
-						<GradientButton type="submit">{$_('common.save')}</GradientButton>
+						<Button variant="gradient" type="submit">{$_('common.save')}</Button>
 					</div>
 				</footer>
 			</div>
@@ -260,7 +261,7 @@
 							<img src="user.png" alt="User" />
 							<div class=" flex flex-col ml-4">
 								<div>
-									<Button onClick={() => undefined} classes="mb-3 !py-1.5"
+									<Button variant="secondary" on:click={() => undefined} classes="mb-3 !py-1.5"
 									>{$_('common.upload')}</Button
 									>
 								</div>
@@ -275,13 +276,14 @@
 					<p class=" text-sm text-stone-500">{$_('user-pages.portraits.lastEdited')}: 27 Dec 2023</p>
 					<div class=" flex items-center">
 						<Button
-							classes="mr-2"
-							onClick={() => {
+							variant="secondary"
+							class="mr-2"
+							on:click={() => {
 							isOpen = false;
 						}}
 						>{$_('common.cancel')}
 						</Button>
-						<GradientButton type="submit" form={$page.form}>{$_('common.save')}</GradientButton>
+						<Button variant="gradient" type="submit" form={$page.form}>{$_('common.save')}</Button>
 					</div>
 				</footer>
 			</div>

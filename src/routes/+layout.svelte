@@ -5,7 +5,7 @@
 	import { setupI18n, isLocaleLoaded, dir, init } from '@services';
 	import { page } from '$app/stores';
 	import { signIn } from '@auth/sveltekit/client';
-	import { GradientButton } from '$lib/@svelte/components';
+	import { Button } from '@/components/ui/button';
 
 	onMount(() => {
 		document.dir = $dir;
@@ -25,11 +25,11 @@
 		<slot />
 	{:else if $page.url.pathname.includes('/admin')}
 		<div class="w-full h-full flex items-center justify-center">
-			<GradientButton onClick={() => signIn('auth0-admin')}>Admin Login</GradientButton>
+			<Button variant="gradient" on:click={() => signIn('auth0-admin')}>Zum Admin-Dashboard</Button>
 		</div>
 	{:else}
 		<div class="w-full h-full flex items-center justify-center">
-			<GradientButton onClick={() => signIn('auth0')}>Login</GradientButton>
+			<Button variant="gradient" on:click={() => signIn('auth0')}>Login</Button>
 		</div>
 	{/if}
 {:else}

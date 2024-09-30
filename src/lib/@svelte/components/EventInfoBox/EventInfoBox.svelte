@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { _ } from '@services';
 	import { CalenderIcon } from '$lib/@svelte/icons';
-	import { GradientLink } from '$lib/@svelte/components';
-	import { Button } from '@/components/ui/button';
+	import { Link } from '@/@svelte/components';
+
 	export let heading: string;
 	export let subHeading: string;
 	export let date: string;
@@ -14,11 +14,10 @@
 	<h4 class=" text-lg font-extrabold text-stone-800">{heading}</h4>
 	<h6 class=" text-sm text-stone-800 font-normal">{subHeading}</h6>
 	<div class=" flex justify-between items-center mt-5">
-		<span class=" flex items-center">
+		<div class=" flex items-center">
 			<CalenderIcon />
 			<p class=" ml-2 text-sm text-stone-800 font-medium">{date}</p>
-		</span>
-		<a {href}><Button class=" !py-1.5">{$_(`common.${buttonText}`)}</Button></a>
-
+		</div>
+		<Link variant="gradient" {href}>{$_(`common.${buttonText}`)}</Link>
 	</div>
 </div>

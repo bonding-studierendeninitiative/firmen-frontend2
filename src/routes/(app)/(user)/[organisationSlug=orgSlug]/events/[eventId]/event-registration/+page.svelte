@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { _ } from '@services';
-	import { GradientButton, Modal, Select, Chip } from '$lib/@svelte/components';
+	import { Modal, Input, Select, Checkbox, Chip } from '$lib/@svelte/components';
+	import { Modal, Select, Chip } from '$lib/@svelte/components';
 	import { Input } from '@/components/ui/input';
 	import { Button } from '@/components/ui/button';
 	import Dropzone from 'svelte-file-dropzone';
@@ -22,6 +23,7 @@
 	import type { CreateEventRegistration } from '@/services';
 	import AddonList from '@/@svelte/components/AddonList/AddonList.svelte';
 	import { t } from 'svelte-i18n';
+	import { Button } from '@/components/ui/button';
 	export let data: PageData;
 	const addons = data.addons ?? [];
 
@@ -118,9 +120,9 @@
 		</div>
 	</div>
 	<footer class=" flex items-center justify-center">
-		<GradientButton classes="!py-1.5" onClick={() => goto('/events')}
-		>{$_('common.viewEvents')}</GradientButton
-		>
+		<Button variant="gradient" class="!py-1.5" on:click={() => goto('/events')}>
+			{$_('common.viewEvents')}
+		</Button>
 	</footer>
 </Modal>
 <div>
@@ -506,6 +508,7 @@
 		</div>
 	</section>
 	<footer class=" flex mt-6 justify-end items-center">
+		<Button variant="gradient" on:click={handleFormSubmit}>{$_('common.submit')}</Button>
 		<Button disabled={!termsAccepted || data.selectedPackage === ""} onClick={handleFormSubmit}>{$_('common.submit')}</Button>
 	</footer>
 

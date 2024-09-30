@@ -1,10 +1,9 @@
 <script lang="ts">
 	import { _ } from '@services';
 	import { onMount } from 'svelte';
-	import { Button } from '../Button';
-	import { GradientButton } from '../GradientButton';
 	import { SelectDown, SelectUp } from '$lib/@svelte/icons';
 	import Checkbox from '../Checkbox/Checkbox.svelte';
+	import { Button } from '@/components/ui/button';
 	interface menuItemTypes {
 		value: string;
 		label: string;
@@ -99,9 +98,9 @@
 				{/if}
 			</div>
 			<footer class=" px-3.5 py-2.5 flex justify-between items-center w-full">
-				<Button classes="!py-1 !px-3 !text-xs" onClick={handleCancel}>{$_('common.cancel')}</Button>
-				<GradientButton classes="!py-1 !px-3 !text-xs" onClick={handleShowResults}
-					>{$_('common.showResults')}</GradientButton
+				<Button variant="outline" class="!py-1 !px-3 !text-xs" on:click={handleCancel}>{$_('common.cancel')}</Button>
+				<Button variant="gradient" class="!py-1 !px-3 !text-xs" on:click={handleShowResults}
+					>{$_('common.showResults')}</Button
 				>
 			</footer>
 		</div>

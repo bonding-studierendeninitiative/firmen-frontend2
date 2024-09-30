@@ -4,7 +4,7 @@
 	import { ButtonIcon, EventInfoBox, InfoListItem, SearchInput } from '$lib/@svelte/components';
 
 	export let publishedEvents: { heading: string, subHeading: string, date: string, id: string }[] = [];
-	export let handleEventRegistration = () => {
+	export let handleEventRegistration: (id: string) => void = () => {
 	};
 
 	let isListView = true;
