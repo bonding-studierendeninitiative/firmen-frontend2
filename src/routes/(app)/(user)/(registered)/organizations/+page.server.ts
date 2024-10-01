@@ -1,9 +1,9 @@
-import type { Actions, PageServerLoad } from './$types';
-import { createOrganization, getOrgMemberships } from '$lib/services/organizations';
+import type { PageServerLoad } from './$types';
+import { createOrganization, getOrgMemberships } from '@/services/organizations';
+import { type Actions, fail } from '@sveltejs/kit';
 import { superValidate } from 'sveltekit-superforms';
 import { valibot } from 'sveltekit-superforms/adapters';
 import { CreateOrganizationRequestSchema } from '@schema/createOrganization';
-import { fail, redirect } from '@sveltejs/kit';
 
 export const load: PageServerLoad = async ({ parent }) => {
 	const { session } = await parent();
@@ -20,6 +20,7 @@ export const load: PageServerLoad = async ({ parent }) => {
 
 export const actions: Actions = {
 	createOrg: async ({ locals, request }) => {
+		console.log('start');
 		const session = await locals.auth();
 		// @ts-expect-error we define accessToken in parent
 		if (!session || !session.accessToken) {
@@ -33,15 +34,11 @@ export const actions: Actions = {
 			return fail(400, { form });
 		}
 
-		const createdOrg = await createOrganization({
+		await createOrganization({
 			// @ts-expect-error we define accessToken in parent
 			accessToken: session?.accessToken,
 			data: form.data
 		});
-
-		if (createdOrg.slug) {
-			redirect(303, `/${createdOrg.slug}`);
-		}
 
 		return {
 			form

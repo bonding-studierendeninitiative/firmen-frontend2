@@ -73,6 +73,7 @@
 		"update": "Update",
 		"addons": "Addons",
 		"packages": "Packages",
+		"back": "Go back",
 		"city": "City",
 		"light": "Light",
 		"standard": "Standard",
@@ -401,6 +402,26 @@
 					"create": "Create",
 					"searchOrganization": "Search my organizations",
 					"organizationWebsite": "bonding.de"
+				}
+			}
+		},
+		"contactPersons": {
+			"signUp": {
+				"labels": {
+					"firstName": "First name",
+					"lastName": "Last name",
+					"phoneNumber": "Phone number",
+					"email": "Your Work Email",
+					"responsibility": "Your responsibility"
+				},
+				"placeholders": {
+					"firstName": "First name",
+					"lastName": "Last name",
+					"phoneNumber": "Phone number",
+					"responsibility": "E. g. Head of HR, Outreach Champion, etc."
+				},
+				"hints": {
+"email": "This should be your work email that you will receive notifications and confirmations to."
 				}
 			}
 		}

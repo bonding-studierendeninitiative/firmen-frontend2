@@ -72,6 +72,7 @@
     "update": "Aktualisieren",
     "addons": "Add-ons",
     "packages": "Pakete",
+    "back": "Zurück",
     "city": "Stadt",
     "light": "Starter",
     "standard": "Standard",
@@ -385,6 +386,29 @@
           "organizationZipCode": "12345",
           "organizationLocality": "Berlin",
           "create": "Erstellen"
+        }
+      }
+    },
+    "contactPersons": {
+      "signUp": {
+        "labels": {
+          "firstName": "Vorname",
+          "lastName": "Nachname",
+          "phoneNumber": "Telefonnummer",
+          "email": "Geschäfts-E-Mail-Adresse",
+          "responsibility": "Ihre Verantwortlichkeit",
+          "title": "Ihre Anrede"
+        },
+        "placeholders": {
+          "firstName": "Sabrina",
+          "lastName": "Müller",
+          "phoneNumber": "123 456789",
+          "email": "sabrina.mueller@work.com",
+          "responsibility": "z. B. Head of HR, Outreach Champion, etc.",
+          "title": "Frau, Herr, Divers, etc."
+        },
+        "hints": {
+          "email": "Bitte geben Sie hier Ihre Arbeits-E-Mail-Adresse an, auf der Sie Benachrichtigungen und Bestätigungen empfangen werden."
         }
       }
     }
