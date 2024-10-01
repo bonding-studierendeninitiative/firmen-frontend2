@@ -392,16 +392,14 @@
     "contactPersons": {
       "signUp": {
         "labels": {
-          "firstName": "Vorname",
-          "lastName": "Nachname",
+          "fullName": "Ihr voller Name",
           "phoneNumber": "Telefonnummer",
           "email": "Geschäfts-E-Mail-Adresse",
           "responsibility": "Ihre Verantwortlichkeit",
           "title": "Ihre Anrede"
         },
         "placeholders": {
-          "firstName": "Sabrina",
-          "lastName": "Müller",
+          "fullName": "Sabrina Müller",
           "phoneNumber": "123 456789",
           "email": "sabrina.mueller@work.com",
           "responsibility": "z. B. Head of HR, Outreach Champion, etc.",

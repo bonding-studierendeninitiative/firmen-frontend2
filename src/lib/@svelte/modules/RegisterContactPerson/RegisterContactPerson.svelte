@@ -42,27 +42,14 @@
 			<Description />
 			<FieldErrors />
 		</Field>
-		<Field form={superform} name="firstName">
+		<Field form={superform} name="fullName">
 			<Control let:attrs>
-				<Label>{$_('user-pages.contactPersons.signUp.labels.firstName')}</Label>
+				<Label>{$_('user-pages.contactPersons.signUp.labels.fullName')}</Label>
 
 				<Input
 					{...attrs}
-					bind:value={$formData.firstName}
-					placeholder={$_('user-pages.contactPersons.signUp.placeholders.firstName')}
-				/>
-			</Control>
-			<Description />
-			<FieldErrors />
-		</Field>
-		<Field form={superform} name="lastName">
-			<Control let:attrs>
-				<Label>{$_('user-pages.contactPersons.signUp.labels.lastName')}</Label>
-
-				<Input
-					{...attrs}
-					bind:value={$formData.lastName}
-					placeholder={$_('user-pages.contactPersons.signUp.placeholders.lastName')}
+					bind:value={$formData.fullName}
+					placeholder={$_('user-pages.contactPersons.signUp.placeholders.fullName')}
 				/>
 			</Control>
 			<Description />

@@ -1,8 +1,4 @@
-import {
-	type ContactPersonDetails,
-	ContactPersonDetailsSchema,
-	ContactPersonRegistrationRequest
-} from '@schema';
+import { ContactPersonDetailsSchema, ContactPersonRegistrationRequest } from '@schema';
 import * as v from 'valibot';
 import { API } from '@api';
 import { error } from '@sveltejs/kit';

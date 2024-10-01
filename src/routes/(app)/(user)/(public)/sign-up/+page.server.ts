@@ -35,7 +35,7 @@ export const actions: Actions = {
 			// @ts-expect-error we define accessToken in parent
 			accessToken: session?.accessToken,
 			data: {
-				fullName: `${form.data.firstName} ${form.data.lastName}`,
+				fullName: form.data.fullName,
 				phone: form.data.phoneNumber,
 				position: form.data.responsibility,
 				email: form.data.email,

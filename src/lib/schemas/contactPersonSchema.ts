@@ -4,8 +4,7 @@ import type { Infer } from 'sveltekit-superforms';
 export const ContactPersonDetailsSchema = v.object({
 	contactPersonId: v.string(),
 	email: v.string(),
-	firstName: v.nullish(v.string(), ''),
-	lastName: v.nullish(v.string(), ''),
+	fullName: v.nullish(v.string(), ''),
 	title: v.nullish(v.string(), ''),
 	phoneNumber: v.string(),
 	responsibility: v.nullish(v.string(), '')
