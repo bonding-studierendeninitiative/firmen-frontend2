@@ -12,15 +12,13 @@ export const EventDetailsResponseSchema = v.object({
 	timeTo: v.nullish(v.pipe(v.string(), v.isoTimeSecond())),
 	comment: v.nullish(v.string()),
 	latestRegistration: v.nullish(v.pipe(v.string(), v.isoDate())),
-	notesCategory: v.optional(v.string()),
-	descriptionNotes: v.optional(v.string()),
+	notesCategory: v.nullish(v.string()),
+	descriptionNotes: v.nullish(v.string()),
 	contactMail: v.nullish(v.string()),
 	website: v.nullish(v.string()),
 	additionalLink: v.nullish(v.string()),
 	createdAt: v.pipe(v.string(), v.isoTimestamp()),
-	modifiedAt: v.nullish(v.pipe(v.string(), v.isoTimestamp())),
-	addons: v.nullish(v.array(v.object({}))),
-	packages: v.array(v.object({}))
+	modifiedAt: v.nullish(v.pipe(v.string(), v.isoTimestamp()))
 });
 
 export type EventDetailsResponse = typeof EventDetailsResponseSchema;

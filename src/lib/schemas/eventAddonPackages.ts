@@ -8,6 +8,7 @@ const EventAddonPackageSchema = v.object({
 	label: v.string(),
 	addons: v.array(
 		v.object({
+			id: v.nullish(v.string()),
 			title: v.pipe(v.string(), v.maxLength(50), v.minLength(1)),
 			label: v.string(),
 			description: v.optional(v.pipe(v.string(), v.maxLength(255))),
@@ -41,7 +42,12 @@ export const GetEventAddonPackageResponseSchema = EventAddonPackageSchema;
 export type GetEventAddonPackageResponse = typeof GetEventAddonPackageResponseSchema;
 
 export const GetEventAddonPackagesResponseSchema = v.object({
-	addonPackages: v.array(v.intersect([EventAddonPackageSchema, v.object({ id: v.string() })])),
+	addonPackages: v.array(
+		v.object({
+			...EventAddonPackageSchema.entries,
+			...v.object({ id: v.string() }).entries
+		})
+	),
 	totalElements: v.number(),
 	totalPages: v.number(),
 	pageNumber: v.number(),

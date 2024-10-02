@@ -22,7 +22,7 @@ export const load: PageServerLoad = async ({ parent, params, url }) => {
 	const result = await getPortraitTemplates({
 		// @ts-expect-error we define accessToken in parent
 		accessToken: session?.accessToken,
-		org: params.organisationSlug,
+		org: params.organizationSlug,
 		page
 	});
 
@@ -52,7 +52,7 @@ export const actions: Actions = {
 		await createPortraitTemplate({
 			// @ts-expect-error we define accessToken in parent
 			accessToken: session?.accessToken,
-			org: params.organisationSlug,
+			org: params.organizationSlug,
 			data: form.data
 		});
 		return {

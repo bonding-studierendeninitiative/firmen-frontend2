@@ -1,33 +1,29 @@
 <script lang="ts">
 	import { _ } from '@services';
-	import { Modal, Input, Select, Checkbox, Chip } from '@/@svelte/components';
-	import { Modal, Select, Chip } from '@/@svelte/components';
+	import { Modal } from '@/@svelte/components';
 	import { Input } from '@/components/ui/input';
 	import { Button } from '@/components/ui/button';
-	import Dropzone from 'svelte-file-dropzone';
-	import { DropzoneIcon, CrossIcon, FilledCheckIcon } from '@/@svelte/icons';
-	import * as Breadcrumb from '@/components/ui/breadcrumb';
+	import { CrossIcon, FilledCheckIcon } from '@/@svelte/icons';
 	import { number } from '@services/i18n';
-
+	import * as Breadcrumb from '@/components/ui/breadcrumb';
 	import { Checkbox } from '@/components/ui/checkbox';
 	import { Label } from '@/components/ui/label';
 	import { Control, Description, Field, FieldErrors } from '@/components/ui/form';
 	import { goto } from '$app/navigation';
 	import type {
 		PageData
-	} from '../../../../../../../../../.svelte-kit/types/src/routes';
+	} from './$types';
 	import { superForm } from 'sveltekit-superforms';
-	import { type SetOrgDetailsRequest, SetOrgDetailsRequestSchema } from '@schema';
+	import { SetOrgDetailsRequestSchema } from '@schema';
 	import { valibot } from 'sveltekit-superforms/adapters';
 	import { toast } from 'svelte-french-toast';
 	import type { CreateEventRegistration } from '@/services';
 	import AddonList from '@/@svelte/components/AddonList/AddonList.svelte';
-	import { t } from 'svelte-i18n';
-	import { Button } from '@/components/ui/button';
+
 	export let data: PageData;
 	const addons = data.addons ?? [];
 
-	const superform = superForm<CreateEventRegistration>(data.createEventRegistrationForm, {
+	const superform = superForm<CreateEventRegistration>(data.createEventRegistrationForm!, {
 		validators: valibot(SetOrgDetailsRequestSchema),
 		dataType: 'json',
 		invalidateAll: 'force',
@@ -66,21 +62,28 @@
 		}
 	}
 
-	function getPackagePrice(id: string) {
-		const pkg = data.buyOption.packages.find(pkg => pkg.id === id);
-		return pkg ? pkg.price : '';
+	function getPackagePrice(id?: string | null) {
+		const pkg = data.buyOption?.packages.find(pkg => pkg.id === id);
+		return pkg ? Number(pkg.price) : 0;
 	}
 
-	function getSelectedAddonsPrice(addonsList, selectedAddons) {
+	function getSelectedAddonsPrice(addonsList: {
+		id: string;
+		price: number | null;
+		addons: {
+			id?: string | null | undefined;
+			price?: number | undefined;
+		}[];
+	}[], selectedAddons: string[]) {
 
 		return selectedAddons.reduce((sum, addonId) => {
 			for (let item of addonsList) {
 				if (item.id === addonId) {
-					sum += item.price;
+					sum += item.price ?? 0;
 				}
 				for (let addon of item.addons) {
 					if (addon.id === addonId) {
-						sum += addon.price;
+						sum += addon.price ?? 0;
 					}
 				}
 			}
@@ -88,8 +91,8 @@
 		}, 0);
 	}
 
-	$: selectedPackagePrice = getPackagePrice(data.selectedPackage);
-	$: selectedAddonPrice = getSelectedAddonsPrice(data.addons, data.selectedAddons);
+	$: selectedPackagePrice = getPackagePrice(data.selectedPackage) as number;
+	$: selectedAddonPrice = getSelectedAddonsPrice(data.addons ?? [], data.selectedAddons ?? []) as number;
 
 	function handleFilesSelect(e: any) {
 		const { acceptedFiles, fileRejections } = e.detail;
@@ -137,7 +140,7 @@
 				<Breadcrumb.Separator />
 				<Breadcrumb.Item>
 					<Breadcrumb.Item let:attrs>
-						<a href={`/${data.orgSlug}/events/${data.event.id}`} {...attrs}>{data.event.name}</a>
+						<a href={`/${data.orgSlug}/events/${data.event?.id}`} {...attrs}>{data.event?.name}</a>
 					</Breadcrumb.Item>
 				</Breadcrumb.Item>
 				<Breadcrumb.Separator />
@@ -420,11 +423,11 @@
 		</p>
 
 		<div class=" border border-stone-200 w-full rounded-lg mt-6">
-			{#each data.buyOption.packages as pkg}
+			{#each data.buyOption?.packages ?? [] as pkg}
 				<div class=" px-3 py-4 flex justify-between items-center border-b border-stone-200">
 					<div class="flex items-center space-x-2">
 						<Checkbox id={`package-${pkg.id}`} checked={data.selectedPackage === pkg.id}
-											onCheckedChange={(v) => handlePackageSelect(v, pkg.id)} />
+											onCheckedChange={(v) => handlePackageSelect(v === true, pkg.id)} />
 						<Label
 							for={`package-${pkg.id}`}
 							class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
@@ -468,7 +471,7 @@
 	<section class="my-6">
 		<div class="flex items-center justify-between mb-3">
 			<p class="text-sm font-medium text-stone-800">{$_('user-pages.events.eventFee')}</p>
-			<p class="text-sm font-extrabold text-stone-800">{$number((selectedPackagePrice ?? 0) / 100, {
+			<p class="text-sm font-extrabold text-stone-800">{$number((selectedPackagePrice) / 100, {
 				style: "currency",
 				currency: "EUR",
 				currencyDisplay: "code"
@@ -487,7 +490,8 @@
 		</div>
 		<div class="flex items-center justify-between mb-6">
 			<p class="text-sm font-medium text-stone-800">{$_('user-pages.events.total')}</p>
-			<p class="text-sm font-extrabold text-stone-800">{$number(((selectedPackagePrice + selectedAddonPrice) ?? 0) / 100, {
+			<p
+				class="text-sm font-extrabold text-stone-800">{$number(((selectedAddonPrice + selectedPackagePrice) ?? 0) / 100, {
 				style: "currency",
 				currency: "EUR",
 				currencyDisplay: "code"
@@ -501,15 +505,15 @@
 				class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
 			>
 				<div class="undertaking-text">
-				{@html $_("user-pages.events.undertakingText")}
+					<span>{$_("user-pages.events.undertakingText")}</span>
 				</div>
 			</Label>
 			<Checkbox bind:checked={termsAccepted} id="terms" aria-labelledby="terms-label" />
 		</div>
 	</section>
 	<footer class=" flex mt-6 justify-end items-center">
-		<Button variant="gradient" on:click={handleFormSubmit}>{$_('common.submit')}</Button>
-		<Button disabled={!termsAccepted || data.selectedPackage === ""} onClick={handleFormSubmit}>{$_('common.submit')}</Button>
+		<Button disabled={!termsAccepted || data.selectedPackage === ""} variant="gradient"
+						on:click={handleFormSubmit}>{$_('common.submit')}</Button>
 	</footer>
 
 </div>

@@ -45,6 +45,21 @@ export const getBuyOption = async ({
 	return parse(GetBuyOptionResponseSchema, data);
 };
 
+export const getActiveBuyOption = async ({
+	accessToken,
+	eventId
+}: {
+	accessToken: string;
+	eventId: string;
+}) => {
+	const response = await API.get<InferInput<GetBuyOptionResponse>>({
+		route: `/event/${eventId}/buy-option/active`,
+		token: accessToken
+	});
+	const data = await response.json();
+	return parse(GetBuyOptionResponseSchema, data);
+};
+
 export const deleteBuyOption = async ({
 	accessToken,
 	eventId,

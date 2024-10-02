@@ -1,4 +1,4 @@
-import type { PageServerLoad } from '../../../../../../../.svelte-kit/types/src/routes';
+import type { PageServerLoad } from './$types';
 import { getEvents } from '@/services';
 
 export const load: PageServerLoad = async ({ parent }) => {

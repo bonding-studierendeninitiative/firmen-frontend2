@@ -1,9 +1,8 @@
 <script lang="ts">
 	import { _ } from '@services';
-	import { goto } from '$app/navigation';
 	import { EventInfoBox } from '@/@svelte/components';
 	import { currentOrganization } from '@/stores/organizationStore';
-	import type { PageData } from '../../../../../../../.svelte-kit/types/src/routes';
+	import type { PageData } from './$types';
 	import { Checkbox } from '@/components/ui/checkbox';
 	import { Label } from '@/components/ui/label';
 

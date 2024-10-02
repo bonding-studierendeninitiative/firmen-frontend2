@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { _ } from '@services';
-	import Tabs from '../../../../../../lib/@svelte/components/Tabs/Tabs.svelte';
 	import {
 		ProfileTab,
 		OrganizationTab,
@@ -9,7 +8,8 @@
 		PasswordTab
 	} from '@/@svelte/pages';
 	import { fade } from 'svelte/transition';
-	import type { PageData } from '../../../../../../../.svelte-kit/types/src/routes';
+	import type { PageData } from './$types';
+	import { Tabs } from '@/@svelte/components';
 	export let data: PageData;
 	let activeTab = 0;
 	const tabHeadings = ['profile', 'organization', 'password', 'billing', 'archived'];

@@ -8,7 +8,7 @@
 	import dayjs from 'dayjs';
 	import type {
 		PageData
-	} from '../../../../../../../../.svelte-kit/types/src/routes';
+	} from './$types';
 	import { AddPortrait } from '@/@svelte/modules/AddPortrait';
 	import { groupBy } from '@/utils/array';
 	import relativeTime from 'dayjs/plugin/relativeTime';
@@ -87,7 +87,7 @@
 							</div>
 							<div class="flex gap-2">
 								<a href={`/${$currentOrganization?.organizationSlug}/catalogue-data/portraits/${portrait.id}`}
-									 class="content-center text-center font-extrabold px-4 py-3 space-x-4 rounded-lg text-stone-800 text-sm w-auto border border-solid border-slate-200 border-1 rounded-lg inline shadow-custom !py-1"
+									 class="content-center text-center font-extrabold px-4 py-1 space-x-4 rounded-lg text-stone-800 text-sm w-auto border border-solid border-slate-200 border-1 inline shadow-custom"
 								>{$_('common.viewDetails')}</a>
 								<input type="hidden" name="id" value={portrait.id} />
 								<Button formaction="?/deletePortrait" onClick={() => {}}>{$_('common.delete')}</Button>

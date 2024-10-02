@@ -3,8 +3,7 @@
 	import { goto } from '$app/navigation';
 	import { NoDataFound, EventInfoBox, Button, Table, Chip } from '@/@svelte/components';
 	import { ImageIcon, DocumentIcon, BrandingIcon } from '@/@svelte/icons';
-	import { toast } from 'svelte-french-toast';
-	import type { PageData } from '../../../../../../../.svelte-kit/types/src/routes';
+	import type { PageData } from './$types';
 	import { currentOrganization } from '@/stores/organizationStore';
 
 	const handleEventRegistration = (id: string) => {

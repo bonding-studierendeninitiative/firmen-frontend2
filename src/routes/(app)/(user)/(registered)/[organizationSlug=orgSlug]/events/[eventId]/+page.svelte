@@ -14,13 +14,13 @@
 	import * as Table from '@/components/ui/table';
 	import type {
 		PageData
-	} from '../../../../../../../../.svelte-kit/types/src/routes';
+	} from './$types';
 	import dayjs from 'dayjs';
 	import AddonList from '@/@svelte/components/AddonList/AddonList.svelte';
 	import { number } from '@services/i18n';
 
 	export let data: PageData;
-	let { buyOption, event, packages: addons }: PageData = data;
+	let { buyOption, event, addons }: PageData = data;
 
 	let selectedPackageID = '';
 	let selectedAddonsURL = '';
@@ -40,7 +40,6 @@
 					{$_('user-pages.events.events')}
 				</Breadcrumb.Link>>
 			</Breadcrumb.Item>
-			<Breadcrumb.Separator />
 			<Breadcrumb.Item>
 				<Breadcrumb.Page>{event.name}</Breadcrumb.Page>
 			</Breadcrumb.Item>
@@ -154,7 +153,7 @@
 		</Table.Root>
 	</section>
 
-	<AddonList {addons} bind:selectedAddons={selectedAddons} />
+	<AddonList addons={addons} bind:selectedAddons={selectedAddons} />
 	<footer class=" flex mt-6 justify-end items-center">
 		{#if selectedPackageID !== ""}
 			<a aria-disabled="true"

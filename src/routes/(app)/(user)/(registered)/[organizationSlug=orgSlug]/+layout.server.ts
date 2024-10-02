@@ -2,7 +2,6 @@ import { getOrganizationDetails, getOrgMemberships } from '@/services/organizati
 import { superValidate } from 'sveltekit-superforms';
 import { valibot } from 'sveltekit-superforms/adapters';
 import { CreateOrganizationRequestSchema } from '@schema';
-import { fail, type Actions } from '@sveltejs/kit';
 import type { LayoutServerLoad } from './$types';
 
 export const load: LayoutServerLoad = async ({ parent, params }) => {
@@ -15,7 +14,7 @@ export const load: LayoutServerLoad = async ({ parent, params }) => {
 		organization: await getOrganizationDetails({
 			// @ts-expect-error we define accessToken in parent
 			accessToken: session?.accessToken,
-			slug: params.organisationSlug
+			slug: params.organizationSlug
 		}),
 		// @ts-expect-error we define accessToken in parent
 		orgs: await getOrgMemberships({ accessToken: session?.accessToken })

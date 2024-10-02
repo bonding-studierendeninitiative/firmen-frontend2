@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { Sidebar } from '@/@svelte/modules';
 	import Check from 'lucide-svelte/icons/check';
-	import type { PageData } from '../../../../../../.svelte-kit/types/src/routes';
+	import type { PageData } from './$types';
 	import { goto } from '$app/navigation';
 	import { currentOrganization } from '@/stores/organizationStore';
 	import ChevronsUpDown from 'lucide-svelte/icons/chevrons-up-down';

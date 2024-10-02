@@ -1,18 +1,16 @@
 import {
 	CreateEventRegistrationSchema,
 	generateOrgInvite,
-	getAddonPackageTemplate,
-	getBuyOption,
+	getActiveBuyOption,
 	getEvent,
 	getOrganizationDetails
 } from '@/services';
 import { superValidate } from 'sveltekit-superforms';
 import { valibot } from 'sveltekit-superforms/adapters';
-import { CreateOrgInviteRequestSchema, SetOrgDetailsRequestSchema } from '@schema';
 import { getContactPersonDetails } from '@/services/contactPerson';
-import { url } from 'valibot';
 import { type Actions, fail } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
+import { getEventAddonPackages } from '@/services/eventAddonPackages';
 
 export const load: PageServerLoad = async ({ parent, params, url }) => {
 	const { session } = await parent();
@@ -23,13 +21,11 @@ export const load: PageServerLoad = async ({ parent, params, url }) => {
 		// @ts-expect-error we define accessToken in parent
 		accessToken: session?.accessToken,
 		eventId
-		// orgSlug: params.organisationSlug
 	});
-	const buyOption = await getBuyOption({
+	const buyOption = await getActiveBuyOption({
 		// @ts-expect-error we define accessToken in parent
 		accessToken: session?.accessToken,
-		eventId,
-		buyOptionId: '688a0790-dc1b-42f4-8eb4-df0882246b04'
+		eventId
 	});
 
 	const selectedPackage = url.searchParams.has('selectedPackage')
@@ -39,18 +35,14 @@ export const load: PageServerLoad = async ({ parent, params, url }) => {
 	const organization = await getOrganizationDetails({
 		// @ts-expect-error we define accessToken in parent
 		accessToken: session?.accessToken,
-		slug: params.organisationSlug
+		slug: params.organizationSlug
 	});
 
-	const pkg = await getAddonPackageTemplate({
+	const addonPackages = await getEventAddonPackages({
 		// @ts-expect-error we define accessToken in parent
 		accessToken: session?.accessToken,
-		addonPackageTemplateId: '4253a1bb-0c1a-4cbf-9809-d97af207f447'
-	});
-	const pkg2 = await getAddonPackageTemplate({
-		// @ts-expect-error we define accessToken in parent
-		accessToken: session?.accessToken,
-		addonPackageTemplateId: '2d9ce650-6834-4a6a-bc10-5aca63cf0fd7'
+		eventId: eventId,
+		buyOptionId: buyOption.id
 	});
 	// @ts-expect-error we define accessToken in parent
 	const { contactPersonId } = await getContactPersonDetails({ accessToken: session?.accessToken });
@@ -71,7 +63,7 @@ export const load: PageServerLoad = async ({ parent, params, url }) => {
 		selectedAddons,
 		createEventRegistrationForm,
 		orgSlug: organization.slug,
-		addons: [pkg, pkg2]
+		addons: addonPackages.addonPackages
 	};
 };
 
@@ -88,7 +80,7 @@ export const actions: Actions = {
 		if (!form.valid) {
 			return fail(400, { form });
 		}
-		// @ts-expect-error
+		// @ts-expect-error we define accessToken in parent
 		await generateOrgInvite({ accessToken: session?.accessToken, data: form.data });
 		return { form };
 	}

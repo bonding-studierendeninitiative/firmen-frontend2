@@ -7,7 +7,7 @@ export const load: PageServerLoad = async ({ parent, params }) => {
 	const { session } = await parent();
 	if (!session?.user) return;
 
-	const organizationSlug = params.organisationSlug;
+	const organizationSlug = params.organizationSlug;
 	const joinCode = params.joinCode;
 
 	const request: AcceptInviteRequest = {

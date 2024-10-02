@@ -20,11 +20,11 @@ export const load: PageServerLoad = async ({ parent, params, url }) => {
 	const organizationData = await getOrganizationDetails({
 		// @ts-expect-error we define accessToken in parent
 		accessToken: session?.accessToken,
-		slug: params.organisationSlug
+		slug: params.organizationSlug
 	});
 
 	const createInviteForm = await superValidate(valibot(CreateOrgInviteRequestSchema));
-	createInviteForm.data.organizationSlug = params.organisationSlug;
+	createInviteForm.data.organizationSlug = params.organizationSlug;
 	createInviteForm.data.redirectURL = APP_URL;
 
 	const editOrganizationDetailsForm = await superValidate(
@@ -77,7 +77,7 @@ export const actions: Actions = {
 		await setOrgDetails({
 			// @ts-expect-error we define accessToken in parent
 			accessToken: session?.accessToken,
-			orgSlug: params.organisationSlug,
+			orgSlug: params.organizationSlug,
 			data: form.data
 		});
 		return { form };
