@@ -40,11 +40,6 @@
 
 	let isOpen = false;
 
-	let files: any = {
-		accepted: [],
-		rejected: []
-	};
-
 	let billingEqualCompany = false;
 	$: if (billingEqualCompany) $formData.billingOrganizationName = $formData.contractLegalEntityName;
 	$: if (billingEqualCompany) $formData.billingStreet = $formData.contractAddressStreet;
