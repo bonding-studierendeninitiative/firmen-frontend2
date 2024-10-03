@@ -4,7 +4,7 @@ import {
 	getOrganizationMembers,
 	setOrgDetails
 } from '@/services';
-import type { Actions, PageServerLoad } from '../../../../../../../.svelte-kit/types/src/routes';
+import type { Actions, PageServerLoad } from './$types';
 import { superValidate } from 'sveltekit-superforms';
 import { valibot } from 'sveltekit-superforms/adapters';
 import { CreateOrgInviteRequestSchema, SetOrgDetailsRequestSchema } from '@schema';

@@ -13,23 +13,23 @@
 	import type {
 		PageData
 	} from './$types';
-	import { superForm } from 'sveltekit-superforms';
-	import { SetOrgDetailsRequestSchema } from '@schema';
+	import SuperDebug, { type Infer, superForm } from 'sveltekit-superforms';
 	import { valibot } from 'sveltekit-superforms/adapters';
 	import { toast } from 'svelte-french-toast';
-	import type { CreateEventRegistration } from '@/services';
+	import { type CreateEventRegistration, CreateEventRegistrationSchema } from '@/services';
 	import AddonList from '@/@svelte/components/AddonList/AddonList.svelte';
 
 	export let data: PageData;
 	const addons = data.addons ?? [];
 
-	const superform = superForm<CreateEventRegistration>(data.createEventRegistrationForm!, {
-		validators: valibot(SetOrgDetailsRequestSchema),
+	const superform = superForm<Infer<CreateEventRegistration>>(data.createEventRegistrationForm!, {
+		validators: valibot(CreateEventRegistrationSchema),
 		dataType: 'json',
 		invalidateAll: 'force',
 		onResult({ result }) {
 			if (result.type === 'success') {
 				toast.success($_('common.saved'));
+				isOpen = true;
 			} else if (result.type === 'error') {
 				toast.error(result.error.message);
 			}
@@ -50,14 +50,14 @@
 	$: if (billingEqualCompany) $formData.billingStreet = $formData.contractAddressStreet;
 	$: if (billingEqualCompany) $formData.billingZipCode = $formData.contractAddressZipCode;
 	$: if (billingEqualCompany) $formData.billingCity = $formData.contractAddressCity;
-	$: if (billingEqualCompany) $formData.billingCountry = $formData.billingCountry;
+	$: if (billingEqualCompany) $formData.billingCountry = $formData.contractAddressCountry;
 
 	function handlePackageSelect(v: boolean, pkgID: string) {
 		if (v) {
-			data.selectedPackage = pkgID;
+			$formData.packageId = pkgID;
 		} else {
-			if (data.selectedPackage === pkgID) {
-				data.selectedPackage = '';
+			if ($formData.packageId === pkgID) {
+				$formData.packageId = '';
 			}
 		}
 	}
@@ -91,18 +91,9 @@
 		}, 0);
 	}
 
-	$: selectedPackagePrice = getPackagePrice(data.selectedPackage) as number;
+	$: selectedPackagePrice = getPackagePrice($formData.packageId) as number;
 	$: selectedAddonPrice = getSelectedAddonsPrice(data.addons ?? [], data.selectedAddons ?? []) as number;
 
-	function handleFilesSelect(e: any) {
-		const { acceptedFiles, fileRejections } = e.detail;
-		files.accepted = [...files.accepted, ...acceptedFiles];
-		files.rejected = [...files.rejected, ...fileRejections];
-	}
-
-	const handleFormSubmit = () => {
-		isOpen = true;
-	};
 	let termsAccepted = false;
 
 </script>
@@ -164,7 +155,7 @@
 
 	<div class=" grid grid-cols-1 gap-4">
 
-		<form action="?/createEventRegistration" method="post" use:enhance>
+		<form action="?/createEventRegistration" id="create-event-registration-form" method="post" use:enhance>
 			<h4 class=" font-extrabold text-sm text-stone-900 mb-6">
 				{$_('user-pages.events.event-registration.companyInformation')}
 			</h4>
@@ -255,7 +246,7 @@
 					>
 					<Input
 						{...attrs}
-						bind:value={$formData.contractAddressStreet}
+						bind:value={$formData.contractAddressCountry}
 						placeholder={$_(
 								'user-pages.events.event-registration.placeholders.contractAddressCountry'
 							)}
@@ -380,6 +371,7 @@
 				<Description />
 				<FieldErrors />
 			</Field>
+			<hr class="my-8">
 			<Field form={superform} name="billingVat">
 				<Control let:attrs>
 					<Label
@@ -426,7 +418,7 @@
 			{#each data.buyOption?.packages ?? [] as pkg}
 				<div class=" px-3 py-4 flex justify-between items-center border-b border-stone-200">
 					<div class="flex items-center space-x-2">
-						<Checkbox id={`package-${pkg.id}`} checked={data.selectedPackage === pkg.id}
+						<Checkbox id={`package-${pkg.id}`} checked={$formData.packageId === pkg.id}
 											onCheckedChange={(v) => handlePackageSelect(v === true, pkg.id)} />
 						<Label
 							for={`package-${pkg.id}`}
@@ -491,7 +483,7 @@
 		<div class="flex items-center justify-between mb-6">
 			<p class="text-sm font-medium text-stone-800">{$_('user-pages.events.total')}</p>
 			<p
-				class="text-sm font-extrabold text-stone-800">{$number(((selectedAddonPrice + selectedPackagePrice) ?? 0) / 100, {
+				class="text-sm font-extrabold text-stone-800">{$number(((selectedAddonPrice ?? 0) + (selectedPackagePrice ?? 0)) / 100, {
 				style: "currency",
 				currency: "EUR",
 				currencyDisplay: "code"
@@ -505,16 +497,18 @@
 				class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
 			>
 				<div class="undertaking-text">
-					<span>{$_("user-pages.events.undertakingText")}</span>
+					{@html $_("user-pages.events.undertakingText")}
 				</div>
 			</Label>
 			<Checkbox bind:checked={termsAccepted} id="terms" aria-labelledby="terms-label" />
 		</div>
 	</section>
 	<footer class=" flex mt-6 justify-end items-center">
-		<Button disabled={!termsAccepted || data.selectedPackage === ""} variant="gradient"
-						on:click={handleFormSubmit}>{$_('common.submit')}</Button>
+		<Button form="create-event-registration-form" disabled={!termsAccepted || $formData.packageId === ""} variant="gradient"
+						type="submit">{$_('common.submit')}</Button>
 	</footer>
+
+	<SuperDebug data={$formData} />
 
 </div>
 

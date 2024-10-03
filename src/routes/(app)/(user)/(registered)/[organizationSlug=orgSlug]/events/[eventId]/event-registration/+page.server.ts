@@ -1,9 +1,9 @@
 import {
 	CreateEventRegistrationSchema,
-	generateOrgInvite,
 	getActiveBuyOption,
 	getEvent,
-	getOrganizationDetails
+	getOrganizationDetails,
+	registerContactPersonToEvent
 } from '@/services';
 import { superValidate } from 'sveltekit-superforms';
 import { valibot } from 'sveltekit-superforms/adapters';
@@ -29,7 +29,7 @@ export const load: PageServerLoad = async ({ parent, params, url }) => {
 	});
 
 	const selectedPackage = url.searchParams.has('selectedPackage')
-		? url.searchParams.get('selectedPackage')
+		? (url.searchParams.get('selectedPackage') as string)
 		: '';
 
 	const organization = await getOrganizationDetails({
@@ -51,6 +51,7 @@ export const load: PageServerLoad = async ({ parent, params, url }) => {
 	createEventRegistrationForm.data.eventId = event.id;
 	createEventRegistrationForm.data.organizationId = organization.id;
 	createEventRegistrationForm.data.contactPersonId = contactPersonId;
+	createEventRegistrationForm.data.packageId = selectedPackage;
 
 	const selectedAddons: string[] = url.searchParams.has('selectedAddon')
 		? url.searchParams.getAll('selectedAddon')
@@ -59,7 +60,6 @@ export const load: PageServerLoad = async ({ parent, params, url }) => {
 	return {
 		event,
 		buyOption,
-		selectedPackage,
 		selectedAddons,
 		createEventRegistrationForm,
 		orgSlug: organization.slug,
@@ -68,7 +68,7 @@ export const load: PageServerLoad = async ({ parent, params, url }) => {
 };
 
 export const actions: Actions = {
-	createEventReg: async ({ locals, request }) => {
+	createEventRegistration: async ({ locals, request }) => {
 		const session = await locals.auth();
 		// @ts-expect-error we define accessToken in parent
 		if (!session || !session.accessToken) {
@@ -81,7 +81,7 @@ export const actions: Actions = {
 			return fail(400, { form });
 		}
 		// @ts-expect-error we define accessToken in parent
-		await generateOrgInvite({ accessToken: session?.accessToken, data: form.data });
+		await registerContactPersonToEvent({ accessToken: session?.accessToken, data: form.data });
 		return { form };
 	}
 };

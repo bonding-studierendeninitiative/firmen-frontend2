@@ -1,31 +1,37 @@
 import { API } from '@api';
 import * as v from 'valibot';
 import type { Infer } from 'sveltekit-superforms';
+import { error } from '@sveltejs/kit';
 
 export const CreateEventRegistrationSchema = v.object({
 	eventId: v.pipe(v.string(), v.nonEmpty()),
 	organizationId: v.pipe(v.string(), v.nonEmpty()),
 	contactPersonId: v.pipe(v.string(), v.nonEmpty()),
-	contractLegalEntityName: v.pipe(v.string(), v.nonEmpty("Legal name required")),
-	contractAddressStreet: v.pipe(v.string(), v.nonEmpty("Street required")),
-	contractAddressZipCode: v.pipe(v.string(), v.nonEmpty("Zip Code required")),
-	contractAddressCity: v.pipe(v.string(), v.nonEmpty("City required")),
-	contractAddressCountry: v.pipe(v.string(), v.nonEmpty("Country required")),
-	billingOrganizationName: v.optional(v.string(), ""),
-	billingStreet: v.optional(v.string(), ""),
-	billingZipCode: v.optional(v.string(), ""),
-	billingCity: v.optional(v.string(), ""),
-	billingCountry: v.optional(v.string(), ""),
-	billingVat: v.optional(v.string(), ""),
-	billingReference: v.optional(v.string(), ""),
-	packageId: v.optional(v.string(), ""),
+	contractLegalEntityName: v.pipe(v.string(), v.nonEmpty('Legal name required')),
+	contractAddressStreet: v.pipe(v.string(), v.nonEmpty('Street required')),
+	contractAddressZipCode: v.pipe(v.string(), v.nonEmpty('Zip Code required')),
+	contractAddressCity: v.pipe(v.string(), v.nonEmpty('City required')),
+	contractAddressCountry: v.pipe(v.string(), v.nonEmpty('Country required')),
+	billingOrganizationName: v.optional(v.string(), ''),
+	billingStreet: v.optional(v.string(), ''),
+	billingZipCode: v.optional(v.string(), ''),
+	billingCity: v.optional(v.string(), ''),
+	billingCountry: v.optional(v.string(), ''),
+	billingVat: v.optional(v.string(), ''),
+	billingReference: v.optional(v.string(), ''),
+	packageId: v.optional(v.string(), ''),
 	selectedAddonPackages: v.array(v.string()),
 	selectedAddons: v.array(v.string()),
-	participationNote: v.optional(v.string(), ""),
-	language: v.optional(v.string(), "ENGLISH"),
-})
+	participationNote: v.optional(v.string(), ''),
+	language: v.optional(v.string(), 'ENGLISH')
+});
 
-export type CreateEventRegistration = Infer<typeof CreateEventRegistrationSchema>;
+export const CreateEventRegistrationResponse = v.object({
+	eventRegistrationId: v.string(),
+	createdAt: v.nullish(v.pipe(v.string(), v.isoTimestamp()))
+});
+
+export type CreateEventRegistration = typeof CreateEventRegistrationSchema;
 
 const EventRegistrationAddonPackageSchema = v.object({
 	purchasable: v.nullable(v.boolean(), false),
@@ -112,4 +118,29 @@ export const getEventRegistrations = async ({
 	});
 	const data = await response.json();
 	return v.parse(GetEventRegistrationsResponse, data);
+};
+
+export const registerContactPersonToEvent = async ({
+	accessToken,
+	data: formData
+}: {
+	accessToken: string;
+	data: Infer<CreateEventRegistration>;
+}) => {
+	const response = await API.post<v.InferInput<CreateEventRegistration>>({
+		route: `/event-registration`,
+		token: accessToken,
+		data: formData
+	});
+
+	const data = await response.json();
+
+	if (response.status === 409) {
+		error(409, 'A registration to this event already exists for your organization!');
+	}
+	if (response.status != 201) {
+		error(500, 'The registration could not be completed');
+	}
+
+	return v.parse(CreateEventRegistrationResponse, data);
 };
