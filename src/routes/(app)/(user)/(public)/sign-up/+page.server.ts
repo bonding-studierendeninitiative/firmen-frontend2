@@ -27,7 +27,6 @@ export const actions: Actions = {
 		const form = await superValidate(request, valibot(ContactPersonRegistrationForm));
 
 		if (!form.valid) {
-			console.log('asdas');
 			return fail(400, { form });
 		}
 

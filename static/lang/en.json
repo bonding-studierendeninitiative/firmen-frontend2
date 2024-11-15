@@ -1,5 +1,9 @@
 {
 	"auth": {
+		"welcomeScreen": {
+			"welcomeTitle": "Company Intranet",
+			"welcomeDescription": "Please log in to continue."
+		},
 		"login": {
 			"heading": "Login",
 			"subHeading": "Enter your login details",
@@ -40,7 +44,8 @@
 			"createAccount": "Create Account"
 		},
 		"footer": {
-			"privacyPolicy": "Privacy Policy"
+			"privacyPolicy": "Privacy Policy",
+			"imprint": "Imprint"
 		}
 	},
 	"auth-fields": {

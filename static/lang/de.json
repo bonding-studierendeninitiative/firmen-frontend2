@@ -1,5 +1,9 @@
 {
   "auth": {
+    "welcomeScreen": {
+      "welcomeTitle": "Firmenintranet",
+      "welcomeDescription": "Bitte loggen Sie sich ein, um fortzufahren."
+    },
     "login": {
       "heading": "Anmeldung",
       "subHeading": "Geben Sie Ihre Anmeldedaten ein",
@@ -40,7 +44,8 @@
       "createAccount": "Konto erstellen"
     },
     "footer": {
-      "privacyPolicy": "Datenschutzrichtlinie"
+      "privacyPolicy": "Datenschutzrichtlinie",
+      "imprint": "Impressum"
     }
   },
   "auth-fields": {

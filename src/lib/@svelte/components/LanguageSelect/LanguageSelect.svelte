@@ -34,7 +34,7 @@
 		on:select={handleLangChange}
 		inputStyles=" text-align:center"
 		--height="28px"
-		--font-size="14px"
+		--font-size="18px"
 		--selected-item-padding="0px"
 		--border="none"
 		--border-focused="none"
