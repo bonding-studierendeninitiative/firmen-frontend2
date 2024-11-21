@@ -52,18 +52,11 @@ const forceOrganizationCreation: Handle = async ({event, resolve}) => {
 	if (['admin', 'dev', 'bonding'].includes(session?.user?.role)) return resolve(event);
 
 
-	// check if we are currently in the sign up process
-	if (!details && event.url.pathname.includes('sign-up')) {
+	// details do not exist -> person not registered/logged in
+	if (!details) {
 		return resolve(event)
 	}
 
-	if (!details && !event.url.pathname.includes('sign-up')) {
-		// should not happen, but to be safe
-		return new Response(null, {status: 302, headers: {location: "/"}})
-	}
-
-
-	// @ts-expect-error is caught with the if clauses above
 	if (details.organizationMemberships.length == 0 && !event.url.pathname.includes('create-org')) {
 		return new Response(null, {status: 302, headers: {location: "/create-org"}})
 	}
