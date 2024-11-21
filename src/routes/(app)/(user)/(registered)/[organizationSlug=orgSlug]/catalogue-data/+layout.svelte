@@ -11,15 +11,15 @@
 	$: tabs = [
 		{
 			name: 'catalogue-data-portraits',
-			href: `/${$currentOrganizationSlugStore?.organizationSlug}/catalogue-data/portraits`
+			href: `/${$currentOrganizationSlugStore}/catalogue-data/portraits`
 		},
 		{
 			name: 'catalogue-data-logos',
-			href: `/${$currentOrganizationSlugStore?.organizationSlug}/catalogue-data/logos`
+			href: `/${$currentOrganizationSlugStore}/catalogue-data/logos`
 		},
 		{
 			name: 'catalogue-data-adverts',
-			href: `/${$currentOrganizationSlugStore?.organizationSlug}/catalogue-data/adverts`
+			href: `/${$currentOrganizationSlugStore}/catalogue-data/adverts`
 		},
 	]
 </script>

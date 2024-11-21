@@ -48,7 +48,7 @@
 						heading={name}
 						subHeading={location}
 						date={dateFrom}
-						href={`/${$currentOrganizationSlugStore?.organizationSlug}/events/${id}`}
+						href={`/${$currentOrganizationSlugStore}/events/${id}`}
 					/>
 					{/if}
 

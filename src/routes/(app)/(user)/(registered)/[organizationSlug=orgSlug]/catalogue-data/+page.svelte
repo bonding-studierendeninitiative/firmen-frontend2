@@ -5,6 +5,6 @@
 	import { currentOrganizationSlugStore } from '@/stores/currentOrganizationSlugStore';
 
 	onMount(() => {
-		goto(`/${$currentOrganizationSlugStore?.organizationSlug}/catalogue-data/portraits`);
+		goto(`/${$currentOrganizationSlugStore}/catalogue-data/portraits`);
 	});
 </script>

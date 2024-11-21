@@ -7,7 +7,7 @@
 	import { currentOrganizationSlugStore } from '@/stores/currentOrganizationSlugStore';
 
 	const handleEventRegistration = (id: string) => {
-		goto(`/${$currentOrganizationSlugStore?.organizationSlug}/events/${id}`);
+		goto(`/${$currentOrganizationSlugStore}/events/${id}`);
 	};
 	let showListings: boolean = false;
 	const handleViewAllEvent = () => {
@@ -53,7 +53,7 @@
 					heading={name}
 					subHeading={location}
 					date={dateFrom}
-					href={`/${$currentOrganizationSlugStore?.organizationSlug}/events/${id}`}
+					href={`/${$currentOrganizationSlugStore}/events/${id}`}
 				/>
 			{/each}
 		</div>
