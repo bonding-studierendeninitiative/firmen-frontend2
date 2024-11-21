@@ -24,6 +24,12 @@ const protectAdmin: Handle = async ({ event, resolve }) => {
 
 const forceContactPersonDetails: Handle = async ({ event, resolve }) => {
 	const session = await event.locals.auth();
+
+	// check if users is not logged in (handleAuth will do this)
+	if (!session?.user) {
+		return resolve(event);
+	}
+
 	// @ts-expect-error role was added in auth
 	if (!['admin', 'dev', 'bonding'].includes(session?.user?.role) && !event.url.pathname.includes('sign-up')) {
 		const details = get(contactPersonDetailsStore);
