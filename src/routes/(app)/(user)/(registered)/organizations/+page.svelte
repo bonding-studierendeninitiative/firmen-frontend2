@@ -2,7 +2,7 @@
 	import { _ } from '@services';
 	import type { PageData } from '../../../../../../.svelte-kit/types/src/routes';
 	import { Button, NoDataFound } from '@/@svelte/components';
-	import { CreateOrganization } from '@/@svelte/modules/CreateOrganization';
+	import { CreateOrganizationDialog } from '../../../../../lib/@svelte/modules/CreateOrganizationDialog';
 
 	export let data: PageData;
 
@@ -93,4 +93,4 @@
 	</main>
 </div>
 
-<CreateOrganization bind:isOpen validated={data.form} />
+<CreateOrganizationDialog bind:isOpen validated={data.form} />

@@ -4,7 +4,7 @@
 	import { Button as ShadcnButton } from '@/components/ui/button';
 	import { SimpleDocumentIcon } from '@/@svelte/icons';
 	import { goto } from '$app/navigation';
-	import { currentOrganization } from '@/stores/organizationStore';
+	import { currentOrganizationSlugStore } from '@/stores/currentOrganizationSlugStore';
 	import dayjs from 'dayjs';
 	import type {
 		PageData
@@ -86,7 +86,7 @@
 								</div>
 							</div>
 							<div class="flex gap-2">
-								<a href={`/${$currentOrganization?.organizationSlug}/catalogue-data/portraits/${portrait.id}`}
+								<a href={`/${$currentOrganizationSlugStore?.organizationSlug}/catalogue-data/portraits/${portrait.id}`}
 									 class="content-center text-center font-extrabold px-4 py-1 space-x-4 rounded-lg text-stone-800 text-sm w-auto border border-solid border-slate-200 border-1 inline shadow-custom"
 								>{$_('common.viewDetails')}</a>
 								<input type="hidden" name="id" value={portrait.id} />

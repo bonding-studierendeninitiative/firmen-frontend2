@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { _ } from '@services';
 	import { EventInfoBox } from '@/@svelte/components';
-	import { currentOrganization } from '@/stores/organizationStore';
+	import { currentOrganizationSlugStore } from '@/stores/currentOrganizationSlugStore';
 	import type { PageData } from './$types';
 	import { Checkbox } from '@/components/ui/checkbox';
 	import { Label } from '@/components/ui/label';
@@ -48,7 +48,7 @@
 						heading={name}
 						subHeading={location}
 						date={dateFrom}
-						href={`/${$currentOrganization?.organizationSlug}/events/${id}`}
+						href={`/${$currentOrganizationSlugStore?.organizationSlug}/events/${id}`}
 					/>
 					{/if}
 

@@ -4,10 +4,10 @@
 	import { NoDataFound, EventInfoBox, Button, Table, Chip } from '@/@svelte/components';
 	import { ImageIcon, DocumentIcon, BrandingIcon } from '@/@svelte/icons';
 	import type { PageData } from './$types';
-	import { currentOrganization } from '@/stores/organizationStore';
+	import { currentOrganizationSlugStore } from '@/stores/currentOrganizationSlugStore';
 
 	const handleEventRegistration = (id: string) => {
-		goto(`/${$currentOrganization?.organizationSlug}/events/${id}`);
+		goto(`/${$currentOrganizationSlugStore?.organizationSlug}/events/${id}`);
 	};
 	let showListings: boolean = false;
 	const handleViewAllEvent = () => {
@@ -53,7 +53,7 @@
 					heading={name}
 					subHeading={location}
 					date={dateFrom}
-					href={`/${$currentOrganization?.organizationSlug}/events/${id}`}
+					href={`/${$currentOrganizationSlugStore?.organizationSlug}/events/${id}`}
 				/>
 			{/each}
 		</div>

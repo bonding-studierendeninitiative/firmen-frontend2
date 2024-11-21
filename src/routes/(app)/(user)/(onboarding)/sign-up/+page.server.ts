@@ -1,7 +1,7 @@
 import type { PageServerLoad } from './$types';
 import { superValidate } from 'sveltekit-superforms';
 import { valibot } from 'sveltekit-superforms/adapters';
-import { ContactPersonRegistrationForm, ContactPersonRegistrationRequest } from '@schema';
+import { ContactPersonRegistrationRequest } from '@schema';
 import { type Actions, fail, redirect } from '@sveltejs/kit';
 import { registerContactPerson } from '@/services/contactPerson';
 
@@ -19,14 +19,16 @@ export const load: PageServerLoad = async ({ parent }) => {
 export const actions: Actions = {
 	registerUser: async ({ locals, request }) => {
 		const session = await locals.auth();
+		console.log("adsasd")
 		// @ts-expect-error we define accessToken in parent
 		if (!session || !session.accessToken) {
 			fail(403);
 			return;
 		}
-		const form = await superValidate(request, valibot(ContactPersonRegistrationForm));
+		const form = await superValidate(request, valibot(ContactPersonRegistrationRequest));
 
 		if (!form.valid) {
+			console.log(form)
 			return fail(400, { form });
 		}
 
@@ -35,8 +37,8 @@ export const actions: Actions = {
 			accessToken: session?.accessToken,
 			data: {
 				fullName: form.data.fullName,
-				phone: form.data.phoneNumber,
-				position: form.data.responsibility,
+				phone: form.data.phone,
+				position: form.data.position,
 				email: form.data.email,
 				// @ts-expect-error we define externalUserId in parent
 				externalUserId: session.externalUserId

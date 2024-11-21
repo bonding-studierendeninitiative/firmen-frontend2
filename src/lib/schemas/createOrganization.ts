@@ -8,7 +8,7 @@ export const CreateOrganizationRequestSchema = v.object({
 		v.minLength(3, 'Your name should be at least 2 characters'),
 		v.maxLength(30, 'Max 30 characters')
 	),
-	phone: v.pipe(v.string('Type is required.'), v.nonEmpty('Phone number is required')),
+	phone: v.pipe(v.string('Phone is required.'), v.nonEmpty('Phone number is required')),
 	size: v.optional(v.string(), ''),
 	email: v.pipe(v.string(), v.minLength(3, 'At least 3 characters'), v.email('Invalid email')),
 	streetAddress: v.pipe(

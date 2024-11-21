@@ -1,6 +1,9 @@
 import { handle as handleAuth } from './auth';
 import { sequence } from '@sveltejs/kit/hooks';
-import type { Handle } from '@sveltejs/kit';
+import { type Handle, redirect } from '@sveltejs/kit';
+import { contactPersonDetailsStore } from '@/stores/contactPersonStore';
+import { get } from 'svelte/store';
+import { getContactPersonDetails } from '@/services/contactPerson';
 
 const protectAdmin: Handle = async ({ event, resolve }) => {
 	const session = await event.locals.auth();
@@ -19,4 +22,49 @@ const protectAdmin: Handle = async ({ event, resolve }) => {
 	return resolve(event);
 };
 
-export const handle = sequence(handleAuth, protectAdmin);
+const forceContactPersonDetails: Handle = async ({ event, resolve }) => {
+	const session = await event.locals.auth();
+	// @ts-expect-error role was added in auth
+	if (!['admin', 'dev', 'bonding'].includes(session?.user?.role) && !event.url.pathname.includes('sign-up')) {
+		const details = get(contactPersonDetailsStore);
+		if (!details) {
+			// @ts-expect-error define accessToke in auth
+			const d = await getContactPersonDetails({ accessToken: session?.accessToken })
+			if (!d) {
+				return new Response(null, {status: 302, headers: {location: "/sign-up"}})
+			}
+		}
+	}
+	return resolve(event)
+};
+
+const forceOrganizationCreation: Handle = async ({event, resolve}) => {
+	const session = await event.locals.auth();
+	const details = get(contactPersonDetailsStore);
+
+	// @ts-expect-error role was added in auth
+	if (['admin', 'dev', 'bonding'].includes(session?.user?.role)) return resolve(event);
+
+
+	// check if we are currently in the sign up process
+	if (!details && event.url.pathname.includes('sign-up')) {
+		return resolve(event)
+	}
+
+	if (!details && !event.url.pathname.includes('sign-up')) {
+		// should not happen, but to be safe
+		return new Response(null, {status: 302, headers: {location: "/"}})
+	}
+
+
+	// @ts-expect-error is caught with the if clauses above
+	if (details.organizationMemberships.length == 0 && !event.url.pathname.includes('create-org')) {
+		return new Response(null, {status: 302, headers: {location: "/create-org"}})
+	}
+
+	return resolve(event);
+
+
+};
+
+export const handle = sequence(handleAuth, protectAdmin, forceContactPersonDetails, forceOrganizationCreation);

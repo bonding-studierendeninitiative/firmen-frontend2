@@ -9,9 +9,10 @@
 	import { valibot } from 'sveltekit-superforms/adapters';
 	import { toast } from 'svelte-french-toast';
 	import { Button } from '@/components/ui/button';
+	import * as Dialog from '@/components/ui/dialog';
+	import { signOut } from '@auth/sveltekit/client';
 
 	export let validated: SuperValidated<ContactPersonRegistrationForm>;
-
 	const superform = superForm<ContactPersonRegistrationForm>(validated, {
 		validators: valibot(ContactPersonRegistrationForm),
 		applyAction: true,
@@ -29,6 +30,7 @@
 
 <form class="my-4" action="?/registerUser" method="POST" id="register-contact-person-form" use:enhance>
 	<div class=" flex flex-col gap-4">
+		<!--
 		<Field form={superform} name="title">
 			<Control let:attrs>
 				<Label>{$_('user-pages.contactPersons.signUp.labels.title')}</Label>
@@ -42,6 +44,7 @@
 			<Description />
 			<FieldErrors />
 		</Field>
+		-->
 		<Field form={superform} name="fullName">
 			<Control let:attrs>
 				<Label>{$_('user-pages.contactPersons.signUp.labels.fullName')}</Label>
@@ -105,9 +108,10 @@
 
 		<footer>
 			<footer class=" flex justify-end items-center w-full">
-				<Button class="mr-2" on:click={() => {history.back()}}>{$_('common.back')}</Button>
-				<Button variant="gradient" type="submit" form="register-contact-person-form">{$_('common.continue')}</Button>
+				<Button variant="secondary"  class="mr-2" on:click={() => signOut()}>{$_('common.back')}</Button>
+				<Button type="submit" form="register-contact-person-form">{$_('common.continue')}</Button>
 			</footer>
 		</footer>
 	</div>
 </form>
+

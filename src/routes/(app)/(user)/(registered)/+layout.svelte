@@ -1,5 +1,5 @@
 <script>
-	import LanguageSelect from '../../../lib/@svelte/components/LanguageSelect/LanguageSelect.svelte';
+	import { LanguageSelect } from '@/@svelte/components';
 </script>
 
 <div class="relative">

@@ -2,6 +2,7 @@ import { ContactPersonDetailsSchema, ContactPersonRegistrationRequest } from '@s
 import * as v from 'valibot';
 import { API } from '@api';
 import { error } from '@sveltejs/kit';
+import { contactPersonDetailsStore } from '@/stores/contactPersonStore';
 
 export const getContactPersonDetails = async ({ accessToken }: { accessToken: string }) => {
 	try {
@@ -31,8 +32,10 @@ export const getContactPersonDetails = async ({ accessToken }: { accessToken: st
 		}
 
 		const data = await response.json();
-		console.log(data);
-		return v.parse(ContactPersonDetailsSchema, data);
+		const details =  v.parse(ContactPersonDetailsSchema, data);
+
+		contactPersonDetailsStore.set(details)
+		return details;
 	} catch (e) {
 		// @ts-expect-error the error likely has a message
 		error(e.status || 500, e.stack);
@@ -73,7 +76,7 @@ export const registerContactPerson = async ({
 		}
 
 		const data = await response.json();
-		console.log(data);
+
 		return data;
 	} catch (e) {
 		// @ts-expect-error the error likely has a message

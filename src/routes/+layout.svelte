@@ -22,6 +22,9 @@
 	const toastOptions = {
 		duration: 5000
 	};
+
+
+
 </script>
 {#if $isLocaleLoaded}
 	{#if $page.data.session?.user}
@@ -36,27 +39,24 @@
 					</div>
 				</nav>
 				<div class=" flex justify-center items-center h-5/6">
-
-					<Card.Root>
-						<Card.Header>
-							<Card.Title>{$_('auth.welcomeScreen.welcomeTitle')}</Card.Title>
-							<Card.Description>{$_('auth.welcomeScreen.welcomeDescription')}</Card.Description>
-						</Card.Header>
-						<Card.Content>
-						{#if $page.url.pathname.includes('/admin')}
-							<div class="w-full h-full flex items-center justify-center">
-								<Button on:click={() => signIn('auth0-admin')}>Zum Admin-Dashboard</Button>
-							</div>
-						{:else}
-							<div class="w-full h-full flex items-center justify-center">
-								<Button on:click={() => signIn('auth0')}>Login</Button>
-							</div>
-						{/if}
-						</Card.Content>
-					</Card.Root>
-
+						<Card.Root>
+							<Card.Header>
+								<Card.Title>{$_('auth.welcomeScreen.welcomeTitle')}</Card.Title>
+								<Card.Description>{$_('auth.welcomeScreen.welcomeDescription')}</Card.Description>
+							</Card.Header>
+							<Card.Content>
+								{#if $page.url.pathname.includes('/admin')}
+									<div class="w-full h-full flex items-center justify-center">
+										<Button on:click={() => signIn('auth0-admin')}>Zum Admin-Dashboard</Button>
+									</div>
+								{:else}
+									<div class="w-full h-full flex items-center justify-center">
+										<Button on:click={() => signIn('auth0')}>Login</Button>
+									</div>
+								{/if}
+							</Card.Content>
+						</Card.Root>
 				</div>
-
 				<footer class=" px-10 py-4 border-t border-solid border-stone-200 bottom-0 fixed w-3/4">
 					<div class=" flex justify-between font-semi-light text-stone-500">
 						<p>©2024 bonding-studierendeninitiative e.V.</p>

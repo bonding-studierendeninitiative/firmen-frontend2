@@ -4,10 +4,11 @@
 	import { page } from '$app/stores';
 	import { _ } from '@services';
 	import { signOut } from '@auth/sveltekit/client';
-	import { currentOrganization } from '$lib/stores/organizationStore';
+	import { currentOrganizationSlugStore } from '@/stores/currentOrganizationSlugStore';
 	import { cn } from '@/utils';
+	import { get } from 'svelte/store';
 
-	$: activeUrl = $page.url.pathname;
+	$: activeUrl = $page.url.pathname
 
 	const checkCurrentPath = (route: string, currentRoute: string) => {
 		return currentRoute.includes(route);
@@ -34,10 +35,10 @@
 			return '/sidebar_background.png';
 		} else return '/sidebar_background.png';
 	};
-	const getSidebarLink = ({ route }: { route: string }): string => {
+	$: getSidebarLink = ({ route }: { route: string }): string => {
 		if (isAdmin()) {
 			return route;
-		} else return `/${$currentOrganization?.organizationSlug}${route}`;
+		} else return `/${$currentOrganizationSlugStore}${route}`;
 	};
 </script>
 

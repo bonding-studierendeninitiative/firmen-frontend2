@@ -2,9 +2,9 @@
 
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
-	import { currentOrganization } from '@/stores/organizationStore';
+	import { currentOrganizationSlugStore } from '@/stores/currentOrganizationSlugStore';
 
 	onMount(() => {
-		goto(`/${$currentOrganization?.organizationSlug}/catalogue-data/portraits`);
+		goto(`/${$currentOrganizationSlugStore?.organizationSlug}/catalogue-data/portraits`);
 	});
 </script>

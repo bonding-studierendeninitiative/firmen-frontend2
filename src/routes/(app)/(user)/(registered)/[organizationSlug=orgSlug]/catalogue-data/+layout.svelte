@@ -2,7 +2,7 @@
 	import { _ } from '@services';
 	import { LinkTabs, Spinner } from '@/@svelte/components';
 	import { page } from '$app/stores';
-	import { currentOrganization } from '@/stores/organizationStore';
+	import { currentOrganizationSlugStore } from '@/stores/currentOrganizationSlugStore';
 	import { navigating } from '$app/stores';
 	import {fade} from 'svelte/transition';
 
@@ -11,15 +11,15 @@
 	$: tabs = [
 		{
 			name: 'catalogue-data-portraits',
-			href: `/${$currentOrganization?.organizationSlug}/catalogue-data/portraits`
+			href: `/${$currentOrganizationSlugStore?.organizationSlug}/catalogue-data/portraits`
 		},
 		{
 			name: 'catalogue-data-logos',
-			href: `/${$currentOrganization?.organizationSlug}/catalogue-data/logos`
+			href: `/${$currentOrganizationSlugStore?.organizationSlug}/catalogue-data/logos`
 		},
 		{
 			name: 'catalogue-data-adverts',
-			href: `/${$currentOrganization?.organizationSlug}/catalogue-data/adverts`
+			href: `/${$currentOrganizationSlugStore?.organizationSlug}/catalogue-data/adverts`
 		},
 	]
 </script>

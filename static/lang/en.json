@@ -412,6 +412,8 @@
 		},
 		"contactPersons": {
 			"signUp": {
+				"title": "Welcome to the company intranet.",
+				"description": "Before we start, we need some information about you",
 				"labels": {
 					"fullName": "Your full name",
 					"phoneNumber": "Your phone number (optional)",

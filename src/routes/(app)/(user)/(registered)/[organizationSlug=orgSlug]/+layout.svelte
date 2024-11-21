@@ -2,8 +2,8 @@
 	import { Sidebar } from '@/@svelte/modules';
 	import Check from 'lucide-svelte/icons/check';
 	import type { PageData } from './$types';
-	import { goto } from '$app/navigation';
-	import { currentOrganization } from '@/stores/organizationStore';
+	import { goto, invalidateAll } from '$app/navigation';
+	import { currentOrganizationSlugStore } from '@/stores/currentOrganizationSlugStore';
 	import ChevronsUpDown from 'lucide-svelte/icons/chevrons-up-down';
 	import * as Command from '@/components/ui/command';
 	import * as Popover from '@/components/ui/popover';
@@ -14,7 +14,8 @@
 	import { cn } from '@/utils.js';
 	import { tick } from 'svelte';
 	import { Building } from 'lucide-svelte';
-	import { CreateOrganization } from '@/@svelte/modules/CreateOrganization';
+	import { CreateOrganizationDialog } from '@/@svelte/modules/CreateOrganizationDialog';
+	import { redirect } from '@sveltejs/kit';
 	export let data: PageData;
 	let orgs = data.orgs ?? [];
 	let items: {
@@ -22,6 +23,12 @@
 		name: string;
 	}[] = [];
 
+
+	function getItemNameByValue(value: string): string | undefined {
+		const item = items.find((item) => item.value === value);
+		return item ? item.name : undefined;
+	}
+	
 	// Reactive statement to update orgs and items when data.orgs changes
 	$: if (data.orgs) {
 		orgs = data.orgs;
@@ -31,15 +38,29 @@
 	// Reactive statement to set the current organization when orgs are available
 	$: if (orgs.length > 0) {
 		const orgSlug = data.organization?.slug;
-		currentOrganization.set(orgs.find((org) => org.organizationSlug === orgSlug));
+		currentOrganizationSlugStore.set(orgSlug);
 	}
 
 	function switchOrganization(value: string) {
 		if (value) {
-			currentOrganization.set(orgs?.find((org) => org.organizationSlug === value));
+			currentOrganizationSlugStore.set(value);
 			goto(`/${value}/dashboard`);
 		}
 	}
+
+	/*
+	currentOrganizationSlugStore.subscribe((slug) => {
+		console.log(slug);
+		if (slug) {
+			goto(`/${slug}/dashboard`);
+			try {
+				goto(`/${slug}/dashboard`);
+			} catch (error) {
+				console.error("Navigation failed:", error);
+			}
+		}
+	})*/
+
 	let popoverOpen = false;
 	let createOrgDialogOpen = false;
 	let value = '';
@@ -70,7 +91,7 @@
 						role="combobox"
 						aria-expanded={popoverOpen}
 						class="w-full justify-between"
-						>{$currentOrganization?.organizationName}
+						>{getItemNameByValue($currentOrganizationSlugStore)}
 						<ChevronsUpDown class="ml-2 h-4 w-4 shrink-0 opacity-50" /></Button
 					>
 				</Popover.Trigger>
@@ -135,5 +156,5 @@
 			<slot />
 		</div>
 	</div>
-	<CreateOrganization bind:isOpen={createOrgDialogOpen} validated={data.form} />
+	<CreateOrganizationDialog bind:isOpen={createOrgDialogOpen} validated={data.form} />
 </div>

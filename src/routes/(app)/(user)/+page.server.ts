@@ -4,6 +4,7 @@ import { superValidate } from 'sveltekit-superforms';
 import { valibot } from 'sveltekit-superforms/adapters';
 import { CreateOrganizationRequestSchema } from '@schema/createOrganization';
 import { fail, redirect } from '@sveltejs/kit';
+import { getContactPersonDetails } from '@/services/contactPerson';
 
 export const load: PageServerLoad = async ({ parent }) => {
 	const { session } = await parent();
@@ -29,7 +30,6 @@ export const actions: Actions = {
 		const form = await superValidate(request, valibot(CreateOrganizationRequestSchema));
 
 		if (!form.valid) {
-			console.log('asdas');
 			return fail(400, { form });
 		}
 
@@ -38,6 +38,12 @@ export const actions: Actions = {
 			accessToken: session?.accessToken,
 			data: form.data
 		});
+
+		// need to refresh store, so that the user is not forced to create new organization
+		await getContactPersonDetails({
+			// @ts-expect-error we define accessToken in parent
+			accessToken: session?.accessToken,
+		})
 
 		if (createdOrg.slug) {
 			redirect(303, `/${createdOrg.slug}`);

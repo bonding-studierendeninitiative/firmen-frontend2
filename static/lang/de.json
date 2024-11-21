@@ -362,7 +362,7 @@
       "organizations": "Organisationen",
       "organizationsSubHeading": "Sie können als Ansprechperson mehreren Organisationen angehören. Beispielsweise könnte eine Agentur damit Anmeldungen für mehrere Kunden verwalten.",
       "noOrgMembershipsFound": "Keine Organisationen gefunden!",
-      "noOrgMembershipsFoundDescription": "Sie sind nicht Mitglied einer Organization. Erstellen Sie eine Organization und verwenden Sie es zur Registrierung für Ihre bevorzugten Veranstaltungen.",
+      "noOrgMembershipsFoundDescription": "Sie sind nicht Mitglied einer Organization. Erstellen Sie eine Organization und verwenden Sie diese zur Registrierung zu Veranstaltungen.",
       "newOrganization": "Neue Organisation",
       "organization": "Organisation",
       "createOrganization": {
@@ -396,6 +396,8 @@
     },
     "contactPersons": {
       "signUp": {
+        "title": "Herzlich Willkommen im Firmenintranet",
+        "description": "Bevor es los geht, brauchen wir einige Angaben von Ihnen.",
         "labels": {
           "fullName": "Ihr voller Name",
           "phoneNumber": "Telefonnummer",
