@@ -67,6 +67,10 @@ export const registerContactPerson = async ({
 			error(404, 'Contact Person not found');
 		}
 
+		if (response.status === 409) {
+			error(409, 'This mail is already registered');
+		}
+
 		if (response.status === 412) {
 			return undefined;
 		}

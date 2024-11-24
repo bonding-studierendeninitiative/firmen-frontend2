@@ -4,6 +4,7 @@ import { type Handle, redirect } from '@sveltejs/kit';
 import { contactPersonDetailsStore } from '@/stores/contactPersonStore';
 import { get } from 'svelte/store';
 import { getContactPersonDetails } from '@/services/contactPerson';
+import { signOut } from '@auth/sveltekit/client';
 
 const protectAdmin: Handle = async ({ event, resolve }) => {
 	const session = await event.locals.auth();
@@ -22,11 +23,25 @@ const protectAdmin: Handle = async ({ event, resolve }) => {
 	return resolve(event);
 };
 
+const handleExpiredSession: Handle = async ({ event, resolve }) => {
+	const session = await event.locals.auth();
+	if (!session) return resolve(event);
+
+	const sessionExpires = new Date(session.expires);
+	const currentDateTime = new Date();
+
+	if (currentDateTime >= sessionExpires) {
+		await signOut()
+	}
+
+	return resolve(event)
+}
+
 const forceContactPersonDetails: Handle = async ({ event, resolve }) => {
 	const session = await event.locals.auth();
 
 	// check if users is not logged in (handleAuth will do this)
-	if (!session?.user) {
+	if (!session?.user ) {
 		return resolve(event);
 	}
 
@@ -66,4 +81,4 @@ const forceOrganizationCreation: Handle = async ({event, resolve}) => {
 
 };
 
-export const handle = sequence(handleAuth, protectAdmin, forceContactPersonDetails, forceOrganizationCreation);
+export const handle = sequence(handleAuth, handleExpiredSession, protectAdmin, forceContactPersonDetails, forceOrganizationCreation);

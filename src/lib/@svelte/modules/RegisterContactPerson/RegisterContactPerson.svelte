@@ -18,12 +18,14 @@
 		applyAction: true,
 		invalidateAll: 'force',
 		onResult({ result }) {
+			console.log(result)
 			if (result.type === 'success') {
 				toast.success($_('user-pages.contactPersons.signUp.successCreated'));
 			} else if (result.type === 'error') {
 				toast.error(result.error.message);
 			}
 		}
+
 	});
 	const { form: formData, enhance } = superform;
 </script>
