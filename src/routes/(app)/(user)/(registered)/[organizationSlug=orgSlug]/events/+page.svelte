@@ -24,6 +24,9 @@
 <div>
 	<h1 class=" text-stone-950 text-3xl font-extrabold">{$_('user-pages.events.events')}</h1>
 	<h4 class=" text-stone-500">{$_('user-pages.events.eventsSubHeading')}</h4>
+	{#if events.length === 0}
+		<p class="container mt-8 flex justify-center items-center h-full">{$_('user-pages.events.noEvents')}</p>
+	{/if}
 	<section class=" mt-10">
 		{#each cities as city}
 			{@const checked = checkedCities.includes(city)}
@@ -50,7 +53,7 @@
 						date={dateFrom}
 						href={`/${$currentOrganizationSlugStore}/events/${id}`}
 					/>
-					{/if}
+				{/if}
 
 			{/each}
 		</div>

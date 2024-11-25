@@ -30,24 +30,19 @@ export const actions: Actions = {
 			return fail(400, { form });
 		}
 
-		let registrationResult: any;
 
-		try {
-			registrationResult = await registerContactPerson({
-				// @ts-expect-error we define accessToken in parent
-				accessToken: session?.accessToken,
-				data: {
-					fullName: form.data.fullName,
-					phone: form.data.phone,
-					position: form.data.position,
-					email: form.data.email,
-					// @ts-expect-error we define externalUserId in parent
-					externalUserId: session.externalUserId
-				}
-			});
-		} catch (e: any) {
-			return error(e.status || 500, e.message);
-		}
+		const registrationResult = await registerContactPerson({
+			// @ts-expect-error we define accessToken in parent
+			accessToken: session?.accessToken,
+			data: {
+				fullName: form.data.fullName,
+				phone: form.data.phone,
+				position: form.data.position,
+				email: form.data.email,
+				// @ts-expect-error we define externalUserId in parent
+				externalUserId: session.externalUserId
+			}
+		});
 
 		if (registrationResult) {
 			redirect(303, '/');

@@ -114,7 +114,6 @@
 		</Button>
 	</footer>
 </Modal>
-<div>
 	<div class="mb-10">
 		<Breadcrumb.Root>
 			<Breadcrumb.List>
@@ -136,13 +135,15 @@
 			</Breadcrumb.List>
 		</Breadcrumb.Root>
 	</div>
-	<div class=" flex justify-between items-start">
+<div class="max-w-screen-lg mx-auto ">
+
+<div class=" flex justify-between items-start">
 		<h3 class=" text-xl font-extrabold text-stone-800">
 			{$_('user-pages.events.registrationForm')}
 		</h3>
-		<button>
+		<!--<button>
 			<CrossIcon />
-		</button>
+		</button>-->
 	</div>
 	<div class=" my-6">
 		<hr />

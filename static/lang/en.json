@@ -336,6 +336,7 @@
 				"billingInformation": "Billing address (can be edited later)"
 			},
 			"events": "Events",
+			"noEvents": "Currently there are no events available.",
 			"eventsSubHeading": "Have a look at recent events for showcasing your company!",
 			"overview": "Overview",
 			"additionalMarketingServices": "Additional Marketing Services",

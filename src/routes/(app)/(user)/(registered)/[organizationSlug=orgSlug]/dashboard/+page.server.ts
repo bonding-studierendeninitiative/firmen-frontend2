@@ -1,5 +1,6 @@
 import type { PageServerLoad } from '../../../../../../../.svelte-kit/types/src/routes';
 import { getEvents } from '@/services/events';
+import { getEventRegistrations } from '@/services';
 
 export const load: PageServerLoad = async ({ parent }) => {
 	const { session } = await parent();

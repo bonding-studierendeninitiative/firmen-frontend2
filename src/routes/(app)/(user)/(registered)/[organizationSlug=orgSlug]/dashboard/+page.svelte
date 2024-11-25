@@ -5,6 +5,7 @@
 	import { ImageIcon, DocumentIcon, BrandingIcon } from '@/@svelte/icons';
 	import type { PageData } from './$types';
 	import { currentOrganizationSlugStore } from '@/stores/currentOrganizationSlugStore';
+	import SuperDebug from 'sveltekit-superforms';
 
 	const handleEventRegistration = (id: string) => {
 		goto(`/${$currentOrganizationSlugStore}/events/${id}`);
@@ -33,6 +34,7 @@
 </script>
 
 <div>
+	<SuperDebug data={events}></SuperDebug>
 	<h1 class=" text-stone-950 text-3xl font-extrabold">{$_('user-pages.dashboard.dashboard')}</h1>
 	<h4 class=" text-stone-500">
 		{$_('user-pages.dashboard.subHeading', { values: { name: data.session?.user?.nickname ?? data.session?.user?.name } })}

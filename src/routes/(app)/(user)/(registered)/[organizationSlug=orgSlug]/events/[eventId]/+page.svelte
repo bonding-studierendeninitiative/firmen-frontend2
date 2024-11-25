@@ -22,14 +22,10 @@
 	export let data: PageData;
 	let { buyOption, event, addons }: PageData = data;
 
-	let selectedPackageID = '';
 	let selectedAddonsURL = '';
-	let selectedAddons: string[] = [];
 
 
-	$: selectedAddonsURL = selectedAddons.length == 0 ? '' : '&selectedAddon=' + selectedAddons.join('&selectedAddon=');
-
-
+	$: selectedAddonsURL = data.selectedAddons.length == 0 ? '' : '&selectedAddon=' + data.selectedAddons.join('&selectedAddon=');
 </script>
 
 <div class="mb-10">
@@ -48,7 +44,8 @@
 
 
 </div>
-<div>
+<div class="max-w-screen-lg mx-auto
+">
 	<div class=" flex justify-between items-start">
 		<div class=" flex">
 			<div>
@@ -113,7 +110,7 @@
 						<Table.Cell class="  p-3 border border-stone-200 text-sm">{service.name}</Table.Cell>
 						{#each buyOption.packages as pkg}
 							<Table.Cell
-								class={selectedPackageID === pkg.id ? "p-3 border border-stone-200 bg-slate-300" : "p-3 border border-stone-200"}>
+								class={data.selectedPackageID === pkg.id ? "p-3 border border-stone-200 bg-slate-300" : "p-3 border border-stone-200"}>
 								<div class="flex justify-center items-center">
 									{#if service.valueType === "BOOLEAN"}
 										{#if pkg.benefits[index].booleanValue}
@@ -140,8 +137,8 @@
 					{#each buyOption.packages as pkg}
 						<Table.Cell class=" p-3">
 							<div class=" flex justify-center items-center">
-								<Button on:click={() => selectedPackageID=pkg.id}
-												variant={selectedPackageID === pkg.id? "default" : "outline"} class="!py-1.5 !px-4">
+								<Button on:click={() => data.selectedPackageID=pkg.id}
+												variant={data.selectedPackageID === pkg.id? "default" : "outline"} class="!py-1.5 !px-4">
 									{$_('common.select')}
 								</Button>
 							</div>
@@ -153,11 +150,11 @@
 		</Table.Root>
 	</section>
 
-	<AddonList addons={addons} bind:selectedAddons={selectedAddons} />
+	<AddonList addons={addons} bind:selectedAddons={data.selectedAddons} />
 	<footer class=" flex mt-6 justify-end items-center">
-		{#if selectedPackageID !== ""}
+		{#if data.selectedPackageID !== ""}
 			<a aria-disabled="true"
-				 href={`${event.id}/event-registration?selectedPackage=${selectedPackageID + selectedAddonsURL}`}>
+				 href={`${event.id}/event-registration?selectedPackage=${data.selectedPackageID + selectedAddonsURL}`}>
 				<Button>{$_('common.continue')}</Button>
 			</a>
 		{:else }

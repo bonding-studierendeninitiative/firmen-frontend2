@@ -324,6 +324,7 @@
         "billingInformation": "Rechnungsadresse (kann später bearbeitet werden)"
       },
       "events": "Veranstaltungen",
+      "noEvents": "Aktuell sind leider keine Veranstaltungen verfügbar.",
       "eventsSubHeading": "Werfen Sie einen Blick auf aktuelle Veranstaltungen, um Ihr Unternehmen zu präsentieren!",
       "overview": "Übersicht",
       "additionalMarketingServices": "Zusätzliche Marketingdienste",
