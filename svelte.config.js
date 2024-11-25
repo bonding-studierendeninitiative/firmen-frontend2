@@ -17,7 +17,7 @@ const config = {
 			'@api-routes': './src/lib/api/apiRoutes.ts',
 			'@schema': './src/lib/schemas',
 			'@constant': './src/lib/constants',
-			"@/*": "./src/lib/*",
+			'@/*': './src/lib/*'
 		},
 		adapter: adapter()
 	}

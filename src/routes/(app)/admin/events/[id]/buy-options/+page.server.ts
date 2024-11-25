@@ -1,6 +1,6 @@
 import { createBuyOption } from '$lib/services';
 import { valibot } from 'sveltekit-superforms/adapters';
-import { CreateBuyOptionRequestSchema } from '@schema';
+import { CreateBuyOptionRequestSchema, SimpleCreateBuyOptionRequestSchema } from '@schema';
 import { superValidate } from 'sveltekit-superforms';
 import { fail, redirect } from '@sveltejs/kit';
 
@@ -13,7 +13,7 @@ export const actions = {
 			return;
 		}
 
-		const form = await superValidate(request, valibot(CreateBuyOptionRequestSchema));
+		const form = await superValidate(request, valibot(SimpleCreateBuyOptionRequestSchema));
 		if (!form.valid) {
 			return fail(400, { form });
 		}

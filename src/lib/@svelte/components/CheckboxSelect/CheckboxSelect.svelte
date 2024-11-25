@@ -98,7 +98,9 @@
 				{/if}
 			</div>
 			<footer class=" px-3.5 py-2.5 flex justify-between items-center w-full">
-				<Button variant="outline" class="!py-1 !px-3 !text-xs" on:click={handleCancel}>{$_('common.cancel')}</Button>
+				<Button variant="outline" class="!py-1 !px-3 !text-xs" on:click={handleCancel}
+					>{$_('common.cancel')}</Button
+				>
 				<Button variant="gradient" class="!py-1 !px-3 !text-xs" on:click={handleShowResults}
 					>{$_('common.showResults')}</Button
 				>

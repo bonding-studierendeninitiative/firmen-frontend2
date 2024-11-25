@@ -9,3 +9,6 @@ export * from './DeleteBuyOption';
 export * from './CreateBuyOption';
 export * from './BuyOptionSelector';
 export * from './RegisterContactPerson';
+export * from './ConfirmEventRegistration';
+export * from './RejectEventRegistration';
+export * from './EventRegistration';

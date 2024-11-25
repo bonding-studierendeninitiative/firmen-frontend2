@@ -21,8 +21,10 @@
 	{#if label}
 		<label
 			for={name}
-			class={cn('text-sm font-medium text-stone-800 cursor-pointer justify-self-start col-span-2', labelClasses)}
-		>{label}</label
+			class={cn(
+				'text-sm font-medium text-stone-800 cursor-pointer justify-self-start col-span-2',
+				labelClasses
+			)}>{label}</label
 		>
 	{/if}
 	<div class="col-span-2 col-start-2">

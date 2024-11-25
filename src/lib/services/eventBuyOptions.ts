@@ -124,7 +124,7 @@ export const createBuyOption = async ({
 }: {
 	accessToken: string;
 	eventId: string;
-	data: InferOutput<CreateBuyOptionRequest>;
+	data: InferInput<CreateBuyOptionRequest>;
 }) => {
 	const response = await API.post<GetBuyOptionResponse>({
 		route: `/event/${eventId}/buy-option`,

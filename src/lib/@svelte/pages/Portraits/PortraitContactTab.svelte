@@ -32,15 +32,17 @@
 			</h4>
 		</section>
 		<section class=" w-full mt-10">
-
 			<div class="grid grid-cols-1 sm:grid-cols-4 gap-4 py-6 border-b-1 border-slate-200">
 				<div class="col-span-1 text-stone-800 text-sm font-extrabold">
 					{$_('user-pages.portraits.contactPersonStudents')}
 				</div>
 				<div class="col-span-3">
-				<Textarea name="contactPersonStudents" bind:value={$form.contactPersonStudents}
-									{...$constraints.contactPersonStudents}
-									placeholder={$_('user-pages.portraits.contactPersonStudents')} />
+					<Textarea
+						name="contactPersonStudents"
+						bind:value={$form.contactPersonStudents}
+						{...$constraints.contactPersonStudents}
+						placeholder={$_('user-pages.portraits.contactPersonStudents')}
+					/>
 				</div>
 			</div>
 			<div class="grid grid-cols-1 sm:grid-cols-4 gap-4 py-6 border-b-1 border-slate-200">
@@ -48,9 +50,12 @@
 					{$_('user-pages.portraits.contactPerson')}
 				</div>
 				<div class="col-span-3">
-				<Textarea name="contactPersonGraduates" bind:value={$form.contactPersonGraduates}
-									{...$constraints.contactPersonGraduates}
-									placeholder={$_('user-pages.portraits.contactPerson')} />
+					<Textarea
+						name="contactPersonGraduates"
+						bind:value={$form.contactPersonGraduates}
+						{...$constraints.contactPersonGraduates}
+						placeholder={$_('user-pages.portraits.contactPerson')}
+					/>
 				</div>
 			</div>
 			<div class="grid grid-cols-1 sm:grid-cols-4 gap-4 py-6 border-b-1 border-slate-200">
@@ -58,8 +63,12 @@
 					{$_('user-pages.portraits.contactAddress')}
 				</div>
 				<div class="col-span-3">
-					<Textarea name="contactAddress" bind:value={$form.contactAddress} {...$constraints.contactAddress}
-										placeholder={$_('user-pages.portraits.contactAddress')} />
+					<Textarea
+						name="contactAddress"
+						bind:value={$form.contactAddress}
+						{...$constraints.contactAddress}
+						placeholder={$_('user-pages.portraits.contactAddress')}
+					/>
 				</div>
 			</div>
 
@@ -68,8 +77,13 @@
 					{$_('user-pages.portraits.website')}
 				</div>
 				<div class="col-span-3">
-					<InputWithPrefix name="website" bind:value={$form.website} {...$constraints.website} prefixText="https://"
-													 placeholder={$_('user-pages.portraits.website')} />
+					<InputWithPrefix
+						name="website"
+						bind:value={$form.website}
+						{...$constraints.website}
+						prefixText="https://"
+						placeholder={$_('user-pages.portraits.website')}
+					/>
 				</div>
 			</div>
 			<div class="grid grid-cols-1 sm:grid-cols-4 gap-4 py-6 border-b-1 border-slate-200">

@@ -15,13 +15,13 @@
 		{ value: 'two', name: 'Two' },
 		{ value: 'three', name: 'Three' }
 	];
-	export let handleInput: ((e: any) => void) = () => {
-	};
+	export let handleInput: (e: any) => void = () => {};
 </script>
 
 <div class=" w-full">
 	{#if label}
-		<Label class="block mb-1 font-medium text-stone-800" for={name}>{label}
+		<Label class="block mb-1 font-medium text-stone-800" for={name}
+			>{label}
 			{#if required}
 				<span class="text-pink-500">*</span>
 			{/if}
@@ -31,7 +31,7 @@
 		on:select={handleInput}
 		{items}
 		id={name}
-		name={name}
+		{name}
 		bind:value
 		{required}
 		class=" placeholder-red-800"

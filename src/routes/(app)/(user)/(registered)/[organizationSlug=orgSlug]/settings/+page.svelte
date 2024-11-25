@@ -35,7 +35,7 @@
 			</div>
 		{:else if activeTab === 1}
 			<div in:fade>
-				<OrganizationTab editOrganizationDetailsForm={data.editOrganizationDetailsForm}/>
+				<OrganizationTab editOrganizationDetailsForm={data.editOrganizationDetailsForm} />
 			</div>
 		{:else if activeTab === 2}
 			<div in:fade>

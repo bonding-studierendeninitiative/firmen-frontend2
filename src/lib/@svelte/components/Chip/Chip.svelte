@@ -6,7 +6,15 @@
 	export let variant: variant;
 	export let classes: string = '';
 
-	type variant = 'success' | 'confirmed' | 'info' | 'verification' | 'created' | 'rejected' | 'withdrawn' | 'brand';
+	type variant =
+		| 'success'
+		| 'confirmed'
+		| 'info'
+		| 'verification'
+		| 'created'
+		| 'rejected'
+		| 'withdrawn'
+		| 'brand';
 
 	const getStylesByVariant = () => {
 		switch (variant) {
@@ -30,7 +38,11 @@
 </script>
 
 <p
-	class={cn(' rounded-custom w-auto px-[10px] py-[2px] text-sm font-normal text-center  ', getStylesByVariant(), classes)}
+	class={cn(
+		' rounded-custom w-auto px-[10px] py-[2px] text-sm font-normal text-center  ',
+		getStylesByVariant(),
+		classes
+	)}
 >
 	{status}
 </p>

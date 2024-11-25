@@ -1,5 +1,4 @@
 <script lang="ts">
-
 	import { Badge } from '@/components/ui/badge';
 	import { number } from '@services/i18n';
 	import * as Card from '@/components/ui/card';
@@ -9,7 +8,7 @@
 	import { LoaderCircle } from 'lucide-svelte';
 
 	export let addonPackage: {
-		id: string,
+		id: string;
 		title: string;
 		description: string;
 		label: string;
@@ -21,7 +20,7 @@
 				label: string;
 				price: number | null;
 			}
-		]
+		];
 	};
 
 	let sending = false;
@@ -30,13 +29,11 @@
 		sending = true;
 		return ({ update }) => {
 			// Set invalidateAll to false if you don't want to reload page data when submitting
-			update({ invalidateAll: true })
-				.finally(async () => {
-					sending = false;
-				});
+			update({ invalidateAll: true }).finally(async () => {
+				sending = false;
+			});
 		};
 	};
-
 </script>
 
 <Card.Root>
@@ -48,9 +45,9 @@
 			{#if addonPackage.price}
 				<span>
 					{$number((addonPackage.price ?? 0) / 100, {
-						style: "currency",
-						currency: "EUR",
-						currencyDisplay: "code"
+						style: 'currency',
+						currency: 'EUR',
+						currencyDisplay: 'code'
 					})}
 				</span>
 			{/if}
@@ -66,30 +63,36 @@
 		<p class="text-xs font-semibold">Zusatzleistungen:</p>
 		{#each addonPackage.addons as addon}
 			<div class="flex gap-x-3 items-start justify-between">
-				<span class="text-sm">{addon.title}
-				</span>
-				{#if addon.label }
+				<span class="text-sm">{addon.title} </span>
+				{#if addon.label}
 					<Badge>{addon.label}</Badge>
 				{/if}
 				<div class="flex-grow"></div>
 				{#if addon.price}
 					<span>
-					{$number((addon.price) / 100, {
-						style: "currency",
-						currency: "EUR",
-						currencyDisplay: "code"
-					})}
-						</span>
+						{$number(addon.price / 100, {
+							style: 'currency',
+							currency: 'EUR',
+							currencyDisplay: 'code'
+						})}
+					</span>
 				{/if}
 			</div>
-			{#if addon.description } <p>{addon.description}</p> {/if}
+			{#if addon.description}
+				<p>{addon.description}</p>
+			{/if}
 		{/each}
 	</Card.Content>
 	<Card.Footer>
 		<form action="?/deleteAddonPackage" method="post" use:enhance={updateSending}>
 			<input name="addonPackageId" type="hidden" value={addonPackage.id} />
-			<Button class="text-red-500 hover:text-red-700" disabled={sending} variant="ghost" type="submit">
-				{#if sending }
+			<Button
+				class="text-red-500 hover:text-red-700"
+				disabled={sending}
+				variant="ghost"
+				type="submit"
+			>
+				{#if sending}
 					<LoaderCircle class="h-4 w-4 animate-spin" />
 				{:else}
 					<TrashIcon />

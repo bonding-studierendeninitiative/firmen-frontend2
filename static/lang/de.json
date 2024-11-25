@@ -71,6 +71,7 @@
     "registeredSuccessfully": "Eine E-Mail wurde an Sie gesendet, um die Registrierung zu bestätigen"
   },
   "common": {
+    "remove": "Entfernen",
     "continue": "Weiter",
     "search": "Suche",
     "delete": "Löschen",
@@ -88,6 +89,7 @@
     "categories": "Kategorien",
     "edit": "Bearbeiten",
     "save": "Speichern",
+    "saved": "Gespeichert",
     "cancel": "Abbrechen",
     "viewDetails": "Details anzeigen",
     "viewRegistrations": "Anfragen anzeigen",
@@ -163,7 +165,8 @@
     "saleTag": "Preis",
     "bookings": "Buchungen",
     "event": "Veranstaltung",
-    "location": "Ort"
+    "location": "Ort",
+    "role": "Rolle"
   },
   "breadcrumbs": {
     "events": "Veranstaltungen"
@@ -175,6 +178,14 @@
   },
   "user-pages": {
     "accounts": {
+      "owner": "Besitzer",
+      "member": "Mitglied",
+      "admin": "Administrator",
+      "invite-dialog-title": "Neue Person einladen",
+      "invite-dialog-description": "Schicken Sie eine Einladung an eine neue Person aus Ihrer Organisation.",
+      "invite": "Einladen",
+      "invitationSuccess": "Eine Einladung wurde verschickt",
+      "organizationAccountListDescription": "Eine Auflistung aller Konten, die mit Ihrer Organisation verknüpft sind.",
       "account": "Konto",
       "accountSubHeading": "Aktualisieren Sie Ihr Portrait und Ihre Organisationsdetails hier.",
       "personalInformation": "Persönliche Informationen",
@@ -298,10 +309,10 @@
           "contractAddressCountry": "Land des Vertragspartners",
           "billingOrganizationName": "Name auf Rechnung",
           "billingStreet": "Straße auf Rechnung",
-          "billingZipCode":  "Postleitzahl auf Rechnung",
+          "billingZipCode": "Postleitzahl auf Rechnung",
           "billingCity": "Stadt auf Rechnung",
           "billingCountry": "Land auf Rechnung",
-          "billingVat":"Umsatzsteuer-Identifikationsnummer",
+          "billingVat": "Umsatzsteuer-Identifikationsnummer",
           "billingReference": "Referenz"
         },
         "placeholders": {
@@ -312,10 +323,10 @@
           "contractAddressCountry": "Deutschland",
           "billingOrganizationName": "Testfirma GmbH",
           "billingStreet": "Theaterstraße 54/56",
-          "billingZipCode":  "52062",
+          "billingZipCode": "52062",
           "billingCity": "Aachen",
           "billingCountry": "Deutschland",
-          "billingVat":"DE1235123",
+          "billingVat": "DE1235123",
           "billingReference": ""
         },
         "registration": "Anmeldung",
@@ -366,6 +377,7 @@
       "newOrganization": "Neue Organisation",
       "organization": "Organisation",
       "createOrganization": {
+        "successCreated": "Ihre neue Organisation wurde erstellt.",
         "labels": {
           "organizationName": "Organisationsname",
           "organizationSize": "Organisationsgröße",
@@ -377,7 +389,8 @@
           "organizationExtendedAddress": "weitere Adresszeile",
           "organizationZipCode": "Postleitzahl",
           "organizationLocality": "Ortschaft",
-          "create": "Erstellen"
+          "create": "Erstellen",
+          "organizationWebsite": "Website"
         },
         "placeholders": {
           "organizationName": "ABC Firma GmbH",
@@ -390,7 +403,9 @@
           "organizationExtendedAddress": "2. Etage",
           "organizationZipCode": "12345",
           "organizationLocality": "Berlin",
-          "create": "Erstellen"
+          "create": "Erstellen",
+          "searchOrganization": "Suche nach meinen Organisationen",
+          "organizationWebsite": "bonding.de"
         }
       }
     },
@@ -408,27 +423,35 @@
         "placeholders": {
           "fullName": "Sabrina Müller",
           "phoneNumber": "123 456789",
-          "email": "sabrina.mueller@work.com",
+          "email": "sabrina.mueller@work.de",
           "responsibility": "z. B. Head of HR, Outreach Champion, etc.",
           "title": "Frau, Herr, Divers, etc."
         },
         "hints": {
-          "email": "Bitte geben Sie hier Ihre Arbeits-E-Mail-Adresse an, auf der Sie Benachrichtigungen und Bestätigungen empfangen werden."
+          "email": "Bitte geben Sie hier Ihre Arbeits-E-Mail-Adresse an, auf der Sie Benachrichtigungen und Bestätigungen empfangen werden.",
+          "phone": "",
+          "fullName": ""
         }
       }
     }
   },
   "admin-pages": {
-    "companies": {
-      "allCompanies": "Alle Unternehmen",
-      "companyDetails": "Firmendetails",
-      "company": "Firma",
-      "contactPerson": "Ansprechpartner",
+    "organizations": {
+      "allOrganizations": "Alle Organisationen",
+      "organizationDetails": "Organisations-Details",
+      "name": "Name",
+      "contactPerson": "Ansprechperson",
+      "contactPeople": "Ansprechpersonen",
       "address": "Adresse",
-      "city": "Stadt",
-      "federalState": "Bundesland",
-      "number": "Nummer",
-      "emailAddress": "E-Mail-Adresse"
+      "city": "Ortschaft",
+      "federalState": "Federal State",
+      "organizationPhone": "Telefonnummer",
+      "organizationEmail": "E-Mail-Adresse",
+      "members": {
+        "owner": "Besitzer",
+        "member": "Mitglied",
+        "guest": "Gast"
+      }
     },
     "addons": {
       "addAddons": "Zusatzfunktionen hinzufügen",

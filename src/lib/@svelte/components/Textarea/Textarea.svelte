@@ -16,17 +16,16 @@
 
 <div>
 	{#if label}
-		<Label class="block mb-1.5 font-medium marker:text-sm text-stone-800" for={label}>{label}
+		<Label class="block mb-1.5 font-medium marker:text-sm text-stone-800" for={label}
+			>{label}
 			{#if required}
 				<span class="text-pink-500">*</span>
 			{/if}
-		</Label
-		>
+		</Label>
 	{/if}
 	<Textarea
-
 		bind:this={ref}
-		bind:value={value}
+		bind:value
 		class={'rounded-lg w-full border border-solid border-gray-300 bg-white shadow-custom flex p-2 pl-3 items-center gap-2 focus:outline-none focus:ring focus:border-blue-500 text-stone-800 text-sm font-normal '.concat(
 			classes
 		)}
@@ -39,6 +38,7 @@
 		}}
 		{placeholder}
 		{required}
-		rows="6" />
+		rows={6}
+	/>
 	<Helper color="red">{errorMessage}</Helper>
 </div>

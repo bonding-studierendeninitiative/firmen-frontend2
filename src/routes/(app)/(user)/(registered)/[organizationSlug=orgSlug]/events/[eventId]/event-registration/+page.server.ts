@@ -1,5 +1,4 @@
 import {
-	CreateEventRegistrationSchema,
 	getActiveBuyOption,
 	getEvent,
 	getOrganizationDetails,
@@ -11,6 +10,7 @@ import { getContactPersonDetails } from '@/services/contactPerson';
 import { type Actions, fail } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import { getEventAddonPackages } from '@/services/eventAddonPackages';
+import { ConfirmEventRegistrationSchema, CreateEventRegistrationSchema } from '@schema';
 
 export const load: PageServerLoad = async ({ parent, params, url }) => {
 	const { session } = await parent();
@@ -47,23 +47,31 @@ export const load: PageServerLoad = async ({ parent, params, url }) => {
 	// @ts-expect-error we define accessToken in parent
 	const { contactPersonId } = await getContactPersonDetails({ accessToken: session?.accessToken });
 
+	const selectedAddons: string[] = url.searchParams.has('selectedAddon')
+		? url.searchParams.getAll('selectedAddon')
+		: [];
+
+	const selectedAddonPackages: string[] = url.searchParams.has('selectedAddonPackage')
+		? url.searchParams.getAll('selectedAddonPackage')
+		: [];
+
 	const createEventRegistrationForm = await superValidate(valibot(CreateEventRegistrationSchema));
 	createEventRegistrationForm.data.eventId = event.id;
 	createEventRegistrationForm.data.organizationId = organization.id;
 	createEventRegistrationForm.data.contactPersonId = contactPersonId;
 	createEventRegistrationForm.data.packageId = selectedPackage;
+	createEventRegistrationForm.data.selectedAddons = selectedAddons;
+	createEventRegistrationForm.data.selectedAddonPackages = selectedAddonPackages;
 
-	const selectedAddons: string[] = url.searchParams.has('selectedAddon')
-		? url.searchParams.getAll('selectedAddon')
-		: [];
+	const confirmEventRegistrationForm = await superValidate(valibot(ConfirmEventRegistrationSchema));
 
 	return {
 		event,
 		buyOption,
-		selectedAddons,
 		createEventRegistrationForm,
+		confirmEventRegistrationForm,
 		orgSlug: organization.slug,
-		addons: addonPackages.addonPackages
+		addonPackages: addonPackages.addonPackages
 	};
 };
 

@@ -32,7 +32,7 @@
 		dataType: 'json',
 		invalidateAll: 'force',
 		onSubmit() {
-			console.log("Hasdas");
+			console.log('Hasdas');
 			loading = true;
 		},
 		onResult({ result }) {
@@ -63,13 +63,9 @@
 	<Dialog.Root bind:open={inviteMemberDialogOpen}>
 		<Dialog.Content class="sm:max-w-[425px]">
 			<Dialog.Header>
-				<Dialog.Title>{$_(
-					'user-pages.accounts.invite-dialog-title'
-				)}</Dialog.Title>
+				<Dialog.Title>{$_('user-pages.accounts.invite-dialog-title')}</Dialog.Title>
 				<Dialog.Description>
-					{$_(
-						'user-pages.accounts.invite-dialog-description'
-					)}
+					{$_('user-pages.accounts.invite-dialog-description')}
 				</Dialog.Description>
 			</Dialog.Header>
 			<form action="?/createInvite" method="POST" id="create-invite-form" use:enhance>
@@ -92,18 +88,20 @@
 
 					<footer>
 						<footer class=" flex justify-end items-center w-full">
-							<Button class="mr-2" variant="outline" on:click={() => (inviteMemberDialogOpen = false)}
-							>{$_('common.cancel')}</Button
+							<Button
+								class="mr-2"
+								variant="outline"
+								on:click={() => (inviteMemberDialogOpen = false)}>{$_('common.cancel')}</Button
 							>
 							{#if loading}
-								<Button form="create-invite-form" disabled
-								>
-									<LoaderCircle class="mr-2 h-4 w-4 animate-spin" />{$_('user-pages.accounts.invite')}
+								<Button form="create-invite-form" disabled>
+									<LoaderCircle class="mr-2 h-4 w-4 animate-spin" />{$_(
+										'user-pages.accounts.invite'
+									)}
 								</Button>
 							{:else}
-
 								<Button form="create-invite-form" type="submit"
-								>{$_('user-pages.accounts.invite')}</Button
+									>{$_('user-pages.accounts.invite')}</Button
 								>
 							{/if}
 						</footer>

@@ -42,7 +42,9 @@
 	<footer>
 		<div class=" flex justify-end items-center my-6 pb-6">
 			<div class=" flex justify-between items-center">
-				<Button variant="secondary" on:click={() => goto('/dashboard')} class=" mr-8">{$_('common.cancel')}</Button>
+				<Button variant="secondary" on:click={() => goto('/dashboard')} class=" mr-8"
+					>{$_('common.cancel')}</Button
+				>
 				<Button variant="gradient" on:click={() => goto('/dashboard')}
 					>{$_('user-pages.accounts.updatePassword')}</Button
 				>

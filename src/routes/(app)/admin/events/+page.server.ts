@@ -7,10 +7,12 @@ export const load: PageServerLoad = async ({ parent }) => {
 
 	return {
 		// @ts-expect-error we define accessToken in parent
-		publishedEvents: await getEvents({ accessToken: session?.accessToken }) ?? [],
+		publishedEvents: (await getEvents({ accessToken: session?.accessToken })) ?? [],
 		// @ts-expect-error we define accessToken in parent
-		unpublishedEvents: await getEvents({ accessToken: session?.accessToken, status: 'UNPUBLISHED' }) ?? [],
+		unpublishedEvents:
+			(await getEvents({ accessToken: session?.accessToken, status: 'UNPUBLISHED' })) ?? [],
 		// @ts-expect-error we define accessToken in parent
-		archivedEvents: await getEvents({ accessToken: session?.accessToken, status: 'ARCHIVED' }) ?? []
+		archivedEvents:
+			(await getEvents({ accessToken: session?.accessToken, status: 'ARCHIVED' })) ?? []
 	};
 };

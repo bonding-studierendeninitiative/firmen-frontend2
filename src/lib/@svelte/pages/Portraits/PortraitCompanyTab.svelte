@@ -40,8 +40,12 @@
 					<Helper>{$_('user-pages.portraits.companyNameHint')}</Helper>
 				</div>
 				<div class="col-span-3">
-					<Input name="title" bind:value={$form.title} {...$constraints.title}
-								 placeholder={$_('user-pages.portraits.companyName')} />
+					<Input
+						name="title"
+						bind:value={$form.title}
+						{...$constraints.title}
+						placeholder={$_('user-pages.portraits.companyName')}
+					/>
 				</div>
 			</div>
 			<div class="grid grid-cols-1 sm:grid-cols-4 gap-4 py-6 border-b-1 border-slate-200">
@@ -49,8 +53,12 @@
 					{$_('user-pages.portraits.branch')}
 				</div>
 				<div class="col-span-3">
-					<MultiSelect name="industry" items={disciplines} bind:value={$form.industry}
-											 placeholder={$_('user-pages.portraits.branch')} />
+					<MultiSelect
+						name="industry"
+						items={disciplines}
+						bind:value={$form.industry}
+						placeholder={$_('user-pages.portraits.branch')}
+					/>
 				</div>
 			</div>
 			<div class="grid grid-cols-1 sm:grid-cols-4 gap-4 py-6 border-b-1 border-slate-200">
@@ -58,8 +66,12 @@
 					{$_('user-pages.portraits.products')}
 				</div>
 				<div class="col-span-3">
-					<Textarea name="products" {...$constraints.products} bind:value={$form.products}
-										placeholder={$_('user-pages.portraits.products')} />
+					<Textarea
+						name="products"
+						{...$constraints.products}
+						bind:value={$form.products}
+						placeholder={$_('user-pages.portraits.products')}
+					/>
 				</div>
 			</div>
 			<div class="grid grid-cols-1 sm:grid-cols-4 gap-4 py-6 border-b-1 border-slate-200">
@@ -67,13 +79,27 @@
 					{$_('user-pages.portraits.revenue')}
 				</div>
 				<div class="col-span-3 flex flex-col gap-y-4">
-					<InputWithPrefix name="revenue_germany" addonClass="min-w-20" prefixText={$_('user-pages.portraits.inland')}
-													 bind:value={$form.revenue_germany} placeholder={$_('user-pages.portraits.revenue')} />
-					<InputWithPrefix name="revenue_europe" addonClass="min-w-20" prefixText={$_('user-pages.portraits.eu')}
-													 bind:value={$form.revenue_europe} placeholder={$_('user-pages.portraits.revenue')} />
-					<InputWithPrefix name="revenue_worldwide" addonClass="min-w-20" prefixText={$_('user-pages.portraits.global')}
-													 bind:value={$form.revenue_worldwide}
-													 placeholder={$_('user-pages.portraits.revenue')} />
+					<InputWithPrefix
+						name="revenue_germany"
+						addonClass="min-w-20"
+						prefixText={$_('user-pages.portraits.inland')}
+						bind:value={$form.revenue_germany}
+						placeholder={$_('user-pages.portraits.revenue')}
+					/>
+					<InputWithPrefix
+						name="revenue_europe"
+						addonClass="min-w-20"
+						prefixText={$_('user-pages.portraits.eu')}
+						bind:value={$form.revenue_europe}
+						placeholder={$_('user-pages.portraits.revenue')}
+					/>
+					<InputWithPrefix
+						name="revenue_worldwide"
+						addonClass="min-w-20"
+						prefixText={$_('user-pages.portraits.global')}
+						bind:value={$form.revenue_worldwide}
+						placeholder={$_('user-pages.portraits.revenue')}
+					/>
 				</div>
 			</div>
 			<div class="grid grid-cols-1 sm:grid-cols-4 gap-4 py-6 border-b-1 border-slate-200">
@@ -81,19 +107,30 @@
 					{$_('user-pages.portraits.locations')}
 				</div>
 				<div class="col-span-3 flex flex-col gap-y-4">
-					<InputWithPrefix name="locations_germany" addonClass="min-w-20" prefixText={$_('user-pages.portraits.inland')}
-													 bind:value={$form.locations_germany}
-													 {...$constraints.locations_germany}
-													 placeholder={$_('user-pages.portraits.locations')} />
-					<InputWithPrefix name="locations_europe" addonClass="min-w-20" prefixText={$_('user-pages.portraits.eu')}
-													 bind:value={$form.locations_europe}
-													 {...$constraints.locations_europe}
-													 placeholder={$_('user-pages.portraits.locations')} />
-					<InputWithPrefix name="locations_worldwide" addonClass="min-w-20"
-													 prefixText={$_('user-pages.portraits.global')}
-													 bind:value={$form.locations_worldwide}
-													 {...$constraints.locations_worldwide}
-													 placeholder={$_('user-pages.portraits.locations')} />
+					<InputWithPrefix
+						name="locations_germany"
+						addonClass="min-w-20"
+						prefixText={$_('user-pages.portraits.inland')}
+						bind:value={$form.locations_germany}
+						{...$constraints.locations_germany}
+						placeholder={$_('user-pages.portraits.locations')}
+					/>
+					<InputWithPrefix
+						name="locations_europe"
+						addonClass="min-w-20"
+						prefixText={$_('user-pages.portraits.eu')}
+						bind:value={$form.locations_europe}
+						{...$constraints.locations_europe}
+						placeholder={$_('user-pages.portraits.locations')}
+					/>
+					<InputWithPrefix
+						name="locations_worldwide"
+						addonClass="min-w-20"
+						prefixText={$_('user-pages.portraits.global')}
+						bind:value={$form.locations_worldwide}
+						{...$constraints.locations_worldwide}
+						placeholder={$_('user-pages.portraits.locations')}
+					/>
 				</div>
 			</div>
 			<div class="grid grid-cols-1 sm:grid-cols-4 gap-4 py-6 border-b-1 border-slate-200">
@@ -101,16 +138,27 @@
 					{$_('user-pages.portraits.numberOfEmployees')}
 				</div>
 				<div class="col-span-3 flex flex-col gap-y-4">
-					<InputWithPrefix name="employees_germany" addonClass="min-w-20" prefixText={$_('user-pages.portraits.inland')}
-													 bind:value={$form.employees_germany}
-													 placeholder={$_('user-pages.portraits.employees')} />
-					<InputWithPrefix name="employees_europe" addonClass="min-w-20" prefixText={$_('user-pages.portraits.eu')}
-													 bind:value={$form.employees_europe}
-													 placeholder={$_('user-pages.portraits.employees')} />
-					<InputWithPrefix name="employees_worldwide" addonClass="min-w-20"
-													 prefixText={$_('user-pages.portraits.global')}
-													 bind:value={$form.employees_worldwide}
-													 placeholder={$_('user-pages.portraits.employees')} />
+					<InputWithPrefix
+						name="employees_germany"
+						addonClass="min-w-20"
+						prefixText={$_('user-pages.portraits.inland')}
+						bind:value={$form.employees_germany}
+						placeholder={$_('user-pages.portraits.employees')}
+					/>
+					<InputWithPrefix
+						name="employees_europe"
+						addonClass="min-w-20"
+						prefixText={$_('user-pages.portraits.eu')}
+						bind:value={$form.employees_europe}
+						placeholder={$_('user-pages.portraits.employees')}
+					/>
+					<InputWithPrefix
+						name="employees_worldwide"
+						addonClass="min-w-20"
+						prefixText={$_('user-pages.portraits.global')}
+						bind:value={$form.employees_worldwide}
+						placeholder={$_('user-pages.portraits.employees')}
+					/>
 				</div>
 			</div>
 		</section>
@@ -118,7 +166,9 @@
 		<footer>
 			<div class=" flex justify-end items-center my-6 pb-6">
 				<div class=" flex justify-between items-center">
-					<Button variant="secondary" on:click={() => goto('/dashboard')} class=" mr-8">{$_('common.cancel')}</Button>
+					<Button variant="secondary" on:click={() => goto('/dashboard')} class=" mr-8"
+						>{$_('common.cancel')}</Button
+					>
 					<Button variant="gradient" type="submit">{$_('common.save')}</Button>
 				</div>
 			</div>

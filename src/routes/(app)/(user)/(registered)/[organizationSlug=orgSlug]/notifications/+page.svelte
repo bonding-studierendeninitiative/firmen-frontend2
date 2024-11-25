@@ -1,12 +1,7 @@
 <script lang="ts">
 	import { _ } from '@services';
 	import { goto } from '$app/navigation';
-	import {
-		ActionNotificationItem,
-		Link,
-		Modal,
-		Select
-	} from '@/@svelte/components';
+	import { ActionNotificationItem, Link, Modal, Select } from '@/@svelte/components';
 	import { FilledCheckIcon, PlusIcon } from '@/@svelte/icons';
 	import { Button } from '@/components/ui/button';
 
@@ -106,10 +101,12 @@
 	<footer class=" flex items-center justify-end">
 		<Button
 			class="!py-1.5"
-			variant="gradient" on:click={() => {
+			variant="gradient"
+			on:click={() => {
 				isSuccessModalOpen = true;
 				isUpdatePortraitModalOpen = false;
-			}}>
+			}}
+		>
 			{$_('common.update')}
 		</Button>
 	</footer>

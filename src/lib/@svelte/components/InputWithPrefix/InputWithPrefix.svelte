@@ -9,9 +9,11 @@
 	export let addonClass: string = '';
 	export let value: string = '';
 </script>
+
 <div>
 	{#if label}
-		<Label class="block mb-1.5 font-medium text-stone-800" for={name}>{label}
+		<Label class="block mb-1.5 font-medium text-stone-800" for={name}
+			>{label}
 			{#if required}
 				<span class="text-pink-500">*</span>
 			{/if}
@@ -24,7 +26,8 @@
 			id={name}
 			{name}
 			{required}
-			bind:value={value}
-			{...$$restProps} />
+			bind:value
+			{...$$restProps}
+		/>
 	</ButtonGroup>
 </div>

@@ -13,30 +13,36 @@
 	import { type CreateEventAddonPackageFormSchema } from '@schema/eventAddonPackages.js';
 	import { ScrollArea } from '@/components/ui/scroll-area';
 
-
 	export let isOpen: boolean = false;
 	const handleAddSubAddon = (e: Event) => {
 		e.preventDefault();
-		form.update((oldForm) => ({
-			...oldForm,
-			addonPackage: {
-				...oldForm.addonPackage,
-				addons: [
-					...oldForm.addonPackage.addons,
-					{ title: '', description: '', price: 0, label: '' }
-				]
-			}
-		}), { taint: false });
+		form.update(
+			(oldForm) => ({
+				...oldForm,
+				addonPackage: {
+					...oldForm.addonPackage,
+					addons: [
+						...oldForm.addonPackage.addons,
+						{ title: '', description: '', price: 0, label: '' }
+					]
+				}
+			}),
+			{ taint: false }
+		);
 	};
 	const handleRemoveAddon = (index: number) => {
 		let subAddonsCopy = [...$form.addonPackage.addons];
 		subAddonsCopy.splice(index, 1);
-		form.update(() => ({
-			...$form, addonPackage: {
-				...$form.addonPackage,
-				addons: subAddonsCopy
-			}
-		}), { taint: false });
+		form.update(
+			() => ({
+				...$form,
+				addonPackage: {
+					...$form.addonPackage,
+					addons: subAddonsCopy
+				}
+			}),
+			{ taint: false }
+		);
 	};
 
 	export let createAddonPackageForm: SuperValidated<Infer<CreateEventAddonPackageFormSchema>>;
@@ -66,7 +72,7 @@
 		<Separator />
 		<form id={$formId} class="@container" action="?/createAddonPackage" method="post" use:enhance>
 			<ScrollArea class="h-[60dvh]">
-				<div class="-m-2 px-4 py-2 h-max flex flex-col gap-4 @lg:grid @lg:grid-cols-3 ">
+				<div class="-m-2 px-4 py-2 h-max flex flex-col gap-4 @lg:grid @lg:grid-cols-3">
 					<Field class="@lg:col-span-2" form={superform} name="addonPackage.title">
 						<Control let:attrs>
 							<Label>{$_('admin-pages.addons.addonName')}</Label>
@@ -91,15 +97,23 @@
 						<Description />
 						<FieldErrors />
 					</Field>
-					<Checkbox containerClass="col-span-1" name="paddonPackage.purchasable"
-										bind:checked={$form.addonPackage.purchasable}
-										label={$_('admin-pages.addons.purchasable')}>
+					<Checkbox
+						containerClass="col-span-1"
+						name="paddonPackage.purchasable"
+						bind:checked={$form.addonPackage.purchasable}
+						label={$_('admin-pages.addons.purchasable')}
+					>
 						<Helper color="gray">{$_('admin-pages.addons.purchasableDescription')}</Helper>
 						<Field slot="description" form={superform} name="addonPackage.price">
 							<Control let:attrs>
-								<Input type="number" required={!$form.addonPackage.purchasable}
-											 disabled={!$form.addonPackage.purchasable} {...attrs} bind:value={$priceProxy}
-											 placeholder={$_('admin-pages.addons.pricePlaceholder')} />
+								<Input
+									type="number"
+									required={!$form.addonPackage.purchasable}
+									disabled={!$form.addonPackage.purchasable}
+									{...attrs}
+									bind:value={$priceProxy}
+									placeholder={$_('admin-pages.addons.pricePlaceholder')}
+								/>
 							</Control>
 							<Description />
 							<FieldErrors />
@@ -113,10 +127,10 @@
 									<div class={`p-2 relative grid grid-cols-2 gap-4 w-full`}>
 										<button
 											class="absolute right-3 top-4 text-red-500 hover:text-red-700 text-xs"
-											on:click|preventDefault={() => handleRemoveAddon(index)}>
-											<TrashIcon />
-										</button
+											on:click|preventDefault={() => handleRemoveAddon(index)}
 										>
+											<TrashIcon />
+										</button>
 										<Field form={superform} name={`addonPackage.addons[${index}].title`}>
 											<Control let:attrs>
 												<Label>{$_('admin-pages.addons.subAddonName')}</Label>
@@ -130,7 +144,10 @@
 												<Label>{$_('admin-pages.addons.price')}</Label>
 												<input
 													class="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex h-10 w-full rounded-md border px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-													type="number" {...attrs} bind:value={$form.addonPackage.addons[index].price} />
+													type="number"
+													{...attrs}
+													bind:value={$form.addonPackage.addons[index].price}
+												/>
 											</Control>
 											<Description />
 											<FieldErrors />
@@ -138,7 +155,10 @@
 										<Field form={superform} name={`addonPackage.addons[${index}].description`}>
 											<Control let:attrs>
 												<Label>{$_('admin-pages.addons.subAddonDescription')}</Label>
-												<Input {...attrs} bind:value={$form.addonPackage.addons[index].description} />
+												<Input
+													{...attrs}
+													bind:value={$form.addonPackage.addons[index].description}
+												/>
 											</Control>
 											<Description />
 											<FieldErrors />
@@ -170,9 +190,9 @@
 			<Button
 				variant="secondary"
 				on:click={() => {
-							isOpen = false;
-						}}
-			>{$_('common.cancel')}
+					isOpen = false;
+				}}
+				>{$_('common.cancel')}
 			</Button>
 			<Button form={$formId} variant="gradient" type="submit">{$_('common.save')}</Button>
 		</Dialog.Footer>

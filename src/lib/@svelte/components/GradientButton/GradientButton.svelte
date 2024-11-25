@@ -7,8 +7,8 @@
 
 <button
 	on:click={onClick}
-	type={type}
-	form={form}
+	{type}
+	{form}
 	class={'flex text-nowrap justify-center bg-gradient-to-b from-white/30 to-transparent bg-brand items-center relative px-4 py-2.5 space-x-4 rounded-lg text-white text-sm font-extrabold '.concat(
 		classes
 	)}

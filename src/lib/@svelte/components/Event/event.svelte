@@ -5,11 +5,13 @@
 
 	dayjs.extend(localizedFormat);
 
-	export let event: {
-		name: string;
-		dateFrom: string | null;
-		location?: string;
-	} | undefined;
+	export let event:
+		| {
+				name: string;
+				dateFrom: string | null;
+				location?: string;
+		  }
+		| undefined;
 </script>
 
 <div>
@@ -17,7 +19,7 @@
 	<div class=" flex mt-2">
 		<div class=" flex items-center mr-2">
 			<CalenderIcon />
-			<p class=" ml-2 text-sm text-stone-800 font-medium">{dayjs(event?.dateFrom).format("ll")}</p>
+			<p class=" ml-2 text-sm text-stone-800 font-medium">{dayjs(event?.dateFrom).format('ll')}</p>
 		</div>
 		<div class=" flex items-center">
 			<LocationIcon />

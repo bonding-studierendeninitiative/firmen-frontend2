@@ -10,12 +10,12 @@
 	export let data: PageServerData;
 
 	const mapEvent = (event: {
-		id: string
-		name: string
-		projectHSG: string
-		dateFrom: string | null
-		dateTo: string | null
-		location: string
+		id: string;
+		name: string;
+		projectHSG: string;
+		dateFrom: string | null;
+		dateTo: string | null;
+		location: string;
 	}) => {
 		return {
 			id: event.id,
@@ -58,26 +58,38 @@
 		<Tabs {tabHeadings} {activeTab} {handleTabChange} />
 	</div>
 	{#if activeTab === 0}
-		<PublishedEventsTab {publishedEvents} handleEventRegistration={(id) => {
-			if (activeTab !== 1) {
-				goto(`/admin/events/${id}/registrations/`);
-			} else {
-				isDrawerOpen = true;
-			}
-		}} {isListView} />
+		<PublishedEventsTab
+			{publishedEvents}
+			handleEventRegistration={(id) => {
+				if (activeTab !== 1) {
+					goto(`/admin/events/${id}/registrations/`);
+				} else {
+					isDrawerOpen = true;
+				}
+			}}
+			{isListView}
+		/>
 	{/if}
 	{#if activeTab === 1}
-		<UnpublishedEventsTab {unpublishedEvents} handleEventRegistration={(id) => {
+		<UnpublishedEventsTab
+			{unpublishedEvents}
+			handleEventRegistration={(id) => {
 				goto(`/admin/events/${id}/registrations/`);
-		}} {isListView} />
+			}}
+			{isListView}
+		/>
 	{/if}
 	{#if activeTab === 2}
-		<PublishedEventsTab publishedEvents={archivedEvents} handleEventRegistration={(id) => {
-			if (activeTab !== 1) {
-				goto(`/admin/events/${id}/registrations/`);
-			} else {
-				isDrawerOpen = true;
-			}
-		}} {isListView} />
+		<PublishedEventsTab
+			publishedEvents={archivedEvents}
+			handleEventRegistration={(id) => {
+				if (activeTab !== 1) {
+					goto(`/admin/events/${id}/registrations/`);
+				} else {
+					isDrawerOpen = true;
+				}
+			}}
+			{isListView}
+		/>
 	{/if}
 </div>

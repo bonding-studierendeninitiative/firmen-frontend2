@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { _ } from '@services';
 	import { FilledCheckIcon, MessageIcon } from '$lib/@svelte/icons';
-	import { Button } from '$lib/@svelte/components';
+	import { Button } from '../Button';
 	import { Button as ShadcnButton } from '@/components/ui/button';
 
 	import relativeTime from 'dayjs/plugin/relativeTime';
@@ -9,8 +9,7 @@
 
 	dayjs.extend(relativeTime);
 
-	const onActionButtonClick = () => {
-	};
+	const onActionButtonClick = () => {};
 
 	export let notificationType:
 		| 'registrationSuccess'
@@ -56,7 +55,9 @@
 					</Button>
 				{/if}
 			</div>
-			<p class="mt-2 text-sm text-stone-400 font-medium">{dayjs(notificationDate).fromNow(true) ?? "40 minutes ago"}</p>
+			<p class="mt-2 text-sm text-stone-400 font-medium">
+				{dayjs(notificationDate).fromNow(true) ?? '40 minutes ago'}
+			</p>
 		</div>
 	</div>
 </div>

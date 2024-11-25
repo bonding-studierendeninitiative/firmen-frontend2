@@ -1,20 +1,19 @@
-import type { PageServerLoad } from '../../../../../../../../.svelte-kit/types/src/routes';
+import type { PageServerLoad } from './$types';
 import {
 	createPortraitTemplate,
-	CreatePortraitTemplateRequestSchema,
 	getPortraitTemplates,
-	deletePortraitTemplate,
-	DeletePortraitTemplateRequestSchema
+	deletePortraitTemplate
 } from '@/services/portraitTemplates';
 import { type Actions, fail } from '@sveltejs/kit';
 import { superValidate } from 'sveltekit-superforms';
 import { valibot } from 'sveltekit-superforms/adapters';
+import { PortraitTemplateSchema, DeletePortraitTemplateRequestSchema } from '@schema';
 
 export const load: PageServerLoad = async ({ parent, params, url }) => {
 	const { session } = await parent();
 	if (!session?.user) return;
 
-	const form = await superValidate(valibot(CreatePortraitTemplateRequestSchema));
+	const form = await superValidate(valibot(PortraitTemplateSchema));
 	const deleteForm = await superValidate(valibot(DeletePortraitTemplateRequestSchema));
 
 	const page = Number(url.searchParams.get('page')) || 0;
@@ -44,7 +43,7 @@ export const actions: Actions = {
 			return;
 		}
 
-		const form = await superValidate(request, valibot(CreatePortraitTemplateRequestSchema));
+		const form = await superValidate(request, valibot(PortraitTemplateSchema));
 		if (!form.valid) {
 			return fail(400, { form });
 		}
