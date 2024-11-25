@@ -71,7 +71,10 @@
 
 	<div
 		id="sidebar"
-		class={cn("lg:block hidden bg-cover bg-center h-screen w-84 rounded-none border-none z-10",isAdmin() && "grayscale")}
+		class={cn(
+			'lg:block hidden bg-cover bg-center h-screen w-84 rounded-none border-none z-10',
+			isAdmin() && 'grayscale'
+		)}
 		style={`background-image: url(${getImagePath()});`}
 	>
 		<!-- Items -->

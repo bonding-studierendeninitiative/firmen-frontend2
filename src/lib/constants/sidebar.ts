@@ -61,7 +61,7 @@ export const ADMIN_SIDEBAR_LINKS: SidebarLinkTypes[] = [
 	},
 	{
 		label: 'company',
-		route: '/admin/company',
+		route: '/admin/organizations',
 		Icon: 'CompanyIcon'
 	}
 ];

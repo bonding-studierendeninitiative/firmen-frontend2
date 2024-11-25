@@ -3,7 +3,7 @@
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
 	import { Button } from '$lib/components/ui/button';
 
-	const addonPackages = [
+	export let addonPackages = [
 		{ label: 'Onlinewerbung-Paket', value: 'Onlinewerbung-Paket', checked: false },
 		{ label: 'Printwerbung-Paket', value: 'Printwerbung-Paket', checked: false }
 	];
@@ -31,13 +31,19 @@
 	<DropdownMenu.Content class="w-[300px]">
 		<DropdownMenu.Label>Addon Packages</DropdownMenu.Label>
 		<DropdownMenu.Separator />
-		<DropdownMenu.CheckboxItem onCheckedChange={(a) => {if (a) {
-			addonPackages.forEach((addonPackage) => addonPackage.checked = false)
-		}}}>All addon packages
+		<DropdownMenu.CheckboxItem
+			onCheckedChange={(a) => {
+				if (a) {
+					addonPackages.forEach((addonPackage) => (addonPackage.checked = false));
+				}
+			}}
+			>All addon packages
 		</DropdownMenu.CheckboxItem>
 		<DropdownMenu.Separator />
 		{#each addonPackages as addonPackage}
-			<DropdownMenu.CheckboxItem bind:checked={addonPackage.checked}>{addonPackage.label}</DropdownMenu.CheckboxItem>
+			<DropdownMenu.CheckboxItem bind:checked={addonPackage.checked}
+				>{addonPackage.label}</DropdownMenu.CheckboxItem
+			>
 		{/each}
 		<DropdownMenu.Separator />
 		<Button variant="ghost">Close</Button>

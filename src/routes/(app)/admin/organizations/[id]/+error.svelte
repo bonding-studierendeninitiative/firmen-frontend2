@@ -1,0 +1,1 @@
+<h1>Error in Admin Organization Details</h1>

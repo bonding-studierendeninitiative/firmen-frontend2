@@ -14,7 +14,10 @@
 	export let memberResponse: GetOrgMembersResponse;
 
 	const table = createTable(readable(memberResponse.members), {
-		page: addPagination({ serverSide: true, serverItemCount: writable(memberResponse.totalElements) }),
+		page: addPagination({
+			serverSide: true,
+			serverItemCount: writable(memberResponse.totalElements)
+		}),
 		sort: addSortBy(),
 		filter: addTableFilter({
 			fn: ({ filterValue, value }) => value.toLowerCase().includes(filterValue.toLowerCase())
@@ -77,7 +80,7 @@
 			bind:value={$filterValue}
 		/>
 		<Button variant="outline" on:click={() => (inviteMemberDialogOpen = true)}
-		>{$_('user-pages.accounts.invite')}</Button
+			>{$_('user-pages.accounts.invite')}</Button
 		>
 	</div>
 	<div class="rounded-md border">
@@ -89,7 +92,7 @@
 							{#each headerRow.cells as cell (cell.id)}
 								<Subscribe attrs={cell.attrs()} let:attrs props={cell.props()} let:props>
 									<Table.Head {...attrs} class="text-sm font-normal">
-										{#if cell.id === 'contactPersonName' || cell.id === 'membershipType' || cell.id === "email"}
+										{#if cell.id === 'contactPersonName' || cell.id === 'membershipType' || cell.id === 'email'}
 											<Button class="px-0" variant="ghost" on:click={props.sort.toggle}>
 												<Render of={cell.render()} />
 												<ArrowUpDown class={'h-4 w-4'} />
@@ -111,14 +114,13 @@
 							{#each row.cells as cell (cell.id)}
 								<Subscribe attrs={cell.attrs()} let:attrs>
 									<Table.Cell {...attrs}>
-										{#if cell.id !== "contactPersonName" && cell.id !== "membershipType" && cell.id !== "email"}
+										{#if cell.id !== 'contactPersonName' && cell.id !== 'membershipType' && cell.id !== 'email'}
 											<div class="pr-0 mr-0 flex justify-end">
 												<Render of={cell.render()} />
 											</div>
 										{:else}
 											<Render of={cell.render()} />
 										{/if}
-
 									</Table.Cell>
 								</Subscribe>
 							{/each}
@@ -133,15 +135,15 @@
 			variant="outline"
 			size="sm"
 			on:click={() => ($pageIndex = $pageIndex - 1)}
-			disabled={!$hasPreviousPage}>Previous
-		</Button
-		>
+			disabled={!$hasPreviousPage}
+			>Previous
+		</Button>
 		<Button
 			variant="outline"
 			size="sm"
 			disabled={!$hasNextPage}
-			on:click={() => ($pageIndex = $pageIndex + 1)}>Next
-		</Button
-		>
+			on:click={() => ($pageIndex = $pageIndex + 1)}
+			>Next
+		</Button>
 	</div>
 </div>

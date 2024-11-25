@@ -34,7 +34,7 @@
 		</button>
 		<Event event={data.event} />
 		<div class="flex-grow"></div>
-		{#if data.event?.status === "UNPUBLISHED"}
+		{#if data.event?.status === 'UNPUBLISHED'}
 			<form action={`/admin/events/${$page.params.id}/?/publishEvent`} method="POST">
 				<Button type="submit">Publish</Button>
 			</form>
@@ -44,7 +44,7 @@
 	<div class="mt-12">
 		<LinkTabs {tabs} {activeTab} />
 	</div>
-	{#if $navigating }
+	{#if $navigating}
 		{@const fromInfo = getEventInfo($navigating?.from?.url)}
 		{@const toInfo = getEventInfo($navigating?.to?.url)}
 		{#if fromInfo && toInfo && fromInfo.eventId === toInfo.eventId && fromInfo.page !== toInfo.page}

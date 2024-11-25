@@ -2,11 +2,7 @@
 	import { _ } from '@services';
 	import { goto } from '$app/navigation';
 	import toast from 'svelte-french-toast';
-	import {
-		BillingAddressCard,
-		Input,
-		Modal
-	} from '$lib/@svelte/components';
+	import { BillingAddressCard, Input, Modal } from '$lib/@svelte/components';
 	import { FilledCheckIcon } from '$lib/@svelte/icons';
 	import CrossIcon from '$lib/@svelte/icons/CrossIcon.svelte';
 	import { Button } from '@/components/ui/button';
@@ -102,7 +98,9 @@
 				>{$_('user-pages.accounts.addBillingAddress')}</Button
 			>
 			<div class=" flex justify-between items-center">
-				<Button variant="secondary" on:click={() => goto('/dashboard')} class=" mr-8">{$_('common.cancel')}</Button>
+				<Button variant="secondary" on:click={() => goto('/dashboard')} class=" mr-8"
+					>{$_('common.cancel')}</Button
+				>
 				<Button variant="gradient" on:click={() => goto('/dashboard')}>{$_('common.save')}</Button>
 			</div>
 		</div>

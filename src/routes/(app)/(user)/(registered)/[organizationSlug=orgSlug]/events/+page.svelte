@@ -9,7 +9,7 @@
 	export let data: PageData;
 	let events = data.events ?? [];
 
-	let cities = [...new Set(events.map(item => item.projectHSG))];
+	let cities = [...new Set(events.map((item) => item.projectHSG))];
 	let checkedCities: string[] = cities;
 
 	function addItem(city: string) {
@@ -33,12 +33,18 @@
 			<Label
 				class=" mr-2 inline-flex items-center px-3 py-3 rounded-md border border-solid border-stone-300"
 			>
-				<Checkbox id="terms" class="mr-2" {checked} onCheckedChange={(v) => {
-                if (v) {
-                  addItem(city);
-                } else {
-                  removeItem(city);
-                }}} />
+				<Checkbox
+					id="terms"
+					class="mr-2"
+					{checked}
+					onCheckedChange={(v) => {
+						if (v) {
+							addItem(city);
+						} else {
+							removeItem(city);
+						}
+					}}
+				/>
 				{city}
 			</Label>
 		{/each}
@@ -54,7 +60,6 @@
 						href={`/${$currentOrganizationSlugStore}/events/${id}`}
 					/>
 				{/if}
-
 			{/each}
 		</div>
 	</section>

@@ -2,10 +2,7 @@
 	import type { PageServerData } from './$types';
 	import { _ } from '@services';
 	import relativeTime from 'dayjs/plugin/relativeTime';
-	import {
-		NoDataFound,
-		Modal
-	} from '$lib/@svelte/components';
+	import { NoDataFound, Modal } from '$lib/@svelte/components';
 	import Select from '$lib/@svelte/components/Select/Select.svelte';
 	import toast from 'svelte-french-toast';
 	import dayjs from 'dayjs';
@@ -41,7 +38,7 @@
 	</div>
 	<footer class=" flex items-center justify-end">
 		<Button variant="gradient" class="!py-1.5" on:click={handleUpdateStatus}
-		>{$_('common.update')}</Button
+			>{$_('common.update')}</Button
 		>
 	</footer>
 </Modal>
@@ -57,8 +54,16 @@
 		</section>
 	{:else}
 		<section class=" mt-10">
-			<DataTable data={data.eventRegistrations} />
+			<DataTable
+				addons={data.addons}
+				addonPackages={data.addonPackages}
+				status={data.status}
+				packages={data.packages}
+				data={data.eventRegistrations}
+				confirmForm={data.confirmForm}
+				rejectForm={data.rejectForm}
+			/>
 		</section>
 	{/if}
-	<SuperDebug data={data.eventRegistrations} />
 </section>
+<SuperDebug {data} />

@@ -6,7 +6,6 @@ const OrgMemberResponseSchema = v.object({
 	contactPersonName: v.string(),
 	membershipType: v.string(),
 	email: v.string()
-
 });
 
 export const GetOrgMembersResponseSchema = v.object({

@@ -16,7 +16,8 @@
 
 <Label for={field}>
 	{label || field}
-	{#if $constraints?.required} <span class="text-pink-500">*</span>{/if}
+	{#if $constraints?.required}
+		<span class="text-pink-500">*</span>{/if}
 	<br />
 	<Input
 		name={field}
@@ -24,6 +25,7 @@
 		aria-invalid={$errors ? 'true' : undefined}
 		bind:value={$value}
 		{...$constraints}
-		{...$$restProps} />
+		{...$$restProps}
+	/>
 </Label>
 {#if $errors}<span class="invalid">{$errors}</span>{/if}

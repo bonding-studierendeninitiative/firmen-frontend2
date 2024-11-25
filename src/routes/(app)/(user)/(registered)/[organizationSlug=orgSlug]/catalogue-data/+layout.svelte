@@ -4,10 +4,14 @@
 	import { page } from '$app/stores';
 	import { currentOrganizationSlugStore } from '@/stores/currentOrganizationSlugStore';
 	import { navigating } from '$app/stores';
-	import {fade} from 'svelte/transition';
+	import { fade } from 'svelte/transition';
 
 	$: activeUrl = $page.url.pathname;
-	$: activeTab = activeUrl?.includes('/catalogue-data/adverts') ? 2 : activeUrl?.includes('/catalogue-data/logos') ? 1 : 0;
+	$: activeTab = activeUrl?.includes('/catalogue-data/adverts')
+		? 2
+		: activeUrl?.includes('/catalogue-data/logos')
+			? 1
+			: 0;
 	$: tabs = [
 		{
 			name: 'catalogue-data-portraits',
@@ -20,8 +24,8 @@
 		{
 			name: 'catalogue-data-adverts',
 			href: `/${$currentOrganizationSlugStore}/catalogue-data/adverts`
-		},
-	]
+		}
+	];
 </script>
 
 <div class="w-full h-full flex flex-col justify-start items-stretch min-h-max">
@@ -31,7 +35,7 @@
 		<LinkTabs {tabs} {activeTab} />
 	</div>
 	<section class="flex-grow mt-6">
-		{#if $navigating?.to?.url.pathname.includes("/catalogue-data/")}
+		{#if $navigating?.to?.url.pathname.includes('/catalogue-data/')}
 			<div class="grid justify-center items-center h-full text-orange-400">
 				<Spinner color="red" />
 			</div>

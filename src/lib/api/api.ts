@@ -5,7 +5,7 @@ interface ApiParams {
 	image?: FormDataEntryValue | null;
 }
 
-import {PUBLIC_BACKEND_HOST} from "$env/static/public"
+import { PUBLIC_BACKEND_HOST } from '$env/static/public';
 
 type GetParams = Omit<ApiParams, 'data'>;
 

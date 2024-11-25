@@ -9,15 +9,12 @@
 	import { Badge } from '@/components/ui/badge';
 
 	export let open: boolean = false;
-	export let buyOptions: { label: string, value: string, active: boolean }[];
+	export let buyOptions: { label: string; value: string; active: boolean }[];
 	export let onSelect: (value: string) => void;
 	export let value = '';
 	export let isDialogOpen = false;
 
-
-	$: selectedValue =
-		buyOptions.find((f) => f.value === value)?.label ??
-		'Select a framework...';
+	$: selectedValue = buyOptions.find((f) => f.value === value)?.label ?? 'Select a framework...';
 
 	// We want to refocus the trigger button when the user selects
 	// an item from the list so users can continue navigating the
@@ -28,7 +25,6 @@
 			document.getElementById(triggerId)?.focus();
 		});
 	}
-
 </script>
 
 <Popover.Root bind:open let:ids>
@@ -55,17 +51,12 @@
 							class="flex"
 							value={buyOption.value}
 							onSelect={(currentValue) => {
-              value = currentValue;
-              closeAndFocusTrigger(ids.trigger);
-							onSelect(value);
-            }}
+								value = currentValue;
+								closeAndFocusTrigger(ids.trigger);
+								onSelect(value);
+							}}
 						>
-							<Check
-								class={cn(
-                "mr-2 h-4 w-4",
-                value !== buyOption.value && "text-transparent"
-              )}
-							/>
+							<Check class={cn('mr-2 h-4 w-4', value !== buyOption.value && 'text-transparent')} />
 							<span class="flex-grow">{buyOption.label}</span>
 							{#if buyOption.active}
 								<Badge variant="outline">aktiv</Badge>
@@ -77,10 +68,12 @@
 			<Command.Separator />
 			<Command.List>
 				<Command.Group>
-					<Command.Item onSelect={() => {
-						open = false;
-						isDialogOpen = true;
-					}}>
+					<Command.Item
+						onSelect={() => {
+							open = false;
+							isDialogOpen = true;
+						}}
+					>
 						<PlusCircle class="mr-2 h-4 w-4" />
 						Create a new buy option&hellip;
 					</Command.Item>
@@ -89,4 +82,3 @@
 		</Command.Root>
 	</Popover.Content>
 </Popover.Root>
-

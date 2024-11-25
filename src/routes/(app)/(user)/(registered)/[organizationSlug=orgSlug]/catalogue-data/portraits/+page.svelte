@@ -6,9 +6,7 @@
 	import { goto } from '$app/navigation';
 	import { currentOrganizationSlugStore } from '@/stores/currentOrganizationSlugStore';
 	import dayjs from 'dayjs';
-	import type {
-		PageData
-	} from './$types';
+	import type { PageData } from './$types';
 	import { AddPortrait } from '@/@svelte/modules/AddPortrait';
 	import { groupBy } from '@/utils/array';
 	import relativeTime from 'dayjs/plugin/relativeTime';
@@ -25,7 +23,10 @@
 	const colors = ['#EA580C', '#EAB308', '#B91C1C', '#15803D', '#155E75', '#9D174D'];
 
 	$: portraits = data.portraitTemplates || [];
-	$: groupedPortraits = groupBy(portraits, (portrait) => dayjs(portrait.lastModifiedAt).get('year') ?? '2024-01-01');
+	$: groupedPortraits = groupBy(
+		portraits,
+		(portrait) => dayjs(portrait.lastModifiedAt).get('year') ?? '2024-01-01'
+	);
 	$: page = data.portraitTemplatePage || 0;
 	$: totalPages = data.portraitTemplatePageCount || 0;
 	$: pages = new Array(totalPages || 0).fill(0).map((_, index) => ({
@@ -79,7 +80,9 @@
 									<SimpleDocumentIcon />
 								</div>
 								<div class=" flex flex-col">
-									<h3 class=" text-balance text-base font-extrabold text-stone-800">{portrait.displayName}</h3>
+									<h3 class=" text-balance text-base font-extrabold text-stone-800">
+										{portrait.displayName}
+									</h3>
 									<h4 class=" text-sm font-normal text-stone-800">
 										{$_('user-pages.portraits.portrait')} # {index + 1}
 									</h4>

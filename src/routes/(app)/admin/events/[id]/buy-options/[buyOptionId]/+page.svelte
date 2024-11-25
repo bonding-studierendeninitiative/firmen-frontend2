@@ -5,8 +5,8 @@
 	import { CreateAddonPackage } from '@/@svelte/modules/CreateAddonPackage';
 
 	export let data: PageServerData;
-
 </script>
+
 <div class="flex flex-col gap-6 justify-center @container">
 	<EditBuyOptions form={data.updateForm} />
 

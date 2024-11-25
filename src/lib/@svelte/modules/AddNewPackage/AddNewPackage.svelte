@@ -1,12 +1,6 @@
 <script lang="ts">
 	import { _ } from '@services';
-	import {
-		Drawer,
-		IconInput,
-		Input,
-		Select,
-		Textarea
-	} from '$lib/@svelte/components';
+	import { Drawer, IconInput, Input, Select, Textarea } from '$lib/@svelte/components';
 	import { addPackageSchema } from '@schema';
 	import type { PackageFieldTypes } from '@schema';
 	import { formatZodErrors } from '$lib/utils/formatZodErrors';

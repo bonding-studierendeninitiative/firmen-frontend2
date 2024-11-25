@@ -3,44 +3,45 @@ import * as v from 'valibot';
 import { API } from '@api';
 import { error } from '@sveltejs/kit';
 import { contactPersonDetailsStore } from '@/stores/contactPersonStore';
-import { CreateEventRegistrationResponse } from '@/services/eventRegistrations';
+import { t } from '@/utils/tuple';
 
 export const getContactPersonDetails = async ({ accessToken }: { accessToken: string }) => {
-	try {
-		const response = await API.get({
+	const [e, response] = await t(
+		API.get({
 			route: '/contact-person/my-details',
 			token: accessToken
-		});
+		})
+	);
 
-		if (response.status === 400) {
-			error(400, 'Bad Request');
-		}
-
-		if (response.status === 401) {
-			error(401, 'Unauthorized');
-		}
-
-		if (response.status === 404) {
-			error(404, 'Contact Person not found');
-		}
-
-		if (response.status === 412) {
-			return undefined;
-		}
-
-		if (response.status === 422) {
-			error(404, 'Contact Person not found');
-		}
-
-		const data = await response.json();
-		const details = v.parse(ContactPersonDetailsSchema, data);
-
-		contactPersonDetailsStore.set(details);
-		return details;
-	} catch (e) {
-		// @ts-expect-error the error likely has a message
-		error(e.status || 500, e.stack);
+	if (e) {
+		error(500, e.stack || 'API error');
 	}
+
+	if (response.status === 400) {
+		error(400, 'Bad Request');
+	}
+
+	if (response.status === 401) {
+		error(401, 'Unauthorized');
+	}
+
+	if (response.status === 404) {
+		error(404, 'Contact Person not found');
+	}
+
+	if (response.status === 412) {
+		return undefined;
+	}
+
+	if (response.status === 422) {
+		error(404, 'Contact Person not found');
+	}
+
+	const data = await response.json();
+	const details = v.parse(ContactPersonDetailsSchema, data);
+
+	contactPersonDetailsStore.set(details);
+	return details;
 };
 export const registerContactPerson = async ({
 	accessToken,

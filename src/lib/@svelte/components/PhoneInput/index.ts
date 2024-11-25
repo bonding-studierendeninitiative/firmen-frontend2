@@ -1,1 +1,1 @@
-export {default as PhoneInput} from "./PhoneInput.svelte"
+export { default as PhoneInput } from './PhoneInput.svelte';

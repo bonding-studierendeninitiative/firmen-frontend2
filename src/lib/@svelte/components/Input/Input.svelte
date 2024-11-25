@@ -23,7 +23,8 @@
 
 <div>
 	{#if label}
-		<Label class="block mb-1.5 font-medium text-stone-800" for={name}>{label}
+		<Label class="block mb-1.5 font-medium text-stone-800" for={name}
+			>{label}
 			{#if required}
 				<span class="text-pink-500">*</span>
 			{/if}
@@ -59,20 +60,20 @@
 							showPassword = false;
 							type = 'password';
 							isToggled = true;
-						}}>
-						<CrossEyeIcon />
-					</button
+						}}
 					>
+						<CrossEyeIcon />
+					</button>
 				{:else}
 					<button
 						on:click={() => {
 							showPassword = true;
 							type = 'text';
 							isToggled = true;
-						}}>
-						<EyeIcon />
-					</button
+						}}
 					>
+						<EyeIcon />
+					</button>
 				{/if}
 			</div>
 		{/if}

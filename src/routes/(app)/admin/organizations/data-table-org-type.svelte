@@ -12,8 +12,7 @@
 	let open = false;
 	export let value = '';
 
-	$: selectedValue =
-		orgTypes.find((f) => f.value === value)?.label ?? 'Select a org type...';
+	$: selectedValue = orgTypes.find((f) => f.value === value)?.label ?? 'Select a org type...';
 </script>
 
 <DropdownMenu.Root bind:open closeOnItemClick={false}>
@@ -32,15 +31,21 @@
 	<DropdownMenu.Content class="w-[300px]">
 		<DropdownMenu.Label>Organization types</DropdownMenu.Label>
 		<DropdownMenu.Separator />
-		<DropdownMenu.CheckboxItem onCheckedChange={(a) => {if (a) {
-			orgTypes.forEach((_type) => _type.checked = false)
-		}}}>All types
+		<DropdownMenu.CheckboxItem
+			onCheckedChange={(a) => {
+				if (a) {
+					orgTypes.forEach((_type) => (_type.checked = false));
+				}
+			}}
+			>All types
 		</DropdownMenu.CheckboxItem>
 		<DropdownMenu.Separator />
 		{#each orgTypes as _type}
-			<DropdownMenu.CheckboxItem bind:checked={_type.checked}>{_type.label}</DropdownMenu.CheckboxItem>
+			<DropdownMenu.CheckboxItem bind:checked={_type.checked}
+				>{_type.label}</DropdownMenu.CheckboxItem
+			>
 		{/each}
 		<DropdownMenu.Separator />
-			<Button variant="ghost">Close</Button>
+		<Button variant="ghost">Close</Button>
 	</DropdownMenu.Content>
 </DropdownMenu.Root>

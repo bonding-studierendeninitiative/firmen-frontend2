@@ -1,3 +1,1 @@
-export { default as AddonList } from './Badge.svelte';
-
-
+export { default as AddonList } from './AddonList.svelte';

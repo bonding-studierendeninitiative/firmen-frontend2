@@ -435,17 +435,23 @@
 		}
 	},
 	"admin-pages": {
-		"companies": {
-			"allCompanies": "All Companies",
-			"companyDetails": "Company Details",
-			"company": "Company",
-			"contactPerson": "Contact Person",
-			"address": "Address",
-			"city": "City",
-			"federalState": "Federal State",
-			"number": "Number",
-			"emailAddress": "Email Address"
-		},
+        "organizations": {
+          "allOrganizations": "All Organizations",
+          "organizationDetails": "Organization Details",
+          "name": "Name",
+          "contactPerson": "Contact Person",
+          "contactPeople": "Contact People",
+          "address": "Address",
+          "city": "City",
+          "federalState": "Federal State",
+          "organizationPhone": "Phone Number",
+          "organizationEmail": "Email Address",
+          "members": {
+            "owner": "Owner",
+            "member": "Member",
+            "guest": "Guest"
+          }
+        },
 		"addons": {
 			"addAddons": "Add Addons",
 			"newAddons": "New Addons",

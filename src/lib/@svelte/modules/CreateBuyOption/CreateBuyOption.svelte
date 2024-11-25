@@ -58,13 +58,14 @@
 	<Dialog.Content>
 		<Dialog.Header>
 			<Dialog.Title>Buy Option</Dialog.Title>
-			<Dialog.Description>
-				Enter the buy option details
-			</Dialog.Description>
+			<Dialog.Description>Enter the buy option details</Dialog.Description>
 		</Dialog.Header>
-		<form class="flex flex-col gap-y-4" method="post"
-					action={`/admin/events/${$page.params.id}/buy-options/?/createBuyOption`} use:enhance>
-
+		<form
+			class="flex flex-col gap-y-4"
+			method="post"
+			action={`/admin/events/${$page.params.id}/buy-options/?/createBuyOption`}
+			use:enhance
+		>
 			<Field form={superform} name="name">
 				<Control let:attrs>
 					<Label>Buy option name</Label>
@@ -88,7 +89,8 @@
 					<div class="flex flex-row items-center justify-between">
 						<Label>Package count</Label>
 						<div
-							class="flex items-center border rounded-md overflow-hidden focus-within:outline-transparent focus-within:ring-1 focus-within:ring-gray-900 dark:focus-within:ring-gray-50 ">
+							class="flex items-center border rounded-md overflow-hidden focus-within:outline-transparent focus-within:ring-1 focus-within:ring-gray-900 dark:focus-within:ring-gray-50"
+						>
 							<Button
 								variant="ghost"
 								size="icon"
@@ -101,10 +103,9 @@
 							<Input
 								type="number"
 								class="px-3 py-2 text-center w-10 border-none focus-visible:outline-transparent focus-visible:ring-transparent"
-								{...attrs} bind:value={$formData.packageCount}
-							>
-
-							</Input>
+								{...attrs}
+								bind:value={$formData.packageCount}
+							></Input>
 							<Button
 								variant="ghost"
 								size="icon"
@@ -126,7 +127,8 @@
 					<div class="flex flex-row items-center justify-between">
 						<Label>Service count</Label>
 						<div
-							class="flex items-center border rounded-md overflow-hidden focus-within:outline-transparent focus-within:ring-1 focus-within:ring-gray-900 dark:focus-within:ring-gray-50 ">
+							class="flex items-center border rounded-md overflow-hidden focus-within:outline-transparent focus-within:ring-1 focus-within:ring-gray-900 dark:focus-within:ring-gray-50"
+						>
 							<Button
 								variant="ghost"
 								size="icon"
@@ -139,10 +141,9 @@
 							<Input
 								type="number"
 								class="px-3 py-2 text-center w-10 border-none focus-visible:outline-transparent focus-visible:ring-transparent"
-								{...attrs} bind:value={$formData.serviceCount}
-							>
-
-							</Input>
+								{...attrs}
+								bind:value={$formData.serviceCount}
+							></Input>
 							<Button
 								variant="ghost"
 								size="icon"

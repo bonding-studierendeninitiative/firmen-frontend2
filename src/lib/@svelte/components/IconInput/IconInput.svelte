@@ -18,14 +18,14 @@
 	export let name: string = '';
 </script>
 
-<div class={cn("flex-grow", $$restProps.disabled && "opacity-50")}>
+<div class={cn('flex-grow', $$restProps.disabled && 'opacity-50')}>
 	{#if label}
-		<label class="block mb-1.5 font-medium marker:text-sm text-stone-800" for={label}>{label}
+		<label class="block mb-1.5 font-medium marker:text-sm text-stone-800" for={label}
+			>{label}
 			{#if required}
 				<span class="text-pink-500">*</span>
 			{/if}
-		</label
-		>
+		</label>
 	{/if}
 	<div class=" w-full">
 		<div class="relative">

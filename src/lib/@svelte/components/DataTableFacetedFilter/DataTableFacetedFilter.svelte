@@ -1,17 +1,22 @@
 <script lang="ts">
-	import PlusCircled from "svelte-radix/PlusCircled.svelte";
-	import Check from "svelte-radix/Check.svelte";
+	import PlusCircled from 'svelte-radix/PlusCircled.svelte';
+	import Check from 'svelte-radix/Check.svelte';
 	import { Button } from '@/components/ui/button';
 	import * as Popover from '@/components/ui/popover';
 	import * as Command from '@/components/ui/command';
 	import { Separator } from '@/components/ui/separator';
 	import { Badge } from '@/components/ui/badge';
 	import { cn } from '@/utils';
-	import type { orgTypes } from '@constant/orgTypes';
+	import type { Component } from 'svelte-eslint-parser/lib/parser/svelte-ast-types-for-v5';
 
+	type Options = {
+		label: string;
+		value: string;
+		icon?: Component;
+	};
 	export let filterValues: string[] = [];
 	export let title: string;
-	export let options = [] as typeof orgTypes;
+	export let options = [] as Options[];
 	export let counts: { [index: string]: number } = {};
 
 	let open = false;
@@ -68,22 +73,22 @@
 						>
 							<div
 								class={cn(
-									"border-primary mr-2 flex h-4 w-4 items-center justify-center rounded-sm border",
+									'border-primary mr-2 flex h-4 w-4 items-center justify-center rounded-sm border',
 									filterValues.includes(option.value)
-										? "bg-primary text-primary-foreground"
-										: "opacity-50 [&_svg]:invisible"
+										? 'bg-primary text-primary-foreground'
+										: 'opacity-50 [&_svg]:invisible'
 								)}
 							>
-								<Check className={cn("h-4 w-4")} />
+								<Check className={cn('h-4 w-4')} />
 							</div>
-							<Icon class="text-muted-foreground mr-2 h-4 w-4" />
+							{#if Icon}
+								<Icon class="text-muted-foreground mr-2 h-4 w-4" />
+							{/if}
 							<span>
 								{option.label}
 							</span>
 							{#if counts[option.value]}
-								<span
-									class="ml-auto flex h-4 w-4 items-center justify-center font-mono text-xs"
-								>
+								<span class="ml-auto flex h-4 w-4 items-center justify-center font-mono text-xs">
 									{counts[option.value]}
 								</span>
 							{/if}

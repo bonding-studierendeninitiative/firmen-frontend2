@@ -12,12 +12,10 @@
 	} from '@/@svelte/icons';
 
 	import * as Table from '@/components/ui/table';
-	import type {
-		PageData
-	} from './$types';
+	import type { PageData } from './$types';
 	import dayjs from 'dayjs';
-	import AddonList from '@/@svelte/components/AddonList/AddonList.svelte';
 	import { number } from '@services/i18n';
+	import { AddonList } from '@/@svelte/components';
 
 	export let data: PageData;
 	let { buyOption, event, addons }: PageData = data;
@@ -26,6 +24,11 @@
 
 
 	$: selectedAddonsURL = data.selectedAddons.length == 0 ? '' : '&selectedAddon=' + data.selectedAddons.join('&selectedAddon=');
+	/*$: searchParams = new URLSearchParams([
+		...selectedAddonPackages.map((addonPackage) => ['selectedAddonPackage', addonPackage]),
+		...selectedAddons.map((addon) => ['selectedAddon', addon]),
+		...(selectedPackageID ? [['selectedPackage', selectedPackageID]] : [])
+	]);*/
 </script>
 
 <div class="mb-10">
@@ -34,15 +37,14 @@
 			<Breadcrumb.Item>
 				<Breadcrumb.Link href={`/${$page.params.organizationSlug}/events`}>
 					{$_('user-pages.events.events')}
-				</Breadcrumb.Link>>
+				</Breadcrumb.Link>
+				>
 			</Breadcrumb.Item>
 			<Breadcrumb.Item>
 				<Breadcrumb.Page>{event.name}</Breadcrumb.Page>
 			</Breadcrumb.Item>
 		</Breadcrumb.List>
 	</Breadcrumb.Root>
-
-
 </div>
 <div class="max-w-screen-lg mx-auto
 ">
@@ -53,11 +55,15 @@
 				<div class=" flex mt-2">
 					<div class=" flex items-center mr-2">
 						<CalenderIcon />
-						{#if event.dateTo && (dayjs(event.dateFrom) !== dayjs(event.dateTo))}
-							<p class=" ml-2 text-sm text-stone-800 font-medium">{dayjs(event.dateFrom).format('DD.MM.YYYY')}
-								- {dayjs(event.dateTo).format('DD.MM.YYYY')}</p>
-						{:else }
-							<p class=" ml-2 text-sm text-stone-800 font-medium">{dayjs(event.dateFrom).format('DD.MM.YYYY')}</p>
+						{#if event.dateTo && dayjs(event.dateFrom) !== dayjs(event.dateTo)}
+							<p class=" ml-2 text-sm text-stone-800 font-medium">
+								{dayjs(event.dateFrom).format('DD.MM.YYYY')}
+								- {dayjs(event.dateTo).format('DD.MM.YYYY')}
+							</p>
+						{:else}
+							<p class=" ml-2 text-sm text-stone-800 font-medium">
+								{dayjs(event.dateFrom).format('DD.MM.YYYY')}
+							</p>
 						{/if}
 					</div>
 					<div class=" flex items-center">
@@ -89,16 +95,18 @@
 		<Table.Root class=" w-full mt-6 rounded-lg">
 			<Table.Header>
 				<Table.Row>
-					<Table.Cell class={`w-1/${buyOption.packages.length +1}`}></Table.Cell>
+					<Table.Cell class={`w-1/${buyOption.packages.length + 1}`}></Table.Cell>
 					{#each buyOption.packages as pkg}
-						<Table.Cell class={`w-1/${buyOption.packages.length +1} p-3`}>
+						<Table.Cell class={`w-1/${buyOption.packages.length + 1} p-3`}>
 							<div>
 								<p class=" text-brand text-sm font-medium">{pkg.name}</p>
-								<p class=" font-extrabold text-2xl mt-2">{$number((pkg.price ?? 0) / 100, {
-									style: "currency",
-									currency: "EUR",
-									currencyDisplay: "code"
-								})}</p>
+								<p class=" font-extrabold text-2xl mt-2">
+									{$number((pkg.price ?? 0) / 100, {
+										style: 'currency',
+										currency: 'EUR',
+										currencyDisplay: 'code'
+									})}
+								</p>
 							</div>
 						</Table.Cell>
 					{/each}
@@ -111,25 +119,28 @@
 						{#each buyOption.packages as pkg}
 							<Table.Cell
 								class={data.selectedPackageID === pkg.id ? "p-3 border border-stone-200 bg-slate-300" : "p-3 border border-stone-200"}>
+								class={selectedPackageID === pkg.id
+									? 'p-3 border border-stone-200 bg-slate-300'
+									: 'p-3 border border-stone-200'}
+							>
 								<div class="flex justify-center items-center">
-									{#if service.valueType === "BOOLEAN"}
+									{#if service.valueType === 'BOOLEAN'}
 										{#if pkg.benefits[index].booleanValue}
 											<OutlinedCheckIcon />
 										{:else}
 											<OutlinedCrossIcon />
 										{/if}
 									{/if}
-									{#if service.valueType === "INTEGER"}
+									{#if service.valueType === 'INTEGER'}
 										{pkg.benefits[index].numericValue}
 									{/if}
 
-									{#if service.valueType === "STRING"}
+									{#if service.valueType === 'STRING'}
 										{pkg.benefits[index].stringValue}
 									{/if}
 								</div>
 							</Table.Cell>
 						{/each}
-
 					</Table.Row>
 				{/each}
 				<Table.Row>
@@ -144,20 +155,27 @@
 							</div>
 						</Table.Cell>
 					{/each}
-
 				</Table.Row>
 			</Table.Body>
 		</Table.Root>
 	</section>
 
-	<AddonList addons={addons} bind:selectedAddons={data.selectedAddons} />
+	<section>
+		<h4 class=" font-extrabold text-sm text-stone-900">
+			{$_('user-pages.events.additionalMarketingServices')}
+		</h4>
+		<p class=" mt-2 text-stone-500 font-normal text-sm">
+			{$_('user-pages.events.additionalMarketingServicesDescription')}
+		</p>
+		<AddonList addons={addons} bind:selectedAddons={data.selectedAddons} />
+	</section>
 	<footer class=" flex mt-6 justify-end items-center">
 		{#if data.selectedPackageID !== ""}
 			<a aria-disabled="true"
 				 href={`${event.id}/event-registration?selectedPackage=${data.selectedPackageID + selectedAddonsURL}`}>
 				<Button>{$_('common.continue')}</Button>
 			</a>
-		{:else }
+		{:else}
 			<Button disabled={true}>{$_('common.continue')}</Button>
 		{/if}
 	</footer>

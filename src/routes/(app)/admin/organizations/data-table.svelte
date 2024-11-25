@@ -1,26 +1,22 @@
 <script lang="ts">
 	import { createTable, Subscribe, Render, createRender } from 'svelte-headless-table';
 	import { _ } from '@services/i18n';
-	import {
-		addColumnFilters,
-		addSelectedRows,
-		addTableFilter
-	} from 'svelte-headless-table/plugins';
+	import { addColumnFilters, addSelectedRows, addTableFilter } from 'svelte-headless-table/plugins';
 	import dayjs from 'dayjs';
 	import relativeTime from 'dayjs/plugin/relativeTime';
 	import * as Table from '@/components/ui/table';
 	import { get, readable } from 'svelte/store';
-	import { SearchInput } from '@/@svelte/components';
+	import { DataTableFacetedFilter, SearchInput } from '@/@svelte/components';
 	import DataTableActions from './data-table-actions.svelte';
 	import DataTableCheckbox from './data-table-checkbox.svelte';
-	import DataTableFacetedFilter from './data-table-faceted-filter.svelte';
 	import type { GetOrgDetailsResponse } from '@schema';
 	import { orgTypes } from '@constant/orgTypes';
+	import { goto } from '$app/navigation';
 
 	export let data: GetOrgDetailsResponse[] = [];
 	const table = createTable(readable(data), {
 		filter: addTableFilter({
-			fn: ({ value, filterValue }) => value.toLowerCase().includes(filterValue.toLowerCase()),
+			fn: ({ value, filterValue }) => value.toLowerCase().includes(filterValue.toLowerCase())
 		}),
 		typeFilter: addColumnFilters(),
 		select: addSelectedRows()
@@ -94,7 +90,7 @@
 				typeFilter: {
 					fn: ({ filterValue, value }) => {
 						if (filterValue.length === 0) return true;
-						if (!Array.isArray(filterValue) || typeof value !== "string") return true;
+						if (!Array.isArray(filterValue) || typeof value !== 'string') return true;
 						return filterValue.some((filter) => {
 							return value.includes(filter);
 						});
@@ -102,12 +98,12 @@
 					initialFilterValue: [],
 					render: ({ filterValue }) => {
 						return get(filterValue);
-					},
+					}
 				}
 			}
 		}),
 		table.column({
-			accessor: ({ id }) => id,
+			accessor: ({ slug }) => slug,
 			header: '',
 			cell: ({ value }) => {
 				return createRender(DataTableActions, { id: value });
@@ -119,6 +115,7 @@
 			}
 		})
 	]);
+
 
 	const { headerRows, pageRows, tableAttrs, tableBodyAttrs, pluginStates } =
 		table.createViewModel(columns);

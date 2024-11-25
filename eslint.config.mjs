@@ -63,7 +63,7 @@ export default [
 		}
 	},
 	{
-		files: ['**/*.svelte'],
+		files: ['**/*.svelte', '**/*.json'],
 
 		languageOptions: {
 			parser: parser,

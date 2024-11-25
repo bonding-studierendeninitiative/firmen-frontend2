@@ -8,7 +8,6 @@ import {
 	AUTH0_DOMAIN
 } from '$env/static/private';
 
-
 export const { handle } = SvelteKitAuth({
 	trustHost: true,
 	providers: [
@@ -46,13 +45,13 @@ export const { handle } = SvelteKitAuth({
 	],
 	callbacks: {
 		async jwt({ token, account, profile }) {
-			if (account) {
+			if (account && account.access_token) {
 				token.accessToken = account.access_token;
 				const tokenPayload = JSON.parse(atob(account.access_token?.split('.')[1]));
 				token.role = tokenPayload['https://dev-bonding-firmen/roles'][0] || 'user';
 				token.externalUserId = account.providerAccountId;
 				token.expires_at = account.expires_at;
-			} else if (token?.expires_at < Date.now() / 1000) {
+			} else if (Number(token?.expires_at || 0) < Date.now() / 1000) {
 				throw new Error('Token expired');
 			}
 			if (profile) {

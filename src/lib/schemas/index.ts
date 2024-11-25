@@ -12,4 +12,6 @@ export * from './organizationDetails';
 export * from './organizationMembership';
 export * from './organizationMembers';
 export * from './organizationInvite';
-export * from "./contactPersonSchema"
+export * from './contactPersonSchema';
+export * from './eventRegistrationSchema';
+export * from './portraitTemplates';

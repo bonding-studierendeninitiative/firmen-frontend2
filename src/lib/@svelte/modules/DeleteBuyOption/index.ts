@@ -1,1 +1,1 @@
-export {default as DeleteBuyOption} from './DeleteBuyOption.svelte';
+export { default as DeleteBuyOption } from './DeleteBuyOption.svelte';

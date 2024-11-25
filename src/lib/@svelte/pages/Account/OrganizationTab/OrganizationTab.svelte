@@ -6,7 +6,9 @@
 		type CreateOrgInviteRequest,
 		CreateOrgInviteRequestSchema,
 		GetOrgDetailsResponse,
-		type GetOrgMembersResponse, type SetOrgDetailsRequest, SetOrgDetailsRequestSchema
+		type GetOrgMembersResponse,
+		type SetOrgDetailsRequest,
+		SetOrgDetailsRequestSchema
 	} from '@schema';
 	import { superForm, type SuperValidated } from 'sveltekit-superforms';
 	import { Control, Description, Field, FieldErrors, Label } from '@/components/ui/form';
@@ -31,23 +33,22 @@
 
 	const { form: formData, enhance } = superform;
 </script>
+
 <pre>
 	{JSON.stringify($formData, null, 2)}
 </pre>
 <div>
-	<form action="?/updateOrg" method="post" use:enhance >
+	<form action="?/updateOrg" method="post" use:enhance>
 		<div class=" flex flex-col gap-1">
 			<Field form={superform} name="name">
 				<Control let:attrs>
-					<Label
-					>{$_('user-pages.organizations.createOrganization.labels.organizationName')}</Label
-					>
+					<Label>{$_('user-pages.organizations.createOrganization.labels.organizationName')}</Label>
 					<Input
 						{...attrs}
 						bind:value={$formData.name}
 						placeholder={$_(
-								'user-pages.organizations.createOrganization.placeholders.organizationName'
-							)}
+							'user-pages.organizations.createOrganization.placeholders.organizationName'
+						)}
 					/>
 				</Control>
 				<Description />
@@ -55,14 +56,13 @@
 			</Field>
 			<Field form={superform} name="organizationPhone">
 				<Control let:attrs>
-					<Label
-					>{$_('user-pages.organizations.createOrganization.labels.organizationPhone')}</Label
+					<Label>{$_('user-pages.organizations.createOrganization.labels.organizationPhone')}</Label
 					>
 					<PhoneInput
 						bind:selectedCountry={$formData.organizationAddress.country}
 						searchPlaceholder={$_(
-								'user-pages.organizations.createOrganization.placeholders.phoneCountryCodeSearch'
-							)}
+							'user-pages.organizations.createOrganization.placeholders.phoneCountryCodeSearch'
+						)}
 						bind:value={$formData.organizationPhone}
 						{...attrs}
 					/>
@@ -72,15 +72,14 @@
 			</Field>
 			<Field form={superform} name="organizationEmail">
 				<Control let:attrs>
-					<Label
-					>{$_('user-pages.organizations.createOrganization.labels.organizationEmail')}</Label
+					<Label>{$_('user-pages.organizations.createOrganization.labels.organizationEmail')}</Label
 					>
 					<Input
 						{...attrs}
 						bind:value={$formData.organizationEmail}
 						placeholder={$_(
-								'user-pages.organizations.createOrganization.placeholders.organizationEmail'
-							)}
+							'user-pages.organizations.createOrganization.placeholders.organizationEmail'
+						)}
 					/>
 				</Control>
 				<Description />
@@ -89,14 +88,14 @@
 			<Field form={superform} name="organizationWebsite">
 				<Control let:attrs>
 					<Label
-					>{$_('user-pages.organizations.createOrganization.labels.organizationWebsite')}</Label
+						>{$_('user-pages.organizations.createOrganization.labels.organizationWebsite')}</Label
 					>
 					<Input
 						{...attrs}
 						bind:value={$formData.organizationWebsite}
 						placeholder={$_(
-								'user-pages.organizations.createOrganization.placeholders.organizationWebsite'
-							)}
+							'user-pages.organizations.createOrganization.placeholders.organizationWebsite'
+						)}
 					/>
 				</Control>
 				<Description />
@@ -105,16 +104,16 @@
 			<Field form={superform} name="street">
 				<Control let:attrs>
 					<Label
-					>{$_(
-						'user-pages.organizations.createOrganization.labels.organizationStreetAddress'
-					)}</Label
+						>{$_(
+							'user-pages.organizations.createOrganization.labels.organizationStreetAddress'
+						)}</Label
 					>
 					<Input
 						{...attrs}
 						bind:value={$formData.organizationAddress.street}
 						placeholder={$_(
-								'user-pages.organizations.createOrganization.placeholders.organizationStreetAddress'
-							)}
+							'user-pages.organizations.createOrganization.placeholders.organizationStreetAddress'
+						)}
 					/>
 				</Control>
 				<Description />
@@ -123,16 +122,16 @@
 			<Field form={superform} name="extendedAddress">
 				<Control let:attrs>
 					<Label
-					>{$_(
-						'user-pages.organizations.createOrganization.labels.organizationExtendedAddress'
-					)}</Label
+						>{$_(
+							'user-pages.organizations.createOrganization.labels.organizationExtendedAddress'
+						)}</Label
 					>
 					<Input
 						{...attrs}
 						bind:value={$formData.organizationAddress.extendedAddress}
 						placeholder={$_(
-								'user-pages.organizations.createOrganization.placeholders.organizationExtendedAddress'
-							)}
+							'user-pages.organizations.createOrganization.placeholders.organizationExtendedAddress'
+						)}
 					/>
 				</Control>
 				<Description />
@@ -144,16 +143,16 @@
 						<Field form={superform} name="zipCode">
 							<Control let:attrs>
 								<Label
-								>{$_(
-									'user-pages.organizations.createOrganization.labels.organizationZipCode'
-								)}</Label
+									>{$_(
+										'user-pages.organizations.createOrganization.labels.organizationZipCode'
+									)}</Label
 								>
 								<Input
 									{...attrs}
 									bind:value={$formData.organizationAddress.zipCode}
 									placeholder={$_(
-											'user-pages.organizations.createOrganization.placeholders.organizationZipCode'
-										)}
+										'user-pages.organizations.createOrganization.placeholders.organizationZipCode'
+									)}
 								/>
 							</Control>
 							<Description />
@@ -166,16 +165,16 @@
 						<Field form={superform} name="locality">
 							<Control let:attrs>
 								<Label
-								>{$_(
-									'user-pages.organizations.createOrganization.labels.organizationLocality'
-								)}</Label
+									>{$_(
+										'user-pages.organizations.createOrganization.labels.organizationLocality'
+									)}</Label
 								>
 								<Input
 									{...attrs}
 									bind:value={$formData.organizationAddress.locality}
 									placeholder={$_(
-											'user-pages.organizations.createOrganization.placeholders.organizationLocality'
-										)}
+										'user-pages.organizations.createOrganization.placeholders.organizationLocality'
+									)}
 								/>
 							</Control>
 							<Description />
@@ -184,10 +183,11 @@
 					</div>
 					<footer>
 						<footer class=" flex justify-end items-center w-full">
-							<Button type="submit">{$_('common.save')}</Button
-							>
+							<Button type="submit">{$_('common.save')}</Button>
 						</footer>
 					</footer>
+				</div>
+			</div>
 		</div>
 	</form>
 	<!--

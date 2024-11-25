@@ -1,1 +1,1 @@
-export { default as CompanyDetails } from './CompanyDetails.svelte';
+export { default as OrganizationDetails } from './OrganizationDetails.svelte';

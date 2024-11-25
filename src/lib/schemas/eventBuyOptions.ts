@@ -1,4 +1,5 @@
 import * as v from 'valibot';
+import type { GenericSchema, ObjectSchema } from 'valibot';
 
 export enum ValueType {
 	String = 'STRING',
@@ -115,10 +116,16 @@ export type UpdateBuyOptionsRequest = typeof UpdateBuyOptionsRequestSchema;
 
 export const CreateBuyOptionRequestSchema = v.object({
 	name: v.pipe(
-		v.string(),
+		v.string('Name is required'),
 		v.minLength(3, 'Mindestens 3 Zeichen'),
 		v.maxLength(30, 'Maximal 30 Zeichen')
 	),
+	packageCount: v.optional(v.number(), 0),
+	serviceCount: v.optional(v.number(), 0)
+});
+
+export const SimpleCreateBuyOptionRequestSchema = v.object({
+	name: v.string('Name is required'),
 	packageCount: v.optional(v.number(), 0),
 	serviceCount: v.optional(v.number(), 0)
 });

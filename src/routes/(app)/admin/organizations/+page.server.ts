@@ -1,5 +1,5 @@
 import type { PageServerLoad } from '../../../../../.svelte-kit/types/src/routes/(app)/admin/events/[id]/buy-options/[buyOptionId]/$types';
-import { getOrgs } from '@/services';
+import { getOrganizationMembers, getOrgs } from '@/services';
 
 export const load: PageServerLoad = async ({ parent }) => {
 	const { session } = await parent();

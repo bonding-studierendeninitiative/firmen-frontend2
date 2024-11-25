@@ -54,54 +54,69 @@
 	bind:isOpen
 	heading={$_('user-pages.portraits.portrait')}
 	handleSubmit={() => {
-		console.log("Handle submit was called");
+		console.log('Handle submit was called');
 	}}
 	hasActions={false}
 >
-	<Button variant="secondary" on:click={() => {
-		form.set({
-			industry: disciplines[Math.floor(Math.random()*disciplines.length)].value,
-			title: faker.lorem.sentence(),
-			products: faker.lorem.sentence(),
-			displayName: faker.lorem.sentence(),
-			comment: faker.lorem.sentence(),
-			revenue_germany: faker.number.int({ min: 0, max: 500000 }).toString(),
-			revenue_europe: faker.number.int({ min: 0, max: 1000000 }).toString(),
-			revenue_worldwide: faker.number.int({ min: 0, max: 2000000 }).toString(),
-			contactAddress: faker.location.streetAddress(),
-			contactPersonStudents: faker.person.fullName(),
-			contactPersonGraduates: faker.person.fullName(),
-			locations_worldwide: faker.number.int({ min: 0, max: 10000 }).toString(),
-			locations_europe: faker.number.int({ min: 0, max: 10000 }).toString(),
-			locations_germany: faker.number.int({ min: 0, max: 10000 }).toString(),
-			employees_worldwide: faker.number.int({ min: 0, max: 10000 }).toString(),
-			employees_europe: faker.number.int({ min: 0, max: 10000 }).toString(),
-			employees_germany: faker.number.int({ min: 0, max: 10000 }).toString(),
-			website: faker.internet.domainName(),
-			additionalInformation: faker.lorem.sentence(),
-			offersThesis: faker.datatype.boolean(),
-			entryOptions: faker.lorem.sentence(),
-			desiredDisciplines: faker.lorem.sentence(),
-			graduates: faker.number.int({ min: 0, max: 10000 }).toString(),
-			offersOutOfCountryWork: faker.datatype.boolean(),
-			offersInternships: faker.datatype.boolean()
-		})
-	}}>Generate random data
+	<Button
+		variant="secondary"
+		on:click={() => {
+			form.set({
+				industry: disciplines[Math.floor(Math.random() * disciplines.length)].value,
+				title: faker.lorem.sentence(),
+				products: faker.lorem.sentence(),
+				displayName: faker.lorem.sentence(),
+				comment: faker.lorem.sentence(),
+				revenue_germany: faker.number.int({ min: 0, max: 500000 }).toString(),
+				revenue_europe: faker.number.int({ min: 0, max: 1000000 }).toString(),
+				revenue_worldwide: faker.number.int({ min: 0, max: 2000000 }).toString(),
+				contactAddress: faker.location.streetAddress(),
+				contactPersonStudents: faker.person.fullName(),
+				contactPersonGraduates: faker.person.fullName(),
+				locations_worldwide: faker.number.int({ min: 0, max: 10000 }).toString(),
+				locations_europe: faker.number.int({ min: 0, max: 10000 }).toString(),
+				locations_germany: faker.number.int({ min: 0, max: 10000 }).toString(),
+				employees_worldwide: faker.number.int({ min: 0, max: 10000 }).toString(),
+				employees_europe: faker.number.int({ min: 0, max: 10000 }).toString(),
+				employees_germany: faker.number.int({ min: 0, max: 10000 }).toString(),
+				website: faker.internet.domainName(),
+				additionalInformation: faker.lorem.sentence(),
+				offersThesis: faker.datatype.boolean(),
+				entryOptions: faker.lorem.sentence(),
+				desiredDisciplines: faker.lorem.sentence(),
+				graduates: faker.number.int({ min: 0, max: 10000 }).toString(),
+				offersOutOfCountryWork: faker.datatype.boolean(),
+				offersInternships: faker.datatype.boolean()
+			});
+		}}
+		>Generate random data
 	</Button>
 	<form action="?/createPortrait" method="post" use:enhance>
 		{#if currentStep === 1}
 			<div class="grid grid-cols-1 gap-y-4 w-full">
-				<Input name="displayName" hintText={$_('user-pages.portraits.nameOfPortrait')}
-							 label={$_('user-pages.portraits.nameOfPortrait')} bind:value={$form.displayName}
-							 {...$constraints.displayName} />
+				<Input
+					name="displayName"
+					hintText={$_('user-pages.portraits.nameOfPortrait')}
+					label={$_('user-pages.portraits.nameOfPortrait')}
+					bind:value={$form.displayName}
+					{...$constraints.displayName}
+				/>
 
 				<TextField {superform} field="graduates" label={$_('user-pages.portraits.graduates')} />
 
-				<Textarea name="comment" label={$_('user-pages.portraits.comments')} bind:value={$form.comment}
-									{...$constraints.comment} />
+				<Textarea
+					name="comment"
+					label={$_('user-pages.portraits.comments')}
+					bind:value={$form.comment}
+					{...$constraints.comment}
+				/>
 				<hr />
-				<Input name="title" label={$_('user-pages.portraits.title')} bind:value={$form.title}
-							 {...$constraints.title} />
+				<Input
+					name="title"
+					label={$_('user-pages.portraits.title')}
+					bind:value={$form.title}
+					{...$constraints.title}
+				/>
 				<MultiSelect
 					name="industry"
 					items={disciplines}
@@ -111,9 +126,12 @@
 					errorMessage={$errors.industry?.join('\n')}
 					{...$constraints.industry}
 				/>
-				<Textarea name="products" label={$_('user-pages.portraits.products')} bind:value={$form.products}
-									{...$constraints.products} />
-
+				<Textarea
+					name="products"
+					label={$_('user-pages.portraits.products')}
+					bind:value={$form.products}
+					{...$constraints.products}
+				/>
 
 				<InputWithPrefix
 					size="sm"
@@ -122,18 +140,24 @@
 					bind:value={$form.revenue_germany}
 					{...$constraints.revenue_germany}
 					label={$_('user-pages.portraits.revenue')}
-					prefixText={$_('user-pages.portraits.inland')} />
+					prefixText={$_('user-pages.portraits.inland')}
+				/>
 				<InputWithPrefix
 					size="sm"
 					addonClass="min-w-14"
-					name="revenue_europe" bind:value={$form.revenue_europe} {...$constraints.revenue_europe}
-					prefixText={$_('user-pages.portraits.eu')} />
+					name="revenue_europe"
+					bind:value={$form.revenue_europe}
+					{...$constraints.revenue_europe}
+					prefixText={$_('user-pages.portraits.eu')}
+				/>
 				<InputWithPrefix
 					size="sm"
 					addonClass="min-w-14"
-					name="revenue_worldwide" bind:value={$form.revenue_worldwide} {...$constraints.revenue_worldwide}
-					prefixText={$_('user-pages.portraits.global')} />
-
+					name="revenue_worldwide"
+					bind:value={$form.revenue_worldwide}
+					{...$constraints.revenue_worldwide}
+					prefixText={$_('user-pages.portraits.global')}
+				/>
 
 				<InputWithPrefix
 					size="sm"
@@ -142,17 +166,24 @@
 					bind:value={$form.locations_germany}
 					{...$constraints.locations_germany}
 					label={$_('user-pages.portraits.locations')}
-					prefixText={$_('user-pages.portraits.inland')} />
+					prefixText={$_('user-pages.portraits.inland')}
+				/>
 				<InputWithPrefix
 					size="sm"
 					addonClass="min-w-14"
-					name="locations_europe" bind:value={$form.locations_europe} {...$constraints.locations_europe}
-					prefixText={$_('user-pages.portraits.eu')} />
+					name="locations_europe"
+					bind:value={$form.locations_europe}
+					{...$constraints.locations_europe}
+					prefixText={$_('user-pages.portraits.eu')}
+				/>
 				<InputWithPrefix
 					size="sm"
 					addonClass="min-w-14"
-					name="locations_worldwide" bind:value={$form.locations_worldwide} {...$constraints.locations_worldwide}
-					prefixText={$_('user-pages.portraits.global')} />
+					name="locations_worldwide"
+					bind:value={$form.locations_worldwide}
+					{...$constraints.locations_worldwide}
+					prefixText={$_('user-pages.portraits.global')}
+				/>
 				<InputWithPrefix
 					size="sm"
 					addonClass="min-w-14"
@@ -160,18 +191,24 @@
 					name="employees_germany"
 					bind:value={$form.employees_germany}
 					{...$constraints.employees_germany}
-					label={$_('user-pages.portraits.numberOfEmployees')} />
+					label={$_('user-pages.portraits.numberOfEmployees')}
+				/>
 				<InputWithPrefix
 					size="sm"
 					addonClass="min-w-14"
 					prefixText={$_('user-pages.portraits.eu')}
-					name="employees_europe" bind:value={$form.employees_europe} {...$constraints.employees_europe}
+					name="employees_europe"
+					bind:value={$form.employees_europe}
+					{...$constraints.employees_europe}
 				/>
 				<InputWithPrefix
 					size="sm"
 					addonClass="min-w-14"
 					prefixText={$_('user-pages.portraits.global')}
-					name="employees_worldwide" bind:value={$form.employees_worldwide} {...$constraints.employees_worldwide} />
+					name="employees_worldwide"
+					bind:value={$form.employees_worldwide}
+					{...$constraints.employees_worldwide}
+				/>
 				<hr />
 				<div class=" grid grid-cols-1 gap-2">
 					<Input
@@ -208,21 +245,25 @@
 					{...$constraints.website}
 					label={$_('user-pages.portraits.website')}
 				/>
-				<Textarea name="additionalInformation" bind:value={$form.additionalInformation}
-									{...$constraints.additionalInformation}
-									label={$_('user-pages.portraits.additionalInformation')} />
-
+				<Textarea
+					name="additionalInformation"
+					bind:value={$form.additionalInformation}
+					{...$constraints.additionalInformation}
+					label={$_('user-pages.portraits.additionalInformation')}
+				/>
 
 				<footer class=" mt-10 flex justify-between items-center mb-4">
-					<p class=" text-sm text-stone-500">{$_('user-pages.portraits.lastEdited')}: 27 Dec 2023</p>
+					<p class=" text-sm text-stone-500">
+						{$_('user-pages.portraits.lastEdited')}: 27 Dec 2023
+					</p>
 					<div class=" flex items-center">
 						<Button
 							variant="secondary"
 							class="mr-2"
 							on:click={() => {
-							isOpen = false;
-						}}
-						>{$_('common.cancel')}
+								isOpen = false;
+							}}
+							>{$_('common.cancel')}
 						</Button>
 						<Button variant="gradient" type="submit">{$_('common.save')}</Button>
 					</div>
@@ -233,7 +274,7 @@
 				<div>
 					<div>
 						<label class="block mb-3 font-medium marker:text-sm text-stone-800" for="Locations"
-						>{$_('user-pages.portraits.uploadPDF')}</label
+							>{$_('user-pages.portraits.uploadPDF')}</label
 						>
 						<Dropzone
 							disableDefaultStyles
@@ -250,19 +291,18 @@
 									{$_('user-pages.portraits.fileInstructions')}
 								</p>
 							</div>
-						</Dropzone
-						>
+						</Dropzone>
 					</div>
 					<div class="w-full">
 						<label class="block my-3 font-medium marker:text-sm text-stone-800" for="Locations"
-						>{$_('user-pages.portraits.companyLogo')}</label
+							>{$_('user-pages.portraits.companyLogo')}</label
 						>
 						<div class=" flex">
 							<img src="user.png" alt="User" />
 							<div class=" flex flex-col ml-4">
 								<div>
 									<Button variant="secondary" on:click={() => undefined} classes="mb-3 !py-1.5"
-									>{$_('common.upload')}</Button
+										>{$_('common.upload')}</Button
 									>
 								</div>
 								<p class="text-gray-500 text-sm font-normal">
@@ -273,15 +313,17 @@
 					</div>
 				</div>
 				<footer class=" mt-10 flex justify-between items-center mb-4">
-					<p class=" text-sm text-stone-500">{$_('user-pages.portraits.lastEdited')}: 27 Dec 2023</p>
+					<p class=" text-sm text-stone-500">
+						{$_('user-pages.portraits.lastEdited')}: 27 Dec 2023
+					</p>
 					<div class=" flex items-center">
 						<Button
 							variant="secondary"
 							class="mr-2"
 							on:click={() => {
-							isOpen = false;
-						}}
-						>{$_('common.cancel')}
+								isOpen = false;
+							}}
+							>{$_('common.cancel')}
 						</Button>
 						<Button variant="gradient" type="submit" form={$page.form}>{$_('common.save')}</Button>
 					</div>

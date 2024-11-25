@@ -3,28 +3,29 @@
 	import { GridIcon, ListIcon } from '$lib/@svelte/icons';
 	import { ButtonIcon, EventInfoBox, InfoListItem, SearchInput } from '$lib/@svelte/components';
 
-	export let unpublishedEvents: { heading: string, subHeading: string, date: string, id: string }[] = [];
-	export let handleEventRegistration: (id: string) => void = () => {
-	};
+	export let unpublishedEvents: {
+		heading: string;
+		subHeading: string;
+		date: string;
+		id: string;
+	}[] = [];
+	export let handleEventRegistration: (id: string) => void = () => {};
 
 	let isListView = true;
 </script>
-
 
 <section class=" mt-10 flex justify-between w-full">
 	<SearchInput placeholder={$_('common.search')} />
 	<div>
 		<ButtonIcon
 			onClick={() => (isListView = false)}
-			classes={` mr-1 ${!isListView ? '!text-brand' : ''}`}>
+			classes={` mr-1 ${!isListView ? '!text-brand' : ''}`}
+		>
 			<GridIcon />
-		</ButtonIcon
-		>
-		<ButtonIcon onClick={() => (isListView = true)} classes={`${isListView ? '!text-brand' : ''}`}
-		>
+		</ButtonIcon>
+		<ButtonIcon onClick={() => (isListView = true)} classes={`${isListView ? '!text-brand' : ''}`}>
 			<ListIcon />
-		</ButtonIcon
-		>
+		</ButtonIcon>
 	</div>
 </section>
 <section class=" mt-6">

@@ -30,7 +30,13 @@
 	const { form: formData, enhance } = superform;
 </script>
 
-<form class="my-4" action="?/registerUser" method="POST" id="register-contact-person-form" use:enhance>
+<form
+	class="my-4"
+	action="?/registerUser"
+	method="POST"
+	id="register-contact-person-form"
+	use:enhance
+>
 	<div class=" flex flex-col gap-4">
 		<!--
 		<Field form={superform} name="title">
@@ -62,17 +68,11 @@
 		</Field>
 		<Field form={superform} name="responsibility">
 			<Control let:attrs>
-				<Label
-				>{$_(
-					'user-pages.contactPersons.signUp.labels.responsibility'
-				)}</Label
-				>
+				<Label>{$_('user-pages.contactPersons.signUp.labels.responsibility')}</Label>
 				<Input
 					{...attrs}
 					bind:value={$formData.responsibility}
-					placeholder={$_(
-											'user-pages.contactPersons.signUp.placeholders.responsibility'
-										)}
+					placeholder={$_('user-pages.contactPersons.signUp.placeholders.responsibility')}
 				/>
 			</Control>
 			<Description />
@@ -85,9 +85,7 @@
 				<Input
 					{...attrs}
 					bind:value={$formData.email}
-					placeholder={$_(
-								'user-pages.contactPersons.signUp.placeholders.email'
-							)}
+					placeholder={$_('user-pages.contactPersons.signUp.placeholders.email')}
 				/>
 			</Control>
 			<FieldErrors />
@@ -98,8 +96,8 @@
 				<!--// bind:selectedCountry={$formData.countryCode}-->
 				<PhoneInput
 					searchPlaceholder={$_(
-								'user-pages.contactPersons.signUp.placeholders.phoneCountryCodeSearch'
-							)}
+						'user-pages.contactPersons.signUp.placeholders.phoneCountryCodeSearch'
+					)}
 					bind:value={$formData.phoneNumber}
 					{...attrs}
 				/>
@@ -116,4 +114,3 @@
 		</footer>
 	</div>
 </form>
-

@@ -33,3 +33,5 @@ export * from './TextField';
 export * from './GradientLink';
 export * from './Event';
 export * from './AddonPackage';
+export * from './AddonList';
+export * from './DataTableFacetedFilter';

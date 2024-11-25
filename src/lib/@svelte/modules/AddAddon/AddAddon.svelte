@@ -4,29 +4,27 @@
 	import PlusIcon from '$lib/@svelte/icons/PlusIcon.svelte';
 	import TrashIcon from '$lib/@svelte/icons/TrashIcon.svelte';
 	import { Button as ShadcnButton } from '@/components/ui/button';
-	import type {
-		CreateAddonPackageTemplateFormSchema
-	} from '@schema/addonPackageTemplates';
+	import type { CreateAddonPackageTemplateFormSchema } from '@schema/addonPackageTemplates';
 	import { type Infer, intProxy, superForm, type SuperValidated } from 'sveltekit-superforms';
 	import { Field, Control, Label, Description, FieldErrors } from '@/components/ui/form';
 	import { Helper } from 'flowbite-svelte';
 	import { valibot } from 'sveltekit-superforms/adapters';
-	import { CreatePortraitTemplateRequestSchema } from '@/services';
 	import { Input } from '@/components/ui/input';
 	import { Textarea } from '@/components/ui/textarea';
+	import { PortraitTemplateSchema } from '@schema';
 
 	export let validated: SuperValidated<Infer<CreateAddonPackageTemplateFormSchema>>;
 
 	export let isOpen: boolean = false;
 	const handleAddSubAddon = (e: Event) => {
 		e.preventDefault();
-		form.update((oldForm) => ({
-			...oldForm,
-			addons: [
-				...oldForm.addons,
-				{ title: '', description: '', price: 0, label: '' }
-			]
-		}), { taint: false });
+		form.update(
+			(oldForm) => ({
+				...oldForm,
+				addons: [...oldForm.addons, { title: '', description: '', price: 0, label: '' }]
+			}),
+			{ taint: false }
+		);
 	};
 	const handleRemoveAddon = (index: number) => {
 		let subAddonsCopy = [...$form.addons];
@@ -35,7 +33,7 @@
 	};
 
 	const superform = superForm(validated, {
-		validators: valibot(CreatePortraitTemplateRequestSchema),
+		validators: valibot(PortraitTemplateSchema),
 		dataType: 'json',
 		onResult({ result }) {
 			if (result.type === 'success') {
@@ -80,12 +78,23 @@
 			<Description />
 			<FieldErrors />
 		</Field>
-		<Checkbox name="purchasable" bind:checked={$form.purchasable} label={$_('admin-pages.addons.purchasable')}>
-			<Helper slot="description" color="gray">{$_('admin-pages.addons.purchasableDescription')}</Helper>
+		<Checkbox
+			name="purchasable"
+			bind:checked={$form.purchasable}
+			label={$_('admin-pages.addons.purchasable')}
+		>
+			<Helper slot="description" color="gray"
+				>{$_('admin-pages.addons.purchasableDescription')}</Helper
+			>
 			<Field form={superform} name="price">
 				<Control let:attrs>
-					<Input type="number" disabled={!$form.purchasable} {...attrs} bind:value={$priceProxy}
-								 placeholder={$_('admin-pages.addons.pricePlaceholder')} />
+					<Input
+						type="number"
+						disabled={!$form.purchasable}
+						{...attrs}
+						bind:value={$priceProxy}
+						placeholder={$_('admin-pages.addons.pricePlaceholder')}
+					/>
 				</Control>
 				<Description />
 				<FieldErrors />
@@ -94,13 +103,14 @@
 		<section class="flex flex-col gap-4">
 			{#each $form.addons as _unused, index}
 				<div
-					class={`border-1 border-stone-400 rounded-xl p-6 relative grid grid-cols-2 gap-4 w-full`}>
+					class={`border-1 border-stone-400 rounded-xl p-6 relative grid grid-cols-2 gap-4 w-full`}
+				>
 					<button
 						class="absolute right-3 top-4 text-red-400 text-xs"
-						on:click|preventDefault={() => handleRemoveAddon(index)}>
-						<TrashIcon />
-					</button
+						on:click|preventDefault={() => handleRemoveAddon(index)}
 					>
+						<TrashIcon />
+					</button>
 					<Field form={superform} name={`addons[${index}].title`}>
 						<Control let:attrs>
 							<Label>{$_('admin-pages.addons.subAddonName')}</Label>
@@ -142,7 +152,12 @@
 			</ShadcnButton>
 		</div>
 		<footer class=" mt-10 flex justify-end items-center mb-4 gap-x-2">
-			<ShadcnButton variant="outline" on:click={() => { isOpen = false; }}>
+			<ShadcnButton
+				variant="outline"
+				on:click={() => {
+					isOpen = false;
+				}}
+			>
 				{$_('common.cancel')}
 			</ShadcnButton>
 			<ShadcnButton variant="gradient" type="submit">{$_('common.save')}</ShadcnButton>
