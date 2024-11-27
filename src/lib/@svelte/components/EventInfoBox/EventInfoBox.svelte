@@ -2,6 +2,7 @@
 	import { _ } from '@services';
 	import { CalenderIcon } from '$lib/@svelte/icons';
 	import { Link } from '@/@svelte/components';
+	import { Button } from '@/components/ui/button';
 
 	export let heading: string;
 	export let subHeading: string;
@@ -18,6 +19,7 @@
 			<CalenderIcon />
 			<p class=" ml-2 text-sm text-stone-800 font-medium">{date}</p>
 		</div>
-		<Link variant="gradient" {href}>{$_(`common.${buttonText}`)}</Link>
+		<Button><a {href}>{$_(`common.${buttonText}`)}</a></Button>
+
 	</div>
 </div>

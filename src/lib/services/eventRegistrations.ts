@@ -6,7 +6,7 @@ import {
 	type CreateEventRegistration,
 	CreateEventRegistrationResponse,
 	GetEventRegistrationsForEventResponse,
-	GetEventRegistrationsForOrganizationResponse
+	GetEventRegistrationsForOrganizationResponse, type OrgEventRegistration, OrgEventRegistrationSchema
 } from '@schema';
 
 export const getEventRegistrationsForEvent = async ({

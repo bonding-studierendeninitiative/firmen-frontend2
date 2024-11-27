@@ -367,7 +367,9 @@
       "upcomingEvents": "Bevorstehende Veranstaltungen",
       "registeredEvents": "Registrierte Veranstaltungen",
       "noEventsRegistered": "Noch keine Veranstaltungen registriert!",
-      "noEventsRegisteredDetail": "Es sind noch keine Veranstaltungen vorhanden. Bitte registrieren Sie eine Veranstaltung für Ihr Unternehmen."
+      "noEventsRegisteredDetail": "Es sind noch keine Veranstaltungen vorhanden. Bitte registrieren Sie eine Veranstaltung für Ihr Unternehmen.",
+      "alreadyRegistered": "Registriert"
+
     },
     "organizations": {
       "myOrganizations": "Meine Organisationen",

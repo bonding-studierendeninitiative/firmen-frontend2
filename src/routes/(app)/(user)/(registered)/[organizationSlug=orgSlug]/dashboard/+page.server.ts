@@ -7,7 +7,6 @@ export const load: PageServerLoad = async ({ parent, params }) => {
 	if (!session?.user) return;
 
 	const eventRegistrations = await getEventRegistrationsForOrganization({
-		// @ts-expect-error we define accessToken in parent
 		accessToken: session?.accessToken,
 		organizationSlug: params.organizationSlug
 	});

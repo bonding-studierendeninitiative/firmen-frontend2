@@ -119,10 +119,6 @@
 						{#each buyOption.packages as pkg}
 							<Table.Cell
 								class={data.selectedPackageID === pkg.id ? "p-3 border border-stone-200 bg-slate-300" : "p-3 border border-stone-200"}>
-								class={selectedPackageID === pkg.id
-									? 'p-3 border border-stone-200 bg-slate-300'
-									: 'p-3 border border-stone-200'}
-							>
 								<div class="flex justify-center items-center">
 									{#if service.valueType === 'BOOLEAN'}
 										{#if pkg.benefits[index].booleanValue}
