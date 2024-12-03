@@ -6,6 +6,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import js from '@eslint/js';
 import { FlatCompat } from '@eslint/eslintrc';
+import i18n from './src/lib/eslint/eslint-plugin-i18n.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -39,7 +40,8 @@ export default [
 	),
 	{
 		plugins: {
-			'@typescript-eslint': typescriptEslint
+			'@typescript-eslint': typescriptEslint,
+			'@i18n': i18n
 		},
 
 		languageOptions: {
@@ -59,11 +61,13 @@ export default [
 
 		rules: {
 			'@typescript-eslint/no-explicit-any': 'off',
-			'@typescript-eslint/no-unused-vars': 'warn'
+			'@typescript-eslint/no-unused-vars': 'warn',
+			'@i18n/no-untranslated-strings': 'warn',
+			'no-unused-vars': 'off'
 		}
 	},
 	{
-		files: ['**/*.svelte', '**/*.json'],
+		files: ['**/*.svelte'],
 
 		languageOptions: {
 			parser: parser,
