@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { CalenderIcon, LocationIcon } from '@/@svelte/icons';
-	import dayjs from 'dayjs';
+	import { dayjs } from '@services';
 	import localizedFormat from 'dayjs/plugin/localizedFormat';
 
 	dayjs.extend(localizedFormat);

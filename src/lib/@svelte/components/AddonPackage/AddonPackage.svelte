@@ -6,6 +6,7 @@
 	import { TrashIcon } from '@/@svelte/icons';
 	import { enhance } from '$app/forms';
 	import { LoaderCircle } from 'lucide-svelte';
+	import { _ } from '@services';
 
 	export let addonPackage: {
 		id: string;
@@ -60,7 +61,7 @@
 		{/if}
 	</Card.Header>
 	<Card.Content class="space-y-1">
-		<p class="text-xs font-semibold">Zusatzleistungen:</p>
+		<p class="text-xs font-semibold">{$_('components.addonPackage.addons')}</p>
 		{#each addonPackage.addons as addon}
 			<div class="flex gap-x-3 items-start justify-between">
 				<span class="text-sm">{addon.title} </span>

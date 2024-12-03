@@ -1,47 +1,33 @@
 <script lang="ts">
-	import { _ } from '@services';
 	import { cn } from '@/utils';
+	import { tv, type VariantProps } from 'tailwind-variants';
 
 	export let status: string;
-	export let variant: variant;
+	export let variant: ChipVariant;
 	export let classes: string = '';
 
-	type variant =
-		| 'success'
-		| 'confirmed'
-		| 'info'
-		| 'verification'
-		| 'created'
-		| 'rejected'
-		| 'withdrawn'
-		| 'brand';
+	type ChipVariant = VariantProps<typeof chipVariants>['variant'];
 
-	const getStylesByVariant = () => {
-		switch (variant) {
-			case 'success':
-			case 'confirmed':
-				return 'text-green-600 bg-green-50';
-			case 'info':
-			case 'verification':
-			case 'created':
-				return 'text-orange-500 bg-orange-100';
-			case 'rejected':
-			case 'withdrawn':
-				return 'text-red-500 bg-red-100';
-			case 'brand':
-				return 'text-brand bg-brand bg-opacity-5';
-
-			default:
-				return 'text-green-600 bg-green-50';
-		}
-	};
+	const chipVariants= tv({
+		base: "rounded-custom w-auto px-[10px] py-[2px] text-sm font-normal text-center",
+		variants: {
+			variant: {
+			success: "text-green-600 bg-green-50",
+			confirmed: "text-green-600 bg-green-50",
+			info: "text-orange-500 bg-orange-100",
+			verification: "text-orange-500 bg-orange-100",
+			created: "text-orange-500 bg-orange-100",
+			rejected: "text-red-500 bg-red-100",
+			withdrawn: "text-red-500 bg-red-100",
+			brand: "text-brand bg-brand bg-opacity-5",
+			},
+		},
+	});
 </script>
 
 <p
 	class={cn(
-		' rounded-custom w-auto px-[10px] py-[2px] text-sm font-normal text-center  ',
-		getStylesByVariant(),
-		classes
+		chipVariants({ variant, className: classes }),
 	)}
 >
 	{status}
