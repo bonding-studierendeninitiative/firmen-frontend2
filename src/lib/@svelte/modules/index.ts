@@ -11,3 +11,4 @@ export * from './RegisterContactPerson';
 export * from './ConfirmEventRegistration';
 export * from './RejectEventRegistration';
 export * from './EventRegistration';
+export * from './ReviewCatalogueData';

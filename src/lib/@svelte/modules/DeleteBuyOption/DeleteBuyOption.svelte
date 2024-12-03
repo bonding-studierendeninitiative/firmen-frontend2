@@ -37,8 +37,8 @@
 	</Dialog.Trigger>
 	<Dialog.Content>
 		<Dialog.Header>
-			<Dialog.Title>Delete Buy Option</Dialog.Title>
-			<Dialog.Description>Do you really want to delete this buy option?</Dialog.Description>
+			<Dialog.Title>{$_("modules.delete-buy-option.title")}</Dialog.Title>
+			<Dialog.Description>{$_("modules.delete-buy-option.description")}</Dialog.Description>
 		</Dialog.Header>
 		<form
 			class="flex flex-col gap-y-4"

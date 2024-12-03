@@ -5,8 +5,8 @@
 
 	export let unpublishedEvents: {
 		heading: string;
-		subHeading: string;
-		date: string;
+		subHeading: string | undefined;
+		date: string | null;
 		id: string;
 	}[] = [];
 	export let handleEventRegistration: (id: string) => void = () => {};

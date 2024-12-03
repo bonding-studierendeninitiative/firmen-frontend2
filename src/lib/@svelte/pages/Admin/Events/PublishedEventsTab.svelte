@@ -3,7 +3,7 @@
 	import { GridIcon, ListIcon } from '$lib/@svelte/icons';
 	import { ButtonIcon, EventInfoBox, InfoListItem, SearchInput } from '$lib/@svelte/components';
 
-	export let publishedEvents: { heading: string; subHeading: string; date: string; id: string }[] =
+	export let publishedEvents: { heading: string; subHeading: string | undefined; date: string | null; id: string }[] =
 		[];
 	export let handleEventRegistration: (id: string) => void = () => {};
 

@@ -57,8 +57,8 @@
 	<Dialog.Overlay />
 	<Dialog.Content>
 		<Dialog.Header>
-			<Dialog.Title>Buy Option</Dialog.Title>
-			<Dialog.Description>Enter the buy option details</Dialog.Description>
+			<Dialog.Title>{$_("modules.create-buy-option.title")}</Dialog.Title>
+			<Dialog.Description>{$_("modules.create-buy-option.description")}</Dialog.Description>
 		</Dialog.Header>
 		<form
 			class="flex flex-col gap-y-4"
@@ -68,7 +68,7 @@
 		>
 			<Field form={superform} name="name">
 				<Control let:attrs>
-					<Label>Buy option name</Label>
+					<Label>{$_("modules.create-buy-option.name")}</Label>
 					<Input {...attrs} bind:value={$formData.name} />
 				</Control>
 				<Description />
@@ -87,7 +87,7 @@
 			<Field form={superform} name="packageCount">
 				<Control let:attrs>
 					<div class="flex flex-row items-center justify-between">
-						<Label>Package count</Label>
+						<Label>{$_("modules.create-buy-option.package-count")}</Label>
 						<div
 							class="flex items-center border rounded-md overflow-hidden focus-within:outline-transparent focus-within:ring-1 focus-within:ring-gray-900 dark:focus-within:ring-gray-50"
 						>
@@ -125,7 +125,7 @@
 			<Field form={superform} name="serviceCount">
 				<Control let:attrs>
 					<div class="flex flex-row items-center justify-between">
-						<Label>Service count</Label>
+						<Label>{$_("modules.create-buy-option.service-count")}</Label>
 						<div
 							class="flex items-center border rounded-md overflow-hidden focus-within:outline-transparent focus-within:ring-1 focus-within:ring-gray-900 dark:focus-within:ring-gray-50"
 						>

@@ -14,7 +14,7 @@
 		name: string;
 		projectHSG: string;
 		dateFrom: string | null;
-		dateTo: string | null;
+		dateTo?: string | null;
 		location: string;
 	}) => {
 		return {
@@ -29,15 +29,13 @@
 	const unpublishedEvents = data.unpublishedEvents?.map(mapEvent) || [];
 	const archivedEvents = data.archivedEvents?.map(mapEvent) || [];
 
-	let isDrawerOpen = false;
 	let activeTab = 0;
-	const tabHeadings = ['published', 'unpublished', 'archived'];
+	const tabHeadings = ['published', 'unpublished', 'archived'] as const;
 
 	const handleTabChange = (tabIndex: number) => {
 		activeTab = tabIndex;
 	};
 
-	let isListView: boolean = false;
 </script>
 
 <div>
@@ -60,14 +58,7 @@
 	{#if activeTab === 0}
 		<PublishedEventsTab
 			{publishedEvents}
-			handleEventRegistration={(id) => {
-				if (activeTab !== 1) {
-					goto(`/admin/events/${id}/registrations/`);
-				} else {
-					isDrawerOpen = true;
-				}
-			}}
-			{isListView}
+			handleEventRegistration={id => goto(`/admin/events/${id}/registrations/`)}
 		/>
 	{/if}
 	{#if activeTab === 1}
@@ -76,20 +67,12 @@
 			handleEventRegistration={(id) => {
 				goto(`/admin/events/${id}/registrations/`);
 			}}
-			{isListView}
 		/>
 	{/if}
 	{#if activeTab === 2}
 		<PublishedEventsTab
 			publishedEvents={archivedEvents}
-			handleEventRegistration={(id) => {
-				if (activeTab !== 1) {
-					goto(`/admin/events/${id}/registrations/`);
-				} else {
-					isDrawerOpen = true;
-				}
-			}}
-			{isListView}
+			handleEventRegistration={id => goto(`/admin/events/${id}/registrations/`)}
 		/>
 	{/if}
 </div>

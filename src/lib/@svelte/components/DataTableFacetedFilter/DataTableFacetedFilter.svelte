@@ -7,6 +7,7 @@
 	import { Separator } from '@/components/ui/separator';
 	import { Badge } from '@/components/ui/badge';
 	import { cn } from '@/utils';
+	import { _ } from '@services';
 	import type { Component } from 'svelte-eslint-parser/lib/parser/svelte-ast-types-for-v5';
 
 	type Options = {
@@ -14,7 +15,7 @@
 		value: string;
 		icon?: Component;
 	};
-	export let filterValues: string[] = [];
+	export let filterValues: string[] | undefined = [];
 	export let title: string;
 	export let options = [] as Options[];
 	export let counts: { [index: string]: number } = {};
@@ -36,7 +37,7 @@
 			<PlusCircled class="mr-2 h-4 w-4" />
 			{title}
 
-			{#if filterValues.length > 0}
+			{#if filterValues?.length > 0}
 				<Separator orientation="vertical" class="mx-2 h-4" />
 				<Badge variant="secondary" class="rounded-sm px-1 font-normal lg:hidden">
 					{filterValues.length}
@@ -44,7 +45,9 @@
 				<div class="hidden space-x-1 lg:flex">
 					{#if filterValues.length > 2}
 						<Badge variant="secondary" class="rounded-sm px-1 font-normal">
-							{filterValues.length} Selected
+							{$_("components.dataTableFacetedFilter.filterLabelTemplate", {
+								values: { count: filterValues.length }
+							})}
 						</Badge>
 					{:else}
 						{#each filterValues as option}
@@ -61,7 +64,7 @@
 		<Command.Root>
 			<Command.Input placeholder={title} />
 			<Command.List>
-				<Command.Empty>No results found.</Command.Empty>
+				<Command.Empty>{$_("components.dataTableFacetedFilter.noResults")}</Command.Empty>
 				<Command.Group>
 					{#each options as option}
 						{@const Icon = option.icon}
@@ -74,7 +77,7 @@
 							<div
 								class={cn(
 									'border-primary mr-2 flex h-4 w-4 items-center justify-center rounded-sm border',
-									filterValues.includes(option.value)
+									filterValues?.includes(option.value)
 										? 'bg-primary text-primary-foreground'
 										: 'opacity-50 [&_svg]:invisible'
 								)}
@@ -95,7 +98,7 @@
 						</Command.Item>
 					{/each}
 				</Command.Group>
-				{#if filterValues.length > 0}
+				{#if filterValues?.length > 0}
 					<Command.Separator />
 					<Command.Item
 						class="justify-center text-center"
@@ -103,7 +106,7 @@
 							filterValues = [];
 						}}
 					>
-						Clear filters
+						{$_("components.dataTableFacetedFilter.clearFilters")}
 					</Command.Item>
 				{/if}
 			</Command.List>

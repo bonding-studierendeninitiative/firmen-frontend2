@@ -3,45 +3,46 @@
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
 	import { Button } from '$lib/components/ui/button';
 	import type {
-		ConfirmEventRegistrationSchema,
-		EventRegistration,
-		RejectEventRegistrationSchema
+		EventRegistration
 	} from '@schema';
-	import { type Infer, type SuperValidated } from 'sveltekit-superforms';
-	import { ConfirmEventRegistration, RejectEventRegistration } from '@/@svelte/modules';
-	import { Badge } from '@/components/ui/badge';
+	import { ConfirmEventRegistration, RejectEventRegistration, ReviewCatalogueData } from '@/@svelte/modules';
 	import type { InferOutput } from 'valibot';
+	import { _ } from '@services';
 
 	export let id: string;
 	export let eventRegistration: InferOutput<EventRegistration>;
-	export let confirmForm: SuperValidated<Infer<ConfirmEventRegistrationSchema>>;
-	export let rejectForm: SuperValidated<Infer<RejectEventRegistrationSchema>>;
 	let isConfirmOpen = false;
 	let isRejectOpen = false;
+	let isReviewCatalogueDataOpen = false;
 </script>
 
-<ConfirmEventRegistration {eventRegistration} {id} {confirmForm} bind:isOpen={isConfirmOpen} />
-<RejectEventRegistration {id} {rejectForm} bind:isOpen={isRejectOpen} />
+<ConfirmEventRegistration {eventRegistration} {id} bind:isOpen={isConfirmOpen} />
+<RejectEventRegistration {id} bind:isOpen={isRejectOpen} />
+<ReviewCatalogueData {eventRegistration} {id} bind:isOpen={isReviewCatalogueDataOpen} />
 
 <DropdownMenu.Root>
 	<DropdownMenu.Trigger asChild let:builder>
 		<Button variant="ghost" builders={[builder]} size="icon" class="relative h-8 w-8 p-0">
-			<span class="sr-only">Open menu</span>
+			<span class="sr-only">{$_("admin-pages.events.event-registrations.data-table.actions.open-menu")}</span>
 			<Ellipsis class="h-4 w-4" />
 		</Button>
 	</DropdownMenu.Trigger>
 	<DropdownMenu.Content>
 		<DropdownMenu.Group>
-			<DropdownMenu.Label>Actions</DropdownMenu.Label>
+			<DropdownMenu.Label>{$_("admin-pages.events.event-registrations.data-table.actions.actions")}</DropdownMenu.Label>
 			<DropdownMenu.Item on:click={() => navigator.clipboard.writeText(id)}>
-				Copy registration ID
+				{$_("admin-pages.events.event-registrations.data-table.actions.copy-id")}
 			</DropdownMenu.Item>
 		</DropdownMenu.Group>
 		<DropdownMenu.Separator />
-		<DropdownMenu.Item on:click={() => (isConfirmOpen = true)}>Confirm...</DropdownMenu.Item>
-		<DropdownMenu.Item class="flex justify-between" disabled on:click={() => (isRejectOpen = true)}>
-			Reject...
-			<Badge>todo</Badge>
+		<DropdownMenu.Item on:click={() => (isConfirmOpen = true)}>
+			{$_("admin-pages.events.event-registrations.data-table.actions.confirm")}
+		</DropdownMenu.Item>
+		<DropdownMenu.Item on:click={() => (isRejectOpen = true)}>
+			{$_("admin-pages.events.event-registrations.data-table.actions.reject")}
+		</DropdownMenu.Item>
+		<DropdownMenu.Item on:click={() => (isReviewCatalogueDataOpen = true)}>
+			{$_("admin-pages.events.event-registrations.data-table.actions.review-catalogue-data")}
 		</DropdownMenu.Item>
 	</DropdownMenu.Content>
 </DropdownMenu.Root>

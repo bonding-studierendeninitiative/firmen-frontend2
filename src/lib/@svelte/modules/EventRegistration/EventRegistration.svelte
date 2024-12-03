@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { _ } from '@services';
 	import type { InferOutput } from 'valibot';
 	import type { EventRegistration } from '@schema';
 	import { AddonList } from '@/@svelte/components';

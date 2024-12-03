@@ -5,6 +5,7 @@
       "welcomeDescription": "Bitte loggen Sie sich ein, um fortzufahren."
     },
     "login": {
+      "admin-login": "Zum Admin-Dashboard",
       "heading": "Anmeldung",
       "subHeading": "Geben Sie Ihre Anmeldedaten ein",
       "forgotPassword": "Passwort vergessen?",
@@ -76,7 +77,7 @@
     "search": "Suche",
     "delete": "Löschen",
     "update": "Aktualisieren",
-    "addons": "Add-ons",
+    "addons": "Zusatzleistungen",
     "packages": "Pakete",
     "back": "Zurück",
     "city": "Stadt",
@@ -89,6 +90,7 @@
     "categories": "Kategorien",
     "edit": "Bearbeiten",
     "save": "Speichern",
+    "saveAsDraft": "Als Entwurf speichern",
     "saved": "Gespeichert",
     "cancel": "Abbrechen",
     "viewDetails": "Details anzeigen",
@@ -107,7 +109,75 @@
     "upload": "Hochladen",
     "showResults": "Ergebnisse anzeigen",
     "somethingWentWrong": "Etwas ist schief gelaufen. Bitte versuchen Sie es erneut",
-    "exportFiles": "Dateien exportieren"
+    "exportFiles": "Dateien exportieren",
+    "logo": "Logo",
+    "portrait": "Portrait",
+    "advert": "Image-Anzeige",
+    "loading": "Loading\u2026",
+    "publish": "Veröffentlichen",
+    "org-types": {
+      "nonprofit": "Gemeinnützig",
+      "company": "Unternehmen",
+      "other": "Organisation"
+    }
+  },
+  "components": {
+    "addonPackage": {
+      "addons": "Zusatzleistungen:"
+    },
+    "dataTableFacetedFilter": {
+      "noResults": "Keine Ergebnisse gefunden.",
+      "filterLabelTemplate": "{count} ausgewählt",
+      "clearFilters": "Zurücksetzen"
+    },
+    "editBuyOptions": {
+      "buyOption": "Kaufoption",
+      "buyOptionName": "Name der Kaufoption",
+      "packages": "Pakete",
+      "services": "Leistungen",
+      "packageName": "Paketname",
+      "serviceName": "Name der Leistung",
+      "serviceDescription": "Beschreibung der Leistung",
+      "packagePrice": "Paketpreis",
+      "addService": "Leistung hinzufügen",
+      "addPackage": "Paket hinzufügen",
+      "value": "Wert",
+      "type": "Typ",
+      "typeText": "Text",
+      "typeBoolean": "Enthalten",
+      "typeNumeric": "Anzahl"
+    },
+    "table": {
+      "no-records": "Es wurden keine Datensätze gefunden."
+    }
+  },
+  "modules": {
+    "add-portrait": {
+      "generate-random-data": "Zufallsdaten generieren"
+    },
+    "buy-option-selector": {
+      "no-buy-options": "Es wurden keine Kaufoptionen gefunden.",
+      "active": "aktiv",
+      "search-placeholder": "Nach einer Kaufoption suchen\u2026",
+      "create-new": "Erstelle eine neue Kaufoption\u2026"
+    },
+    "contact-person": {
+      "full-name": "Ansprechperson:"
+    },
+    "create-buy-option": {
+      "title": "Kaufoption",
+      "description": "Lege die Daten dieser Kaufoption fest",
+      "name": "Name der Kaufoption",
+      "package-count": "Anzahl der Pakete",
+      "service-count": "Anzahl der maximalen Leistungen pro Paket"
+    },
+    "delete-buy-option": {
+      "title": "Kaufoption löschen",
+      "description": "Möchtest du wirklich diese Kaufoption löschen?"
+    },
+    "organization": {
+      "name": "Organisation:"
+    }
   },
   "sidebar": {
     "dashboard": "Dashboard",
@@ -287,7 +357,7 @@
       "emailAddress": "E-Mail-Adresse",
       "website": "Webseite",
       "additionalInformation": "Sonstige Informationen",
-      "lastEdited": "Zuletzt bearbeitet",
+      "lastEdited": "Zuletzt bearbeitet: {date}",
       "uploadPDF": "PDF hochladen",
       "clickToUpload": "Zum Hochladen klicken",
       "orDragAndDrop": "oder ziehen und ablegen",
@@ -369,7 +439,6 @@
       "noEventsRegistered": "Noch keine Veranstaltungen registriert!",
       "noEventsRegisteredDetail": "Es sind noch keine Veranstaltungen vorhanden. Bitte registrieren Sie eine Veranstaltung für Ihr Unternehmen.",
       "alreadyRegistered": "Registriert"
-
     },
     "organizations": {
       "myOrganizations": "Meine Organisationen",
@@ -441,6 +510,7 @@
   "admin-pages": {
     "organizations": {
       "allOrganizations": "Alle Organisationen",
+      "back-to-overview": "⮐ Zurück zu allen Organisationen",
       "organizationDetails": "Organisations-Details",
       "name": "Name",
       "contactPerson": "Ansprechperson",
@@ -454,9 +524,40 @@
         "owner": "Besitzer",
         "member": "Mitglied",
         "guest": "Gast"
+      },
+      "eventRegistrations": {
+        "none-found": "Es wurden keine Anmeldungen für diese Organisation gefunden",
+        "": ""
+      },
+      "openMenu": "Menü öffnen&hellip;",
+      "data-table": {
+        "actions": {
+          "view-details": "Details anzeigen\u2026",
+          "title": "Aktionen",
+          "copy-id": "Organisations-ID kopieren"
+        },
+        "headers": {
+          "type": "Typ",
+          "email": "E-Mail-Addresse",
+          "phone": "Telefonnummer",
+          "name": "Name",
+          "last-modified": "Zuletzt bearbeitet"
+        },
+        "filters": {
+          "type": {
+            "title": "Typ",
+            "options": {
+              "nonprofit": "Gemeinnützig",
+              "company": "Unternehmen",
+              "other": "Organisation"
+            }
+          }
+        }
       }
     },
     "addons": {
+      "title": "Erstelle ein neues Zusatzleistungspaket",
+      "add": "Ein Zusatzleistungspaket hinzufügen",
       "addAddons": "Zusatzfunktionen hinzufügen",
       "newAddons": "Neue Zusatzfunktionen",
       "addonName": "Name des Zusatzleistungs-Pakets",
@@ -490,8 +591,8 @@
       "selectAddons": "Zusatzfunktionen auswählen"
     },
     "events": {
-      "heading": "Veranstaltungen",
-      "subHeading": "Schauen Sie sich aktuelle Veranstaltungen an, um Ihr Unternehmen zu präsentieren!",
+      "heading": "Veranstaltungsplanung",
+      "subHeading": "In Notes veröffentliche Veranstaltungen werden alle paar Stunden ins Firmenintranet importiert. Du kannst sie veröffentlichen, um Firmen die Anmeldung zu ermöglichen.",
       "publishNewEvents": "Neue Veranstaltungen veröffentlichen",
       "viewRegistrations": "Bewerbungen anzeigen",
       "viewDetails": "Details anzeigen",
@@ -514,7 +615,62 @@
       "endTime": "Endzeit",
       "specialties": "Besonderheiten",
       "eventTemplate": "Veranstaltungsvorlage (optional)",
-      "buy-options": "Kaufoptionen"
+      "buy-options": {
+        "title": "Kaufoptionen",
+        "publish": "Diese Kaufoption veröffentlichen",
+        "addons": "Zusatzleistungspakete",
+        "no-addon-packages": "Keine Zusatzleistungspakete"
+      },
+      "event-registrations": {
+        "data-table": {
+          "filters": {
+            "status": "Alle Status",
+            "package": "Alle Pakete",
+            "addon-packages": "Alle Zusatz-Pakete",
+            "addons": "Alle Zusatzleistungen"
+          },
+          "headers": {
+            "package": "Paket",
+            "addons": "Zusatzleistungen",
+            "phone": "Telefonnummer",
+            "email": "E-Mail-Adresse",
+            "contact-person": "Ansprechperson",
+            "org": "Organisation",
+            "portrait-status": "Portrait",
+            "logo-status": "Logo",
+            "advert-status": "Image-Anzeige",
+            "status": "Status",
+            "last-modified": "Zuletzt bearbeitet"
+          },
+          "actions": {
+            "review-catalogue-data": "Katalogdaten überprüfen",
+            "confirm": "Bestätigen\u2026",
+            "reject": "Ablehnen\u2026",
+            "open-menu": "Menü öffnen\u2026",
+            "actions": "Aktionen",
+            "copy-id": "Anmelde-ID kopieren"
+          },
+          "packages": {
+            "all-packages": "Alle Pakete"
+          }
+        },
+        "reject-event-registration": {
+          "title": "Veranstaltungsanmeldung ablehnen",
+          "description": "Möchtest du diese Anmeldung ablehnen?",
+          "proceed": "Anmeldung ablehnen"
+        },
+        "confirm-event-registration": {
+          "title": "Veranstaltungsanmeldung bestätigen",
+          "description": "Möchtest du diese Veranstaltungsanmeldung bestätigen",
+          "proceed": "Anmeldung bestätigen"
+        },
+        "review-catalogue-data": {
+          "title": "Katalogdaten überprüfen",
+          "description": "Wenn du Ausstellern Feddback schickst, bekommen sie die Möglichkeit eine neue Version hochzuladen.",
+          "proceed": "Feedback senden",
+          "document-type": "Feedback festhalten für\u2026"
+        }
+      }
     },
     "dashboard": {
       "dashboard": "Dashboard"

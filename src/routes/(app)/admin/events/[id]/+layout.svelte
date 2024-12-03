@@ -7,6 +7,7 @@
 	import { fade } from 'svelte/transition';
 	import { Event } from '@/@svelte/components';
 	import { Button } from '@/components/ui/button';
+	import { _ } from '@services';
 
 	$: activeUrl = $page.url.pathname;
 
@@ -36,7 +37,7 @@
 		<div class="flex-grow"></div>
 		{#if data.event?.status === 'UNPUBLISHED'}
 			<form action={`/admin/events/${$page.params.id}/?/publishEvent`} method="POST">
-				<Button type="submit">Publish</Button>
+				<Button type="submit">{$_("common.publish")}</Button>
 			</form>
 		{/if}
 	</div>
