@@ -1,4 +1,3 @@
-import type { Infer } from 'sveltekit-superforms';
 import * as v from 'valibot';
 
 const OrgMemberResponseSchema = v.object({
@@ -16,4 +15,4 @@ export const GetOrgMembersResponseSchema = v.object({
 	pageSize: v.number()
 });
 
-export type GetOrgMembersResponse = Infer<typeof GetOrgMembersResponseSchema>;
+export type GetOrgMembersResponse = typeof GetOrgMembersResponseSchema;

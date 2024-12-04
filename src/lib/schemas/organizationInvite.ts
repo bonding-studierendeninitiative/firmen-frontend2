@@ -1,4 +1,3 @@
-import type { Infer } from 'sveltekit-superforms';
 import * as v from 'valibot';
 
 export const CreateOrgInviteRequestSchema = v.object({
@@ -11,14 +10,14 @@ export const CreateOrgInviteRequestSchema = v.object({
 	redirectURL: v.string()
 });
 
-export type CreateOrgInviteRequest = Infer<typeof CreateOrgInviteRequestSchema>;
+export type CreateOrgInviteRequest = typeof CreateOrgInviteRequestSchema;
 
 export const AcceptInviteRequestSchema = v.object({
 	organizationSlug: v.string(),
 	joinCode: v.string()
 });
 
-export type AcceptInviteRequest = Infer<typeof AcceptInviteRequestSchema>;
+export type AcceptInviteRequest = typeof AcceptInviteRequestSchema;
 
 /*
 {

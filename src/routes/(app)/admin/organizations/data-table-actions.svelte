@@ -10,7 +10,7 @@
 <DropdownMenu.Root>
 	<DropdownMenu.Trigger asChild let:builder>
 		<Button variant="ghost" builders={[builder]} size="icon" class="relative h-8 w-8 p-0">
-			<span class="sr-only">{$_("admin-pages.organizations.openMenu")}</span>
+			<span class="sr-only">{$_("common.open-menu")}</span>
 			<Ellipsis class="h-4 w-4" />
 		</Button>
 	</DropdownMenu.Trigger>

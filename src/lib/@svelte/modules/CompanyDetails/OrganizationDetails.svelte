@@ -5,13 +5,16 @@
 	import { CompanyInformationTab } from './components';
 	import PortraitsTab from './components/PortraitsTab/PortraitsTab.svelte';
 	import BookingsTab from './components/BookingsTab/BookingsTab.svelte';
-	import type { GetOrgMembersResponse } from '@schema';
+	import type { CreateOrgInviteRequest, GetOrgMembersResponse } from '@schema';
+	import type { InferOutput } from 'valibot';
+	import type { SuperValidated } from 'sveltekit-superforms';
 
 	export let isOpen: boolean = false;
 
 	export let organization: any;
 
-	export let orgMembers: GetOrgMembersResponse;
+	export let createInviteForm: SuperValidated<InferOutput<CreateOrgInviteRequest>> | undefined;
+	export let orgMembers: InferOutput<GetOrgMembersResponse>;
 
 	let activeTab = 0;
 	const tabHeadings = ['companyInformation', 'portraits', 'bookings'];
@@ -37,8 +40,8 @@
 			{#if activeTab === 0}
 				<div>
 					<CompanyInformationTab organizationInfo={Object.entries(organization).filter(
-						([key, value]) => key !== 'id' && key !== 'createdAt' && key !== 'updatedAt' && key !== undefined
-					).map(([key, value]) => ({ label: key, value }))} orgMembers={orgMembers} />
+						([key]) => key !== 'id' && key !== 'createdAt' && key !== 'updatedAt' && key !== undefined
+					).map(([key, value]) => ({ label: key, value }))} {orgMembers} {createInviteForm} />
 				</div>
 			{:else if activeTab === 1}
 				<div in:fade>

@@ -119,7 +119,10 @@
       "nonprofit": "Gemeinnützig",
       "company": "Unternehmen",
       "other": "Organisation"
-    }
+    },
+    "next": "Weiter",
+    "previous": "Zurück",
+    "open-menu": "Menü öffnen\u2026"
   },
   "components": {
     "addonPackage": {
@@ -184,6 +187,7 @@
     "events": "Veranstaltungen",
     "catalogue-data": "Ausstellerdaten",
     "notifications": "Benachrichtigungen",
+    "settings": "Einstellungen",
     "account": "Konto",
     "categories": "Kategorien",
     "packages": "Pakete",
@@ -529,7 +533,6 @@
         "none-found": "Es wurden keine Anmeldungen für diese Organisation gefunden",
         "": ""
       },
-      "openMenu": "Menü öffnen&hellip;",
       "data-table": {
         "actions": {
           "view-details": "Details anzeigen\u2026",
@@ -646,7 +649,6 @@
             "review-catalogue-data": "Katalogdaten überprüfen",
             "confirm": "Bestätigen\u2026",
             "reject": "Ablehnen\u2026",
-            "open-menu": "Menü öffnen\u2026",
             "actions": "Aktionen",
             "copy-id": "Anmelde-ID kopieren"
           },

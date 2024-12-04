@@ -29,7 +29,7 @@ export const SetOrgDetailsRequestSchema = v.object({
 	defaultBillingAddressId: v.nullish(v.string()),
 	organizationAddress: v.object({
 		street: v.string(),
-		extendedAddress: v.string(),
+		extendedAddress: v.nullish(v.string()),
 		country: v.pipe(v.string(), v.length(2, 'Must be 2 characters')),
 		zipCode: v.string(),
 		locality: v.string()
