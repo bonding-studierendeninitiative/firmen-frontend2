@@ -264,7 +264,7 @@
 	export let { hiddenColumnIds } = pluginStates.hide;
 </script>
 
-<section class="flex gap-x-4">
+<section class="flex gap-4 flex-wrap justify-end">
 	<SearchInput placeholder={$_('common.search')} bind:value={$filterValue} />
 	<div class="flex-grow"></div>
 	<DataTableFacetedFilter

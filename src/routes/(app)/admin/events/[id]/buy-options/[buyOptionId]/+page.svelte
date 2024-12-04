@@ -9,9 +9,9 @@
 	export let data: PageServerData;
 </script>
 
-<div class="flex flex-col gap-6 justify-center @container">
+<div class="flex flex-col gap-y-2 justify-center @container p-6 rounded-xl border">
 	<EditBuyOptions form={data.updateForm} />
-<Separator />
+	<Separator class="-mx-6 w-auto" />
 	<div class="py-6 space-y-6 w-full">
 		<h3 class="font-semibold text-lg">{$_("admin-pages.events.buy-options.addons")}</h3>
 		{#if data.addonPackages}

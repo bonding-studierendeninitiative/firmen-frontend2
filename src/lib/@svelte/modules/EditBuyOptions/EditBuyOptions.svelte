@@ -89,8 +89,8 @@
 	};
 </script>
 
-<form action="?/updateBuyOption" method="post" use:enhance class="space-y-8">
-	<div class="pt-6 space-y-4">
+<form action="?/updateBuyOption" method="post" use:enhance class="space-y-2">
+	<div class="space-y-4">
 		<div class="flex gap-1">
 			<h3 class="font-semibold text-lg flex-grow">{$_("components.editBuyOptions.buyOption")}</h3>
 			<Button disabled={!isTainted($tainted)} variant="default" type="submit"
@@ -106,7 +106,7 @@
 			<FieldErrors />
 		</Field>
 	</div>
-	<Separator />
+	<Separator class="-mx-6 w-auto" />
 	<div class="py-4 space-y-4">
 		<h3 class="font-semibold text-lg flex-grow">{$_("components.editBuyOptions.packages")}</h3>
 		<div class="rounded-lg overflow-x-scroll border">
