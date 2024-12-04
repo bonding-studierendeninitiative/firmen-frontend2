@@ -40,7 +40,7 @@ const handleExpiredSession: Handle = async ({ event, resolve }) => {
 	const currentDateTime = new Date();
 
 	if (currentDateTime >= sessionExpires) {
-		logger.info('Handling an expired session, signing the user out\u2026');
+		logger.info(`Handling an expired session ${session}, signing the user out\u2026`);
 		await signOut();
 	}
 

@@ -19,7 +19,7 @@ export const { handle } = SvelteKitAuth({
 			issuer: AUTH0_DOMAIN,
 			authorization: {
 				params: {
-					scope: 'openid profile email',
+					scope: 'openid profile email offline_access',
 					audience: 'https://dev-bonding-firmen-backend'
 				}
 			}
@@ -46,23 +46,65 @@ export const { handle } = SvelteKitAuth({
 	callbacks: {
 		async jwt({ token, account, profile }) {
 			if (account && account.access_token) {
-				token.accessToken = account.access_token;
 				const tokenPayload = JSON.parse(atob(account.access_token?.split('.')[1]));
-				token.role = tokenPayload['https://dev-bonding-firmen/roles'][0] || 'user';
-				token.externalUserId = account.providerAccountId;
-				token.expires_at = account.expires_at;
-			} else if (Number(token?.expires_at || 0) < Date.now() / 1000) {
-				throw new Error('Token expired');
+				return {
+					...token,
+					access_token: account.access_token,
+					refresh_token: account.refresh_token,
+					expires_at: account.expires_at,
+					externalUserId: account.providerAccountId,
+					role: tokenPayload['https://dev-bonding-firmen/roles'][0] || 'User',
+					nickname: profile?.nickname ?? undefined
+				};
+			} else if (Date.now() < Number(token.expires_at || 0) * 1000) {
+				return token;
+			} else {
+				// Subsequent logins, but the `access_token` has expired, try to refresh it
+				if (!token.refresh_token) throw new TypeError('Missing refresh_token');
+
+				try {
+					// The `token_endpoint` can be found in the provider's documentation. Or if they support OIDC,
+					// at their `/.well-known/openid-configuration` endpoint.
+					const response = await fetch(`${AUTH0_DOMAIN}/oauth/token`, {
+						method: 'POST',
+						body: new URLSearchParams({
+							client_id: AUTH0_CLIENT_ID,
+							client_secret: AUTH0_CLIENT_SECRET,
+							grant_type: 'refresh_token',
+							refresh_token: token.refresh_token
+						}),
+						headers: {
+							'Content-Type': 'application/x-www-form-urlencoded'
+						}
+					});
+
+					const tokensOrError = await response.json();
+
+					if (!response.ok) throw tokensOrError;
+
+					const newTokens = tokensOrError as {
+						access_token: string;
+						expires_in: number;
+						refresh_token?: string;
+					};
+
+					token.access_token = newTokens.access_token;
+					token.expires_at = Math.floor(Date.now() / 1000 + newTokens.expires_in);
+					// Some providers only issue refresh tokens once, so preserve if we did not get a new one
+					if (newTokens.refresh_token) token.refresh_token = newTokens.refresh_token;
+					return token;
+				} catch (error) {
+					console.error('Error refreshing access_token', error);
+					// If we fail to refresh the token, return an error so we can handle it on the page
+					token.error = 'RefreshTokenError';
+					return token;
+				}
 			}
-			if (profile) {
-				token.nickname = profile.nickname;
-			}
-			return token;
 		},
 		async session({ session, token }) {
 			return {
 				...session,
-				accessToken: token.accessToken,
+				accessToken: token.access_token,
 				externalUserId: token.externalUserId,
 				user: {
 					...session.user,
