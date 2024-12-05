@@ -369,7 +369,11 @@
 			"registeredEvents": "Registered Events",
 			"noEventsRegistered": "No events registered yet!",
 			"noEventsRegisteredDetail": "There are no events to display yet. Please register a event for your company"
-			"alreadyRegistered": "Registered"
+			"alreadyRegistered": "Registered",
+			"event": "Event",
+			"hsg": "Location",
+			"date": "Date",
+			"advert": "Advert"
 		},
 		"organizations": {
 			"myOrganizations": "My Organizations",

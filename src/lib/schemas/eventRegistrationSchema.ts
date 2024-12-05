@@ -180,5 +180,4 @@ export const GetEventRegistrationsForOrganizationResponse = v.object({
 	pageSize: v.number()
 });
 
-export type GetEventRegistrationsForOrganizationResponse =
-	typeof GetEventRegistrationsForEventResponse;
+export type GetEventRegistrationsForOrganizationResponseType = v.InferOutput<typeof GetEventRegistrationsForOrganizationResponse>;

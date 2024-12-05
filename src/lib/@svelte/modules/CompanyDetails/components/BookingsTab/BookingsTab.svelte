@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { InfoListItem } from '$lib/@svelte/components';
-	import type { GetEventRegistrationsForOrganizationResponse } from '@schema';
+	import type { GetEventRegistrationsForOrganizationResponseType } from '@schema';
 	import type { InferOutput } from 'valibot';
 
 	const upcomingEvents = [
@@ -42,7 +42,7 @@
 		}
 	];
 
-	export let eventRegistrations: InferOutput<GetEventRegistrationsForOrganizationResponse>["eventRegistrations"] = [];
+	export let eventRegistrations: InferOutput<GetEventRegistrationsForOrganizationResponseType>["eventRegistrations"] = [];
 </script>
 
 <section>

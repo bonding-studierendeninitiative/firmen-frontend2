@@ -5,8 +5,8 @@ import { error } from '@sveltejs/kit';
 import {
 	type CreateEventRegistration,
 	CreateEventRegistrationResponse,
-	GetEventRegistrationsForEventResponse,
-	GetEventRegistrationsForOrganizationResponse, type OrgEventRegistration, OrgEventRegistrationSchema
+	GetEventRegistrationsForEventResponse, GetEventRegistrationsForOrganizationResponse,
+	GetEventRegistrationsForOrganizationResponseType, type OrgEventRegistration, OrgEventRegistrationSchema
 } from '@schema';
 
 export const getEventRegistrationsForEvent = async ({
