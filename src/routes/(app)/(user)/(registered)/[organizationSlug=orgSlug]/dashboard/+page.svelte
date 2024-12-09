@@ -5,6 +5,7 @@
 	import type { PageData } from './$types';
 	import { currentOrganizationSlugStore } from '@/stores/currentOrganizationSlugStore';
 	import SuperDebug from 'sveltekit-superforms';
+	import { RegisteredEventList } from '@/@svelte/modules/RegisteredEventList';
 
 
 	export let data: PageData;
@@ -30,7 +31,6 @@
 </script>
 
 <div>
-	<SuperDebug data={eventRegistrations}></SuperDebug>
 	<h1 class=" text-stone-950 text-3xl font-extrabold">{$_('user-pages.dashboard.dashboard')}</h1>
 	<h4 class=" text-stone-500">
 		{$_('user-pages.dashboard.subHeading', {
@@ -66,6 +66,7 @@
 			</h2>
 		</div>
 		<div class="mt-2">
+			<!--
 			{#if eventRegistrations.length > 0 }
 				<div class="grid grid-cols-1 sm:grid-cols-1 md:sm:grid-cols-1 lg:sm:grid-cols-2 gap-8">
 					{#each eventRegistrations as eventRegistration (eventRegistration.id)}
@@ -83,7 +84,8 @@
 					buttonText={$_('common.viewEvents')}
 					onButtonClick={toggleListing}
 				/>
-			{/if}
+			{/if}-->
+			<RegisteredEventList bind:eventRegistrations={data.eventRegistrations}></RegisteredEventList>
 		</div>
 	</section>
 </div>
