@@ -6,7 +6,7 @@
 	import type { GetAddonPackageTemplateResponse } from '@schema';
 	import * as HoverCard from '$lib/components/ui/hover-card/index.js';
 	import type { InferOutput } from 'valibot';
-	import { number } from '@services/i18n';
+	import { number, _ } from '@services/i18n';
 	import { onMount } from 'svelte';
 
 	export let addons: InferOutput<GetAddonPackageTemplateResponse>[] = [];
@@ -68,12 +68,13 @@
 	}
 </script>
 
-<div class=" border border-stone-200 w-full rounded-lg mt-6">
+<div class=" border border-stone-200 w-full rounded-lg mt-6 p-4 space-y-4">
+	<span>{$_("admin-pages.events.event-registrations.purchased-addons")}</span>
 	<!-- marketingServices -->
 	{#each addons as addonPackage}
 		{@const checkedPKG = selectedAddonPackages.includes(addonPackage.id)}
-		<div class=" border-b border-stone-200 py-3">
-			<div class="px-3 flex justify-between items-center align-middle">
+		<div class="">
+			<div class="flex justify-between items-center align-middle">
 				<div class=" flex items-center align-middle">
 					<div class="flex items-center space-x-2">
 						{#if addonPackage.purchasable}
@@ -109,7 +110,7 @@
 				</div>
 				{#if addonPackage.purchasable}
 					<p class=" text-sm font-stone-800 font-extrabold">
-						{$number((addonPackage.price ?? 0) / 100, {
+						{$number((checkedPKG? addonPackage.price ?? 0 : 0) / 100, {
 							style: 'currency',
 							currency: 'EUR',
 							currencyDisplay: 'code'
@@ -150,9 +151,9 @@
 						</Label>
 					</div>
 					<p class=" text-sm font-stone-800 font-medium">
-						{checkedAddon
+						{checkedPKG
 							? 'included'
-							: $number((addon.price ?? 0) / 100, {
+							: $number((checkedAddon ? addon.price ?? 0 : 0) / 100, {
 								style: 'currency',
 								currency: 'EUR',
 								currencyDisplay: 'code'

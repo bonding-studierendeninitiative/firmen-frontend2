@@ -122,7 +122,12 @@
     },
     "next": "Next",
     "previous": "Previous",
-    "open-menu": "Open menu\u2026"
+    "open-menu": "Open menu\u2026",
+    "event-registration-status": {
+      "created": "New",
+      "confirmed": "Confirmed",
+      "rejected": "Rejected"
+    }
   },
   "components": {
     "addonPackage": {
@@ -134,7 +139,7 @@
       "clearFilters": "Clear filters"
     },
     "editBuyOptions": {
-      "buyOption": "Buy option",
+      "buyOption": "Buy option {buyOptionName}",
       "buyOptionName": "Buy option name",
       "packages": "Packages",
       "services": "Services",
@@ -617,6 +622,7 @@
       "endTime": "End Time",
       "specialties": "Specialties",
       "eventTemplate": "Event template (optional)",
+      "show-buy-options": "Show buy options",
       "buy-options": {
         "title": "Buy options",
         "publish": "Publish this buy option",
@@ -670,7 +676,9 @@
           "description": "Do you want to review this event registration?",
           "proceed": "Review registration",
           "document-type": "Review the\u2026"
-        }
+        },
+        "purchased-package": "Purchased package",
+        "purchased-addons": "Purchased addons"
       }
     },
     "dashboard": {

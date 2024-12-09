@@ -38,11 +38,11 @@
 <Dialog.Root bind:open={isOpen}>
 	<Dialog.Content>
 		<form action="?/confirmEventRegistration" method="post" use:enhance>
-			<Dialog.Header>
+			<Dialog.Header class="space-y-4">
 				<Dialog.Title>{$_("admin-pages.events.event-registrations.confirm-event-registration.title")}</Dialog.Title>
 				<Dialog.Description>{$_("admin-pages.events.event-registrations.confirm-event-registration.title")}</Dialog.Description>
 			</Dialog.Header>
-			<EventRegistration {eventRegistration} />
+			<EventRegistration class="py-4" {eventRegistration} />
 
 			<Dialog.Footer>
 				<Button type="submit">{$_("admin-pages.events.event-registrations.confirm-event-registration.proceed")}</Button>

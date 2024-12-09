@@ -15,6 +15,7 @@
 	import { toast } from 'svelte-french-toast';
 	import * as Table from '@/components/ui/table';
 	import { Separator } from '@/components/ui/separator';
+	import { cn } from '@/utils';
 
 	export let form: SuperValidated<Infer<UpdateBuyOptionRequest>>;
 
@@ -92,8 +93,13 @@
 <form action="?/updateBuyOption" method="post" use:enhance class="space-y-2">
 	<div class="space-y-4">
 		<div class="flex gap-1">
-			<h3 class="font-semibold text-lg flex-grow">{$_("components.editBuyOptions.buyOption")}</h3>
-			<Button disabled={!isTainted($tainted)} variant="default" type="submit"
+			<h3 class="font-semibold text-lg flex-grow">{$_("components.editBuyOptions.buyOption", {
+				values: {
+					"buyOptionName": $formData.name
+				}
+			})}</h3>
+			<Button disabled={!isTainted($tainted)} class={cn(isTainted($tainted) ? "animate-pulse":null)} variant="default"
+							type="submit"
 			>{$_('common.saveAsDraft')}</Button
 			>
 		</div>

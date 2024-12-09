@@ -3,6 +3,7 @@
 	import { CalenderIcon } from '$lib/@svelte/icons';
 	import { Link } from '@/@svelte/components';
 	import { Button } from '@/components/ui/button';
+	import Ellipsis from 'lucide-svelte/icons/ellipsis';
 
 	export let heading: string;
 	export let subHeading: string;
@@ -20,6 +21,5 @@
 			<p class=" ml-2 text-sm text-stone-800 font-medium">{date}</p>
 		</div>
 		<Button><a {href}>{$_(`common.${buttonText}`)}</a></Button>
-
 	</div>
 </div>
