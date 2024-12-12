@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { _ } from '@services';
 
-	export let tabHeadings: string[];
+	export let tabHeadings: readonly string[];
 	export let activeTab: number;
 	export let handleTabChange: (index: number) => void;
 	export let hasBorder: boolean = true;

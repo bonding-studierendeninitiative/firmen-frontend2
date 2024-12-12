@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { ErrorMessage } from '../ErrorMessage';
-	import { clsx } from 'clsx';
 	import { cn } from '@/utils';
 
 	type HandleInputType = undefined | { (e: any): void };

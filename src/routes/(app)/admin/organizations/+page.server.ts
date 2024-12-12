@@ -1,5 +1,5 @@
 import type { PageServerLoad } from '../../../../../.svelte-kit/types/src/routes/(app)/admin/events/[id]/buy-options/[buyOptionId]/$types';
-import { getOrganizationMembers, getOrgs } from '@/services';
+import { getOrgs } from '@/services';
 
 export const load: PageServerLoad = async ({ parent }) => {
 	const { session } = await parent();
@@ -9,9 +9,6 @@ export const load: PageServerLoad = async ({ parent }) => {
 		// @ts-expect-error we define accessToken in parent
 		accessToken: session?.accessToken
 	});
-
-	// const updateForm = await superValidate(buyOption, valibot(UpdateBuyOptionRequestSchema));
-	// const createAddonPackageForm = await superValidate(valibot(CreateEventAddonPackageSchema));
 
 	return {
 		organizations

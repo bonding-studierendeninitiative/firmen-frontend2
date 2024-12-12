@@ -12,22 +12,24 @@
 	import Dropzone from 'svelte-file-dropzone';
 	import { superForm, type SuperValidated, type Infer } from 'sveltekit-superforms';
 	import { page } from '$app/stores';
-	import type { CreatePortraitTemplateRequest } from '$lib/services/portraitTemplates';
 	import { toast } from 'svelte-french-toast';
 	import { invalidate } from '$app/navigation';
 	import { faker } from '@faker-js/faker';
 	import { disciplines } from '@constant';
 	import { Button } from '@/components/ui/button';
+	import type { CreatePortraitTemplateRequest } from '@schema';
+
 
 	export let isOpen: boolean = false;
-
 	let currentStep = 1;
 	let files: any = {
 		accepted: [],
 		rejected: []
 	};
 
-	$: isOpen ? (currentStep = 1) : null;
+	$: {
+		isOpen ? (currentStep = 1) : null;
+	}
 
 	function handleFilesSelect(e: any) {
 		const { acceptedFiles, fileRejections } = e.detail;
@@ -89,7 +91,7 @@
 				offersInternships: faker.datatype.boolean()
 			});
 		}}
-		>Generate random data
+	>{$_("modules.add-portrait.generate-random-data")}
 	</Button>
 	<form action="?/createPortrait" method="post" use:enhance>
 		{#if currentStep === 1}
@@ -254,7 +256,11 @@
 
 				<footer class=" mt-10 flex justify-between items-center mb-4">
 					<p class=" text-sm text-stone-500">
-						{$_('user-pages.portraits.lastEdited')}: 27 Dec 2023
+						{$_('user-pages.portraits.lastEdited', {
+							values: {
+								date: '27 Dec 2023',
+							}
+						})}
 					</p>
 					<div class=" flex items-center">
 						<Button
@@ -263,7 +269,7 @@
 							on:click={() => {
 								isOpen = false;
 							}}
-							>{$_('common.cancel')}
+						>{$_('common.cancel')}
 						</Button>
 						<Button variant="gradient" type="submit">{$_('common.save')}</Button>
 					</div>
@@ -274,7 +280,7 @@
 				<div>
 					<div>
 						<label class="block mb-3 font-medium marker:text-sm text-stone-800" for="Locations"
-							>{$_('user-pages.portraits.uploadPDF')}</label
+						>{$_('user-pages.portraits.uploadPDF')}</label
 						>
 						<Dropzone
 							disableDefaultStyles
@@ -294,16 +300,16 @@
 						</Dropzone>
 					</div>
 					<div class="w-full">
-						<label class="block my-3 font-medium marker:text-sm text-stone-800" for="Locations"
-							>{$_('user-pages.portraits.companyLogo')}</label
-						>
+						<label class="block my-3 font-medium marker:text-sm text-stone-800" for="Locations">
+							{$_('user-pages.portraits.companyLogo')}
+						</label>
 						<div class=" flex">
 							<img src="user.png" alt="User" />
 							<div class=" flex flex-col ml-4">
 								<div>
-									<Button variant="secondary" on:click={() => undefined} classes="mb-3 !py-1.5"
-										>{$_('common.upload')}</Button
-									>
+									<Button variant="secondary" on:click={() => undefined} class="mb-3 !py-1.5">
+										{$_('common.upload')}
+									</Button>
 								</div>
 								<p class="text-gray-500 text-sm font-normal">
 									{$_('user-pages.portraits.logoInstructions')}
@@ -314,7 +320,11 @@
 				</div>
 				<footer class=" mt-10 flex justify-between items-center mb-4">
 					<p class=" text-sm text-stone-500">
-						{$_('user-pages.portraits.lastEdited')}: 27 Dec 2023
+						{$_('user-pages.portraits.lastEdited', {
+							values: {
+								date: '27 Dec 2023',
+							}
+						})}
 					</p>
 					<div class=" flex items-center">
 						<Button
@@ -323,7 +333,7 @@
 							on:click={() => {
 								isOpen = false;
 							}}
-							>{$_('common.cancel')}
+						>{$_('common.cancel')}
 						</Button>
 						<Button variant="gradient" type="submit" form={$page.form}>{$_('common.save')}</Button>
 					</div>

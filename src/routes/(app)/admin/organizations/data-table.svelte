@@ -1,17 +1,14 @@
 <script lang="ts">
 	import { createTable, Subscribe, Render, createRender } from 'svelte-headless-table';
-	import { _ } from '@services/i18n';
+	import { _, dayjs } from '@services';
 	import { addColumnFilters, addSelectedRows, addTableFilter } from 'svelte-headless-table/plugins';
-	import dayjs from 'dayjs';
-	import relativeTime from 'dayjs/plugin/relativeTime';
 	import * as Table from '@/components/ui/table';
 	import { get, readable } from 'svelte/store';
 	import { DataTableFacetedFilter, SearchInput } from '@/@svelte/components';
 	import DataTableActions from './data-table-actions.svelte';
 	import DataTableCheckbox from './data-table-checkbox.svelte';
 	import type { GetOrgDetailsResponse } from '@schema';
-	import { orgTypes } from '@constant/orgTypes';
-	import { goto } from '$app/navigation';
+	import { Building, Network, Star } from 'lucide-svelte';
 
 	export let data: GetOrgDetailsResponse[] = [];
 	const table = createTable(readable(data), {
@@ -22,7 +19,19 @@
 		select: addSelectedRows()
 	});
 
-	dayjs.extend(relativeTime);
+	$: orgTypes = [
+		{
+			label: $_('common.org-types.nonprofit'),
+			value: 'nonprofit',
+			icon: Star
+		},
+		{
+			label: $_('common.org-types.company'),
+			value: 'company',
+			icon: Building
+		},
+		{ label: $_('common.org-types.other'), value: 'other', icon: Network }
+	];
 
 	const counts = data.reduce<{
 		type: { [index: string]: number };
@@ -61,19 +70,19 @@
 		}),
 		table.column({
 			accessor: 'name',
-			header: 'Organization'
+			header: $_(`admin-pages.organizations.data-table.headers.name`)
 		}),
 		table.column({
 			accessor: 'organizationPhone',
-			header: 'Phone'
+			header: $_(`admin-pages.organizations.data-table.headers.phone`)
 		}),
 		table.column({
 			accessor: 'organizationEmail',
-			header: 'Email'
+			header: $_(`admin-pages.organizations.data-table.headers.email`)
 		}),
 		table.column({
 			accessor: ({ createdAt, modifiedAt }) => dayjs(modifiedAt ?? createdAt).fromNow(),
-			header: 'Last modified',
+			header: $_(`admin-pages.organizations.data-table.headers.last-modified`),
 			plugins: {
 				filter: {
 					exclude: true
@@ -82,7 +91,11 @@
 		}),
 		table.column({
 			accessor: 'organizationType',
-			header: 'Typ',
+			id: 'organizationType',
+			header: $_(`admin-pages.organizations.data-table.headers.type`),
+			cell: ({ value }) => {
+				return $_(`common.org-types.${value}`)
+			},
 			plugins: {
 				filter: {
 					exclude: true
@@ -129,7 +142,7 @@
 	<div class="flex-grow"></div>
 	<DataTableFacetedFilter
 		bind:filterValues={$filterValues.organizationType}
-		title="Type"
+		title={$_("admin-pages.organizations.data-table.filters.type.title")}
 		options={orgTypes}
 		counts={counts.type}
 	/>

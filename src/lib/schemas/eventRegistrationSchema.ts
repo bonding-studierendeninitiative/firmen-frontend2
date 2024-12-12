@@ -1,4 +1,5 @@
 import * as v from 'valibot';
+import { APIEvent } from '@schema/events';
 
 export const CreateEventRegistrationSchema = v.object({
 	eventId: v.pipe(v.string(), v.nonEmpty()),
@@ -128,14 +129,7 @@ export const OrgEventRegistrationSchema = v.object({
 			text: v.string()
 		})
 	),
-	event: v.object({
-		id: v.string(),
-		name: v.string(),
-		projectHSG: v.string(),
-		dateFrom: v.string(),
-		dateTo: v.nullish(v.string()),
-		location: v.string()
-	}),
+	event: APIEvent,
 	portraitStatus: v.nullish(
 		v.object({
 			code: v.number(),
@@ -180,4 +174,5 @@ export const GetEventRegistrationsForOrganizationResponse = v.object({
 	pageSize: v.number()
 });
 
-export type GetEventRegistrationsForOrganizationResponseType = v.InferOutput<typeof GetEventRegistrationsForOrganizationResponse>;
+export type GetEventRegistrationsForOrganizationResponse =
+	typeof GetEventRegistrationsForOrganizationResponse;

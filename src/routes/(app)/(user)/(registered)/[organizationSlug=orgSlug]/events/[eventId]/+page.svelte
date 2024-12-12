@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { _ } from '@services';
+	import { _, dayjs } from '@services';
 	import { Button } from '@/components/ui/button';
 	import * as Breadcrumb from '@/components/ui/breadcrumb';
 
@@ -13,7 +13,6 @@
 
 	import * as Table from '@/components/ui/table';
 	import type { PageData } from './$types';
-	import dayjs from 'dayjs';
 	import { number } from '@services/i18n';
 	import { AddonList } from '@/@svelte/components';
 

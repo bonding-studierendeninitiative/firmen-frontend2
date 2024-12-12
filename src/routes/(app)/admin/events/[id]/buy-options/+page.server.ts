@@ -1,6 +1,6 @@
 import { createBuyOption } from '$lib/services';
 import { valibot } from 'sveltekit-superforms/adapters';
-import { CreateBuyOptionRequestSchema, SimpleCreateBuyOptionRequestSchema } from '@schema';
+import { SimpleCreateBuyOptionRequestSchema } from '@schema';
 import { superValidate } from 'sveltekit-superforms';
 import { fail, redirect } from '@sveltejs/kit';
 

@@ -1,13 +1,8 @@
 <script lang="ts">
-	import { _ } from '@services';
+	import { _, dayjs } from '@services';
 	import { FilledCheckIcon, MessageIcon } from '$lib/@svelte/icons';
 	import { Button } from '../Button';
 	import { Button as ShadcnButton } from '@/components/ui/button';
-
-	import relativeTime from 'dayjs/plugin/relativeTime';
-	import dayjs from 'dayjs';
-
-	dayjs.extend(relativeTime);
 
 	const onActionButtonClick = () => {};
 

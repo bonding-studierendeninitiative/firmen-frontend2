@@ -1,19 +1,15 @@
 <script lang="ts">
-	import { _ } from '@services';
+	import { _, dayjs } from '@services';
 	import { Button, NoDataFound } from '@/@svelte/components';
 	import { Button as ShadcnButton } from '@/components/ui/button';
 	import { SimpleDocumentIcon } from '@/@svelte/icons';
 	import { goto } from '$app/navigation';
 	import { currentOrganizationSlugStore } from '@/stores/currentOrganizationSlugStore';
-	import dayjs from 'dayjs';
 	import type { PageData } from './$types';
 	import { AddPortrait } from '@/@svelte/modules/AddPortrait';
 	import { groupBy } from '@/utils/array';
-	import relativeTime from 'dayjs/plugin/relativeTime';
 	import { Pagination } from 'flowbite-svelte';
 	import { superForm } from 'sveltekit-superforms';
-
-	dayjs.extend(relativeTime);
 
 	export let data: PageData;
 

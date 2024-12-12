@@ -7,6 +7,7 @@
 	import { cn } from '@/utils';
 	import { tick } from 'svelte';
 	import { Badge } from '@/components/ui/badge';
+	import { _ } from '@services';
 
 	export let open: boolean = false;
 	export let buyOptions: { label: string; value: string; active: boolean }[];
@@ -42,9 +43,9 @@
 	</Popover.Trigger>
 	<Popover.Content class="w-[300px] p-0">
 		<Command.Root>
-			<Command.Input placeholder="Search for a buy option..." />
+			<Command.Input placeholder={$_("modules.buy-option-selector.search-placeholder")} />
 			<Command.List>
-				<Command.Empty>No buy option found.</Command.Empty>
+				<Command.Empty>{$_("modules.buy-option-selector.no-buy-options")}</Command.Empty>
 				<Command.Group>
 					{#each buyOptions as buyOption}
 						<Command.Item
@@ -59,7 +60,7 @@
 							<Check class={cn('mr-2 h-4 w-4', value !== buyOption.value && 'text-transparent')} />
 							<span class="flex-grow">{buyOption.label}</span>
 							{#if buyOption.active}
-								<Badge variant="outline">aktiv</Badge>
+								<Badge variant="outline">{$_("modules.buy-option-selector.active")}</Badge>
 							{/if}
 						</Command.Item>
 					{/each}
@@ -75,7 +76,7 @@
 						}}
 					>
 						<PlusCircle class="mr-2 h-4 w-4" />
-						Create a new buy option&hellip;
+						{$_("modules.buy-option-selector.create-new")}
 					</Command.Item>
 				</Command.Group>
 			</Command.List>

@@ -1,8 +1,7 @@
 <script lang="ts">
 	import { _ } from '@services';
 	import { goto } from '$app/navigation';
-	import { NoDataFound, EventInfoBox, Button, Table, Chip } from '@/@svelte/components';
-	import { ImageIcon, DocumentIcon, BrandingIcon } from '@/@svelte/icons';
+	import { NoDataFound, EventInfoBox, Button, Table, Chip, EventRegistrationInfoBox } from '@/@svelte/components';
 	import type { PageData } from './$types';
 	import { currentOrganizationSlugStore } from '@/stores/currentOrganizationSlugStore';
 	import SuperDebug from 'sveltekit-superforms';
@@ -70,12 +69,11 @@
 			<!--
 			{#if eventRegistrations.length > 0 }
 				<div class="grid grid-cols-1 sm:grid-cols-1 md:sm:grid-cols-1 lg:sm:grid-cols-2 gap-8">
-					{#each eventRegistrations as { event, id }, index (index)}
-						<EventInfoBox
-							heading={event.name}
-							subHeading={event.location}
-							date={event.dateFrom}
-							href={`/${$currentOrganizationSlugStore}/events/${id}`}
+					{#each eventRegistrations as eventRegistration (eventRegistration.id)}
+						<EventRegistrationInfoBox
+							{eventRegistration}
+							date={eventRegistration.event.dateFrom}
+							href={`/${$currentOrganizationSlugStore}/events/${eventRegistration.id}`}
 						/>
 					{/each}
 				</div>

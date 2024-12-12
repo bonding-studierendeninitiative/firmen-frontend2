@@ -31,54 +31,60 @@ const handleExpiredSession: Handle = async ({ event, resolve }) => {
 	const currentDateTime = new Date();
 
 	if (currentDateTime >= sessionExpires) {
-		await signOut()
+		await signOut();
 	}
 
-	return resolve(event)
-}
+	return resolve(event);
+};
 
 const forceContactPersonDetails: Handle = async ({ event, resolve }) => {
 	const session = await event.locals.auth();
 
 	// check if users is not logged in (handleAuth will do this)
-	if (!session?.user ) {
+	if (!session?.user) {
 		return resolve(event);
 	}
 
 	// @ts-expect-error role was added in auth
-	if (!['admin', 'dev', 'bonding'].includes(session?.user?.role) && !event.url.pathname.includes('sign-up')) {
+	if (
+		!['admin', 'dev', 'bonding'].includes(session?.user?.role) &&
+		!event.url.pathname.includes('sign-up')
+	) {
 		const details = get(contactPersonDetailsStore);
 		if (!details) {
 			// @ts-expect-error define accessToke in auth
-			const d = await getContactPersonDetails({ accessToken: session?.accessToken })
+			const d = await getContactPersonDetails({ accessToken: session?.accessToken });
 			if (!d) {
-				return new Response(null, {status: 302, headers: {location: "/sign-up"}})
+				return new Response(null, { status: 302, headers: { location: '/sign-up' } });
 			}
 		}
 	}
-	return resolve(event)
+	return resolve(event);
 };
 
-const forceOrganizationCreation: Handle = async ({event, resolve}) => {
+const forceOrganizationCreation: Handle = async ({ event, resolve }) => {
 	const session = await event.locals.auth();
 	const details = get(contactPersonDetailsStore);
 
 	// @ts-expect-error role was added in auth
 	if (['admin', 'dev', 'bonding'].includes(session?.user?.role)) return resolve(event);
 
-
 	// details do not exist -> person not registered/logged in
 	if (!details) {
-		return resolve(event)
+		return resolve(event);
 	}
 
 	if (details.organizationMemberships.length == 0 && !event.url.pathname.includes('create-org')) {
-		return new Response(null, {status: 302, headers: {location: "/create-org"}})
+		return new Response(null, { status: 302, headers: { location: '/create-org' } });
 	}
 
 	return resolve(event);
-
-
 };
 
-export const handle = sequence(handleAuth, handleExpiredSession, protectAdmin, forceContactPersonDetails, forceOrganizationCreation);
+export const handle = sequence(
+	handleAuth,
+	handleExpiredSession,
+	protectAdmin,
+	forceContactPersonDetails,
+	forceOrganizationCreation
+);

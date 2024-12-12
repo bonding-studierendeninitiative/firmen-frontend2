@@ -80,9 +80,9 @@
 						/>
 					</Select.Trigger>
 					<Select.Content>
-						<Select.Item value="company" label="Company">Company</Select.Item>
-						<Select.Item value="nonprofit" label="Non-Profit">Non-Profit</Select.Item>
-						<Select.Item value="other" label="Other">Other</Select.Item>
+						<Select.Item value="company" label={$_("common.org-types.company")} />
+						<Select.Item value="nonprofit" label={$_("common.org-types.nonprofit")} />
+						<Select.Item value="other" label={$_("common.org-types.other")} />
 					</Select.Content>
 				</Select.Root>
 			</Control>

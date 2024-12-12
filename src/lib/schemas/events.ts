@@ -1,6 +1,6 @@
 import * as v from 'valibot';
 
-const APIEvent = v.object({
+export const APIEvent = v.object({
 	id: v.string(),
 	name: v.string(),
 	projectHSG: v.string(),

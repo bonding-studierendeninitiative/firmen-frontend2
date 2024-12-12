@@ -63,11 +63,11 @@
 
 <Dialog.Root bind:open={isOpen}>
 	<Dialog.Trigger>
-		<Button variant="link">Add an addon package</Button>
+		<Button variant="link">{$_("admin-pages.addons.add")}</Button>
 	</Dialog.Trigger>
 	<Dialog.Content class="flex flex-col gap-y-4 max-w-3xl">
 		<Dialog.Header>
-			<Dialog.Title>Create a new addon package</Dialog.Title>
+			<Dialog.Title>{$_("admin-pages.addons.title")}</Dialog.Title>
 		</Dialog.Header>
 		<Separator />
 		<form id={$formId} class="@container" action="?/createAddonPackage" method="post" use:enhance>
@@ -121,7 +121,7 @@
 					</Checkbox>
 					<section class="col-span-3">
 						<fieldset class="border border-stone-300 rounded-lg p-4">
-							<legend class="px-2 text-sm font-semibold">Zusatzleistungen</legend>
+							<legend class="px-2 text-sm font-semibold">{$_("common.addons")}</legend>
 							<div class="space-y-2">
 								{#each $form.addonPackage.addons as _unused, index}
 									<div class={`p-2 relative grid grid-cols-2 gap-4 w-full`}>

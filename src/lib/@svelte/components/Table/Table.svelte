@@ -25,6 +25,6 @@
 </div>
 {#if !totalRecords}
 	<div class=" w-full h-20 flex justify-center items-center">
-		Leider wurden keine Datensätze gefunden
+		{$_("components.table.no-records")}
 	</div>
 {/if}

@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { createTable, Subscribe, Render, createRender } from 'svelte-headless-table';
-	import { _ } from '@services/i18n';
+	import { createTable, Subscribe, Render, createRender, type ReadOrWritable } from 'svelte-headless-table';
+	import { _, dayjs } from '@services';
 	import {
 		addColumnFilters,
 		addHiddenColumns,
@@ -8,29 +8,29 @@
 		addTableFilter
 	} from 'svelte-headless-table/plugins';
 	import type { InferOutput } from 'valibot';
-	import dayjs from 'dayjs';
-	import relativeTime from 'dayjs/plugin/relativeTime';
 	import * as Table from '@/components/ui/table';
-	import { get, readable } from 'svelte/store';
-	import { Chip, DataTableFacetedFilter, SearchInput } from '@/@svelte/components';
+	import { get } from 'svelte/store';
+	import {
+		AdvertStatusIcon,
+		Chip,
+		DataTableFacetedFilter,
+		PortraitStatusIcon,
+		LogoStatusIcon,
+		SearchInput
+	} from '@/@svelte/components';
 	import DataTableActions from './data-table-actions.svelte';
 	import DataTableCheckbox from './data-table-checkbox.svelte';
-	import { BrandingIcon, DocumentIcon, ImageIcon } from '@/@svelte/icons';
 	import type {
-		ConfirmEventRegistrationSchema,
-		EventRegistration,
-		RejectEventRegistrationSchema
+		EventRegistration
 	} from '@schema';
-	import type { Infer, SuperValidated } from 'sveltekit-superforms';
 
-	export let data: InferOutput<EventRegistration>[] = [];
-	export let confirmForm: SuperValidated<Infer<ConfirmEventRegistrationSchema>>;
-	export let rejectForm: SuperValidated<Infer<RejectEventRegistrationSchema>>;
-	export let packages: string[];
-	export let status: string[];
-	export let addonPackages: string[];
-	export let addons: string[];
-	const table = createTable(readable(data), {
+	export let data: ReadOrWritable<InferOutput<EventRegistration>[]>;
+	export let packages: string[] = [];
+	export let status: string[] = [];
+	export let addonPackages: string[] = [];
+	export let addons: string[] = [];
+
+	let table = createTable(data, {
 		filter: addTableFilter({
 			fn: ({ value, filterValue }) => value.toLowerCase().includes(filterValue.toLowerCase())
 		}),
@@ -44,9 +44,7 @@
 		})
 	});
 
-	dayjs.extend(relativeTime);
-
-	const counts = data?.reduce<{
+	$: counts = $data.reduce<{
 		package: { [index: string]: number };
 		status: { [index: string]: number };
 		addonPackages: { [index: string]: number };
@@ -100,23 +98,24 @@
 		}),
 		table.column({
 			accessor: ({ organization }) => organization.name,
-			header: 'Organization'
+			header: $_('admin-pages.events.event-registrations.data-table.headers.org')
 		}),
 		table.column({
 			accessor: ({ contactPerson }) => contactPerson.fullName,
-			header: 'Contact Person'
+			header: $_('admin-pages.events.event-registrations.data-table.headers.contact-person')
 		}),
 		table.column({
 			accessor: ({ contactPerson, organization }) => contactPerson.phone ?? organization.phone,
-			header: 'Phone'
+			header: $_('admin-pages.events.event-registrations.data-table.headers.phone')
 		}),
 		table.column({
 			accessor: ({ contactPerson, organization }) => contactPerson.email ?? organization.email,
-			header: 'Email'
+			header: $_('admin-pages.events.event-registrations.data-table.headers.email')
 		}),
 		table.column({
 			accessor: ({ purchasedPackage }) => purchasedPackage.name,
-			header: 'Package',
+			header: $_('admin-pages.events.event-registrations.data-table.headers.package'),
+			id: "package",
 			plugins: {
 				packageFilter: {
 					fn: ({ filterValue, value }) => {
@@ -135,7 +134,7 @@
 		}),
 		table.column({
 			accessor: ({ createdAt, modifiedAt }) => dayjs(modifiedAt ?? createdAt).fromNow(),
-			header: 'Last modified',
+			header: $_('admin-pages.events.event-registrations.data-table.headers.last-modified'),
 			plugins: {
 				filter: {
 					exclude: true
@@ -144,9 +143,10 @@
 		}),
 		table.column({
 			accessor: ({ status }) => status?.text,
-			header: 'Status',
+			header: $_('admin-pages.events.event-registrations.data-table.headers.status'),
+			id: "status",
 			cell: ({ value }) => {
-				return createRender(Chip, { status: value, variant: 'success' });
+				return createRender(Chip, { status: value, variant: value });
 			},
 			plugins: {
 				filter: {
@@ -165,9 +165,9 @@
 			}
 		}),
 		table.column({
-			accessor: 'portraitStatus',
-			cell: () => createRender(DocumentIcon),
-			header: 'Portrait',
+			accessor: ({ portraitStatus }) => portraitStatus?.text ?? '',
+			cell: ({ value }) => createRender(PortraitStatusIcon, { variant: value }),
+			header: $_('admin-pages.events.event-registrations.data-table.headers.portrait-status'),
 			plugins: {
 				filter: {
 					exclude: true
@@ -175,9 +175,9 @@
 			}
 		}),
 		table.column({
-			accessor: 'logoStatus',
-			cell: () => createRender(ImageIcon),
-			header: 'Logo',
+			accessor: ({ logoStatus }) => logoStatus?.text,
+			cell: ({ value }) => createRender(LogoStatusIcon, { variant: value }),
+			header: $_('admin-pages.events.event-registrations.data-table.headers.logo-status'),
 			plugins: {
 				filter: {
 					exclude: true
@@ -185,9 +185,9 @@
 			}
 		}),
 		table.column({
-			accessor: 'advertisementStatus',
-			cell: () => createRender(BrandingIcon),
-			header: 'Advert',
+			accessor: ({ advertisementStatus }) => advertisementStatus?.text,
+			cell: ({ value }) => createRender(AdvertStatusIcon, { variant: value }),
+			header: $_('admin-pages.events.event-registrations.data-table.headers.advert-status'),
 			plugins: {
 				filter: {
 					exclude: true
@@ -200,9 +200,7 @@
 			cell: ({ value }) => {
 				return createRender(DataTableActions, {
 					id: value.id,
-					eventRegistration: value,
-					confirmForm,
-					rejectForm
+					eventRegistration: value
 				});
 			},
 			plugins: {
@@ -221,7 +219,7 @@
 				},
 				addonPackageFilter: {
 					fn: ({ filterValue, value }) => {
-						console.log({filterValue, value})
+						console.log({ filterValue, value });
 						if (filterValue.length === 0) return true;
 						if (!Array.isArray(filterValue) || !Array.isArray(value)) return true;
 						return filterValue.some((filter) => {
@@ -270,23 +268,23 @@
 	<SearchInput placeholder={$_('common.search')} bind:value={$filterValue} />
 	<div class="flex-grow"></div>
 	<DataTableFacetedFilter
-		title="All status..."
+		title={$_("admin-pages.events.event-registrations.data-table.filters.status")}
 		options={status.map((_package) => ({
 			label: _package,
 			value: _package,
 			checked: false
 		}))}
-		bind:filterValues={$statusFilterValues.Status}
+		bind:filterValues={$statusFilterValues.status}
 		counts={counts?.status}
 	/>
 	<DataTableFacetedFilter
-		title="Select a package..."
+		title={$_("admin-pages.events.event-registrations.data-table.filters.package")}
 		options={packages.map((_package) => ({
 			label: _package,
 			value: _package,
 			checked: false
 		}))}
-		bind:filterValues={$packageFilterValues.Package}
+		bind:filterValues={$packageFilterValues.package}
 		counts={counts?.package}
 	/>
 	<DataTableFacetedFilter
@@ -295,8 +293,8 @@
 			label: addonPackage,
 			value: addonPackage
 		}))}
-		bind:filterValues={$addonPackageFilterValues.AddonPackages}
-		title="All addon packages"
+		bind:filterValues={$addonPackageFilterValues["addon-packages"]}
+		title={$_("admin-pages.events.event-registrations.data-table.filters.addon-packages")}
 	/>
 	<DataTableFacetedFilter
 		options={addons.map((addon) => ({
@@ -304,7 +302,7 @@
 			value: addon
 		}))}
 		bind:filterValues={$addonFilterValues.addons}
-		title="All addons"
+		title={$_("admin-pages.events.event-registrations.data-table.filters.addons")}
 		counts={counts?.addons}
 	/>
 </section>

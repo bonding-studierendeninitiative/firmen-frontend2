@@ -2,7 +2,6 @@
 	import { _ } from '@services';
 	import { PencilSquareIcon } from '$lib/@svelte/icons';
 	import { Button } from '..';
-	import ButtonIcon from '../ButtonIcon/ButtonIcon.svelte';
 	export let isDefault: boolean;
 </script>
 

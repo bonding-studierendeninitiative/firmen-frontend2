@@ -6,6 +6,7 @@
 	import { fade } from 'svelte/transition';
 	import { DeleteBuyOption, BuyOptionSelector, CreateBuyOption } from '@/@svelte/modules';
 	import { Button } from '@/components/ui/button';
+	import { _ } from '@services';
 
 	export let data: LayoutServerData;
 
@@ -37,7 +38,7 @@
 				<Button
 					type="submit"
 					disabled={!$page.params.buyOptionId || $page.params.buyOptionId === activeBuyOption?.id}
-					>Publish this buy option</Button
+					>{$_("admin-pages.events.buy-options.publish")}</Button
 				>
 			</form>
 		</nav>

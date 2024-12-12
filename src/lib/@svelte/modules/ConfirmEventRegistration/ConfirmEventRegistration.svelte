@@ -9,13 +9,17 @@
 	import { toast } from 'svelte-french-toast';
 	import type { InferOutput } from 'valibot';
 	import { EventRegistration } from '@/@svelte/modules';
+	import { getContext } from 'svelte';
+	import type { Writable } from 'svelte/store';
+	import { _ } from '@services';
 
 	export let isOpen: boolean;
 	export let id: string;
-	export let confirmForm: SuperValidated<Infer<ConfirmEventRegistrationSchema>>;
+	let confirmForm: Writable<SuperValidated<Infer<ConfirmEventRegistrationSchema>>> = getContext('confirmForm');
 	export let eventRegistration: InferOutput<EventRegistrationSchema>;
 
-	const superConfirmForm = superForm(confirmForm, {
+
+	const superConfirmForm = superForm($confirmForm, {
 		onSubmit({ formData }) {
 			formData.set('eventRegistrationId', id);
 		},
@@ -35,13 +39,13 @@
 	<Dialog.Content>
 		<form action="?/confirmEventRegistration" method="post" use:enhance>
 			<Dialog.Header>
-				<Dialog.Title>Confirm event registration</Dialog.Title>
-				<Dialog.Description>Do you want to confirm this Event Registration?</Dialog.Description>
+				<Dialog.Title>{$_("admin-pages.events.event-registrations.confirm-event-registration.title")}</Dialog.Title>
+				<Dialog.Description>{$_("admin-pages.events.event-registrations.confirm-event-registration.title")}</Dialog.Description>
 			</Dialog.Header>
 			<EventRegistration {eventRegistration} />
 
 			<Dialog.Footer>
-				<Button type="submit">Confirm registration</Button>
+				<Button type="submit">{$_("admin-pages.events.event-registrations.confirm-event-registration.proceed")}</Button>
 			</Dialog.Footer>
 		</form>
 	</Dialog.Content>

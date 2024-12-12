@@ -15,3 +15,4 @@ export * from './organizationInvite';
 export * from './contactPersonSchema';
 export * from './eventRegistrationSchema';
 export * from './portraitTemplates';
+export * from './catalogueData';

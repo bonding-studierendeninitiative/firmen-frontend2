@@ -3,8 +3,8 @@
 	import { Button } from '@/components/ui/button';
 	export let showButton = true;
 	export let heading: string;
-	export let subHeading: string;
-	export let date: string;
+	export let subHeading: string | undefined;
+	export let date: string | null;
 	export let buttonText: string;
 	export let onRegisterClick: (() => void) | undefined = undefined;
 </script>

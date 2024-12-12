@@ -8,13 +8,13 @@
 
 	import { fade } from 'svelte/transition';
 	import type { PageServerData } from './$types';
-	import SuperDebug from 'sveltekit-superforms';
+	import { _ } from '@services';
 
 	export let data: PageServerData;
-	export let organization = data?.organization;
-	export let orgMembers = data?.orgMembers || [];
-	export let portraitTemplates = data?.portraitTemplates || [];
-	export let eventRegistrations = data?.eventRegistrations || [];
+	let organization = data?.organization;
+	let orgMembers = data?.orgMembers || [];
+	let portraitTemplates = data?.portraitTemplates || [];
+	let eventRegistrations = data?.eventRegistrations || [];
 
 	let activeTab = 0;
 	const tabHeadings = ['companyInformation', 'portraits', 'bookings'];
@@ -34,9 +34,9 @@
 <div>
 
 	<header class="space-y-4">
-		<Link href="/admin/organizations">⮐ Zurück zu allen Organisationen</Link>
+		<Link href="/admin/organizations">{$_("admin-pages.organizations.back-to-overview")}</Link>
 		<h1 class=" text-stone-950 text-3xl font-extrabold">{organization?.name}</h1>
-		<p>{organization?.organizationType}</p>
+		<p>{$_(`common.org-types.${organization?.organizationType}`)}</p>
 	</header>
 	<div class="grid grid-cols-1 gap-4 w-full">
 		<Tabs hasBorder={false} {tabHeadings} {activeTab} {handleTabChange} />
@@ -54,7 +54,7 @@
 			</div>
 		{:else if activeTab === 2}
 			<div in:fade>
-				<BookingsTab />
+				<BookingsTab {eventRegistrations} />
 			</div>
 		{/if}
 	</section>

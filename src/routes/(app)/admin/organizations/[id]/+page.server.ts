@@ -34,9 +34,6 @@ export const load: PageServerLoad = async ({ parent, params }) => {
 		organizationSlug: params.id
 	});
 
-	// const updateForm = await superValidate(buyOption, valibot(UpdateBuyOptionRequestSchema));
-	// const createAddonPackageForm = await superValidate(valibot(CreateEventAddonPackageSchema));
-
 	return {
 		orgMembers: members,
 		organization,

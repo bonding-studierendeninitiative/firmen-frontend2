@@ -1,18 +1,30 @@
 <script lang="ts">
 	import type { PageServerData } from './$types';
 	import { _ } from '@services';
-	import relativeTime from 'dayjs/plugin/relativeTime';
 	import { NoDataFound, Modal } from '$lib/@svelte/components';
 	import Select from '$lib/@svelte/components/Select/Select.svelte';
 	import toast from 'svelte-french-toast';
-	import dayjs from 'dayjs';
 	import DataTable from './data-table.svelte';
 	import { Button } from '@/components/ui/button';
-	import SuperDebug from 'sveltekit-superforms';
+	import { writable } from 'svelte/store';
+	import { setContext } from 'svelte';
 
-	dayjs.extend(relativeTime);
 
 	export let data: PageServerData;
+
+	$: ({ addons, addonPackages, eventRegistrations, status: someStatus, rejectForm, confirmForm, packages } = data);
+
+	let tableData = writable(eventRegistrations);
+	let confirmFormStore = writable(confirmForm);
+	let rejectFormStore = writable(rejectForm);
+	$: {
+		tableData.set(eventRegistrations ?? [])
+		confirmFormStore.set(confirmForm)
+		rejectFormStore.set(rejectForm)
+	}
+
+	setContext('confirmForm', confirmFormStore);
+	setContext('rejectForm', rejectFormStore);
 
 	let isOpen = false;
 
@@ -38,13 +50,13 @@
 	</div>
 	<footer class=" flex items-center justify-end">
 		<Button variant="gradient" class="!py-1.5" on:click={handleUpdateStatus}
-			>{$_('common.update')}</Button
+		>{$_('common.update')}</Button
 		>
 	</footer>
 </Modal>
 
 <section class=" mt-6">
-	{#if !data.eventRegistrations}
+	{#if !eventRegistrations}
 		<section class=" mt-10">
 			<NoDataFound
 				heading={$_('admin-pages.events.noRegistrationsFound')}
@@ -55,15 +67,13 @@
 	{:else}
 		<section class=" mt-10">
 			<DataTable
-				addons={data.addons}
-				addonPackages={data.addonPackages}
-				status={data.status}
-				packages={data.packages}
-				data={data.eventRegistrations}
-				confirmForm={data.confirmForm}
-				rejectForm={data.rejectForm}
+				addons={addons}
+				data={tableData}
+				addonPackages={addonPackages}
+				status={someStatus}
+				packages={packages}
 			/>
 		</section>
 	{/if}
 </section>
-<SuperDebug {data} />
+<!--<SuperDebug data={page} />-->
