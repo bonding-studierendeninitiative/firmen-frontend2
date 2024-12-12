@@ -1,13 +1,9 @@
-import type { PageServerLoad } from '../../../../../../../../../.svelte-kit/types/src/routes';
-import {
-	getPortraitTemplate,
-	PortraitCompanyDetailsSchema,
-	PortraitContactInfoSchema,
-	updatePortraitDetails
-} from '@/services/portraitTemplates';
+import type { PageServerLoad } from './$types';
+import { getPortraitTemplate, updatePortraitDetails } from '@/services/portraitTemplates';
 import { superValidate } from 'sveltekit-superforms';
 import { valibot } from 'sveltekit-superforms/adapters';
 import { type Actions, fail } from '@sveltejs/kit';
+import { PortraitCompanyDetailsSchema, PortraitContactInfoSchema } from '@schema';
 
 export const load: PageServerLoad = async ({ params, parent }) => {
 	const { session } = await parent();

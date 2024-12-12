@@ -10,8 +10,8 @@ export const load: PageServerLoad = async ({ parent, params, url }) => {
 	const page = Number(url.searchParams.get('page') || '0'); // default to page 0
 	const limit = Number(url.searchParams.get('limit') || '10'); // default to 10 items per page
 
-
 	const eventRegistrations = await getEventRegistrationsForOrganization({
+		// @ts-expect-error we define accessToken in parent
 		accessToken: session?.accessToken,
 		organizationSlug: params.organizationSlug
 	});
