@@ -4,7 +4,6 @@
 	import type { InferOutput } from 'valibot';
 	import { _ } from '@services';
 
-
 	export let eventRegistrations: InferOutput<GetEventRegistrationsForOrganizationResponse>['eventRegistrations'] = [];
 </script>
 

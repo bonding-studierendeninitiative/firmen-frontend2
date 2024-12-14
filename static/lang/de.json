@@ -447,7 +447,11 @@
       "registeredEvents": "Registrierte Veranstaltungen",
       "noEventsRegistered": "Noch keine Veranstaltungen registriert!",
       "noEventsRegisteredDetail": "Es sind noch keine Veranstaltungen vorhanden. Bitte registrieren Sie eine Veranstaltung für Ihr Unternehmen.",
-      "alreadyRegistered": "Registriert"
+      "alreadyRegistered": "Registriert",
+      "event": "Veranstaltung",
+      "hsg": "Standort",
+      "date": "Datum",
+      "advert": "Imageanzeige"
     },
     "organizations": {
       "myOrganizations": "Meine Organisationen",
