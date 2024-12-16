@@ -3,9 +3,8 @@
 	import type { PageServerData } from './$types';
 	import { Tabs } from '$lib/@svelte/components';
 	import { _ } from '@services';
-	import PublishedEventsTab from '$lib/@svelte/pages/Admin/Events/PublishedEventsTab.svelte';
-	import UnpublishedEventsTab from '$lib/@svelte/pages/Admin/Events/UnpublishedEventsTab.svelte';
 	import { Button } from '@/components/ui/button';
+	import { PublishedEventsTab, UnpublishedEventsTab } from '@/@svelte/pages';
 
 	export let data: PageServerData;
 
@@ -59,6 +58,7 @@
 		<PublishedEventsTab
 			{publishedEvents}
 			handleEventRegistration={id => goto(`/admin/events/${id}/registrations/`)}
+			handleBuyOptions={id => goto(`/admin/events/${id}/buy-options/`)}
 		/>
 	{/if}
 	{#if activeTab === 1}

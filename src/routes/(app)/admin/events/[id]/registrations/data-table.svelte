@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { createTable, Subscribe, Render, createRender, type ReadOrWritable } from 'svelte-headless-table';
-	import { _, dayjs } from '@services';
+	import { _, dayjs, locale } from '@services';
 	import {
 		addColumnFilters,
 		addHiddenColumns,
@@ -9,7 +9,7 @@
 	} from 'svelte-headless-table/plugins';
 	import type { InferOutput } from 'valibot';
 	import * as Table from '@/components/ui/table';
-	import { get } from 'svelte/store';
+	import { derived, get } from 'svelte/store';
 	import {
 		AdvertStatusIcon,
 		Chip,
@@ -30,7 +30,7 @@
 	export let addonPackages: string[] = [];
 	export let addons: string[] = [];
 
-	let table = createTable(data, {
+	let table = createTable(derived([data, locale], ([data, locale]) => (data)), {
 		filter: addTableFilter({
 			fn: ({ value, filterValue }) => value.toLowerCase().includes(filterValue.toLowerCase())
 		}),
@@ -133,7 +133,7 @@
 			}
 		}),
 		table.column({
-			accessor: ({ createdAt, modifiedAt }) => dayjs(modifiedAt ?? createdAt).fromNow(),
+			accessor: ({ createdAt, modifiedAt }) => dayjs(modifiedAt ?? createdAt, {}, $locale ?? "de").fromNow(),
 			header: $_('admin-pages.events.event-registrations.data-table.headers.last-modified'),
 			plugins: {
 				filter: {
@@ -146,7 +146,7 @@
 			header: $_('admin-pages.events.event-registrations.data-table.headers.status'),
 			id: "status",
 			cell: ({ value }) => {
-				return createRender(Chip, { status: value, variant: value });
+				return createRender(Chip, { status: $_(`common.event-registration-status.${value}`), variant: value });
 			},
 			plugins: {
 				filter: {
@@ -264,7 +264,7 @@
 	export let { hiddenColumnIds } = pluginStates.hide;
 </script>
 
-<section class="flex gap-x-4">
+<section class="flex gap-4 flex-wrap justify-end">
 	<SearchInput placeholder={$_('common.search')} bind:value={$filterValue} />
 	<div class="flex-grow"></div>
 	<DataTableFacetedFilter

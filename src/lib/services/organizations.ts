@@ -18,13 +18,14 @@ import {
 } from '@schema';
 import { error } from '@sveltejs/kit';
 import * as v from 'valibot';
+import type { InferInput } from 'valibot';
 
 export const acceptOrgInvite = async ({
 	accessToken,
 	data
 }: {
 	accessToken: string;
-	data: AcceptInviteRequest;
+	data: InferInput<AcceptInviteRequest>;
 }) => {
 	const parsed = v.parse(AcceptInviteRequestSchema, data);
 	const response = await API.post({
@@ -95,7 +96,7 @@ export const getOrganizationMembers = async ({
 	page?: number;
 }) => {
 	try {
-		const response = await API.get<GetOrgMembersResponse>({
+		const response = await API.get<InferInput<GetOrgMembersResponse>>({
 			route: `/organization/${slug}/members?page=${page}&pageSize=10`,
 			token: accessToken
 		});

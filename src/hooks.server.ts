@@ -1,22 +1,31 @@
 import { handle as handleAuth } from './auth';
 import { sequence } from '@sveltejs/kit/hooks';
-import { type Handle, redirect } from '@sveltejs/kit';
+import { type Handle } from '@sveltejs/kit';
 import { contactPersonDetailsStore } from '@/stores/contactPersonStore';
 import { get } from 'svelte/store';
 import { getContactPersonDetails } from '@/services/contactPerson';
 import { signOut } from '@auth/sveltekit/client';
+import { createLogger } from 'vite';
+
+const logger = createLogger();
 
 const protectAdmin: Handle = async ({ event, resolve }) => {
 	const session = await event.locals.auth();
+	logger.info(
+		`Protecting request to ${event.url.pathname} for session ${JSON.stringify(session?.user)}.`
+	);
 	if (
 		// @ts-expect-error role was added in auth
 		!['admin', 'dev', 'bonding'].includes(session?.user?.role) &&
 		event.url.pathname.startsWith('/admin/')
 	) {
+		logger.info(
+			`Protected request to ${event.url.pathname} for session ${JSON.stringify(session?.user)}`
+		);
 		return new Response(null, {
 			status: 302,
 			headers: {
-				location: '/'
+				location: '/admin'
 			}
 		});
 	}
@@ -31,6 +40,7 @@ const handleExpiredSession: Handle = async ({ event, resolve }) => {
 	const currentDateTime = new Date();
 
 	if (currentDateTime >= sessionExpires) {
+		logger.info(`Handling an expired session ${session}, signing the user out\u2026`);
 		await signOut();
 	}
 
@@ -45,8 +55,8 @@ const forceContactPersonDetails: Handle = async ({ event, resolve }) => {
 		return resolve(event);
 	}
 
-	// @ts-expect-error role was added in auth
 	if (
+		// @ts-expect-error role was added in auth
 		!['admin', 'dev', 'bonding'].includes(session?.user?.role) &&
 		!event.url.pathname.includes('sign-up')
 	) {
@@ -55,6 +65,7 @@ const forceContactPersonDetails: Handle = async ({ event, resolve }) => {
 			// @ts-expect-error define accessToke in auth
 			const d = await getContactPersonDetails({ accessToken: session?.accessToken });
 			if (!d) {
+				logger.info('User is not yet registered. Redirecting to sign up.');
 				return new Response(null, { status: 302, headers: { location: '/sign-up' } });
 			}
 		}
@@ -75,6 +86,8 @@ const forceOrganizationCreation: Handle = async ({ event, resolve }) => {
 	}
 
 	if (details.organizationMemberships.length == 0 && !event.url.pathname.includes('create-org')) {
+		logger.info('User is not member of an organization. Redirecting to org creation.');
+
 		return new Response(null, { status: 302, headers: { location: '/create-org' } });
 	}
 

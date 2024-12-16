@@ -23,7 +23,7 @@
 	$: activeBuyOption = data.buyOptions?.find((buyOption) => buyOption.active);
 </script>
 
-<section class="mt-6 flex flex-col gap-y-4">
+<section class="mt-10 flex flex-col gap-y-8">
 	{#if data.buyOptionCount > 0}
 		<nav class="flex justify-between gap-x-2">
 			<BuyOptionSelector

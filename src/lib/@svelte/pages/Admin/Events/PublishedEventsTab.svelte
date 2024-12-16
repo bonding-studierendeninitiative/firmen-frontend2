@@ -6,6 +6,7 @@
 	export let publishedEvents: { heading: string; subHeading: string | undefined; date: string | null; id: string }[] =
 		[];
 	export let handleEventRegistration: (id: string) => void = () => {};
+	export let handleBuyOptions: (id: string) => void = () => {};
 
 	let isListView = true;
 </script>
@@ -33,6 +34,7 @@
 					{subHeading}
 					{date}
 					onRegisterClick={() => handleEventRegistration(id)}
+					onBuyOptionsClick={() => handleBuyOptions(id)}
 					buttonText={$_('admin-pages.events.viewRegistrations')}
 				/>
 			{/each}

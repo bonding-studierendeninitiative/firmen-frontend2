@@ -2,6 +2,7 @@ import type { PageServerLoad } from './$types';
 import { acceptOrgInvite } from '@/services';
 import { type AcceptInviteRequest } from '@schema';
 import { redirect } from '@sveltejs/kit';
+import type { InferInput } from 'valibot';
 
 export const load: PageServerLoad = async ({ parent, params }) => {
 	const { session } = await parent();
@@ -10,7 +11,7 @@ export const load: PageServerLoad = async ({ parent, params }) => {
 	const organizationSlug = params.organizationSlug;
 	const joinCode = params.joinCode;
 
-	const request: AcceptInviteRequest = {
+	const request: InferInput<AcceptInviteRequest> = {
 		organizationSlug,
 		joinCode
 	};

@@ -22,33 +22,37 @@
 			}
 		}
 	});
-	const { form: formData, enhance } = superform;
+	const { form: formData, enhance, constraints } = superform;
 
 	function decreaseServicesCount(e: Event) {
 		e.preventDefault();
-		if ($formData.serviceCount > 0) {
-			$formData.serviceCount = $formData.serviceCount - 1;
+		const serviceCount = Number($formData.serviceCount);
+		if (serviceCount > 0) {
+			$formData.serviceCount = serviceCount - 1;
 		}
 	}
 
 	function decreasePackagesCount(e: Event) {
 		e.preventDefault();
-		if ($formData.packageCount > 0) {
-			$formData.packageCount = $formData.packageCount - 1;
+		const packageCount = Number($formData.packageCount);
+		if (packageCount > 0) {
+			$formData.packageCount = packageCount - 1;
 		}
 	}
 
 	function increaseServicesCount(e: Event) {
 		e.preventDefault();
-		if ($formData.packageCount > 0) {
-			$formData.packageCount = $formData.packageCount + 1;
+		const serviceCount = Number($formData.serviceCount);
+		if (10 > serviceCount && serviceCount >= 0) {
+			$formData.serviceCount = serviceCount + 1;
 		}
 	}
 
 	function increasePackagesCount(e: Event) {
 		e.preventDefault();
-		if ($formData.packageCount > 0) {
-			$formData.packageCount = $formData.packageCount + 1;
+		const packageCount = Number($formData.packageCount);
+		if (10 > packageCount && packageCount >= 0) {
+			$formData.packageCount = packageCount + 1;
 		}
 	}
 </script>
@@ -105,6 +109,7 @@
 								class="px-3 py-2 text-center w-10 border-none focus-visible:outline-transparent focus-visible:ring-transparent"
 								{...attrs}
 								bind:value={$formData.packageCount}
+								{...$constraints.packageCount}
 							></Input>
 							<Button
 								variant="ghost"
@@ -143,6 +148,7 @@
 								class="px-3 py-2 text-center w-10 border-none focus-visible:outline-transparent focus-visible:ring-transparent"
 								{...attrs}
 								bind:value={$formData.serviceCount}
+								{...$constraints.serviceCount}
 							></Input>
 							<Button
 								variant="ghost"
@@ -161,7 +167,7 @@
 			</Field>
 
 			<Dialog.Footer>
-				<Button variant="gradient" type="submit">{$_('common.save')}</Button>
+				<Button variant="gradient" type="submit">{$_('common.submit')}</Button>
 			</Dialog.Footer>
 		</form>
 	</Dialog.Content>

@@ -119,6 +119,14 @@
       "nonprofit": "Nonprofit",
       "company": "Company",
       "other": "Organization"
+    },
+    "next": "Next",
+    "previous": "Previous",
+    "open-menu": "Open menu\u2026",
+    "event-registration-status": {
+      "created": "New",
+      "confirmed": "Confirmed",
+      "rejected": "Rejected"
     }
   },
   "components": {
@@ -131,7 +139,7 @@
       "clearFilters": "Clear filters"
     },
     "editBuyOptions": {
-      "buyOption": "Buy option",
+      "buyOption": "Buy option {buyOptionName}",
       "buyOptionName": "Buy option name",
       "packages": "Packages",
       "services": "Services",
@@ -437,7 +445,8 @@
       "upcomingEvents": "Upcoming Events",
       "registeredEvents": "Registered Events",
       "noEventsRegistered": "No events registered yet!",
-      "noEventsRegisteredDetail": "There are no events to display yet. Please register a event for your company"
+      "noEventsRegisteredDetail": "There are no events to display yet. Please register a event for your company",
+      "alreadyRegistered": "Registered"
     },
     "organizations": {
       "myOrganizations": "My Organizations",
@@ -488,7 +497,8 @@
           "fullName": "Your full name",
           "phoneNumber": "Your phone number (optional)",
           "email": "Your Work Email",
-          "responsibility": "Your responsibility"
+          "responsibility": "Your responsibility",
+          "title": "Your Salutation"
         },
         "placeholders": {
           "fullName": "Alice Anderson",
@@ -527,7 +537,6 @@
         "none-found": "No Event Registrations for this company where found",
         "": ""
       },
-      "openMenu": "Open menu\u2026",
       "data-table": {
         "actions": {
           "view-details": "View details\u2026",
@@ -613,6 +622,7 @@
       "endTime": "End Time",
       "specialties": "Specialties",
       "eventTemplate": "Event template (optional)",
+      "show-buy-options": "Show buy options",
       "buy-options": {
         "title": "Buy options",
         "publish": "Publish this buy option",
@@ -644,7 +654,6 @@
             "review-catalogue-data": "Katalogdaten überprüfen",
             "confirm": "Bestätigen\u2026",
             "reject": "Ablehnen\u2026",
-            "open-menu": "Open menu\u2026",
             "actions": "Actions",
             "copy-id": "Copy registration Id"
           },
@@ -667,7 +676,9 @@
           "description": "Do you want to review this event registration?",
           "proceed": "Review registration",
           "document-type": "Review the\u2026"
-        }
+        },
+        "purchased-package": "Purchased package",
+        "purchased-addons": "Purchased addons"
       }
     },
     "dashboard": {

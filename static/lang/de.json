@@ -119,6 +119,14 @@
       "nonprofit": "Gemeinnützig",
       "company": "Unternehmen",
       "other": "Organisation"
+    },
+    "next": "Weiter",
+    "previous": "Zurück",
+    "open-menu": "Menü öffnen\u2026",
+    "event-registration-status": {
+      "created": "Neu",
+      "confirmed": "Bestätigt",
+      "rejected": "Abgelehnt"
     }
   },
   "components": {
@@ -131,7 +139,7 @@
       "clearFilters": "Zurücksetzen"
     },
     "editBuyOptions": {
-      "buyOption": "Kaufoption",
+      "buyOption": "Kaufoption {buyOptionName}",
       "buyOptionName": "Name der Kaufoption",
       "packages": "Pakete",
       "services": "Leistungen",
@@ -184,6 +192,7 @@
     "events": "Veranstaltungen",
     "catalogue-data": "Ausstellerdaten",
     "notifications": "Benachrichtigungen",
+    "settings": "Einstellungen",
     "account": "Konto",
     "categories": "Kategorien",
     "packages": "Pakete",
@@ -533,7 +542,6 @@
         "none-found": "Es wurden keine Anmeldungen für diese Organisation gefunden",
         "": ""
       },
-      "openMenu": "Menü öffnen&hellip;",
       "data-table": {
         "actions": {
           "view-details": "Details anzeigen\u2026",
@@ -598,10 +606,10 @@
       "heading": "Veranstaltungsplanung",
       "subHeading": "In Notes veröffentliche Veranstaltungen werden alle paar Stunden ins Firmenintranet importiert. Du kannst sie veröffentlichen, um Firmen die Anmeldung zu ermöglichen.",
       "publishNewEvents": "Neue Veranstaltungen veröffentlichen",
-      "viewRegistrations": "Bewerbungen anzeigen",
+      "viewRegistrations": "Anmeldungen anzeigen",
       "viewDetails": "Details anzeigen",
-      "noRegistrationsFound": "Keine Bewerbungen gefunden",
-      "noDataToDisplay": "Es liegen noch keine Bewerbungen vor.",
+      "noRegistrationsFound": "Keine Anmeldungen gefunden",
+      "noDataToDisplay": "Es liegen noch keine Anmeldungen vor.",
       "backToEvents": "Zurück zu den Veranstaltungen",
       "verification": "Überprüfung",
       "confirmed": "Bestätigt",
@@ -619,6 +627,7 @@
       "endTime": "Endzeit",
       "specialties": "Besonderheiten",
       "eventTemplate": "Veranstaltungsvorlage (optional)",
+      "show-buy-options": "Kaufoptionen anzeigen",
       "buy-options": {
         "title": "Kaufoptionen",
         "publish": "Diese Kaufoption veröffentlichen",
@@ -650,7 +659,6 @@
             "review-catalogue-data": "Katalogdaten überprüfen",
             "confirm": "Bestätigen\u2026",
             "reject": "Ablehnen\u2026",
-            "open-menu": "Menü öffnen\u2026",
             "actions": "Aktionen",
             "copy-id": "Anmelde-ID kopieren"
           },
@@ -673,7 +681,9 @@
           "description": "Wenn du Ausstellern Feddback schickst, bekommen sie die Möglichkeit eine neue Version hochzuladen.",
           "proceed": "Feedback senden",
           "document-type": "Feedback festhalten für\u2026"
-        }
+        },
+        "purchased-package": "Gebuchtes Paket",
+        "purchased-addons": "Gebuchte Zusatzleistungen"
       }
     },
     "dashboard": {
