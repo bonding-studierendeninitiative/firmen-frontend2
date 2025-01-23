@@ -261,6 +261,14 @@
         "title": "Mitglieder Ihrer Organisation",
         "description": "Hier sehen sie die Mitglieder, die mit dieser Organisation verknüpft sind."
       },
+      "org-details": {
+        "title": "Juristische Anschrift",
+        "description": "Unter welchem Namen und an welcher Adresse ist ihre Organisation eingetragen?"
+      },
+      "org-contact-details": {
+        "title": "Kontaktdaten",
+        "description": "Die allgemeinen Kontaktdaten ihrer Organisation."
+      },
       "owner": "Besitzer",
       "member": "Mitglied",
       "admin": "Administrator",

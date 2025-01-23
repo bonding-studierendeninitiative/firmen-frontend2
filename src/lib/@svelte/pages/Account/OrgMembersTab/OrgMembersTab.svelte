@@ -15,14 +15,14 @@
 
 </script>
 
-<div class="grid gap-x-8 grid-cols-3 @container gap-y-8">
-	<section class="@3xl:col-span-1 col-span-3">
+<section class="grid gap-x-8 grid-cols-3 @container gap-y-8">
+	<div class="@3xl:col-span-1 col-span-3">
 		<h2 class=" text-stone-800 text-lg font-extrabold">
 			{$_('user-pages.settings.org-members.title')}
 		</h2>
 		<h4 class=" text-stone-500 text-sm">
 			{$_('user-pages.settings.org-members.description')}
 		</h4>
-	</section>
+	</div>
 	<ManageOrgMembers class="@3xl:col-span-2 col-span-3" {createInviteForm} {organizationMembers} />
-</div>
+</section>
