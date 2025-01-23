@@ -4,11 +4,7 @@ import { getEventRegistrationsForOrganization, uploadCatalogueData } from '@/ser
 import { superValidate, withFiles, fail } from 'sveltekit-superforms';
 import { UploadCatalogueDataForm } from '@schema';
 
-// Import every translation for a specific language
-import '@valibot/i18n/de';
 import { valibot } from 'sveltekit-superforms/adapters';
-import { get } from 'svelte/store';
-import { locale } from '@services';
 
 export const load: PageServerLoad = async ({ parent, params, url }) => {
 	const { session } = await parent();
