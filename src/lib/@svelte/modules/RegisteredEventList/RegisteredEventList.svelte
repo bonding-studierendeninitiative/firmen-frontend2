@@ -1,9 +1,8 @@
 <script lang="ts">
-	import type { GetEventRegistrationsForOrganizationResponseType } from '@schema';
+	import type { GetEventRegistrationsForOrganizationResponse } from '@schema';
 	import SuperDebug from 'sveltekit-superforms';
-	import * as v from 'valibot';
 	import DataTable from "./data-table.svelte";
-	export let eventRegistrations: GetEventRegistrationsForOrganizationResponseType;
+	export let eventRegistrations: GetEventRegistrationsForOrganizationResponse;
 </script>
 
 <DataTable bind:eventRegistrations />

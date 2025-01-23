@@ -58,7 +58,8 @@ const forceContactPersonDetails: Handle = async ({ event, resolve }) => {
 	if (
 		// @ts-expect-error role was added in auth
 		!['admin', 'dev', 'bonding'].includes(session?.user?.role) &&
-		!event.url.pathname.includes('sign-up')
+		!event.url.pathname.includes('sign-up') &&
+		event.url.pathname.length > 1
 	) {
 		const details = get(contactPersonDetailsStore);
 		if (!details) {

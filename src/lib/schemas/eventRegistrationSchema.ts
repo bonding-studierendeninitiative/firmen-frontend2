@@ -104,7 +104,30 @@ export const EventRegistrationSchema = v.object({
 	purchasedPackage: v.object({
 		price: v.number(),
 		name: v.string()
-	})
+	}),
+	advertisement: v.nullish(
+		v.object({
+			status: v.nullish(
+				v.object({
+					code: v.number(),
+					text: v.string()
+				})
+			),
+			name: v.string()
+		})
+	),
+	logo: v.nullish(
+		v.object({
+			status: v.nullish(
+				v.object({
+					code: v.number(),
+					text: v.string()
+				})
+			),
+			mimeType: v.string(),
+			name: v.string()
+		})
+	)
 });
 
 export const OrgEventRegistrationSchema = v.object({
@@ -152,7 +175,30 @@ export const OrgEventRegistrationSchema = v.object({
 	purchasedPackage: v.object({
 		price: v.number(),
 		name: v.string()
-	})
+	}),
+	advertisement: v.nullish(
+		v.object({
+			status: v.nullish(
+				v.object({
+					code: v.number(),
+					text: v.string()
+				})
+			),
+			name: v.string()
+		})
+	),
+	logo: v.nullish(
+		v.object({
+			status: v.nullish(
+				v.object({
+					code: v.number(),
+					text: v.string()
+				})
+			),
+			mimeType: v.string(),
+			name: v.string()
+		})
+	)
 });
 
 export type EventRegistration = typeof EventRegistrationSchema;

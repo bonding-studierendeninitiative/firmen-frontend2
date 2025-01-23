@@ -13,3 +13,5 @@ export * from './RejectEventRegistration';
 export * from './EventRegistration';
 export * from './ReviewCatalogueData';
 export * from './ManageOrgMembers';
+export * from './UploadCatalogueData';
+export * from './ManageOrgMembers';

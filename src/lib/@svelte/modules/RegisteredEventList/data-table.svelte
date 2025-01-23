@@ -1,16 +1,17 @@
 <script lang="ts">
-	import type { GetEventRegistrationsForOrganizationResponseType } from '@schema';
-	import { createRender, createTable, Render, Subscribe } from 'svelte-headless-table';
+	import type { GetEventRegistrationsForOrganizationResponse } from '@schema';
 	import { addPagination } from 'svelte-headless-table/plugins';
 	import { readable } from 'svelte/store';
 	import * as Table from '$lib/components/ui/table';
-	import { Chip } from '@/@svelte/components';
-	import { BrandingIcon, DocumentIcon, ImageIcon } from '@/@svelte/icons';
+	import { AdvertStatusIcon, Chip, LogoStatusIcon, PortraitStatusIcon } from '@/@svelte/components';
 	import { _ } from '@services';
 	import { Button } from '$lib/components/ui/button';
 	import { writable } from 'svelte/store';
+	import DataTableActions from './data-table-actions.svelte';
+	import type { InferOutput } from 'valibot';
+	import { createRender, createTable, Render, Subscribe } from 'svelte-headless-table';
 
-	export let eventRegistrations: GetEventRegistrationsForOrganizationResponseType;
+	export let eventRegistrations: InferOutput<GetEventRegistrationsForOrganizationResponse>;
 	let currentServerItemCount = writable(eventRegistrations.totalElements);
 
 	$: {
@@ -20,7 +21,7 @@
 	const table = createTable(readable(eventRegistrations.eventRegistrations), {
 		page: addPagination({
 			serverSide: true,
-			serverItemCount: currentServerItemCount,
+			serverItemCount: currentServerItemCount
 		})
 	});
 
@@ -67,7 +68,7 @@
 		}),
 		table.column({
 			accessor: ({ portraitStatus }) => portraitStatus?.text,
-			cell: ({value}) => createRender(DocumentIcon),
+			cell: ({ value }) => createRender(PortraitStatusIcon, { variant: value }),
 			header: 'Portrait',
 			plugins: {
 				filter: {
@@ -76,8 +77,8 @@
 			}
 		}),
 		table.column({
-			accessor: 'logoStatus',
-			cell: () => createRender(ImageIcon),
+			accessor: ({ logoStatus }) => logoStatus?.text,
+			cell: ({ value }) => createRender(LogoStatusIcon, { variant: value }),
 			header: 'Logo',
 			plugins: {
 				filter: {
@@ -86,16 +87,29 @@
 			}
 		}),
 		table.column({
-			accessor: 'advertisementStatus',
-			cell: () => createRender(BrandingIcon),
+			accessor: ({ advertisementStatus }) => advertisementStatus?.text,
+			cell: ({ value }) => createRender(AdvertStatusIcon, { variant: value }),
 			header: $_('user-pages.dashboard.advert'),
 			plugins: {
 				filter: {
 					exclude: true
 				}
 			}
+		}),
+		table.column({
+			accessor: (item) => item.id,
+			header: '',
+			cell: ({ value }) => {
+				return createRender(DataTableActions, {
+					id: value
+				});
+			},
+			plugins: {
+				filter: {
+					exclude: true
+				}
+			}
 		})
-
 	]);
 
 	const { headerRows, pageRows, tableAttrs, tableBodyAttrs, pluginStates } = table.createViewModel(columns);

@@ -1,6 +1,14 @@
-import type { PageServerLoad } from './$types';
+import type { Actions, PageServerLoad } from './$types';
 import { getEvents } from '@/services/events';
-import { getEventRegistrationsForOrganization } from '@/services';
+import { getEventRegistrationsForOrganization, uploadCatalogueData } from '@/services';
+import { superValidate, withFiles, fail } from 'sveltekit-superforms';
+import { UploadCatalogueDataForm } from '@schema';
+
+// Import every translation for a specific language
+import '@valibot/i18n/de';
+import { valibot } from 'sveltekit-superforms/adapters';
+import { get } from 'svelte/store';
+import { locale } from '@services';
 
 export const load: PageServerLoad = async ({ parent, params, url }) => {
 	const { session } = await parent();
@@ -16,6 +24,8 @@ export const load: PageServerLoad = async ({ parent, params, url }) => {
 		organizationSlug: params.organizationSlug
 	});
 
+	const uploadCatalogueDataForm = await superValidate(valibot(UploadCatalogueDataForm));
+
 	const eventsToHide = eventRegistrations.eventRegistrations.map(
 		(eventRegistration) => eventRegistration.event.id
 	);
@@ -26,6 +36,34 @@ export const load: PageServerLoad = async ({ parent, params, url }) => {
 		events: events.filter((event) => !eventsToHide.includes(event.id)),
 		page,
 		limit,
-		eventRegistrations
+		eventRegistrations,
+		uploadCatalogueDataForm
 	};
+};
+
+export const actions: Actions = {
+	uploadCatalogueData: async ({ locals, request }) => {
+		const session = await locals.auth();
+		// @ts-expect-error we define accessToken in parent
+		if (!session || !session.accessToken) {
+			fail(403);
+			return;
+		}
+
+		const form = await superValidate(request, valibot(UploadCatalogueDataForm), {
+			strict: true
+		});
+		if (!form.valid) {
+			return fail(400, withFiles({ form }));
+		}
+
+		await uploadCatalogueData({
+			// @ts-expect-error we define accessToken in parent
+			accessToken: session?.accessToken,
+			eventRegistrationId: form.data.eventRegistrationId,
+			data: form.data
+		});
+
+		return withFiles({ form });
+	}
 };

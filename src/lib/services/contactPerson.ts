@@ -1,9 +1,10 @@
 import { ContactPersonDetailsSchema, ContactPersonRegistrationRequest } from '@schema';
 import * as v from 'valibot';
 import { API } from '@api';
-import { error } from '@sveltejs/kit';
+import { error, redirect } from '@sveltejs/kit';
 import { contactPersonDetailsStore } from '@/stores/contactPersonStore';
 import { t } from '@/utils/tuple';
+import { goto } from '$app/navigation';
 
 export const getContactPersonDetails = async ({ accessToken }: { accessToken: string }) => {
 	const [e, response] = await t(
@@ -22,7 +23,7 @@ export const getContactPersonDetails = async ({ accessToken }: { accessToken: st
 	}
 
 	if (response.status === 401) {
-		error(401, 'Unauthorized');
+		redirect(302, '/');
 	}
 
 	if (response.status === 404) {

@@ -127,7 +127,10 @@
       "created": "New",
       "confirmed": "Confirmed",
       "rejected": "Rejected"
-    }
+    },
+    "confirm": "Confirm",
+    "request-changes": "Request changes",
+    "reject": "Reject"
   },
   "components": {
     "addonPackage": {
@@ -185,6 +188,20 @@
     },
     "organization": {
       "name": "Organization:"
+    },
+    "upload-catalogue-data": {
+      "document-type": "Document type",
+      "file": "Upload file…",
+      "upload": "Upload catalogue data…",
+      "title": "Upload catalogue data",
+      "description": "Catalogue data can help represent your organization at our events."
+    },
+    "review-event-registration": {
+      "title": "Review event registration",
+      "description": "Do you want to review this event registration?",
+      "proceed": "Review registration",
+      "document-type": "Review the\u2026",
+      "feedback-type": "Type of feedback"
     }
   },
   "sidebar": {
@@ -446,7 +463,14 @@
       "registeredEvents": "Registered Events",
       "noEventsRegistered": "No events registered yet!",
       "noEventsRegisteredDetail": "There are no events to display yet. Please register a event for your company",
-      "alreadyRegistered": "Registered"
+      "alreadyRegistered": "Registered",
+      "data-table": {
+        "actions": {
+          "actions": "Actions",
+          "copy-id": "Copy ID",
+          "upload-catalogue-data": "Upload catalogue data"
+        }
+      }
     },
     "organizations": {
       "myOrganizations": "My Organizations",
@@ -537,6 +561,7 @@
         "none-found": "No Event Registrations for this company where found",
         "": ""
       },
+      "openMenu": "Open menu\u2026",
       "data-table": {
         "actions": {
           "view-details": "View details\u2026",
@@ -654,6 +679,7 @@
             "review-catalogue-data": "Katalogdaten überprüfen",
             "confirm": "Bestätigen\u2026",
             "reject": "Ablehnen\u2026",
+            "open-menu": "Open menu\u2026",
             "actions": "Actions",
             "copy-id": "Copy registration Id"
           },
@@ -678,7 +704,13 @@
           "document-type": "Review the\u2026"
         },
         "purchased-package": "Purchased package",
-        "purchased-addons": "Purchased addons"
+        "purchased-addons": "Purchased addons",
+        "feedback-type": "Type of feedback"
+      },
+      "feedback": {
+        "placeholders": {
+          "feedback": "Feedback"
+        }
       }
     },
     "dashboard": {
