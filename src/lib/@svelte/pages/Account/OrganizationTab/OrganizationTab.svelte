@@ -193,62 +193,62 @@
 	<!--
 	<section>
 		<h2 class=" text-stone-800 text-lg font-extrabold">
-			{$_('user-pages.accounts.companyInformation')}
+			{$_('user-pages.settings.companyInformation')}
 		</h2>
 		<h4 class=" text-stone-500 text-sm">
-			{$_('user-pages.accounts.companyInformationSubHeading')}
+			{$_('user-pages.settings.companyInformationSubHeading')}
 		</h4>
 	</section>
 	<section class=" w-full mt-10">
 		<div class="grid grid-cols-1 sm:grid-cols-4 gap-4 py-6 border-y-1 border-slate-200">
 			<div class="col-span-1 text-stone-800 text-sm font-extrabold">
-				{$_('user-pages.accounts.companyName')}
+				{$_('user-pages.settings.companyName')}
 			</div>
 			<div class="col-span-3">
-				<Input placeholder={$_('user-pages.accounts.companyName')} />
+				<Input placeholder={$_('user-pages.settings.companyName')} />
 			</div>
 		</div>
 		<div class="grid grid-cols-1 sm:grid-cols-4 gap-4 py-6 border-b-1 border-slate-200">
 			<div class="col-span-1 text-stone-800 text-sm font-extrabold">
-				{$_('user-pages.accounts.address')}
+				{$_('user-pages.settings.address')}
 			</div>
 			<div class="col-span-3">
-				<Input placeholder={$_('user-pages.accounts.address')} />
+				<Input placeholder={$_('user-pages.settings.address')} />
 			</div>
 		</div>
 		<div class="grid grid-cols-1 sm:grid-cols-4 gap-4 py-6 border-b-1 border-slate-200">
 			<div class="col-span-1 text-stone-800 text-sm font-extrabold">
-				{$_('user-pages.accounts.cityState')}
+				{$_('user-pages.settings.cityState')}
 			</div>
 			<div class="col-span-3">
 				<div class="col-span-3 grid grid-cols-2 gap-4">
-					<Select placeholder={$_('user-pages.accounts.city')} />
-					<Select placeholder={$_('user-pages.accounts.state')} />
+					<Select placeholder={$_('user-pages.settings.city')} />
+					<Select placeholder={$_('user-pages.settings.state')} />
 				</div>
 			</div>
 		</div>
 		<div class="grid grid-cols-1 sm:grid-cols-4 gap-4 py-6 border-b-1 border-slate-200">
 			<div class="col-span-1 text-stone-800 text-sm font-extrabold">
-				{$_('user-pages.accounts.country')}
+				{$_('user-pages.settings.country')}
 			</div>
 			<div class="col-span-3">
-				<Input placeholder={$_('user-pages.accounts.country')} />
+				<Input placeholder={$_('user-pages.settings.country')} />
 			</div>
 		</div>
 		<div class="grid grid-cols-1 sm:grid-cols-4 gap-4 py-6 border-b-1 border-slate-200">
 			<div class="col-span-1 text-stone-800 text-sm font-extrabold">
-				{$_('user-pages.accounts.salesTaxIDOptional')}
+				{$_('user-pages.settings.salesTaxIDOptional')}
 			</div>
 			<div class="col-span-3">
-				<Input placeholder={$_('user-pages.accounts.saleTaxID')} />
+				<Input placeholder={$_('user-pages.settings.saleTaxID')} />
 			</div>
 		</div>
 		<div class="grid grid-cols-1 sm:grid-cols-4 gap-4 py-6 border-b-1 border-slate-200">
 			<div class="col-span-1 text-stone-800 text-sm font-extrabold">
-				{$_('user-pages.accounts.website')}
+				{$_('user-pages.settings.website')}
 			</div>
 			<div class="col-span-3">
-				<InputWithPrefix prefixText="https://" placeholder={$_('user-pages.accounts.website')} />
+				<InputWithPrefix prefixText="https://" placeholder={$_('user-pages.settings.website')} />
 			</div>
 		</div>
 		<div class="grid grid-cols-1 sm:grid-cols-4 gap-4 py-6 border-b-1 border-slate-200">

@@ -25,7 +25,7 @@
 		onResult({ result }) {
 			if (result.type === 'success') {
 				inviteMemberDialogOpen = false;
-				toast.success($_('user-pages.accounts.invitationSuccess'));
+				toast.success($_('user-pages.settings.invitationSuccess'));
 			} else if (result.type === 'error') {
 				toast.error(result.error.message);
 			}
@@ -34,55 +34,57 @@
 	const { form: formData, enhance, submitting } = superform;
 </script>
 
-	<DataTable memberResponse={organizationMembers} bind:inviteMemberDialogOpen />
+<div {...$$restProps} >
+<DataTable memberResponse={organizationMembers} bind:inviteMemberDialogOpen />
+</div>
 
-	<Dialog.Root bind:open={inviteMemberDialogOpen}>
-		<Dialog.Content class="sm:max-w-[425px]">
-			<Dialog.Header>
-				<Dialog.Title>{$_('user-pages.accounts.invite-dialog-title')}</Dialog.Title>
-				<Dialog.Description>
-					{$_('user-pages.accounts.invite-dialog-description')}
-				</Dialog.Description>
-			</Dialog.Header>
-			<form action="?/createInvite" method="POST" id="create-invite-form" use:enhance>
-				<div class=" flex flex-col gap-1">
-					<Field form={superform} name="userMail">
-						<Control let:attrs>
-							<Label>{$_('user-pages.accounts.emailAddress')}</Label>
-							<Input
-								{...attrs}
-								bind:value={$formData.userMail}
-								placeholder={$_(
+<Dialog.Root bind:open={inviteMemberDialogOpen}>
+	<Dialog.Content class="sm:max-w-[425px]">
+		<Dialog.Header>
+			<Dialog.Title>{$_('user-pages.settings.invite-dialog-title')}</Dialog.Title>
+			<Dialog.Description>
+				{$_('user-pages.settings.invite-dialog-description')}
+			</Dialog.Description>
+		</Dialog.Header>
+		<form action="?/createInvite" method="POST" id="create-invite-form" use:enhance>
+			<div class=" flex flex-col gap-1">
+				<Field form={superform} name="userMail">
+					<Control let:attrs>
+						<Label>{$_('user-pages.settings.emailAddress')}</Label>
+						<Input
+							{...attrs}
+							bind:value={$formData.userMail}
+							placeholder={$_(
 									'user-pages.organizations.createOrganization.placeholders.organizationEmail'
 								)}
-							/>
-						</Control>
+						/>
+					</Control>
 
-						<Description />
-						<FieldErrors />
-					</Field>
+					<Description />
+					<FieldErrors />
+				</Field>
 
-					<footer>
-						<footer class=" flex justify-end items-center w-full">
-							<Button
-								class="mr-2"
-								variant="outline"
-								on:click={() => (inviteMemberDialogOpen = false)}>{$_('common.cancel')}</Button
+				<footer>
+					<footer class=" flex justify-end items-center w-full">
+						<Button
+							class="mr-2"
+							variant="outline"
+							on:click={() => (inviteMemberDialogOpen = false)}>{$_('common.cancel')}</Button
+						>
+						{#if $submitting}
+							<Button form="create-invite-form" disabled>
+								<LoaderCircle class="mr-2 h-4 w-4 animate-spin" />{$_(
+								'user-pages.settings.invite'
+							)}
+							</Button>
+						{:else}
+							<Button form="create-invite-form" type="submit"
+							>{$_('user-pages.settings.invite')}</Button
 							>
-							{#if $submitting}
-								<Button form="create-invite-form" disabled>
-									<LoaderCircle class="mr-2 h-4 w-4 animate-spin" />{$_(
-									'user-pages.accounts.invite'
-								)}
-								</Button>
-							{:else}
-								<Button form="create-invite-form" type="submit"
-								>{$_('user-pages.accounts.invite')}</Button
-								>
-							{/if}
-						</footer>
+						{/if}
 					</footer>
-				</div>
-			</form>
-		</Dialog.Content>
-	</Dialog.Root>
+				</footer>
+			</div>
+		</form>
+	</Dialog.Content>
+</Dialog.Root>

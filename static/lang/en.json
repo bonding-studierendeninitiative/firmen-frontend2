@@ -213,7 +213,7 @@
     "companyInformation": "Company Information",
     "portraits": "Portraits",
     "bookings": "Bookings",
-    "profile": "Profile",
+    "org-members": "Members",
     "organization": "Organization",
     "password": "Password",
     "billing": "Billing",
@@ -255,7 +255,11 @@
     "confirmed": "Confirmed"
   },
   "user-pages": {
-    "accounts": {
+    "settings": {
+      "org-members": {
+        "title": "Members of your organisation",
+        "description": "These members are linked to your organization."
+      },
       "owner": "Owner",
       "member": "Member",
       "admin": "Admin",

@@ -214,7 +214,7 @@
     "companyInformation": "Firmeninformationen",
     "portraits": "Portraits",
     "bookings": "Buchungen",
-    "profile": "Profil",
+    "org-members": "Mitglieder",
     "organization": "Organisation",
     "password": "Passwort",
     "billing": "Abrechnung",
@@ -256,7 +256,11 @@
     "confirmed": "Bestätigt"
   },
   "user-pages": {
-    "accounts": {
+    "settings": {
+      "org-members": {
+        "title": "Mitglieder Ihrer Organisation",
+        "description": "Hier sehen sie die Mitglieder, die mit dieser Organisation verknüpft sind."
+      },
       "owner": "Besitzer",
       "member": "Mitglied",
       "admin": "Administrator",

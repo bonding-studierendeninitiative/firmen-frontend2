@@ -16,11 +16,11 @@
 			<!-- <GradientButton classes="px-6" onClick={() => undefined}>Details</GradientButton> -->
 			{#if isDefault}
 				<div class=" bg-stone-200 mx-6 text-slate-700 rounded-lg py-1.5 px-4">
-					{$_('user-pages.accounts.default')}
+					{$_('user-pages.settings.default')}
 				</div>
 			{:else}
 				<Button classes="mx-6" onClick={() => undefined}
-					>{$_('user-pages.accounts.makeItDefault')}</Button
+					>{$_('user-pages.settings.makeItDefault')}</Button
 				>
 			{/if}
 			<button class="text-stone-500"><PencilSquareIcon /></button>
