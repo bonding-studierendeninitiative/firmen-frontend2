@@ -1,17 +1,10 @@
 <script lang="ts">
 	import { _ } from '@services';
 	import { LinkTabs, Spinner } from '@/@svelte/components';
-	import { page } from '$app/stores';
 	import { currentOrganizationSlugStore } from '@/stores/currentOrganizationSlugStore';
 	import { navigating } from '$app/stores';
 	import { fade } from 'svelte/transition';
 
-	$: activeUrl = $page.url.pathname;
-	$: activeTab = activeUrl?.includes('/catalogue-data/adverts')
-		? 2
-		: activeUrl?.includes('/catalogue-data/logos')
-			? 1
-			: 0;
 	$: tabs = [
 		{
 			name: 'catalogue-data-portraits',
@@ -32,7 +25,7 @@
 	<h1 class=" text-stone-950 text-3xl font-extrabold">{$_('user-pages.portraits.portraits')}</h1>
 	<h4 class=" text-stone-500">{$_('user-pages.portraits.portraitsSubHeading')}</h4>
 	<div class=" mt-6">
-		<LinkTabs {tabs} {activeTab} />
+		<LinkTabs {tabs} />
 	</div>
 	<section class="flex-grow mt-6">
 		{#if $navigating?.to?.url.pathname.includes('/catalogue-data/')}
