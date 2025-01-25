@@ -185,6 +185,21 @@
     },
     "organization": {
       "name": "Organization:"
+    },
+    "add-billing-address-template": {
+      "streetHouseNo": "Street, House No.",
+      "postalCode": "Postal code",
+      "addBillingAddress": "Add Billing Address",
+      "newAddress": "New Address",
+      "addAddress": "Add Address",
+      "vat": "Sales Tax ID (optional)",
+      "companyName": "Company Name",
+      "address": "Address",
+      "cityState": "City & State",
+      "city": "City",
+      "state": "State",
+      "country": "Country",
+      "billingReference": "Internal billing reference (optional)"
     }
   },
   "sidebar": {
@@ -315,7 +330,7 @@
       "buildingOptional": "Building (Optional)",
       "building": "Building",
       "orderIDReferenceID": "Order ID / Reference ID",
-      "billingAddress": "Billing Address",
+      "billingAddress": "Billing addresses",
       "makeItDefault": "Make it default",
       "default": "Default",
       "addBillingAddress": "Add Billing Address",

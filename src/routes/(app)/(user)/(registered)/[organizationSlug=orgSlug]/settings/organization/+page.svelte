@@ -12,8 +12,11 @@
 	import { PhoneInput } from '@/@svelte/components/PhoneInput';
 	import { Input } from '@/components/ui/input';
 	import * as Card from '@/components/ui/card';
+	import type { PageServerData } from './$types';
 
-	export let editOrganizationDetailsForm: SuperValidated<SetOrgDetailsRequest>;
+
+	export let data: PageServerData;
+	export let editOrganizationDetailsForm: SuperValidated<SetOrgDetailsRequest> = data.editOrganizationDetailsForm;
 
 	const superform = superForm<SetOrgDetailsRequest>(editOrganizationDetailsForm, {
 		validators: valibot(SetOrgDetailsRequestSchema),

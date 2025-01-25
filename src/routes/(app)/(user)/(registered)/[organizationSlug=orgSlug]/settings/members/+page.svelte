@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { _ } from '@services';
+	import type { PageServerData } from './$types';
 
 	import {
 		type CreateOrgInviteRequest,
@@ -9,9 +10,9 @@
 	import type { InferOutput } from 'valibot';
 	import { ManageOrgMembers } from '@/@svelte/modules';
 
-
-	export let createInviteForm: SuperValidated<InferOutput<CreateOrgInviteRequest>> | undefined;
-	export let organizationMembers: InferOutput<GetOrgMembersResponse> | undefined;
+	export let data: PageServerData;
+	export let createInviteForm: SuperValidated<InferOutput<CreateOrgInviteRequest>> | undefined = data.createInviteForm;
+	export let organizationMembers: InferOutput<GetOrgMembersResponse> | undefined = data.organizationMembers;
 
 </script>
 

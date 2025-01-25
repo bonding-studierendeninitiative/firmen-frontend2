@@ -16,3 +16,4 @@ export * from './contactPersonSchema';
 export * from './eventRegistrationSchema';
 export * from './portraitTemplates';
 export * from './catalogueData';
+export * from './billingAddressTemplates';

@@ -185,6 +185,21 @@
     },
     "organization": {
       "name": "Organisation:"
+    },
+    "add-billing-address-template": {
+      "streetHouseNo": "Straße, Hausnummer",
+      "postalCode": "Postleitzahl",
+      "addBillingAddress": "Rechnungsadresse hinzufügen",
+      "newAddress": "Neue Adresse",
+      "addAddress": "Adresse hinzufügen",
+      "vat": "Umsatzsteuer-ID (optional)",
+      "companyName": "Firmenname",
+      "address": "Adresse",
+      "cityState": "Stadt & Bundesland",
+      "city": "Stadt",
+      "state": "Bundesland",
+      "country": "Land",
+      "billingReference": "Interne Referenz (optional)"
     }
   },
   "sidebar": {
@@ -316,7 +331,7 @@
       "buildingOptional": "Gebäude (optional)",
       "building": "Gebäude",
       "orderIDReferenceID": "Bestell-ID / Referenz-ID",
-      "billingAddress": "Rechnungsadresse",
+      "billingAddress": "Rechnungsadressen",
       "makeItDefault": "Als Standard festlegen",
       "default": "Standard",
       "addBillingAddress": "Rechnungsadresse hinzufügen",
