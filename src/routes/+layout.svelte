@@ -3,7 +3,7 @@
 	import { Toaster } from 'svelte-french-toast';
 	import '../app.css';
 	import { setupI18n, isLocaleLoading, dir } from '@services';
-	import { page } from '$app/state';
+	import { page } from '$app/stores';
 	import { signIn } from '@auth/sveltekit/client';
 	import { Button } from '@/components/ui/button';
 	import { ColorLogoIcon } from '@/@svelte/icons';
@@ -27,7 +27,7 @@
 		<div class="w-12 h-12 rounded-full border-stone-500 border-4 border-t-transparent animate-spin">
 		</div>
 	</div>
-{:else if page.data.session?.user}
+{:else if $page.data.session?.user}
 	<slot />
 {:else}
 	<div class=" flex w-full h-screen">
@@ -45,7 +45,7 @@
 						<Card.Description>{$_('auth.welcomeScreen.welcomeDescription')}</Card.Description>
 					</Card.Header>
 					<Card.Content>
-						{#if page.url.pathname.includes('/admin')}
+						{#if $page.url.pathname.includes('/admin')}
 							<div class="w-full h-full flex items-center justify-center">
 								<Button on:click={() => signIn('auth0-admin')}>{$_("auth.login.admin-login")}</Button>
 							</div>
