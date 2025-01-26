@@ -17,6 +17,7 @@ public/build/
 # Ignore Svelte compiler cache
 .svelte/
 /.svelte-kit
+/.vercel
 
 # Ignore development server files
 __sapper__/

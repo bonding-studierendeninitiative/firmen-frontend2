@@ -2,7 +2,7 @@
 	import { _ } from '@services';
 	import { goto } from '$app/navigation';
 	import { Input, InputWithPrefix, MultiSelect, Textarea } from '$lib/@svelte/components';
-	import { PortraitCompanyDetailsSchema } from '$lib/services/portraitTemplates';
+	import { PortraitCompanyDetailsSchema } from '@schema';
 	import { Helper } from 'flowbite-svelte';
 	import { disciplines } from '@constant';
 	import { type Infer, superForm, type SuperValidated } from 'sveltekit-superforms';
