@@ -100,7 +100,7 @@ importers:
         version: 5.4.14
     optionalDependencies:
       '@rollup/rollup-linux-x64-gnu':
-        specifier: ^4.32.0
+        specifier: '*'
         version: 4.32.0
     devDependencies:
       '@eslint/eslintrc':
