@@ -8,8 +8,6 @@ vite.config.ts.timestamp-*
 
 # Ignore Node.js related files and folders
 node_modules/
-package-lock.json
-yarn.lock
 
 # Ignore build artifacts
 public/build/
