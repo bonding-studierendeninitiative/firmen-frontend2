@@ -186,11 +186,11 @@ packages:
     resolution: {integrity: sha512-30iZtAPgz+LTIYoeivqYo853f02jBYSd5uGnGpkFV0M3xOt9aN73erkgYAmZU43x4VfqcnLxW9Kpg3R5LC4YYw==}
     engines: {node: '>=6.0.0'}
 
-  '@ark/schema@0.37.0':
-    resolution: {integrity: sha512-uLkP3ixV6LgVEm8wLl0IkAVFfQ0o6IU+uI9AaFQHV4wLMAIwbE90uEDXAEm4H2kv18oypSIUNpz8Q5zzQDDIuw==}
+  '@ark/schema@0.38.0':
+    resolution: {integrity: sha512-ATH7tNpJvNmipTSRZD1Klfg00PBCQf+73grcrzIv6cbDanW7HJKYeNLeV1K3h0vXRthSD8OxQ3y0PI3dGcV/Cw==}
 
-  '@ark/util@0.37.0':
-    resolution: {integrity: sha512-4x6wVil/IMnIlHSQczCOXw2Z6YdKPyay942M0FwOHRo5K4vYYcujMNDnBaaW2Xi5A8kJqe8Lnc061SlFX0yGzQ==}
+  '@ark/util@0.38.0':
+    resolution: {integrity: sha512-0Vo0gCbaOsv/Z9TYsmk+qKZGn/FZyWlVsx2hcrHIP12S8Vcz9/EichNS/gb58K1q7jMlgXoPg2wS7OvuyfKILQ==}
 
   '@auth/core@0.34.2':
     resolution: {integrity: sha512-KywHKRgLiF3l7PLyL73fjLSIBe1YNcA6sMeew4yMP6cfCWGXZrkkXd32AjRi1hlJ9nvovUBGZHvbn+LijO6ZeQ==}
@@ -1148,8 +1148,8 @@ packages:
     resolution: {integrity: sha512-COROpnaoap1E2F000S62r6A60uHZnmlvomhfyT2DlTcrY1OrBKn2UhH7qn5wTC9zMvD0AY7csdPSNwKP+7WiQw==}
     engines: {node: '>= 0.4'}
 
-  arktype@2.0.2:
-    resolution: {integrity: sha512-bSTdxrlpzRKqHDbBx/Dy8MxqGftfRMUQf0aZbAM1bs8JNguI91zlgdUAfDNSLjKVruj2sdN2Yr/WWgXsdpANEA==}
+  arktype@2.0.3:
+    resolution: {integrity: sha512-s+cLyFKHrSs59nyZ9zdNT79/ydpO/+tuNbcNxii82ux58PI1rUHQD4UXfUH7kgj8tgqXDsY8ipmrdOL7EG1WrQ==}
 
   async-sema@3.1.1:
     resolution: {integrity: sha512-tLRNUXati5MFePdAk8dw7Qt7DpxPB60ofAgn8WRhW6a2rcimZnYBP9oxHiv0OHy+Wz7kPMG+t4LGdt31+4EmGg==}
@@ -2639,12 +2639,12 @@ snapshots:
       '@jridgewell/gen-mapping': 0.3.8
       '@jridgewell/trace-mapping': 0.3.25
 
-  '@ark/schema@0.37.0':
+  '@ark/schema@0.38.0':
     dependencies:
-      '@ark/util': 0.37.0
+      '@ark/util': 0.38.0
     optional: true
 
-  '@ark/util@0.37.0':
+  '@ark/util@0.38.0':
     optional: true
 
   '@auth/core@0.34.2':
@@ -3430,10 +3430,10 @@ snapshots:
 
   aria-query@5.3.2: {}
 
-  arktype@2.0.2:
+  arktype@2.0.3:
     dependencies:
-      '@ark/schema': 0.37.0
-      '@ark/util': 0.37.0
+      '@ark/schema': 0.38.0
+      '@ark/util': 0.38.0
     optional: true
 
   async-sema@3.1.1: {}
@@ -4724,7 +4724,7 @@ snapshots:
       '@sinclair/typebox': 0.34.14
       '@typeschema/class-validator': 0.3.0(@types/json-schema@7.0.15)(class-validator@0.14.1)
       '@vinejs/vine': 3.0.0
-      arktype: 2.0.2
+      arktype: 2.0.3
       class-validator: 0.14.1
       effect: 3.12.7
       joi: 17.13.3
