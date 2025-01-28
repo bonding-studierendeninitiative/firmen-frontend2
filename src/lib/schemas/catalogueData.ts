@@ -1,18 +1,8 @@
-import { object, string, enum as valiEnum, union, intersect, literal, variant } from 'valibot';
-
-export enum FeedbackType {
-	CONFIRMATION = 'confirmation',
-	CHANGE_REQUEST = 'change-request',
-	REJECTION = 'rejection'
-}
-
-export const documentTypes = ['advert', 'portrait', 'logo'] as const;
-
-export type DocumentType = (typeof documentTypes)[number];
+import { object, string, union, intersect, literal, file } from 'valibot';
 
 export const ReviewCatalogueDataRequest = object({
 	feedback: string(),
-	feedbackType: valiEnum(FeedbackType),
+	feedbackType: union([literal('confirmation'), literal('change-request'), literal('rejection')]),
 	documentType: union([literal('advert'), literal('portrait'), literal('logo')])
 });
 
@@ -26,3 +16,19 @@ export const ReviewCatalogueDataForm = intersect([
 ]);
 
 export type ReviewCatalogueDataForm = typeof ReviewCatalogueDataForm;
+
+export const UploadCatalogueDataRequest = object({
+	documentType: union([literal('advert'), literal('logo')]),
+	file: file()
+});
+
+export type UploadCatalogueDataRequest = typeof UploadCatalogueDataRequest;
+
+export const UploadCatalogueDataForm = intersect([
+	UploadCatalogueDataRequest,
+	object({
+		eventRegistrationId: string()
+	})
+]);
+
+export type UploadCatalogueDataForm = typeof UploadCatalogueDataForm;

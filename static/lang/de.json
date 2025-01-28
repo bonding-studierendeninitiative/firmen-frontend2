@@ -127,7 +127,10 @@
       "created": "Neu",
       "confirmed": "Bestätigt",
       "rejected": "Abgelehnt"
-    }
+    },
+    "confirm": "Bestätigen",
+    "request-changes": "Änderungen anfragen",
+    "reject": "Ablehnen"
   },
   "components": {
     "addonPackage": {
@@ -185,6 +188,20 @@
     },
     "organization": {
       "name": "Organisation:"
+    },
+    "upload-catalogue-data": {
+      "document-type": "Art des Dokuments",
+      "file": "Datei hochladen…",
+      "upload": "Katalogdaten hochladen…",
+      "title": "Katalogdaten hochladen",
+      "description": "Mithilfe von kreativ gestalteten Katalogdaten bekommen Besucher einen besseren Vorgeschmack auf ihre Organisation als Aussteller"
+    },
+    "review-catalogue-data": {
+      "title": "Katalogdaten überprüfen",
+      "description": "Wenn du Ausstellern Feddback schickst, bekommen sie die Möglichkeit eine neue Version hochzuladen.",
+      "proceed": "Feedback senden",
+      "document-type": "Feedback festhalten für\u2026",
+      "feedback-type": "Art des Feedbacks"
     },
     "add-billing-address-template": {
       "streetHouseNo": "Straße, Hausnummer",
@@ -478,7 +495,14 @@
       "event": "Veranstaltung",
       "hsg": "Standort",
       "date": "Datum",
-      "advert": "Imageanzeige"
+      "advert": "Imageanzeige",
+      "data-table": {
+        "actions": {
+          "actions": "Aktionen",
+          "copy-id": "ID kopieren",
+          "upload-catalogue-data": "Katalogdaten hochladen\u2026"
+        }
+      }
     },
     "organizations": {
       "myOrganizations": "Meine Organisationen",
@@ -569,6 +593,7 @@
         "none-found": "Es wurden keine Anmeldungen für diese Organisation gefunden",
         "": ""
       },
+      "openMenu": "Menü öffnen&hellip;",
       "data-table": {
         "actions": {
           "view-details": "Details anzeigen\u2026",
@@ -686,6 +711,7 @@
             "review-catalogue-data": "Katalogdaten überprüfen",
             "confirm": "Bestätigen\u2026",
             "reject": "Ablehnen\u2026",
+            "open-menu": "Menü öffnen\u2026",
             "actions": "Aktionen",
             "copy-id": "Anmelde-ID kopieren"
           },
@@ -710,7 +736,13 @@
           "document-type": "Feedback festhalten für\u2026"
         },
         "purchased-package": "Gebuchtes Paket",
-        "purchased-addons": "Gebuchte Zusatzleistungen"
+        "purchased-addons": "Gebuchte Zusatzleistungen",
+        "feedback-type": "Art des Feedbacks"
+      },
+      "feedback": {
+        "placeholders": {
+          "feedback": "Feedback"
+        }
       }
     },
     "dashboard": {

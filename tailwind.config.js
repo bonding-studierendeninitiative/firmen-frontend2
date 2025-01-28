@@ -19,6 +19,8 @@ const config = {
 				brand: '#007EC7',
 				error: '#EF4444',
 				'brand-light': '#007EC720',
+				'brand-green': '#78be96',
+				'brand-yellow': '#ffeb5a',
 				border: 'hsl(var(--border) / <alpha-value>)',
 				input: 'hsl(var(--input) / <alpha-value>)',
 				ring: 'hsl(var(--ring) / <alpha-value>)',

@@ -13,7 +13,9 @@ const buttonVariants = tv({
 			ghost: 'hover:bg-accent hover:text-accent-foreground',
 			link: 'text-primary underline-offset-4 hover:underline',
 			gradient:
-				'text-nowrap bg-gradient-to-b from-white/30 to-transparent bg-brand relative space-x-4 text-white font-extrabold '
+				'text-nowrap bg-gradient-to-b from-white/30 to-transparent bg-brand relative space-x-4 text-white font-extrabold ',
+			success: 'bg-brand-green text-primary-foreground',
+			warning: 'bg-brand-yellow'
 		},
 		size: {
 			default: 'h-10 px-4 py-2',

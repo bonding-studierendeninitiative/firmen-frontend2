@@ -10,6 +10,7 @@
 	import { LanguageSelect } from '@/@svelte/components';
 	import { _ } from '@services';
 	import * as Card from '@/components/ui/card';
+	import SuperDebug from 'sveltekit-superforms';
 
 	onMount(() => {
 		document.dir = $dir;
@@ -71,5 +72,6 @@
 			style="background-image: url('/sidebar_background.png');"
 		></div>
 	</div>
+	<SuperDebug data={page} />
 {/if}
 <Toaster containerClassName="mr-7 mb-16" position="bottom-right" {toastOptions} />

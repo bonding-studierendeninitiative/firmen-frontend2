@@ -12,19 +12,22 @@
 
 	export let data: PageServerData;
 
-	$: ({ addons, addonPackages, eventRegistrations, status: someStatus, rejectForm, confirmForm, packages } = data);
+	$: ({ addons, addonPackages, eventRegistrations, status: someStatus, rejectForm, confirmForm, packages, reviewCatalogueDataForm } = data);
 
 	let tableData = writable(eventRegistrations);
 	let confirmFormStore = writable(confirmForm);
 	let rejectFormStore = writable(rejectForm);
+	let reviewCatalogueDataFormStore = writable(reviewCatalogueDataForm);
 	$: {
 		tableData.set(eventRegistrations ?? [])
 		confirmFormStore.set(confirmForm)
 		rejectFormStore.set(rejectForm)
+		reviewCatalogueDataFormStore.set(reviewCatalogueDataForm)
 	}
 
 	setContext('confirmForm', confirmFormStore);
 	setContext('rejectForm', rejectFormStore);
+	setContext('reviewCatalogueDataForm', reviewCatalogueDataFormStore);
 
 	let isOpen = false;
 

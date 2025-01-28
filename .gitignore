@@ -8,8 +8,6 @@ vite.config.ts.timestamp-*
 
 # Ignore Node.js related files and folders
 node_modules/
-package-lock.json
-yarn.lock
 
 # Ignore build artifacts
 public/build/
@@ -17,6 +15,7 @@ public/build/
 # Ignore Svelte compiler cache
 .svelte/
 /.svelte-kit
+/.vercel
 
 # Ignore development server files
 __sapper__/
@@ -41,3 +40,5 @@ logs/
 Thumbs.db
 
 
+.vercel
+.env*.local
