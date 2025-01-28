@@ -2,10 +2,6 @@
 	import Ellipsis from 'lucide-svelte/icons/ellipsis';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
 	import { Button } from '$lib/components/ui/button';
-	import type {
-		EventRegistration
-	} from '@schema';
-	import type { InferOutput } from 'valibot';
 	import { _ } from '@services';
 	import { UploadCatalogueData } from '@/@svelte/modules';
 

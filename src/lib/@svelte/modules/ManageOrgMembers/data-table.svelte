@@ -11,7 +11,6 @@
 	import { Input } from '$lib/components/ui/input';
 	import type { InferOutput } from 'valibot';
 	import { cn } from '@/utils';
-	import { Select } from 'flowbite-svelte';
 
 	export let inviteMemberDialogOpen;
 	export let memberResponse: InferOutput<GetOrgMembersResponse>;
@@ -54,8 +53,8 @@
 		table.column({
 			accessor: ({ contactPersonId }) => contactPersonId,
 			header: '',
-			cell: ({ value }) => {
-				return createRender(DataTableActions, { id: value });
+			cell: () => {
+				return createRender(DataTableActions);
 			},
 			plugins: {
 				sort: {

@@ -108,7 +108,7 @@
 							<Tabs.Root class="p-1" bind:value={$formData.feedbackType}>
 								<Tabs.List class="space-x-1">
 									{#each feedbackTypeOptions as { value, label, icon, clazz }}
-										<Tabs.Trigger class={clazz} {value}>
+										<Tabs.Trigger {...attrs} class={clazz} {value}>
 											<svelte:component class="w-4 h-4 mr-2" this={icon} />{label}</Tabs.Trigger>
 									{/each}
 								</Tabs.List>
@@ -134,7 +134,7 @@
 					</Dialog.Footer>
 				</div>
 				<div>
-					<CatalogueDataPreview documentType={$formData.documentType} {eventRegistration} {id} />
+					<CatalogueDataPreview documentType={$formData.documentType} {eventRegistration} />
 				</div>
 			</div>
 		</form>

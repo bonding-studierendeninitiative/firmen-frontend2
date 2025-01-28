@@ -1,11 +1,6 @@
 <script lang="ts">
 	import { _ } from '@services';
 	import { Button } from '$lib/@svelte/components';
-
-	export let portraitsInfo = [
-		{ name: 'Portrait Document #1', branch: 'Engineering' },
-		{ name: 'Portrait Document #2', branch: 'Telecommunications' }
-	];
 </script>
 
 <section>
