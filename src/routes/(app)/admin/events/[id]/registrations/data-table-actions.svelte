@@ -3,7 +3,7 @@
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
 	import { Button } from '$lib/components/ui/button';
 	import type {
-		EventRegistration
+		EventRegistration, OrgEventRegistration
 	} from '@schema';
 	import { ConfirmEventRegistration, RejectEventRegistration, ReviewCatalogueData } from '@/@svelte/modules';
 	import type { InferOutput } from 'valibot';

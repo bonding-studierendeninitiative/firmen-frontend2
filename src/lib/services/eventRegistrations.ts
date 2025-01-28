@@ -5,8 +5,9 @@ import { error } from '@sveltejs/kit';
 import {
 	type CreateEventRegistration,
 	CreateEventRegistrationResponse,
-	GetEventRegistrationsForEventResponse, GetEventRegistrationsForOrganizationResponse,
-	GetEventRegistrationsForOrganizationResponseType, type OrgEventRegistration, OrgEventRegistrationSchema
+	GetEventRegistrationsForEventResponse,
+	GetEventRegistrationsForOrganizationResponse,
+	type GetEventRegistrationsForOrganizationResponse as responseType
 } from '@schema';
 
 export const getEventRegistrationsForEvent = async ({
@@ -32,12 +33,10 @@ export const getEventRegistrationsForOrganization = async ({
 	accessToken: string;
 	organizationSlug: string;
 }) => {
-	const response = await API.get<v.InferInput<typeof GetEventRegistrationsForOrganizationResponse>>(
-		{
-			route: `/event-registration?organizationId=${organizationSlug}`,
-			token: accessToken
-		}
-	);
+	const response = await API.get<v.InferInput<responseType>>({
+		route: `/event-registration?organizationId=${organizationSlug}`,
+		token: accessToken
+	});
 	const data = await response.json();
 	return v.parse(GetEventRegistrationsForOrganizationResponse, data);
 };

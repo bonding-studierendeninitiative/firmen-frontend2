@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { page } from '$app/stores';
+	export let error;
 </script>
 
-<h1>Error (User) {$page.error?.message}</h1>
+<h1>⚠️ (User) {error?.message}</h1>

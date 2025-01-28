@@ -1,32 +1,29 @@
 <script lang="ts">
 	import { _ } from '@services';
 	import { goto } from '$app/navigation';
-	import { NoDataFound, EventInfoBox, Button, Table, Chip, EventRegistrationInfoBox } from '@/@svelte/components';
+	import { EventInfoBox, Button } from '@/@svelte/components';
 	import type { PageData } from './$types';
 	import { currentOrganizationSlugStore } from '@/stores/currentOrganizationSlugStore';
 	import SuperDebug from 'sveltekit-superforms';
 	import { RegisteredEventList } from '@/@svelte/modules/RegisteredEventList';
+	import { writable } from 'svelte/store';
+	import { setContext } from 'svelte';
 
 
 	export let data: PageData;
 	let events = data.events ?? [];
-	let eventRegistrations = data.eventRegistrations?.eventRegistrations || [];
+	let { uploadCatalogueDataForm } = data;
 
-	let showListings: boolean = false;
 	const handleViewAllEvent = () => {
 		goto('/events');
 	};
-	const toggleListing = () => {
-		showListings = true;
-	};
-	const columns = ['event', 'location', 'date', 'status', 'uploads'];
 
-	interface EventListType {
-		event: string;
-		location: string;
-		date: string;
-		statusText: string;
+	let uploadCatalogueDataFormStore = writable(uploadCatalogueDataForm);
+	$: {
+		uploadCatalogueDataFormStore.set(uploadCatalogueDataForm);
 	}
+
+	setContext('uploadCatalogueDataForm', uploadCatalogueDataFormStore);
 
 </script>
 

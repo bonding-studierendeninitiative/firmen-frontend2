@@ -13,6 +13,7 @@ import { valibot } from 'sveltekit-superforms/adapters';
 import { superValidate } from 'sveltekit-superforms';
 import { fail } from '@sveltejs/kit';
 import { reviewCatalogueData } from '@/services';
+import { ReviewCatalogueData } from '@/@svelte/modules';
 
 export const load: PageServerLoad = async ({ parent, params }) => {
 	const { session } = await parent();
@@ -29,6 +30,9 @@ export const load: PageServerLoad = async ({ parent, params }) => {
 	});
 	const rejectForm = await superValidate(valibot(RejectEventRegistrationSchema), {
 		id: 'rejectForm'
+	});
+	const reviewCatalogueDataForm = await superValidate(valibot(ReviewCatalogueDataForm), {
+		id: 'reviewCatalogueDataForm'
 	});
 
 	const packages = new Set(
@@ -53,6 +57,7 @@ export const load: PageServerLoad = async ({ parent, params }) => {
 	return {
 		confirmForm,
 		rejectForm,
+		reviewCatalogueDataForm,
 		packages: [...packages],
 		status: [...status],
 		addonPackages: [...addonPackages],
@@ -110,7 +115,9 @@ export const actions: Actions = {
 			return;
 		}
 
-		const form = await superValidate(request, valibot(ReviewCatalogueDataForm));
+		const formData = await request.formData();
+
+		const form = await superValidate(formData, valibot(ReviewCatalogueDataForm));
 		if (!form.valid) {
 			return fail(400, { form });
 		}

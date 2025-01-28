@@ -58,7 +58,7 @@ export const { handle } = SvelteKitAuth({
 				};
 			} else if (Date.now() < Number(token.expires_at || 0) * 1000) {
 				return token;
-			} else {
+			} else if (account) {
 				// Subsequent logins, but the `access_token` has expired, try to refresh it
 				if (!token.refresh_token) throw new TypeError('Missing refresh_token');
 
