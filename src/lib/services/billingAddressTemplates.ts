@@ -31,8 +31,7 @@ export const getBillingAddressTemplatesForOrganization = async ({
 
 	if (response.status !== 200) {
 		error(response.status, {
-			message: `Could not get billing address templates`,
-			problem: await response.json()
+			message: `Could not get billing address templates`
 		});
 	}
 
