@@ -44,7 +44,7 @@
 <div>
 	<section>
 		<h2 class=" text-stone-800 text-lg font-extrabold">
-			{$_('user-pages.accounts.archivedEvents')}
+			{$_('user-pages.settings.archivedEvents')}
 		</h2>
 	</section>
 	<section class=" mt-10">

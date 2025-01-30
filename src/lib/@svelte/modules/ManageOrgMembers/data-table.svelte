@@ -10,6 +10,7 @@
 	import ArrowUpDown from 'lucide-svelte/icons/arrow-up-down';
 	import { Input } from '$lib/components/ui/input';
 	import type { InferOutput } from 'valibot';
+	import { cn } from '@/utils';
 
 	export let inviteMemberDialogOpen;
 	export let memberResponse: InferOutput<GetOrgMembersResponse>;
@@ -39,11 +40,11 @@
 			header: $_('table-headings.role'),
 			cell: ({ value }) => {
 				if (value == 'OWNER') {
-					return $_('user-pages.accounts.owner');
+					return $_('user-pages.settings.owner');
 				} else if (value == 'MEMBER') {
-					return $_('user-pages.accounts.member');
+					return $_('user-pages.settings.member');
 				} else if (value == 'ADMIN') {
-					return $_('user-pages.accounts.admin');
+					return $_('user-pages.settings.admin');
 				} else {
 					return value;
 				}
@@ -52,8 +53,8 @@
 		table.column({
 			accessor: ({ contactPersonId }) => contactPersonId,
 			header: '',
-			cell: ({ value }) => {
-				return createRender(DataTableActions, { id: value });
+			cell: () => {
+				return createRender(DataTableActions);
 			},
 			plugins: {
 				sort: {
@@ -72,77 +73,80 @@
 	const { filterValue } = pluginStates.filter;
 </script>
 
-<div class="flex items-center justify-between py-4">
-	<Input
-		class="max-w-sm"
-		placeholder={$_('common.search')}
-		type="text"
-		bind:value={$filterValue}
-	/>
-	<Button variant="outline" on:click={() => (inviteMemberDialogOpen = true)}
-	>{$_('user-pages.accounts.invite')}</Button
-	>
-</div>
-<div class="rounded-md border">
-	<Table.Root {...$tableAttrs} class="w-full whitespace-no-wrap">
-		<Table.Header>
-			{#each $headerRows as headerRow}
-				<Subscribe rowAttrs={headerRow.attrs()}>
-					<Table.Row class=" tracking-wide text-left text-gray-500 border-b bg-gray-50">
-						{#each headerRow.cells as cell (cell.id)}
-							<Subscribe attrs={cell.attrs()} let:attrs props={cell.props()} let:props>
-								<Table.Head {...attrs} class="text-sm font-normal">
-									{#if cell.id === 'contactPersonName' || cell.id === 'membershipType' || cell.id === 'email'}
-										<Button class="px-0" variant="ghost" on:click={props.sort.toggle}>
+<div class={cn(`space-y-4`, $$props.class)}
+		 {...$$restProps}>
+	<div class={cn(`flex items-center justify-between gap-4`)}>
+		<Input
+			class="max-w-sm"
+			placeholder={$_('common.search')}
+			type="text"
+			bind:value={$filterValue}
+		/>
+		<Button variant="outline" on:click={() => (inviteMemberDialogOpen = true)}
+		>{$_('user-pages.settings.invite')}</Button
+		>
+	</div>
+	<div class="rounded-md border">
+		<Table.Root {...$tableAttrs} class="w-full whitespace-no-wrap">
+			<Table.Header>
+				{#each $headerRows as headerRow}
+					<Subscribe rowAttrs={headerRow.attrs()}>
+						<Table.Row class=" tracking-wide text-left text-gray-500 border-b bg-gray-50">
+							{#each headerRow.cells as cell (cell.id)}
+								<Subscribe attrs={cell.attrs()} let:attrs props={cell.props()} let:props>
+									<Table.Head {...attrs} class="text-sm font-normal">
+										{#if cell.id === 'contactPersonName' || cell.id === 'membershipType' || cell.id === 'email'}
+											<Button class="px-0" variant="ghost" on:click={props.sort.toggle}>
+												<Render of={cell.render()} />
+												<ArrowUpDown class={'h-4 w-4'} />
+											</Button>
+										{:else}
 											<Render of={cell.render()} />
-											<ArrowUpDown class={'h-4 w-4'} />
-										</Button>
-									{:else}
-										<Render of={cell.render()} />
-									{/if}
-								</Table.Head>
-							</Subscribe>
-						{/each}
-					</Table.Row>
-				</Subscribe>
-			{/each}
-		</Table.Header>
-		<Table.Body {...$tableBodyAttrs} class="bg-white divide-y">
-			{#each $pageRows as row (row.id)}
-				<Subscribe rowAttrs={row.attrs()} let:rowAttrs>
-					<Table.Row {...rowAttrs}>
-						{#each row.cells as cell (cell.id)}
-							<Subscribe attrs={cell.attrs()} let:attrs>
-								<Table.Cell {...attrs}>
-									{#if cell.id !== 'contactPersonName' && cell.id !== 'membershipType' && cell.id !== 'email'}
-										<div class="pr-0 mr-0 flex justify-end">
+										{/if}
+									</Table.Head>
+								</Subscribe>
+							{/each}
+						</Table.Row>
+					</Subscribe>
+				{/each}
+			</Table.Header>
+			<Table.Body {...$tableBodyAttrs} class="bg-white divide-y">
+				{#each $pageRows as row (row.id)}
+					<Subscribe rowAttrs={row.attrs()} let:rowAttrs>
+						<Table.Row {...rowAttrs}>
+							{#each row.cells as cell (cell.id)}
+								<Subscribe attrs={cell.attrs()} let:attrs>
+									<Table.Cell {...attrs}>
+										{#if cell.id !== 'contactPersonName' && cell.id !== 'membershipType' && cell.id !== 'email'}
+											<div class="pr-0 mr-0 flex justify-end">
+												<Render of={cell.render()} />
+											</div>
+										{:else}
 											<Render of={cell.render()} />
-										</div>
-									{:else}
-										<Render of={cell.render()} />
-									{/if}
-								</Table.Cell>
-							</Subscribe>
-						{/each}
-					</Table.Row>
-				</Subscribe>
-			{/each}
-		</Table.Body>
-	</Table.Root>
-</div>
-<div class="flex items-center justify-end space-x-4 py-4">
-	<Button
-		variant="outline"
-		size="sm"
-		on:click={() => ($pageIndex = $pageIndex - 1)}
-		disabled={!$hasPreviousPage}
-	>{$_("common.previous")}
-	</Button>
-	<Button
-		variant="outline"
-		size="sm"
-		disabled={!$hasNextPage}
-		on:click={() => ($pageIndex = $pageIndex + 1)}
-	>{$_("common.next")}
-	</Button>
+										{/if}
+									</Table.Cell>
+								</Subscribe>
+							{/each}
+						</Table.Row>
+					</Subscribe>
+				{/each}
+			</Table.Body>
+		</Table.Root>
+	</div>
+	<div class="flex items-center justify-end space-x-4">
+		<Button
+			variant="outline"
+			size="sm"
+			on:click={() => ($pageIndex = $pageIndex - 1)}
+			disabled={!$hasPreviousPage}
+		>{$_("common.previous")}
+		</Button>
+		<Button
+			variant="outline"
+			size="sm"
+			disabled={!$hasNextPage}
+			on:click={() => ($pageIndex = $pageIndex + 1)}
+		>{$_("common.next")}
+		</Button>
+	</div>
 </div>

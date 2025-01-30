@@ -9,9 +9,6 @@
 	import { Button } from '@/components/ui/button';
 	import { _ } from '@services';
 
-	$: activeUrl = $page.url.pathname;
-
-	$: activeTab = activeUrl?.includes('/details') ? 2 : activeUrl?.includes('/buy-options') ? 1 : 0;
 	export let data: LayoutServerData;
 	$: tabs = [
 		{ href: `/admin/events/${data.event?.id}/registrations`, name: 'registrations' },
@@ -43,7 +40,7 @@
 	</div>
 
 	<div class="mt-12">
-		<LinkTabs {tabs} {activeTab} />
+		<LinkTabs {tabs} />
 	</div>
 	{#if $navigating}
 		{@const fromInfo = getEventInfo($navigating?.from?.url)}

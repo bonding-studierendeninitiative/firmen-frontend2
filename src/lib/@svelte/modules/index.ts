@@ -15,3 +15,4 @@ export * from './ReviewCatalogueData';
 export * from './ManageOrgMembers';
 export * from './UploadCatalogueData';
 export * from './ManageOrgMembers';
+export * from './AddBillingAddressTemplate';

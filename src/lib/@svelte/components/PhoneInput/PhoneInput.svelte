@@ -4,6 +4,7 @@
 	import 'svelte-tel-input/styles/flags.css';
 	import type { Country, DetailedValue } from 'svelte-tel-input/types';
 	import type { CountryCode } from 'libphonenumber-js/types';
+	import { cn } from '@/utils';
 
 	export let clickOutside = true;
 	export let closeOnClick = true;
@@ -95,7 +96,7 @@
 	};
 </script>
 
-<div>
+<div class={cn($$props.class)}>
 	{#if label}
 		<label class="block mb-1.5 font-medium marker:text-sm text-stone-800" for={name}
 			>{label}

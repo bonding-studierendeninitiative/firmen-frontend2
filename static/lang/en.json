@@ -202,6 +202,21 @@
       "proceed": "Review registration",
       "document-type": "Review the\u2026",
       "feedback-type": "Type of feedback"
+    },
+    "add-billing-address-template": {
+      "streetHouseNo": "Street, House No.",
+      "postalCode": "Postal code",
+      "addBillingAddress": "Add Billing Address",
+      "newAddress": "New Address",
+      "addAddress": "Add Address",
+      "vat": "Sales Tax ID (optional)",
+      "companyName": "Company Name",
+      "address": "Address",
+      "cityState": "City & State",
+      "city": "City",
+      "state": "State",
+      "country": "Country",
+      "billingReference": "Internal billing reference (optional)"
     }
   },
   "sidebar": {
@@ -230,7 +245,7 @@
     "companyInformation": "Company Information",
     "portraits": "Portraits",
     "bookings": "Bookings",
-    "profile": "Profile",
+    "org-members": "Members",
     "organization": "Organization",
     "password": "Password",
     "billing": "Billing",
@@ -272,7 +287,19 @@
     "confirmed": "Confirmed"
   },
   "user-pages": {
-    "accounts": {
+    "settings": {
+      "org-members": {
+        "title": "Members of your organisation",
+        "description": "These members are linked to your organization."
+      },
+      "org-details": {
+        "title": "Legal address",
+        "description": "We recommend that you supply your organizations official legal name and address (e. g. the information that will appear on the contract)."
+      },
+      "org-contact-details": {
+        "title": "Contact info",
+        "description": "The general purpose contact data for your organization."
+      },
       "owner": "Owner",
       "member": "Member",
       "admin": "Admin",
@@ -320,7 +347,7 @@
       "buildingOptional": "Building (Optional)",
       "building": "Building",
       "orderIDReferenceID": "Order ID / Reference ID",
-      "billingAddress": "Billing Address",
+      "billingAddress": "Billing addresses",
       "makeItDefault": "Make it default",
       "default": "Default",
       "addBillingAddress": "Add Billing Address",

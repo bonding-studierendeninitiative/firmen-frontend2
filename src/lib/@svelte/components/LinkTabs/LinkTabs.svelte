@@ -1,11 +1,12 @@
 <script lang="ts">
 	import { _ } from '@services';
+	import { page } from '$app/stores';
+	import { cn } from '@/utils';
 
 	export let tabs: {
 		name: string;
 		href: string;
 	}[];
-	export let activeTab: number;
 	export let hasBorder: boolean = true;
 
 	const activeTabStyle = '  border-b-2 border-brand !text-brand';
@@ -17,8 +18,11 @@
 			{#each tabs as tab, index (tab)}
 				<a
 					href={tab.href}
-					class={`text-stone-500 py-4 px-0 ${index === 0 ? 'mr-6' : 'mx-6'} block text-sm font-medium  focus:outline-none`.concat(
-						index === activeTab ? activeTabStyle : ''
+					class={
+					cn(
+						"text-stone-500 py-4 px-0 block text-sm font-medium focus:outline-none",
+					index === 0 ? 'mr-6' : 'mx-6',
+					$page.url.href.includes(tab.href) ? activeTabStyle : undefined,
 					)}
 				>
 					{$_(`tab-headings.${tab.name}`)}

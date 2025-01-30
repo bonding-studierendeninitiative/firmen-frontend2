@@ -202,6 +202,21 @@
       "proceed": "Feedback senden",
       "document-type": "Feedback festhalten für\u2026",
       "feedback-type": "Art des Feedbacks"
+    },
+    "add-billing-address-template": {
+      "streetHouseNo": "Straße, Hausnummer",
+      "postalCode": "Postleitzahl",
+      "addBillingAddress": "Rechnungsadresse hinzufügen",
+      "newAddress": "Neue Adresse",
+      "addAddress": "Adresse hinzufügen",
+      "vat": "Umsatzsteuer-ID (optional)",
+      "companyName": "Firmenname",
+      "address": "Adresse",
+      "cityState": "Stadt & Bundesland",
+      "city": "Stadt",
+      "state": "Bundesland",
+      "country": "Land",
+      "billingReference": "Interne Referenz (optional)"
     }
   },
   "sidebar": {
@@ -231,7 +246,7 @@
     "companyInformation": "Firmeninformationen",
     "portraits": "Portraits",
     "bookings": "Buchungen",
-    "profile": "Profil",
+    "org-members": "Mitglieder",
     "organization": "Organisation",
     "password": "Passwort",
     "billing": "Abrechnung",
@@ -273,7 +288,19 @@
     "confirmed": "Bestätigt"
   },
   "user-pages": {
-    "accounts": {
+    "settings": {
+      "org-members": {
+        "title": "Mitglieder Ihrer Organisation",
+        "description": "Hier sehen sie die Mitglieder, die mit dieser Organisation verknüpft sind."
+      },
+      "org-details": {
+        "title": "Juristische Anschrift",
+        "description": "Unter welchem Namen und an welcher Adresse ist ihre Organisation eingetragen?"
+      },
+      "org-contact-details": {
+        "title": "Kontaktdaten",
+        "description": "Die allgemeinen Kontaktdaten ihrer Organisation."
+      },
       "owner": "Besitzer",
       "member": "Mitglied",
       "admin": "Administrator",
@@ -321,7 +348,7 @@
       "buildingOptional": "Gebäude (optional)",
       "building": "Gebäude",
       "orderIDReferenceID": "Bestell-ID / Referenz-ID",
-      "billingAddress": "Rechnungsadresse",
+      "billingAddress": "Rechnungsadressen",
       "makeItDefault": "Als Standard festlegen",
       "default": "Standard",
       "addBillingAddress": "Rechnungsadresse hinzufügen",

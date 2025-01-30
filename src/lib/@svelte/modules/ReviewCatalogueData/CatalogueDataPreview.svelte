@@ -2,7 +2,6 @@
 	import type { Infer } from 'sveltekit-superforms';
 	import type { OrgEventRegistration } from '@schema';
 
-	export let id: string;
 	export let eventRegistration: Infer<OrgEventRegistration>;
 	export let documentType: 'portrait' | 'advert' | 'logo';
 </script>

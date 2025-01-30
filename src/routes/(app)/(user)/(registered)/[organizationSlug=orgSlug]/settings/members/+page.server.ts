@@ -27,14 +27,8 @@ export const load: PageServerLoad = async ({ parent, params, url }) => {
 	createInviteForm.data.organizationSlug = params.organizationSlug;
 	createInviteForm.data.redirectURL = APP_URL;
 
-	const editOrganizationDetailsForm = await superValidate(
-		organizationData,
-		valibot(SetOrgDetailsRequestSchema)
-	);
-
 	return {
 		createInviteForm,
-		editOrganizationDetailsForm,
 		organization: organizationData,
 		organizationMembers: await getOrganizationMembers({
 			// @ts-expect-error we define accessToken in parent
@@ -60,26 +54,6 @@ export const actions: Actions = {
 		}
 		// @ts-expect-error  we define accessToken in parent
 		await generateOrgInvite({ accessToken: session?.accessToken, data: form.data });
-		return { form };
-	},
-	updateOrg: async ({ locals, request, params }) => {
-		const session = await locals.auth();
-		// @ts-expect-error we define accessToken in parent
-		if (!session || !session.accessToken) {
-			fail(403);
-			return;
-		}
-
-		const form = await superValidate(request, valibot(SetOrgDetailsRequestSchema));
-		if (!form.valid) {
-			return fail(400, { form });
-		}
-		await setOrgDetails({
-			// @ts-expect-error we define accessToken in parent
-			accessToken: session?.accessToken,
-			orgSlug: params.organizationSlug,
-			data: form.data
-		});
 		return { form };
 	}
 };

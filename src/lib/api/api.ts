@@ -3,17 +3,24 @@ interface ApiParams {
 	token?: string;
 	data?: Record<string, unknown> | null;
 	image?: FormDataEntryValue | null;
+	fetch?: typeof fetch;
 }
 
 import { PUBLIC_BACKEND_HOST } from '$env/static/public';
 
 type GetParams = Omit<ApiParams, 'data'>;
 
+declare function fetch<ResponseType = any>(
+	input: RequestInfo | URL,
+	init?: TypedRequestInit
+): Promise<TypedResponse<ResponseType>>;
+
 export const API = {
 	baseUrl: PUBLIC_BACKEND_HOST,
 	get: <T>(params: GetParams): Promise<TypedResponse<T>> => {
+		const fetchFunction = params.fetch ?? fetch;
 		try {
-			return fetch(API.baseUrl + params.route, {
+			return fetchFunction(API.baseUrl + params.route, {
 				headers: params.token ? { Authorization: `Bearer ${params.token}` } : undefined,
 				method: 'GET'
 			});
@@ -69,11 +76,6 @@ type PreparedHeaders = Partial<{
 	Accept: MimeTypes;
 	Authorization: `Bearer ${string}`;
 }>;
-
-declare function fetch<ResponseType = any>(
-	input: RequestInfo | URL,
-	init?: TypedRequestInit
-): Promise<TypedResponse<ResponseType>>;
 
 type HttpVerbs = 'POST' | 'PUT' | 'DELETE' | 'UPDATE' | 'GET' | 'CONNECT' | 'HEAD' | 'OPTIONS';
 

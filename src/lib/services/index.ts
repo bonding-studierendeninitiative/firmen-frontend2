@@ -5,3 +5,4 @@ export * from './organizations';
 export * from './eventRegistrations';
 export * from './eventBuyOptions';
 export * from './catalogueData';
+export * from './billingAddressTemplates';
