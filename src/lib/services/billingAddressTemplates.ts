@@ -7,6 +7,9 @@ import {
 	GetBillingAddressTemplateForOrganizationResponse
 } from '@schema';
 import type { InferOutput } from 'valibot';
+import { createLogger } from 'vite';
+
+const logger = createLogger();
 
 export const getBillingAddressTemplatesForOrganization = async ({
 	accessToken,
@@ -22,6 +25,9 @@ export const getBillingAddressTemplatesForOrganization = async ({
 		token: accessToken,
 		fetch: fetchF
 	});
+
+	logger.info(`In getBillingAddressTemplatesForOrganization, response.status: ${response.status}`);
+	logger.info(`url was: ${response.url}`);
 
 	if (response.status !== 200) {
 		error(response.status, {
