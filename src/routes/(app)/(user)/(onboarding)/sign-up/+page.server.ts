@@ -1,8 +1,8 @@
 import type { PageServerLoad } from './$types';
 import { superValidate } from 'sveltekit-superforms';
 import { valibot } from 'sveltekit-superforms/adapters';
-import { type ContactPersonDetails, ContactPersonRegistrationRequest } from '@schema';
-import { type Actions, error, fail, redirect } from '@sveltejs/kit';
+import { ContactPersonRegistrationRequest } from '@schema';
+import { type Actions, fail, redirect } from '@sveltejs/kit';
 import { registerContactPerson } from '@/services/contactPerson';
 
 export const load: PageServerLoad = async ({ parent }) => {
@@ -29,7 +29,6 @@ export const actions: Actions = {
 		if (!form.valid) {
 			return fail(400, { form });
 		}
-
 
 		const registrationResult = await registerContactPerson({
 			// @ts-expect-error we define accessToken in parent

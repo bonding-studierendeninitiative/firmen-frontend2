@@ -3,7 +3,6 @@ import { sequence } from '@sveltejs/kit/hooks';
 import { type Handle } from '@sveltejs/kit';
 import { contactPersonDetailsStore } from '@/stores/contactPersonStore';
 import { get } from 'svelte/store';
-import { getContactPersonDetails } from '@/services/contactPerson';
 import { signOut } from '@auth/sveltekit/client';
 import { createLogger } from 'vite';
 
@@ -47,33 +46,6 @@ const handleExpiredSession: Handle = async ({ event, resolve }) => {
 	return resolve(event);
 };
 
-const forceContactPersonDetails: Handle = async ({ event, resolve }) => {
-	const session = await event.locals.auth();
-
-	// check if users is not logged in (handleAuth will do this)
-	if (!session?.user) {
-		return resolve(event);
-	}
-
-	if (
-		// @ts-expect-error role was added in auth
-		!['admin', 'dev', 'bonding'].includes(session?.user?.role) &&
-		!event.url.pathname.includes('sign-up') &&
-		event.url.pathname.length > 1
-	) {
-		const details = get(contactPersonDetailsStore);
-		if (!details) {
-			// @ts-expect-error define accessToke in auth
-			const d = await getContactPersonDetails({ accessToken: session?.accessToken });
-			if (!d) {
-				logger.info('User is not yet registered. Redirecting to sign up.');
-				return new Response(null, { status: 302, headers: { location: '/sign-up' } });
-			}
-		}
-	}
-	return resolve(event);
-};
-
 const forceOrganizationCreation: Handle = async ({ event, resolve }) => {
 	const session = await event.locals.auth();
 	const details = get(contactPersonDetailsStore);
@@ -99,6 +71,5 @@ export const handle = sequence(
 	handleAuth,
 	handleExpiredSession,
 	protectAdmin,
-	forceContactPersonDetails,
 	forceOrganizationCreation
 );
