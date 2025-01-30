@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/sveltekit';
 import { handle as handleAuth } from './auth';
 import { sequence } from '@sveltejs/kit/hooks';
 import { type Handle } from '@sveltejs/kit';
@@ -5,6 +6,11 @@ import { contactPersonDetailsStore } from '@/stores/contactPersonStore';
 import { get } from 'svelte/store';
 import { signOut } from '@auth/sveltekit/client';
 import { createLogger } from 'vite';
+
+Sentry.init({
+	dsn: 'https://f1933902b8f781edc8b707ee9d75ea53@o4508733953540096.ingest.de.sentry.io/4508733955571792',
+	tracesSampleRate: 1
+});
 
 const logger = createLogger();
 
@@ -68,8 +74,7 @@ const forceOrganizationCreation: Handle = async ({ event, resolve }) => {
 };
 
 export const handle = sequence(
-	handleAuth,
-	handleExpiredSession,
-	protectAdmin,
-	forceOrganizationCreation
+	Sentry.sentryHandle(),
+	sequence(handleAuth, handleExpiredSession, protectAdmin, forceOrganizationCreation)
 );
+export const handleError = Sentry.handleErrorWithSentry();
