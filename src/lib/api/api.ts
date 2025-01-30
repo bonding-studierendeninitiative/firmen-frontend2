@@ -25,7 +25,7 @@ export const API = {
 				method: 'GET'
 			});
 		} catch (error: any) {
-			throw new Error(error.response.data || 'An error occurred');
+			return Promise.reject(error);
 		}
 	},
 	post: <T>(params: ApiParams): Promise<TypedResponse<T>> => {
