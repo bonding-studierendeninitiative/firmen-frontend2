@@ -113,7 +113,8 @@ export const EventRegistrationSchema = v.object({
 					text: v.string()
 				})
 			),
-			name: v.string()
+			name: v.string(),
+			url: v.nullish(v.string())
 		})
 	),
 	logo: v.nullish(
@@ -125,7 +126,8 @@ export const EventRegistrationSchema = v.object({
 				})
 			),
 			mimeType: v.string(),
-			name: v.string()
+			name: v.string(),
+			url: v.nullish(v.string())
 		})
 	)
 });
@@ -184,7 +186,8 @@ export const OrgEventRegistrationSchema = v.object({
 					text: v.string()
 				})
 			),
-			name: v.string()
+			name: v.string(),
+			url: v.nullish(v.string())
 		})
 	),
 	logo: v.nullish(
@@ -196,7 +199,8 @@ export const OrgEventRegistrationSchema = v.object({
 				})
 			),
 			mimeType: v.string(),
-			name: v.string()
+			name: v.string(),
+			url: v.nullish(v.string())
 		})
 	)
 });

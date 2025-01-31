@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { Infer } from 'sveltekit-superforms';
+	import { type Infer } from 'sveltekit-superforms';
 	import type { OrgEventRegistration } from '@schema';
 
 	export let eventRegistration: Infer<OrgEventRegistration>;
@@ -9,13 +9,13 @@
 	<p>Placeholder</p>
 {:else if documentType === 'advert' && eventRegistration.advertisement}
 	<embed
-		src={`http://localhost:50678/firmenintranet/${eventRegistration.advertisement.name}#toolbar=0&navpanes=0&scrollbar=0`}
+		src={`${eventRegistration.advertisement.url}#toolbar=0&navpanes=0&scrollbar=0`}
 		width="100%" class="[aspect-ratio:1/_1.41]" title="Preview" />
 {:else if documentType === 'logo' && eventRegistration.logo}
 	{#if eventRegistration.logo.mimeType === 'image/png'}
-		<img alt="Logo" src={`http://localhost:50678/firmenintranet/${eventRegistration.logo.name}`} />
+		<img alt="Logo" src={eventRegistration.logo.url} />
 	{:else }
-		<embed src={`http://localhost:50678/${eventRegistration.logo.name}`} />
+		<embed src={`${eventRegistration.logo.url}#toolbar=0&navpanes=0&scrollbar=0`} />
 	{/if}
 
 {/if}

@@ -2,7 +2,7 @@
 	import { Button } from '@/components/ui/button';
 	import * as Dialog from '@/components/ui/dialog';
 	import * as Tabs from '@/components/ui/tabs';
-	import { type Infer, superForm, type SuperValidated } from 'sveltekit-superforms';
+	import SuperDebug, { type Infer, superForm, type SuperValidated } from 'sveltekit-superforms';
 	import {
 		type OrgEventRegistration, type ReviewCatalogueDataForm
 	} from '@schema';
@@ -137,6 +137,10 @@
 					<CatalogueDataPreview documentType={$formData.documentType} {eventRegistration} />
 				</div>
 			</div>
+
+			<details>
+			<SuperDebug data={eventRegistration} />
+			</details>
 		</form>
 	</Dialog.Content>
 </Dialog.Root>
