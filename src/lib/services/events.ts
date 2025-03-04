@@ -21,10 +21,16 @@ export const getEvents = async ({
 			token: accessToken
 		});
 		const data = await response.json();
-		return parse(GetEventsResponseSchema, data).events;
+		return parse(GetEventsResponseSchema, data);
 	} catch (error) {
 		console.error(error);
-		return [];
+		return {
+			events: [],
+			totalElements: 0,
+			totalPages: 0,
+			pageNumber: 0,
+			pageSize: 10
+		};
 	}
 };
 

@@ -25,7 +25,7 @@
 				{#await data.publishedEvents}
 					<Skeleton class="w-6 h-12 text-muted-foreground" />
 				{:then publishedEvents}
-					<span class="text-3xl font-semibold">{publishedEvents?.length}</span>
+					<span class="text-3xl font-semibold">{publishedEvents?.totalElements}</span>
 				{:catch error}
 					<span class="text-3xl font-semibold">NaN</span>
 				{/await}
@@ -36,7 +36,7 @@
 				{#await data.unpublishedEvents}
 					<Skeleton class="w-6 h-12 text-muted-foreground" />
 				{:then unpublishedEvents}
-					<span class="text-3xl font-semibold">{unpublishedEvents?.length}</span>
+					<span class="text-3xl font-semibold">{unpublishedEvents?.totalElements}</span>
 				{:catch error}
 					<span class="text-3xl font-semibold">NaN</span>
 				{/await}
@@ -47,7 +47,7 @@
 				{#await data.archivedEvents}
 					<Skeleton class="w-6 h-12 text-muted-foreground" />
 				{:then archivedEvents}
-					<span class="text-3xl font-semibold">{archivedEvents?.length}</span>
+					<span class="text-3xl font-semibold">{archivedEvents?.totalElements}</span>
 				{:catch error}
 					<span class="text-3xl font-semibold">NaN</span>
 				{/await}

@@ -15,10 +15,10 @@
 		<LoaderCircle class="w-10 h-10 my-8 mx-auto animate-spin" />
 	{:then events}
 		<div in:fade>
-		{#if events?.length === 0}
+		{#if events?.events.length === 0}
 			<p class="container mt-8 flex justify-center items-center h-full">{$_('user-pages.events.noEvents')}</p>
 		{/if}
-		<EventsList events={events} orgSlug={data.initialState.orgSlug} />
+		<EventsList events={events?.events ?? []} orgSlug={data.initialState.orgSlug} />
 		</div>
 	{:catch error}
 		<p>{error.message}</p>
