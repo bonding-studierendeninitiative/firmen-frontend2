@@ -1,15 +1,16 @@
-import type { LayoutServerLoad } from './$types';
 import { getEvent } from '@/services';
+import { clerkClient } from 'svelte-clerk/server';
 
-export const load: LayoutServerLoad = async ({ parent, params }) => {
-	const { session } = await parent();
-	if (!session?.user) return;
+export const load = async ({ parent, params, isDataRequest }) => {
+	const { initialState } = await parent();
+	if (!initialState.sessionId) return;
 
-	const event = await getEvent({
-		// @ts-expect-error we define accessToken in parent
-		accessToken: session?.accessToken,
+	const token = await clerkClient.sessions.getToken(initialState.sessionId, 'access_token');
+
+	const event = getEvent({
+		accessToken: token.jwt,
 		eventId: params.id
 	});
 
-	return { event };
+	return { event: event };
 };

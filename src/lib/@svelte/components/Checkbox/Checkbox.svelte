@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { type ClassValue, clsx } from 'clsx';
-	import { cn } from '@/utils';
+	import { cn } from '@/utils/tailwind';
 
 	export let checked: boolean = false;
 	export let label: string = '';

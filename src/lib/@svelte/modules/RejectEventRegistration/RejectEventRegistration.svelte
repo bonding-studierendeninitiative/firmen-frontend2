@@ -10,9 +10,9 @@
 
 	export let isOpen: boolean;
 	export let id: string;
-	let rejectForm: Writable<SuperValidated<Infer<RejectEventRegistrationSchema>>> = getContext('rejectForm');
+	export let rejectForm: SuperValidated<Infer<RejectEventRegistrationSchema>>;
 
-	const superConfirmForm = superForm($rejectForm, {
+	const superConfirmForm = superForm(rejectForm, {
 		id,
 		onSubmit({ formData }) {
 			formData.set('eventRegistrationId', id);

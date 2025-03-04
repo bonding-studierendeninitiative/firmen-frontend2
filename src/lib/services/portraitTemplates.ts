@@ -21,21 +21,31 @@ export const getPortraitTemplates = async ({
 	org: string;
 	page?: number;
 }) => {
-	const response = await API.get<v.InferInput<typeof GetPortraitTemplatesResponse>>({
-		route: `/portrait-template?organizationId=${org}&status=PUBLISHED&page=${page}&limit=6`,
-		token: accessToken
-	});
-	if (response.status === 401) {
-		error(401, 'Unauthorized');
+	try {
+		const response = await API.get<v.InferInput<typeof GetPortraitTemplatesResponse>>({
+			route: `/portrait-template?organizationId=${org}&page=${page}&limit=6`,
+			token: accessToken
+		});
+		if (response.status === 401) {
+			error(401, 'Unauthorized');
+		}
+		if (response.status === 403) {
+			error(403, 'Forbidden');
+		}
+		if (response.status === 404) {
+			error(404, 'Not Found');
+		}
+		const data = await response.json();
+		return v.parse(GetPortraitTemplatesResponse, data);
+	} catch (error) {
+		console.error(error);
+		return {
+			portraitTemplates: [],
+			totalElements: 0,
+			totalPages: 0,
+			pageNumber: 0
+		};
 	}
-	if (response.status === 403) {
-		error(403, 'Forbidden');
-	}
-	if (response.status === 404) {
-		error(404, 'Not Found');
-	}
-	const data = await response.json();
-	return v.parse(GetPortraitTemplatesResponse, data);
 };
 
 export const getPortraitTemplate = async ({

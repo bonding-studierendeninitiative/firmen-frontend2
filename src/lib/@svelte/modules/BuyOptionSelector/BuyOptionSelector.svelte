@@ -4,7 +4,7 @@
 	import { Button } from '@/components/ui/button';
 	import { ChevronsUpDown, PlusCircle } from 'lucide-svelte';
 	import Check from 'lucide-svelte/icons/check';
-	import { cn } from '@/utils';
+	import { cn } from '@/utils/tailwind';
 	import { tick } from 'svelte';
 	import { Badge } from '@/components/ui/badge';
 	import { _ } from '@services';

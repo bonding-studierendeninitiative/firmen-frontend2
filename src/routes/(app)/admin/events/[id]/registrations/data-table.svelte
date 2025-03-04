@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { createTable, Subscribe, Render, createRender, type ReadOrWritable } from 'svelte-headless-table';
+	import { createTable, Subscribe, Render, createRender } from 'svelte-headless-table';
 	import { _, dayjs, locale } from '@services';
 	import {
 		addColumnFilters,
@@ -9,7 +9,7 @@
 	} from 'svelte-headless-table/plugins';
 	import type { InferOutput } from 'valibot';
 	import * as Table from '@/components/ui/table';
-	import { derived, get } from 'svelte/store';
+	import { get, readable } from 'svelte/store';
 	import {
 		AdvertStatusIcon,
 		Chip,
@@ -20,17 +20,25 @@
 	} from '@/@svelte/components';
 	import DataTableActions from './data-table-actions.svelte';
 	import DataTableCheckbox from './data-table-checkbox.svelte';
+	import ExportCatalogueDataForm from './export-catalogue-data-form.svelte';
+	import SimpleEventRegistrationOrganization from './simple-event-registration-organization.svelte';
 	import type {
-		EventRegistration
+		ExportCatalogueDataRequest,
+		GetEventRegistrationsForEventResponse
 	} from '@schema';
+	import { getContext } from 'svelte';
+	import { type Infer, superForm, type SuperValidated } from 'sveltekit-superforms';
 
-	export let data: ReadOrWritable<InferOutput<EventRegistration>[]>;
+	export let data: InferOutput<GetEventRegistrationsForEventResponse>['eventRegistrations'];
 	export let packages: string[] = [];
 	export let status: string[] = [];
 	export let addonPackages: string[] = [];
 	export let addons: string[] = [];
 
-	let table = createTable(derived([data, locale], ([data, locale]) => (data)), {
+	console.log("DataTable:", {data, packages, status, addonPackages, addons});
+	let exportCatalogueDataForm: SuperValidated<Infer<ExportCatalogueDataRequest>> = getContext('exportCatalogueDataForm');
+
+	let table = createTable(readable(data), {
 		filter: addTableFilter({
 			fn: ({ value, filterValue }) => value.toLowerCase().includes(filterValue.toLowerCase())
 		}),
@@ -44,7 +52,7 @@
 		})
 	});
 
-	$: counts = $data.reduce<{
+	$: counts = data.reduce<{
 		package: { [index: string]: number };
 		status: { [index: string]: number };
 		addonPackages: { [index: string]: number };
@@ -53,7 +61,7 @@
 		(acc, { purchasedPackage, status, addonPackages }) => {
 			acc.package[purchasedPackage.name] = (acc.package[purchasedPackage.name] || 0) + 1;
 			if (status) {
-				acc.status[status.text] = (acc.status[status.text] || 0) + 1;
+				acc.status[status] = (acc.status[status] || 0) + 1;
 			}
 			if (addonPackages) {
 				addonPackages.forEach((addonPackage) => {
@@ -97,25 +105,19 @@
 			}
 		}),
 		table.column({
-			accessor: ({ organization }) => organization.name,
-			header: $_('admin-pages.events.event-registrations.data-table.headers.org')
-		}),
-		table.column({
-			accessor: ({ contactPerson }) => contactPerson.fullName,
-			header: $_('admin-pages.events.event-registrations.data-table.headers.contact-person')
-		}),
-		table.column({
-			accessor: ({ contactPerson, organization }) => contactPerson.phone ?? organization.phone,
-			header: $_('admin-pages.events.event-registrations.data-table.headers.phone')
-		}),
-		table.column({
-			accessor: ({ contactPerson, organization }) => contactPerson.email ?? organization.email,
-			header: $_('admin-pages.events.event-registrations.data-table.headers.email')
+			accessor: ({ organization }) => organization,
+			header: $_('admin-pages.events.event-registrations.data-table.headers.org'),
+			id: 'organization',
+			cell: ({ value }) => {
+				return createRender(SimpleEventRegistrationOrganization, {
+					organization: value,
+				})
+			}
 		}),
 		table.column({
 			accessor: ({ purchasedPackage }) => purchasedPackage.name,
 			header: $_('admin-pages.events.event-registrations.data-table.headers.package'),
-			id: "package",
+			id: 'package',
 			plugins: {
 				packageFilter: {
 					fn: ({ filterValue, value }) => {
@@ -133,7 +135,7 @@
 			}
 		}),
 		table.column({
-			accessor: ({ createdAt, modifiedAt }) => dayjs(modifiedAt ?? createdAt, {}, $locale ?? "de").fromNow(),
+			accessor: ({ createdAt, modifiedAt }) => dayjs(modifiedAt ?? createdAt, {}, $locale ?? 'de').fromNow(),
 			header: $_('admin-pages.events.event-registrations.data-table.headers.last-modified'),
 			plugins: {
 				filter: {
@@ -142,9 +144,9 @@
 			}
 		}),
 		table.column({
-			accessor: ({ status }) => status?.text,
+			accessor: ({ status }) => status,
 			header: $_('admin-pages.events.event-registrations.data-table.headers.status'),
-			id: "status",
+			id: 'status',
 			cell: ({ value }) => {
 				return createRender(Chip, { status: $_(`common.event-registration-status.${value}`), variant: value });
 			},
@@ -165,7 +167,7 @@
 			}
 		}),
 		table.column({
-			accessor: ({ portraitStatus }) => portraitStatus?.text ?? '',
+			accessor: ({ portraitStatus }) => portraitStatus ?? '',
 			cell: ({ value }) => createRender(PortraitStatusIcon, { variant: value }),
 			header: $_('admin-pages.events.event-registrations.data-table.headers.portrait-status'),
 			plugins: {
@@ -175,7 +177,7 @@
 			}
 		}),
 		table.column({
-			accessor: ({ logoStatus }) => logoStatus?.text,
+			accessor: ({ logoStatus }) => logoStatus,
 			cell: ({ value }) => createRender(LogoStatusIcon, { variant: value }),
 			header: $_('admin-pages.events.event-registrations.data-table.headers.logo-status'),
 			plugins: {
@@ -185,7 +187,7 @@
 			}
 		}),
 		table.column({
-			accessor: ({ advertisementStatus }) => advertisementStatus?.text,
+			accessor: ({ advertisementStatus }) => advertisementStatus,
 			cell: ({ value }) => createRender(AdvertStatusIcon, { variant: value }),
 			header: $_('admin-pages.events.event-registrations.data-table.headers.advert-status'),
 			plugins: {
@@ -256,6 +258,7 @@
 	const { headerRows, pageRows, tableAttrs, tableBodyAttrs, pluginStates } =
 		table.createViewModel(columns);
 
+	let enableExport = pluginStates.select.someRowsSelected;
 	export let { filterValue } = pluginStates.filter;
 	export let { filterValues: packageFilterValues } = pluginStates.packageFilter;
 	export let { filterValues: statusFilterValues } = pluginStates.statusFilter;
@@ -305,6 +308,12 @@
 		title={$_("admin-pages.events.event-registrations.data-table.filters.addons")}
 		counts={counts?.addons}
 	/>
+	<ExportCatalogueDataForm disabled={!$enableExport} {exportCatalogueDataForm} selectedEventRegistrations={Object.entries(get(pluginStates.select.selectedDataIds)).map(([id, selected]) => ({
+				id,
+				selected
+			})).map(({ id }) => {
+				return $pageRows.find((row) => row.isData() && row.dataId === id)?.original.id;
+			})} />
 </section>
 <section class="mt-10">
 	<div class="rounded-md border">

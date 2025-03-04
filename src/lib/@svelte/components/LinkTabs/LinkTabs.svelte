@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { _ } from '@services';
 	import { page } from '$app/stores';
-	import { cn } from '@/utils';
+	import { cn } from '@/utils/tailwind';
 
 	export let tabs: {
 		name: string;

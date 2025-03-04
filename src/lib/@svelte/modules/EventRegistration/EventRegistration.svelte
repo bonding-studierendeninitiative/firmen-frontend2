@@ -1,18 +1,26 @@
 <script lang="ts">
 	import type { InferOutput } from 'valibot';
-	import type { EventRegistration } from '@schema';
-	import { AddonList } from '@/@svelte/components';
+	import type { EventRegistration, GetEventRegistrationsForEventResponse } from '@schema';
+	import { AddonList, Chip } from '@/@svelte/components';
 	import Organization from './Organization.svelte';
 	import ContactPerson from './ContactPerson.svelte';
 	import Package from './Package.svelte';
+	import { dayjs } from '@services/i18n';
 
-	export let eventRegistration: InferOutput<EventRegistration>;
+	export let eventRegistration: InferOutput<GetEventRegistrationsForEventResponse>['eventRegistrations'][number];
 </script>
 
 <section {...$$props}>
 	<div class=" grid grid-cols-1 gap-4">
-		<Organization organization={eventRegistration.organization} />
-		<ContactPerson contactPerson={eventRegistration.contactPerson} />
+		<span>{eventRegistration.organizationName}</span>
+			<span>Wunschtage</span>
+		<div>
+			{#each eventRegistration.desiredEventRegistrationDays ?? [] as day}
+				{@const date = dayjs(day)}
+				<span>{date.format("dd")}</span>
+				<span>{date.format("ll")}</span>
+			{/each}
+		</div>
 		{#if eventRegistration.organizationComment }
 			<div>{eventRegistration.organizationComment}</div>
 		{/if}

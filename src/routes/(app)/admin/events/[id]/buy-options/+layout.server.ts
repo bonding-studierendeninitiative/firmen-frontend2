@@ -1,29 +1,31 @@
-import { getBuyOptions } from '$lib/services';
-import type { LayoutServerLoad } from './$types';
+import { getBuyOptions } from '@/services';
 import { valibot } from 'sveltekit-superforms/adapters';
 import { CreateBuyOptionRequestSchema } from '@schema';
 import { superValidate } from 'sveltekit-superforms';
-import { redirect } from '@sveltejs/kit';
+import { clerkClient } from 'svelte-clerk/server';
 
-export const load: LayoutServerLoad = async ({ parent, params }) => {
-	const { session } = await parent();
-	if (!session?.user) return;
+export const load = async ({ parent, params, isDataRequest }) => {
+	async function loadBuyOptions(eventId: string) {
+		const { initialState } = await parent();
+		if (!initialState.sessionId) return;
 
-	const response = await getBuyOptions({
-		// @ts-expect-error we define accessToken in parent
-		accessToken: session?.accessToken,
-		eventId: params.id
-	});
+		const token = await clerkClient.sessions.getToken(initialState.sessionId, 'access_token');
 
-	if (response.buyOptions.length > 0 && !params.buyOptionId) {
-		redirect(302, `/admin/events/${params.id}/buy-options/${response.buyOptions[0].id}`);
+		const response = await getBuyOptions({
+			accessToken: token.jwt,
+			eventId
+		});
+
+		return {
+			buyOptions: response.buyOptions,
+			totalElements: response.totalElements
+		};
 	}
 
-	const createForm = await superValidate(valibot(CreateBuyOptionRequestSchema));
+	const createForm = superValidate(valibot(CreateBuyOptionRequestSchema));
 
 	return {
-		buyOptions: response.buyOptions,
-		buyOptionCount: response.totalElements,
-		createForm
+		buyOptionData: isDataRequest ? loadBuyOptions(params.id) : await loadBuyOptions(params.id),
+		createForm: isDataRequest ? createForm : await createForm
 	};
 };

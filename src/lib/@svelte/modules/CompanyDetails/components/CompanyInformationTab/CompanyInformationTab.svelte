@@ -6,10 +6,11 @@
 	import { getContext } from 'svelte';
 	import type { ReadOrWritable } from 'svelte-headless-table';
 	import { ManageOrgMembers } from '@/@svelte/modules';
+	import type { OrganizationMembership } from 'svelte-clerk/server';
 
 	export let organizationInfo: { label: string; value: string }[];
 	export let createInviteForm: ReadOrWritable<SuperValidated<InferOutput<CreateOrgInviteRequest>>> | undefined = getContext('createInviteForm');
-	export let orgMembers: InferOutput<GetOrgMembersResponse>;
+	export let orgMembers: { data: OrganizationMembership[]; totalCount: number };
 
 	console.log({ organizationInfo, orgMembers });
 </script>

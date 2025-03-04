@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { cn } from '@/utils';
+	import { cn } from '@/utils/tailwind';
 
 	export let href: $$Props['href'] = '#';
 

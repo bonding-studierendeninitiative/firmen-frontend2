@@ -1,9 +1,10 @@
 <script lang="ts">
 
 	import { tv, type VariantProps } from 'tailwind-variants';
-	import { cn } from '@/utils';
+	import { cn } from '@/utils/tailwind';
 
 	export let variant: VariantProps<typeof advertStatusIconVariants>;
+	export let title: string = "";
 
 	const advertStatusIconVariants = tv({
 		variants: {
@@ -20,7 +21,7 @@
 
 </script>
 
-<span title={variant} >
+<span {title} >
 <svg class={cn(advertStatusIconVariants({variant}))} xmlns="http://www.w3.org/2000/svg" width="25" height="24"
 		 viewBox="0 0 25 24" fill="none">
 	<path

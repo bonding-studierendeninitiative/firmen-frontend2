@@ -20,6 +20,8 @@ export const CreateEventRegistrationSchema = v.object({
 	packageId: v.optional(v.string(), ''),
 	selectedAddonPackages: v.array(v.string()),
 	selectedAddons: v.array(v.string()),
+	selectedEventDays: v.array(v.string()),
+	selectedAmountOfParticipationDays: v.number(),
 	participationNote: v.optional(v.string(), ''),
 	language: v.optional(v.string(), 'ENGLISH')
 });
@@ -66,40 +68,12 @@ export const EventRegistrationSchema = v.object({
 	modifiedAt: v.nullable(v.pipe(v.string(), v.isoTimestamp())),
 	organizationComment: v.nullable(v.string()),
 	participationNote: v.nullable(v.string()),
-	contactPerson: v.object({
-		fullName: v.nullish(v.string()),
-		phone: v.nullish(v.string()),
-		email: v.nullish(v.string())
-	}),
-	organization: v.object({
-		name: v.nullish(v.string()),
-		phone: v.nullish(v.string()),
-		email: v.nullish(v.string())
-	}),
-	status: v.nullish(
-		v.object({
-			code: v.number(),
-			text: v.string()
-		})
-	),
-	portraitStatus: v.nullish(
-		v.object({
-			code: v.number(),
-			text: v.string()
-		})
-	),
-	logoStatus: v.nullish(
-		v.object({
-			code: v.number(),
-			text: v.string()
-		})
-	),
-	advertisementStatus: v.nullish(
-		v.object({
-			code: v.number(),
-			text: v.string()
-		})
-	),
+	userId: v.string(),
+	organizationId: v.string(),
+	status: v.string(),
+	portraitStatus: v.string(),
+	logoStatus: v.string(),
+	advertisementStatus: v.string(),
 	addonPackages: v.array(EventRegistrationAddonPackageSchema),
 	purchasedPackage: v.object({
 		price: v.number(),
@@ -107,24 +81,14 @@ export const EventRegistrationSchema = v.object({
 	}),
 	advertisement: v.nullish(
 		v.object({
-			status: v.nullish(
-				v.object({
-					code: v.number(),
-					text: v.string()
-				})
-			),
+			status: v.string(),
 			name: v.string(),
 			url: v.nullish(v.string())
 		})
 	),
 	logo: v.nullish(
 		v.object({
-			status: v.nullish(
-				v.object({
-					code: v.number(),
-					text: v.string()
-				})
-			),
+			status: v.string(),
 			mimeType: v.string(),
 			name: v.string(),
 			url: v.nullish(v.string())
@@ -138,41 +102,13 @@ export const OrgEventRegistrationSchema = v.object({
 	modifiedAt: v.nullable(v.pipe(v.string(), v.isoTimestamp())),
 	organizationComment: v.nullable(v.string()),
 	participationNote: v.nullable(v.string()),
-	contactPerson: v.object({
-		fullName: v.nullish(v.string()),
-		phone: v.nullish(v.string()),
-		email: v.nullish(v.string())
-	}),
-	organization: v.object({
-		name: v.nullish(v.string()),
-		phone: v.nullish(v.string()),
-		email: v.nullish(v.string())
-	}),
-	status: v.nullish(
-		v.object({
-			code: v.number(),
-			text: v.string()
-		})
-	),
+	userId: v.string(),
+	organizationId: v.string(),
+	status: v.string(),
 	event: APIEvent,
-	portraitStatus: v.nullish(
-		v.object({
-			code: v.number(),
-			text: v.string()
-		})
-	),
-	logoStatus: v.nullish(
-		v.object({
-			code: v.number(),
-			text: v.string()
-		})
-	),
-	advertisementStatus: v.nullish(
-		v.object({
-			code: v.number(),
-			text: v.string()
-		})
-	),
+	portraitStatus: v.string(),
+	logoStatus: v.string(),
+	advertisementStatus: v.string(),
 	addonPackages: v.array(EventRegistrationAddonPackageSchema),
 	purchasedPackage: v.object({
 		price: v.number(),
@@ -180,24 +116,14 @@ export const OrgEventRegistrationSchema = v.object({
 	}),
 	advertisement: v.nullish(
 		v.object({
-			status: v.nullish(
-				v.object({
-					code: v.number(),
-					text: v.string()
-				})
-			),
+			status: v.string(),
 			name: v.string(),
 			url: v.nullish(v.string())
 		})
 	),
 	logo: v.nullish(
 		v.object({
-			status: v.nullish(
-				v.object({
-					code: v.number(),
-					text: v.string()
-				})
-			),
+			status: v.string(),
 			mimeType: v.string(),
 			name: v.string(),
 			url: v.nullish(v.string())
@@ -209,12 +135,49 @@ export type EventRegistration = typeof EventRegistrationSchema;
 export type OrgEventRegistration = typeof OrgEventRegistrationSchema;
 
 export const GetEventRegistrationsForEventResponse = v.object({
-	eventRegistrations: v.array(EventRegistrationSchema),
+	eventRegistrations: v.array(
+		v.object({
+			id: v.string(),
+			createdAt: v.pipe(v.string(), v.isoTimestamp()),
+			modifiedAt: v.nullable(v.pipe(v.string(), v.isoTimestamp())),
+			organizationComment: v.nullable(v.string()),
+			participationNote: v.nullable(v.string()),
+			userId: v.string(),
+			organizationId: v.string(),
+			status: v.string(),
+			portraitStatus: v.string(),
+			logoStatus: v.string(),
+			advertisementStatus: v.string(),
+			addonPackages: v.array(EventRegistrationAddonPackageSchema),
+			purchasedPackage: v.object({
+				price: v.number(),
+				name: v.string()
+			}),
+			advertisement: v.nullish(
+				v.object({
+					status: v.string(),
+					name: v.string(),
+					url: v.nullish(v.string())
+				})
+			),
+			logo: v.nullish(
+				v.object({
+					status: v.string(),
+					mimeType: v.string(),
+					name: v.string(),
+					url: v.nullish(v.string())
+				})
+			),
+			desiredEventRegistrationDays: v.nullish(v.array(v.string()))
+		})
+	),
 	totalElements: v.number(),
 	totalPages: v.number(),
 	pageNumber: v.number(),
 	pageSize: v.number()
 });
+
+export type GetEventRegistrationsForEventResponse = typeof GetEventRegistrationsForEventResponse;
 
 export const GetEventRegistrationsForOrganizationResponse = v.object({
 	eventRegistrations: v.array(OrgEventRegistrationSchema),

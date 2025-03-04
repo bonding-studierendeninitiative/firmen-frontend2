@@ -1,33 +1,35 @@
 <script lang="ts">
 	import type { PageServerData } from './$types';
 	import { _ } from '@services';
-	import { NoDataFound, Modal } from '$lib/@svelte/components';
-	import Select from '$lib/@svelte/components/Select/Select.svelte';
+	import { NoDataFound, Modal } from '@/@svelte/components';
+	import Select from '../../../../../../lib/@svelte/components/Select/Select.svelte';
 	import toast from 'svelte-french-toast';
 	import DataTable from './data-table.svelte';
 	import { Button } from '@/components/ui/button';
 	import { writable } from 'svelte/store';
 	import { setContext } from 'svelte';
-
+	import { LoaderCircle } from 'lucide-svelte';
+	import { fade } from 'svelte/transition';
 
 	export let data: PageServerData;
 
-	$: ({ addons, addonPackages, eventRegistrations, status: someStatus, rejectForm, confirmForm, packages, reviewCatalogueDataForm } = data);
+	$: ({ rejectForm, confirmForm, reviewCatalogueDataForm, exportCatalogueDataForm } = data);
 
-	let tableData = writable(eventRegistrations);
 	let confirmFormStore = writable(confirmForm);
 	let rejectFormStore = writable(rejectForm);
 	let reviewCatalogueDataFormStore = writable(reviewCatalogueDataForm);
+	let exportCatalogueDataFormStore = writable(exportCatalogueDataForm);
 	$: {
-		tableData.set(eventRegistrations ?? [])
-		confirmFormStore.set(confirmForm)
-		rejectFormStore.set(rejectForm)
-		reviewCatalogueDataFormStore.set(reviewCatalogueDataForm)
+		confirmFormStore.set(confirmForm);
+		rejectFormStore.set(rejectForm);
+		reviewCatalogueDataFormStore.set(reviewCatalogueDataForm);
+		exportCatalogueDataFormStore.set(exportCatalogueDataForm);
 	}
 
 	setContext('confirmForm', confirmFormStore);
 	setContext('rejectForm', rejectFormStore);
 	setContext('reviewCatalogueDataForm', reviewCatalogueDataFormStore);
+	setContext('exportCatalogueDataForm', exportCatalogueDataFormStore);
 
 	let isOpen = false;
 
@@ -58,25 +60,31 @@
 	</footer>
 </Modal>
 
-<section class=" mt-6">
-	{#if !eventRegistrations}
-		<section class=" mt-10">
-			<NoDataFound
-				heading={$_('admin-pages.events.noRegistrationsFound')}
-				subHeading={$_('admin-pages.events.noDataToDisplay')}
-				buttonText={$_('admin-pages.events.backToEvents')}
-			/>
-		</section>
-	{:else}
-		<section class=" mt-10">
-			<DataTable
-				addons={addons}
-				data={tableData}
-				addonPackages={addonPackages}
-				status={someStatus}
-				packages={packages}
-			/>
-		</section>
-	{/if}
+	{#await data.tableData}
+		<LoaderCircle class="w-10 h-10 mx-auto animate-spin" />
+	{:then data}
+<section in:fade class=" mt-6">
+		{#if !data?.eventRegistrations}
+			<section class=" mt-10">
+				<NoDataFound
+					heading={$_('admin-pages.events.noRegistrationsFound')}
+					subHeading={$_('admin-pages.events.noDataToDisplay')}
+					buttonText={$_('admin-pages.events.backToEvents')}
+				/>
+			</section>
+		{:else}
+			<section class=" mt-10">
+				<DataTable
+					addons={data?.addons}
+					data={data?.eventRegistrations}
+					addonPackages={data?.addonPackages}
+					status={data?.status}
+					packages={data?.packages}
+				/>
+			</section>
+		{/if}
 </section>
+	{:catch error}
+		<p>{error.message}</p>
+	{/await}
 <!--<SuperDebug data={page} />-->

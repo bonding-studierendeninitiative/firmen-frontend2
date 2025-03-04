@@ -4,22 +4,20 @@
 	import { type Infer, superForm, type SuperValidated } from 'sveltekit-superforms';
 	import type {
 		ConfirmEventRegistrationSchema,
-		EventRegistration as EventRegistrationSchema
+		EventRegistration as EventRegistrationSchema, GetEventRegistrationsForEventResponse
 	} from '@schema';
 	import { toast } from 'svelte-french-toast';
 	import type { InferOutput } from 'valibot';
 	import { EventRegistration } from '@/@svelte/modules';
-	import { getContext } from 'svelte';
-	import type { Writable } from 'svelte/store';
 	import { _ } from '@services';
 
 	export let isOpen: boolean;
 	export let id: string;
-	let confirmForm: Writable<SuperValidated<Infer<ConfirmEventRegistrationSchema>>> = getContext('confirmForm');
-	export let eventRegistration: InferOutput<EventRegistrationSchema>;
+	export let confirmForm: SuperValidated<Infer<ConfirmEventRegistrationSchema>>;
+	export let eventRegistration: InferOutput<GetEventRegistrationsForEventResponse>['eventRegistrations'][number];
 
 
-	const superConfirmForm = superForm($confirmForm, {
+	const superConfirmForm = superForm(confirmForm, {
 		onSubmit({ formData }) {
 			formData.set('eventRegistrationId', id);
 		},

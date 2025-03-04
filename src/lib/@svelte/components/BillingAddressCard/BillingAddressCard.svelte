@@ -11,6 +11,7 @@
 	import { Button } from '@/components/ui/button';
 	import toast from 'svelte-french-toast';
 	import * as Dialog from "@/components/ui/dialog"
+	import { invalidate } from '$app/navigation';
 
 	export let isDefault: boolean;
 	export let billingAddress: Infer<BillingAddressTemplate>;
@@ -27,12 +28,12 @@
 		invalidateAll: true
 	});
 	const { enhance: makeDefaultEnhance } = superForm(makeBillingAddressTemplateDefaultForm, {
-		onResult({ result }) {
+		async onResult({ result }) {
 			if (result.type === 'success') {
 				toast.success('Address successfully set as default');
+				await invalidate('organization');
 			}
-		},
-		invalidateAll: true
+		}
 	});
 </script>
 

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { _ } from '@services';
+	import { _, faker } from '@services';
 	import {
 		Drawer,
 		Input,
@@ -14,7 +14,6 @@
 	import { page } from '$app/stores';
 	import { toast } from 'svelte-french-toast';
 	import { invalidate } from '$app/navigation';
-	import { faker } from '@faker-js/faker';
 	import { disciplines } from '@constant';
 	import { Button } from '@/components/ui/button';
 	import type { CreatePortraitTemplateRequest } from '@schema';
@@ -65,30 +64,30 @@
 		on:click={() => {
 			form.set({
 				industry: disciplines[Math.floor(Math.random() * disciplines.length)].value,
-				title: faker.lorem.sentence(),
-				products: faker.lorem.sentence(),
-				displayName: faker.lorem.sentence(),
-				comment: faker.lorem.sentence(),
-				revenue_germany: faker.number.int({ min: 0, max: 500000 }).toString(),
-				revenue_europe: faker.number.int({ min: 0, max: 1000000 }).toString(),
-				revenue_worldwide: faker.number.int({ min: 0, max: 2000000 }).toString(),
-				contactAddress: faker.location.streetAddress(),
-				contactPersonStudents: faker.person.fullName(),
-				contactPersonGraduates: faker.person.fullName(),
-				locations_worldwide: faker.number.int({ min: 0, max: 10000 }).toString(),
-				locations_europe: faker.number.int({ min: 0, max: 10000 }).toString(),
-				locations_germany: faker.number.int({ min: 0, max: 10000 }).toString(),
-				employees_worldwide: faker.number.int({ min: 0, max: 10000 }).toString(),
-				employees_europe: faker.number.int({ min: 0, max: 10000 }).toString(),
-				employees_germany: faker.number.int({ min: 0, max: 10000 }).toString(),
-				website: faker.internet.domainName(),
-				additionalInformation: faker.lorem.sentence(),
-				offersThesis: faker.datatype.boolean(),
-				entryOptions: faker.lorem.sentence(),
-				desiredDisciplines: faker.lorem.sentence(),
-				graduates: faker.number.int({ min: 0, max: 10000 }).toString(),
-				offersOutOfCountryWork: faker.datatype.boolean(),
-				offersInternships: faker.datatype.boolean()
+				title: $faker.lorem.sentence(),
+				products: $faker.lorem.sentence(),
+				displayName: $faker.lorem.sentence(),
+				comment: $faker.lorem.sentence(),
+				revenue_germany: $faker.number.int({ min: 0, max: 500000 }).toString(),
+				revenue_europe: $faker.number.int({ min: 0, max: 1000000 }).toString(),
+				revenue_worldwide: $faker.number.int({ min: 0, max: 2000000 }).toString(),
+				contactAddress: $faker.location.streetAddress(),
+				contactPersonStudents: $faker.person.fullName(),
+				contactPersonGraduates: $faker.person.fullName(),
+				locations_worldwide: $faker.number.int({ min: 0, max: 10000 }).toString(),
+				locations_europe: $faker.number.int({ min: 0, max: 10000 }).toString(),
+				locations_germany: $faker.number.int({ min: 0, max: 10000 }).toString(),
+				employees_worldwide: $faker.number.int({ min: 0, max: 10000 }).toString(),
+				employees_europe: $faker.number.int({ min: 0, max: 10000 }).toString(),
+				employees_germany: $faker.number.int({ min: 0, max: 10000 }).toString(),
+				website: $faker.internet.domainName(),
+				additionalInformation: $faker.lorem.sentence(),
+				offersThesis: $faker.datatype.boolean(),
+				entryOptions: $faker.lorem.sentence(),
+				desiredDisciplines: $faker.lorem.sentence(),
+				graduates: $faker.number.int({ min: 0, max: 10000 }).toString(),
+				offersOutOfCountryWork: $faker.datatype.boolean(),
+				offersInternships: $faker.datatype.boolean()
 			});
 		}}
 	>{$_("modules.add-portrait.generate-random-data")}

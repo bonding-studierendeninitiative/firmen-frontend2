@@ -20,6 +20,6 @@
 			<CalenderIcon />
 			<p class=" ml-2 text-sm text-stone-800 font-medium">{date}</p>
 		</div>
-		<Button><a {href}>{$_(`common.${buttonText}`)}</a></Button>
+		<a {href}><Button>{$_(`common.${buttonText}`)}</Button></a>
 	</div>
 </div>

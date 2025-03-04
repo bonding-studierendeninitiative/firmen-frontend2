@@ -1,255 +1,80 @@
-import { API } from '@api';
-import {
-	CreateOrganizationRequestSchema,
-	CreateOrganizationResponse,
-	GetOrgDetailsResponse,
-	GetOrgMembershipsResponseSchema,
-	GetOrgMembersResponseSchema,
-	CreateOrgInviteRequestSchema,
-	type CreateOrganizationRequest,
-	type GetOrgMembershipsResponse,
-	type GetOrgMembersResponse,
-	type CreateOrgInviteRequest,
-	type AcceptInviteRequest,
-	AcceptInviteRequestSchema,
-	type SetOrgDetailsRequest,
-	SetOrgDetailsRequestSchema,
-	getOrganizationsResponse
-} from '@schema';
+import { type SetOrgDetailsRequest } from '@schema';
 import { error } from '@sveltejs/kit';
-import * as v from 'valibot';
-import type { InferInput } from 'valibot';
-
-export const acceptOrgInvite = async ({
-	accessToken,
-	data
-}: {
-	accessToken: string;
-	data: InferInput<AcceptInviteRequest>;
-}) => {
-	const parsed = v.parse(AcceptInviteRequestSchema, data);
-	const response = await API.post({
-		route: '/organization/accept-invite',
-		token: accessToken,
-		data: parsed
-	});
-
-	if (response.status === 400) {
-		error(400, 'Bad Request');
-	}
-
-	if (response.status === 401) {
-		error(401, 'Unauthorized');
-	}
-
-	if (response.status === 404) {
-		error(404, 'Organization not found');
-	}
-
-	if (response.status === 422) {
-		error(404, 'Organization not found');
-	}
-
-	return true;
-};
+import type { InferOutput } from 'valibot';
+import { clerkClient } from 'svelte-clerk/server';
+import { makeSerializable } from '@/utils/serializable';
 
 export const generateOrgInvite = async ({
 	accessToken,
 	data
 }: {
 	accessToken: string;
-	data: CreateOrgInviteRequest;
+	data: unknown;
 }) => {
-	const parsed = v.parse(CreateOrgInviteRequestSchema, data);
-	const response = await API.post({
-		route: '/organization/create-invite',
-		token: accessToken,
-		data: parsed
-	});
-
-	if (response.status === 400) {
-		error(400, 'Bad Request');
-	}
-
-	if (response.status === 401) {
-		error(401, 'Unauthorized');
-	}
-
-	if (response.status === 404) {
-		error(404, 'Organization not found');
-	}
-
-	if (response.status === 422) {
-		error(404, 'Organization not found');
-	}
-
-	return true;
+	// TODO do something with clerk
 };
 
-export const getOrganizationMembers = async ({
-	accessToken,
-	slug,
-	page = 0
-}: {
-	accessToken: string;
-	slug: string;
-	page?: number;
-}) => {
+export const getOrganizationMembers = async ({ slug }: { slug: string }) => {
 	try {
-		const response = await API.get<InferInput<GetOrgMembersResponse>>({
-			route: `/organization/${slug}/members?page=${page}&pageSize=10`,
-			token: accessToken
+		const orgMemberships = await clerkClient.organizations.getOrganizationMembershipList({
+			organizationId: slug,
+			limit: 10,
+			offset: 0
 		});
-		if (response.status === 401) {
-			error(401, 'Unauthorized');
-		}
 
-		if (response.status === 404) {
-			error(404, 'Organization not found');
-		}
-
-		if (response.status === 422) {
-			error(404, 'Organization not found');
-		}
-
-		const data = await response.json();
-		return v.parse(GetOrgMembersResponseSchema, data);
+		return makeSerializable(orgMemberships);
 	} catch (e) {
 		// @ts-expect-error the error likely has a message
 		error(e.status || 500, e.message);
 	}
 };
 
-export const getOrgMemberships = async ({ accessToken }: { accessToken: string }) => {
+export const getOrgMemberships = async ({ userId }: { userId: string }) => {
 	try {
-		const response = await API.get<GetOrgMembershipsResponse>({
-			route: '/contact-person/memberships?page=0&limit=4',
-			token: accessToken
+		const memberships = await clerkClient.users.getOrganizationMembershipList({
+			userId,
+			limit: 10,
+			offset: 0
 		});
 
-		if (response.status === 204) {
-			return [];
-		}
-
-		if (response.status === 404) {
-			return [];
-		}
-
-		const data = await response.json();
-		const responseJson = v.parse(GetOrgMembershipsResponseSchema, data);
-		return responseJson.memberships;
+		return makeSerializable(memberships.data);
 	} catch (e) {
 		// @ts-expect-error the error likely has a message
 		error(e.status || 500, e.message);
 	}
 };
 
-export const getOrganizationDetails = async ({
-	accessToken,
-	slug
-}: {
-	accessToken: string;
-	slug: string;
-}) => {
-	const response = await API.get({
-		route: `/organization/${slug}`,
-		token: accessToken
+export const getOrganizationDetails = async ({ slug }: { slug: string }) => {
+	const org = await clerkClient.organizations.getOrganization({
+		slug,
+		includeMembersCount: true
 	});
-
-	if (response.status === 401) {
-		error(401, 'Unauthorized');
-	}
-
-	if (response.status === 404) {
-		error(404, 'Organization not found');
-	}
-
-	if (response.status === 422) {
-		error(404, 'Organization not found');
-	}
-
-	const data = await response.json();
-	return v.parse(GetOrgDetailsResponse, data);
+	return makeSerializable(org);
 };
 
 export const setOrgDetails = async ({
-	accessToken,
-	orgSlug,
+	orgId,
 	data
 }: {
-	accessToken: string;
-	orgSlug: string;
-	data: SetOrgDetailsRequest;
+	orgId: string;
+	data: InferOutput<SetOrgDetailsRequest>;
 }) => {
-	try {
-		const parsed = v.parse(SetOrgDetailsRequestSchema, data);
-		const response = await API.put({
-			route: `/organization/${orgSlug}`,
-			token: accessToken,
-			data: parsed
-		});
-
-		if (response.status === 400) {
-			error(400, 'Bad Request');
+	await clerkClient.organizations.updateOrganizationMetadata(orgId, {
+		publicMetadata: {
+			...data
 		}
-
-		if (response.status === 401) {
-			error(401, 'Unauthorized');
-		}
-
-		if (response.status === 403) {
-			error(401, 'Unauthorized');
-		}
-
-		if (response.status === 404) {
-			error(404, 'Organization not found');
-		}
-
-		if (response.status === 422) {
-			error(404, 'Organization not found');
-		}
-
-		return true;
-	} catch (e) {
-		// @ts-expect-error the error likely has a message
-		error(e.status || 500, e.message);
-	}
-};
-
-export const createOrganization = async ({
-	accessToken,
-	data
-}: {
-	accessToken: string;
-	data: CreateOrganizationRequest;
-}) => {
-	try {
-		const parsed = v.parse(CreateOrganizationRequestSchema, data);
-		const response = await API.post({
-			route: '/organization',
-			token: accessToken,
-			data: parsed
-		});
-		const responseData = await response.json();
-		const responseJson = v.parse(CreateOrganizationResponse, responseData);
-		return responseJson.createdOrganization;
-	} catch (e) {
-		// @ts-expect-error the error likely has a message
-		error(e.status || 500, e.message);
-	}
-};
-
-export const getOrgs = async ({
-	accessToken,
-	page = 0
-}: {
-	accessToken: string;
-	page?: number;
-}) => {
-	const response = await API.get({
-		route: `/organization?page=${page}`,
-		token: accessToken
 	});
-	const responseData = await response.json();
-	return v.parse(getOrganizationsResponse, responseData);
+};
+
+export const getOrgs = async ({ limit = 10, offset = 0 }: { limit?: number; offset?: number }) => {
+	try {
+		const organizations = await clerkClient.organizations.getOrganizationList({
+			includeMembersCount: true,
+			limit,
+			offset
+		});
+		return makeSerializable(organizations.data);
+	} catch (e) {
+		error(e?.status || 500, e?.message);
+	}
 };

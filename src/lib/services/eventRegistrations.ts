@@ -9,6 +9,7 @@ import {
 	GetEventRegistrationsForOrganizationResponse,
 	type GetEventRegistrationsForOrganizationResponse as responseType
 } from '@schema';
+import { clerkClient } from 'svelte-clerk/server';
 
 export const getEventRegistrationsForEvent = async ({
 	accessToken,
@@ -23,22 +24,68 @@ export const getEventRegistrationsForEvent = async ({
 		token: accessToken
 	});
 	const data = await response.json();
-	return v.parse(GetEventRegistrationsForEventResponse, data);
+	const { eventRegistrations, totalPages, totalElements, pageNumber, pageSize } = v.parse(
+		GetEventRegistrationsForEventResponse,
+		data
+	);
+	return {
+		eventRegistrations: await Promise.all(
+			eventRegistrations.map(async (eventRegistration) => {
+				const org = await clerkClient.organizations.getOrganization({
+					organizationId: eventRegistration.organizationId
+				});
+
+				return {
+					...eventRegistration,
+					organization: {
+						name: org.name,
+						address: 'no address found',
+						logo: org.imageUrl
+					}
+				};
+			})
+		),
+		totalElements,
+		totalPages,
+		pageNumber,
+		pageSize
+	};
 };
 
 export const getEventRegistrationsForOrganization = async ({
 	accessToken,
-	organizationSlug
+	organizationSlug,
+	page = '0',
+	limit = '4'
 }: {
 	accessToken: string;
 	organizationSlug: string;
+	page?: string;
+	limit?: string;
 }) => {
-	const response = await API.get<v.InferInput<responseType>>({
-		route: `/event-registration?organizationId=${organizationSlug}`,
-		token: accessToken
+	const searchParams = new URLSearchParams({
+		page,
+		limit,
+		organizationId: organizationSlug
 	});
-	const data = await response.json();
-	return v.parse(GetEventRegistrationsForOrganizationResponse, data);
+	try {
+		const response = await API.get<v.InferInput<responseType>>({
+			route: `/event-registration?${searchParams}`,
+			token: accessToken
+		});
+		const data = await response.json();
+		console.log(data);
+		return v.parse(GetEventRegistrationsForOrganizationResponse, data);
+	} catch (error) {
+		console.error(error);
+		return {
+			eventRegistrations: [],
+			totalElements: 0,
+			totalPages: 0,
+			pageNumber: 0,
+			pageSize: 10
+		};
+	}
 };
 
 export const registerContactPersonToEvent = async ({

@@ -15,7 +15,7 @@
 	</DropdownMenu.Trigger>
 	<DropdownMenu.Content>
 		<DropdownMenu.Group>
-			<DropdownMenu.Item>{$_('common.remove')}</DropdownMenu.Item>
+			<DropdownMenu.Item class="text-red-500 hover:text-red-700">{$_('common.remove')}</DropdownMenu.Item>
 		</DropdownMenu.Group>
 	</DropdownMenu.Content>
 </DropdownMenu.Root>

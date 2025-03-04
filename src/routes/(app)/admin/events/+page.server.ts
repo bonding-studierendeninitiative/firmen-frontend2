@@ -1,18 +1,20 @@
-import type { PageServerLoad } from './$types';
-import { getEvents } from '$lib/services/events';
+import { getEvents } from '@/services/events';
+import { clerkClient } from 'svelte-clerk/server';
 
-export const load: PageServerLoad = async ({ parent }) => {
-	const { session } = await parent();
-	if (!session?.user) return;
+export const load = async ({ parent, isDataRequest }) => {
+	const { initialState } = await parent();
+	if (!initialState.sessionId) return;
+
+	const token = await clerkClient.sessions.getToken(initialState.sessionId, 'access_token');
+
+	console.log(token.jwt);
 
 	return {
-		// @ts-expect-error we define accessToken in parent
-		publishedEvents: (await getEvents({ accessToken: session?.accessToken })) ?? [],
-		// @ts-expect-error we define accessToken in parent
-		unpublishedEvents:
-			(await getEvents({ accessToken: session?.accessToken, status: 'UNPUBLISHED' })) ?? [],
-		// @ts-expect-error we define accessToken in parent
-		archivedEvents:
-			(await getEvents({ accessToken: session?.accessToken, status: 'ARCHIVED' })) ?? []
+		publishedEvents:
+			(isDataRequest
+				? getEvents({ accessToken: token.jwt, status: 'PUBLISHED' })
+				: await getEvents({ accessToken: token.jwt, status: 'PUBLISHED' })) ?? [],
+		unpublishedEvents: (await getEvents({ accessToken: token.jwt, status: 'UNPUBLISHED' })) ?? [],
+		archivedEvents: (await getEvents({ accessToken: token.jwt, status: 'ARCHIVED' })) ?? []
 	};
 };

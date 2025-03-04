@@ -6,16 +6,17 @@
 	import { Control, Description, Field, FieldErrors, Label } from '@/components/ui/form';
 	import { Input } from '@/@svelte/components';
 	import { superForm, type SuperValidated } from 'sveltekit-superforms';
-	import { type CreateOrgInviteRequest, CreateOrgInviteRequestSchema, type GetOrgMembersResponse } from '@schema';
+	import { type CreateOrgInviteRequest, CreateOrgInviteRequestSchema } from '@schema';
 	import { valibot } from 'sveltekit-superforms/adapters';
 	import { toast } from 'svelte-french-toast';
 	import DataTable from './data-table.svelte';
 	import type { InferOutput } from 'valibot';
+	import type { OrganizationMembership } from 'svelte-clerk/server';
 
 	let inviteMemberDialogOpen = false;
 
 	export let createInviteForm: SuperValidated<InferOutput<CreateOrgInviteRequest>> | undefined;
-	export let organizationMembers: InferOutput<GetOrgMembersResponse> | undefined;
+	export let organizationMembers: { data: OrganizationMembership[]; totalCount: number };
 
 	const superform = superForm(createInviteForm, {
 		validators: valibot(CreateOrgInviteRequestSchema),
@@ -25,7 +26,7 @@
 		onResult({ result }) {
 			if (result.type === 'success') {
 				inviteMemberDialogOpen = false;
-				toast.success($_('user-pages.settings.invitationSuccess'));
+				toast.success($_('modules.manage-org-members.invitationSuccess'));
 			} else if (result.type === 'error') {
 				toast.error(result.error.message);
 			}
@@ -41,16 +42,16 @@
 <Dialog.Root bind:open={inviteMemberDialogOpen}>
 	<Dialog.Content class="sm:max-w-[425px]">
 		<Dialog.Header>
-			<Dialog.Title>{$_('user-pages.settings.invite-dialog-title')}</Dialog.Title>
+			<Dialog.Title>{$_('modules.manage-org-members.invite-dialog-title')}</Dialog.Title>
 			<Dialog.Description>
-				{$_('user-pages.settings.invite-dialog-description')}
+				{$_('modules.manage-org-members.invite-dialog-description')}
 			</Dialog.Description>
 		</Dialog.Header>
 		<form action="?/createInvite" method="POST" id="create-invite-form" use:enhance>
 			<div class=" flex flex-col gap-1">
 				<Field form={superform} name="userMail">
 					<Control let:attrs>
-						<Label>{$_('user-pages.settings.emailAddress')}</Label>
+						<Label>{$_('modules.manage-org-members.emailAddress')}</Label>
 						<Input
 							{...attrs}
 							bind:value={$formData.userMail}
@@ -74,12 +75,12 @@
 						{#if $submitting}
 							<Button form="create-invite-form" disabled>
 								<LoaderCircle class="mr-2 h-4 w-4 animate-spin" />{$_(
-								'user-pages.settings.invite'
+								'modules.manage-org-members.invite'
 							)}
 							</Button>
 						{:else}
 							<Button form="create-invite-form" type="submit"
-							>{$_('user-pages.settings.invite')}</Button
+							>{$_('modules.manage-org-members.invite')}</Button
 							>
 						{/if}
 					</footer>

@@ -1,4 +1,8 @@
-import { type ReviewCatalogueDataRequest, type UploadCatalogueDataRequest } from '@schema';
+import {
+	type ExportCatalogueDataRequest,
+	type ReviewCatalogueDataRequest,
+	type UploadCatalogueDataRequest
+} from '@schema';
 import { API } from '@api';
 import { error } from '@sveltejs/kit';
 import type { InferOutput } from 'valibot';
@@ -36,7 +40,7 @@ export const uploadCatalogueData = async ({
 	data: InferOutput<UploadCatalogueDataRequest>;
 }) => {
 	const response = await API.post<{ url: string }>({
-		route: `/event-registration/${eventRegistrationId}/request-upload-url/${formData.documentType}`,
+		route: `/event-registration/${eventRegistrationId}/request-upload-url`,
 		token: accessToken,
 		data: formData
 	});
@@ -54,5 +58,23 @@ export const uploadCatalogueData = async ({
 
 	if (uploadResponse.status !== 200) {
 		error(500, 'The upload could not be completed');
+	}
+};
+
+export const exportCatalogueData = async ({
+	accessToken,
+	data: formData
+}: {
+	accessToken: string;
+	data: InferOutput<ExportCatalogueDataRequest>;
+}) => {
+	const response = await API.post<{ url: string }>({
+		route: `/export/catalogue-data`,
+		token: accessToken,
+		data: formData
+	});
+
+	if (response.status !== 200) {
+		error(500, 'The export could not be started');
 	}
 };

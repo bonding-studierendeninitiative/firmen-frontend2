@@ -8,26 +8,24 @@ import {
 } from '@schema';
 import type { InferOutput } from 'valibot';
 import { createLogger } from 'vite';
+import { clerkClient } from 'svelte-clerk/server';
 
 const logger = createLogger();
 
 export const getBillingAddressTemplatesForOrganization = async ({
 	accessToken,
 	organizationId,
-	fetch: fetchF
+	fetch: fetchF = fetch
 }: {
 	accessToken: string;
 	organizationId: string;
-	fetch: typeof fetch;
+	fetch?: typeof fetch;
 }) => {
 	const response = await API.get({
 		route: `/organization/${organizationId}/billing-address-template`,
 		token: accessToken,
 		fetch: fetchF
 	});
-
-	logger.info(`In getBillingAddressTemplatesForOrganization, response.status: ${response.status}`);
-	logger.info(`url was: ${response.url}`);
 
 	if (response.status !== 200) {
 		error(response.status, {
@@ -56,6 +54,11 @@ export const createBillingAddressTemplate = async ({
 		data: formData,
 		fetch: fetchF
 	});
+
+	logger.info(
+		`In createBillingAddressTemplatesForOrganization, response.status: ${response.status}`
+	);
+	logger.info(`url was: ${response.url}`);
 
 	if (response.status !== 200) {
 		error(500, 'The billing address template could not be created');
@@ -88,23 +91,15 @@ export const deleteBillingAddressTemplate = async ({
 };
 
 export const makeBillingAddressTemplateDefault = async ({
-	accessToken,
 	organizationId,
-	billingAddressTemplateId,
-	fetch: fetchF
+	billingAddressTemplateId
 }: {
-	accessToken: string;
 	organizationId: string;
 	billingAddressTemplateId: string;
-	fetch: typeof fetch;
 }) => {
-	const response = await API.post({
-		route: `/organization/${organizationId}/billing-address-template/${billingAddressTemplateId}/make-default`,
-		token: accessToken,
-		fetch: fetchF
+	await clerkClient.organizations.updateOrganizationMetadata(organizationId, {
+		publicMetadata: {
+			defaultBillingAddressTemplateId: billingAddressTemplateId
+		}
 	});
-
-	if (response.status !== 204) {
-		error(500, 'The billing address template could not be set as the default');
-	}
 };

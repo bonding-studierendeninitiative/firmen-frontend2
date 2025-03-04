@@ -156,7 +156,17 @@
       "type": "Type",
       "typeText": "Text",
       "typeBoolean": "Included",
-      "typeNumeric": "Amount"
+      "typeNumeric": "Amount",
+      "eventDays": {
+        "header": "Event days",
+        "dayName": "Label for the day",
+        "dayDate": "Date",
+        "capacity": "Capacity",
+        "signUpDays": {
+          "header": "Allowed sign up days per organization",
+          "days": "{days, plural, one {{days, number} day max} other {{days, number} days max}}"
+        }
+      }
     },
     "table": {
       "no-records": "No records were found."
@@ -217,6 +227,15 @@
       "state": "State",
       "country": "Country",
       "billingReference": "Internal billing reference (optional)"
+    },
+    "manage-org-members": {
+      "owner": "Owner",
+      "member": "Member",
+      "admin": "Admin",
+      "invite-dialog-title": "Invite new member",
+      "invite-dialog-description": "Send an invitation to add a new member to your organization.",
+      "invite": "Invite",
+      "invitationSuccess": "An invitation was sent"
     }
   },
   "sidebar": {
@@ -276,7 +295,8 @@
     "bookings": "Bookings",
     "event": "Event",
     "location": "Location",
-    "role": "Role"
+    "role": "Role",
+    "joined": "Joined"
   },
   "breadcrumbs": {
     "events": "Events"
@@ -284,7 +304,11 @@
   "status-text": {
     "verification": "Verification",
     "rejected": "Rejected",
-    "confirmed": "Confirmed"
+    "confirmed": "Confirmed",
+    "created": "Created",
+    "missing": "Missing",
+    "uploaded": "Uploaded",
+    "changes-requested": "Changes requested"
   },
   "user-pages": {
     "settings": {
@@ -300,13 +324,6 @@
         "title": "Contact info",
         "description": "The general purpose contact data for your organization."
       },
-      "owner": "Owner",
-      "member": "Member",
-      "admin": "Admin",
-      "invite-dialog-title": "Invite new member",
-      "invite-dialog-description": "Send an invitation to add a new member to your organization.",
-      "invite": "Invite",
-      "invitationSuccess": "An invitation was sent",
       "organizationAccountListDescription": "A list of all accounts associated with your organization",
       "account": "Account",
       "accountSubHeading": "Update your profile and organization details here.",
@@ -481,7 +498,14 @@
       "total": "Total",
       "undertakingText": "I agree to the <a href='https://bonding.de/agb' target='_blank'>general terms and conditionsy</a>",
       "registrationCompleted": "Registration Completed",
-      "registrationCompletedDescription": "Thank you for registering for this event. Our team will verify your information and process your request. Once approved, you’ll receive a confirmation email."
+      "registrationCompletedDescription": "Thank you for registering for this event. Our team will verify your information and process your request. Once approved, you’ll receive a confirmation email.",
+      "eventDays": "Event days",
+      "eventDaysDescription": "Choose the day of the event that you want to participate on",
+      "sign-up-days": {
+        "header": "Number of participation days",
+        "description": "Select on how many days you would like to participate in the event",
+        "days": "{days, plural, one {{days, number} day} other {{days, number} days} }"
+      }
     },
     "dashboard": {
       "dashboard": "Dashboard",
@@ -600,7 +624,8 @@
           "email": "Email",
           "phone": "Phone",
           "name": "Name",
-          "last-modified": "Last modified"
+          "last-modified": "Last modified",
+          "members-count": "Members"
         },
         "filters": {
           "type": {
@@ -696,6 +721,7 @@
             "email": "Email",
             "contact-person": "Contact person",
             "org": "Organization",
+            "created": "Created",
             "portrait-status": "Portrait",
             "logo-status": "Logo",
             "advert-status": "Image-Ad",
@@ -741,7 +767,8 @@
       }
     },
     "dashboard": {
-      "dashboard": "Dashboard"
+      "dashboard": "Dashboard",
+      "events": "Events"
     }
   }
 }

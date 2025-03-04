@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Label, Helper, Select } from 'flowbite-svelte';
-	import { cn } from '@/utils';
+	import { cn } from '@/utils/tailwind';
 
 	export let errorMessage: string = '';
 	export let label: string = '';

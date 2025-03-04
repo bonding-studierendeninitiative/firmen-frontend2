@@ -156,7 +156,17 @@
       "type": "Typ",
       "typeText": "Text",
       "typeBoolean": "Enthalten",
-      "typeNumeric": "Anzahl"
+      "typeNumeric": "Anzahl",
+      "eventDays": {
+        "header": "Veranstaltungstage",
+        "dayName": "Label",
+        "dayDate": "Datum",
+        "capacity": "Kapazität",
+        "signUpDays": {
+          "header": "Erlaubte Anmeldetage pro Organisation",
+          "days": "{days, plural, one {max. {days, number} Tag} other {max. {days, number} Tage}}"
+        }
+      }
     },
     "table": {
       "no-records": "Es wurden keine Datensätze gefunden."
@@ -217,6 +227,15 @@
       "state": "Bundesland",
       "country": "Land",
       "billingReference": "Interne Referenz (optional)"
+    },
+    "manage-org-members": {
+      "owner": "Besitzer",
+      "member": "Mitglied",
+      "admin": "Administrator",
+      "invite-dialog-title": "Neue Person einladen",
+      "invite-dialog-description": "Schicken Sie eine Einladung an eine neue Person aus Ihrer Organisation.",
+      "invite": "Einladen",
+      "invitationSuccess": "Eine Einladung wurde verschickt"
     }
   },
   "sidebar": {
@@ -277,7 +296,8 @@
     "bookings": "Buchungen",
     "event": "Veranstaltung",
     "location": "Ort",
-    "role": "Rolle"
+    "role": "Rolle",
+    "joined": "Trat bei"
   },
   "breadcrumbs": {
     "events": "Veranstaltungen"
@@ -285,7 +305,11 @@
   "status-text": {
     "verification": "Überprüfung",
     "rejected": "Abgelehnt",
-    "confirmed": "Bestätigt"
+    "confirmed": "Bestätigt",
+    "created": "Erstellt",
+    "missing": "Fehlt",
+    "uploaded": "Hochgeladen",
+    "changes-requested": "Änderungen angefragt"
   },
   "user-pages": {
     "settings": {
@@ -301,13 +325,6 @@
         "title": "Kontaktdaten",
         "description": "Die allgemeinen Kontaktdaten ihrer Organisation."
       },
-      "owner": "Besitzer",
-      "member": "Mitglied",
-      "admin": "Administrator",
-      "invite-dialog-title": "Neue Person einladen",
-      "invite-dialog-description": "Schicken Sie eine Einladung an eine neue Person aus Ihrer Organisation.",
-      "invite": "Einladen",
-      "invitationSuccess": "Eine Einladung wurde verschickt",
       "organizationAccountListDescription": "Eine Auflistung aller Konten, die mit Ihrer Organisation verknüpft sind.",
       "account": "Konto",
       "accountSubHeading": "Aktualisieren Sie Ihr Portrait und Ihre Organisationsdetails hier.",
@@ -482,7 +499,14 @@
       "total": "Gesamt",
       "undertakingText": "Ich bestätige die <a href='https://bonding.de/agb' target='_blank'>AGBs</a>",
       "registrationCompleted": "Registrierung abgeschlossen",
-      "registrationCompletedDescription": "Vielen Dank für die Registrierung für diese Veranstaltung. Unser Team wird Ihre Informationen überprüfen und Ihre Anfrage bearbeiten. Nach Genehmigung erhalten Sie eine Bestätigungs-E-Mail."
+      "registrationCompletedDescription": "Vielen Dank für die Registrierung für diese Veranstaltung. Unser Team wird Ihre Informationen überprüfen und Ihre Anfrage bearbeiten. Nach Genehmigung erhalten Sie eine Bestätigungs-E-Mail.",
+      "eventDays": "Wunschtage",
+      "eventDaysDescription": "Wählen Sie die Tage aus, an denen Sie verfügbar für eine Teilnahme sind",
+      "sign-up-days": {
+        "header": "Anzahl der Teilnahmetage",
+        "description": "Wählen Sie aus, an wie vielen Tagen Sie teilnehmen möchten",
+        "days": "{days, plural, one {{days, number} Tag} other {{days, number} Tage} }"
+      }
     },
     "dashboard": {
       "dashboard": "Dashboard",
@@ -605,7 +629,8 @@
           "email": "E-Mail-Addresse",
           "phone": "Telefonnummer",
           "name": "Name",
-          "last-modified": "Zuletzt bearbeitet"
+          "last-modified": "Zuletzt bearbeitet",
+          "members-count": "Mitglieder"
         },
         "filters": {
           "type": {
@@ -701,6 +726,7 @@
             "email": "E-Mail-Adresse",
             "contact-person": "Ansprechperson",
             "org": "Organisation",
+            "created": "Erstellt",
             "portrait-status": "Portrait",
             "logo-status": "Logo",
             "advert-status": "Image-Anzeige",
@@ -746,7 +772,8 @@
       }
     },
     "dashboard": {
-      "dashboard": "Dashboard"
+      "dashboard": "Dashboard",
+      "events": "Veranstaltungen"
     }
   }
 }

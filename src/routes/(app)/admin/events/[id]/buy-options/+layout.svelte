@@ -1,63 +1,72 @@
 <script lang="ts">
-	import type { LayoutServerData } from './$types';
-	import { NoDataFound, Spinner } from '@/@svelte/components';
-	import { navigating, page } from '$app/stores';
-	import { goto } from '$app/navigation';
-	import { fade } from 'svelte/transition';
+	import { NoDataFound } from '@/@svelte/components';
+	import { page } from '$app/stores';
+	import { goto, invalidate } from '$app/navigation';
 	import { DeleteBuyOption, BuyOptionSelector, CreateBuyOption } from '@/@svelte/modules';
 	import { Button } from '@/components/ui/button';
 	import { _ } from '@services';
+	import type { InferOutput } from 'valibot';
+	import { type GetBuyOptionsResponse } from '@schema';
+	import { LoaderCircle } from 'lucide-svelte';
+	import { fade } from 'svelte/transition';
 
-	export let data: LayoutServerData;
+	export let data;
 
-	$: items =
-		data.buyOptions?.map((buyOption) => ({
+	function mapBuyOptionToValue(buyOption: InferOutput<GetBuyOptionsResponse>['buyOptions'][number]) {
+		return {
 			value: buyOption.id,
 			name: buyOption.name,
 			label: buyOption.name,
 			active: buyOption.active
-		})) ?? [];
+		};
+	}
 
 	let isDialogOpen = false;
 
-	$: activeBuyOption = data.buyOptions?.find((buyOption) => buyOption.active);
 </script>
 
-<section class="mt-10 flex flex-col gap-y-8">
-	{#if data.buyOptionCount > 0}
-		<nav class="flex justify-between gap-x-2">
-			<BuyOptionSelector
-				bind:isDialogOpen
-				buyOptions={items}
-				value={$page.params.buyOptionId}
-				onSelect={(value) => goto(`/admin/events/${$page.params.id}/buy-options/${value}`)}
-			/>
-			<DeleteBuyOption />
-			<div class="flex-grow" />
-			<form action="?/activateBuyOption" method="post">
-				<Button
-					type="submit"
-					disabled={!$page.params.buyOptionId || $page.params.buyOptionId === activeBuyOption?.id}
+{#await data.buyOptionData}
+	<LoaderCircle class="animate-spin w-14 h-14 mx-auto" />
+{:then buyOptions}
+	<section in:fade class="mt-10 flex flex-col gap-y-8">
+		{#if buyOptions?.totalElements > 0}
+			{@const activeBuyOption = buyOptions?.buyOptions?.find((buyOption) => buyOption.active)}
+			<nav class="flex justify-between gap-x-2">
+				<BuyOptionSelector
+					bind:isDialogOpen
+					buyOptions={buyOptions?.buyOptions.map(mapBuyOptionToValue) ?? []}
+					value={$page.params.buyOptionId}
+					onSelect={async (value) =>{
+						await goto(`/admin/events/${$page.params.id}/buy-options/${value}`)
+						await invalidate("buyOption"); }}
+				/>
+				<DeleteBuyOption />
+				<div class="flex-grow"></div>
+				<form action="?/activateBuyOption" method="post">
+					<Button
+						type="submit"
+						disabled={!$page.params.buyOptionId || $page.params.buyOptionId === activeBuyOption?.id}
 					>{$_("admin-pages.events.buy-options.publish")}</Button
-				>
-			</form>
-		</nav>
-		{#if $navigating?.to?.url.pathname.includes('/buy-options/')}
-			<div class="grid justify-center items-center h-full text-orange-400">
-				<Spinner color="red" />
-			</div>
+					>
+				</form>
+			</nav>
+			<slot />
 		{:else}
-			<div in:fade>
-				<slot />
-			</div>
+			<NoDataFound
+				onButtonClick={() => (isDialogOpen = true)}
+				buttonText="Create a new buy option&hellip;"
+				heading="This event does not have any buy options yet."
+				subHeading="Create a buy option now to enable organizations to sign up to this event."
+			/>
 		{/if}
-	{:else}
-		<NoDataFound
-			onButtonClick={() => (isDialogOpen = true)}
-			buttonText="Create a new buy option&hellip;"
-			heading="This event does not have any buy options yet."
-			subHeading="Create a buy option now to enable organizations to sign up to this event."
-		/>
-	{/if}
-</section>
-<CreateBuyOption bind:isDialogOpen createForm={data.createForm} />
+	</section>
+{:catch error}
+	<p class="text-red-500">Error: {error.message}</p>
+{/await}
+{#await data.createForm}
+	<LoaderCircle class="animate-spin w-16 h-16" />
+{:then createForm}
+	<CreateBuyOption bind:isDialogOpen {createForm} />
+{:catch error}
+	<p class="text-red-500">Error: {error.message}</p>
+{/await}

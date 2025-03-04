@@ -1,1 +1,5 @@
-<h1>Error in Admin Organization Details</h1>
+<script lang="ts">
+	export let error;
+</script>
+
+<h1>⚠️ (Admin Orgs) {error?.message}</h1>

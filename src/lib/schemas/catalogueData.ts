@@ -1,4 +1,4 @@
-import { object, string, union, intersect, literal, file } from 'valibot';
+import { object, string, union, intersect, literal, file, nonEmpty, pipe, array } from 'valibot';
 
 export const ReviewCatalogueDataRequest = object({
 	feedback: string(),
@@ -17,8 +17,16 @@ export const ReviewCatalogueDataForm = intersect([
 
 export type ReviewCatalogueDataForm = typeof ReviewCatalogueDataForm;
 
+export const ExportCatalogueDataRequest = object({
+	documentType: union([literal('advert'), literal('logo')]),
+	eventRegistrationIds: array(string())
+});
+
+export type ExportCatalogueDataRequest = typeof ExportCatalogueDataRequest;
+
 export const UploadCatalogueDataRequest = object({
 	documentType: union([literal('advert'), literal('logo')]),
+	orgSlug: pipe(string(), nonEmpty()),
 	file: file()
 });
 

@@ -6,7 +6,7 @@
 	import * as Command from '@/components/ui/command';
 	import { Separator } from '@/components/ui/separator';
 	import { Badge } from '@/components/ui/badge';
-	import { cn } from '@/utils';
+	import { cn } from '@/utils/tailwind';
 	import { _ } from '@services';
 	import type { Component } from 'svelte-eslint-parser/lib/parser/svelte-ast-types-for-v5';
 

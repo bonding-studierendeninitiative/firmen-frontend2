@@ -4,7 +4,7 @@
 	import 'svelte-tel-input/styles/flags.css';
 	import type { Country, DetailedValue } from 'svelte-tel-input/types';
 	import type { CountryCode } from 'libphonenumber-js/types';
-	import { cn } from '@/utils';
+	import { cn } from '@/utils/tailwind';
 
 	export let clickOutside = true;
 	export let closeOnClick = true;

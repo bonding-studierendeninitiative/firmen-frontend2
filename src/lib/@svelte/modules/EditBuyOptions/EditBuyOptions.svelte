@@ -1,11 +1,12 @@
 <script lang="ts">
 	import { _ } from '@services';
-	import { type Infer, superForm, type SuperValidated } from 'sveltekit-superforms';
+	import SuperDebug, { type Infer, intProxy, superForm, type SuperValidated } from 'sveltekit-superforms';
 	import { Checkbox } from '$lib/@svelte/components';
 	import { type UpdateBuyOptionRequest, ValueType } from '@schema';
 	import { TrashIcon } from '$lib/@svelte/icons';
 	import { Button } from '@/components/ui/button';
 	import * as DropdownMenu from '@/components/ui/dropdown-menu';
+	import * as Tabs from '@/components/ui/tabs';
 	import { Hash, Plus, Type } from 'lucide-svelte';
 	import Check from 'lucide-svelte/icons/check';
 	import { Field, Label, Control, Description, FieldErrors } from '@/components/ui/form';
@@ -15,11 +16,12 @@
 	import { toast } from 'svelte-french-toast';
 	import * as Table from '@/components/ui/table';
 	import { Separator } from '@/components/ui/separator';
-	import { cn } from '@/utils';
+	import { cn } from '@/utils/tailwind';
+	import { CaretDown, CaretUp } from 'svelte-radix';
 
 	export let form: SuperValidated<Infer<UpdateBuyOptionRequest>>;
 
-	const superform = superForm<Infer<UpdateBuyOptionRequest>>(form, {
+	let superform = superForm<Infer<UpdateBuyOptionRequest>>(form, {
 		dataType: 'json',
 		invalidateAll: 'force',
 		onResult({ result }) {
@@ -30,9 +32,63 @@
 			}
 		}
 	});
-	const { form: formData, enhance, isTainted, tainted } = superform;
+	let { form: formData, enhance, isTainted, tainted } = superform;
 
-	const removePackage = (e: Event, packageIndex: number) => {
+	let signUpDaysProxy = intProxy(superform, 'allowedSignUpDays', { empty: 'null' });
+
+	function handleCreateEventDay(e: Event) {
+		e.preventDefault();
+		formData.update((oldForm) => ({
+			...oldForm,
+			eventDays: [
+				...oldForm.eventDays,
+				{
+					dayName: '',
+					dayDate: new Date().toISOString().split('T')[0] ?? '2025-01-01',
+					capacity: 0
+				}
+			]
+		}));
+	}
+
+	function handleDeleteEventDay(e: Event, dayIndex: number) {
+		e.preventDefault();
+		formData.update((oldForm) => ({
+			...oldForm,
+			eventDays: [
+				...oldForm.eventDays.slice(0, dayIndex),
+				...oldForm.eventDays.slice(dayIndex + 1)
+			]
+		}));
+	}
+
+	function handleMoveEventDayUp(e: Event, dayIndex: number) {
+		e.preventDefault();
+		formData.update((oldForm) => ({
+			...oldForm,
+			eventDays: [
+				...oldForm.eventDays.slice(0, dayIndex - 1),
+				oldForm.eventDays[dayIndex],
+				oldForm.eventDays[dayIndex - 1],
+				...oldForm.eventDays.slice(dayIndex + 1)
+			]
+		}));
+	}
+
+	function handleMoveEventDayDown(e: Event, dayIndex: number) {
+		e.preventDefault();
+		formData.update((oldForm) => ({
+			...oldForm,
+			eventDays: [
+				...oldForm.eventDays.slice(0, dayIndex),
+				oldForm.eventDays[dayIndex + 1],
+				oldForm.eventDays[dayIndex],
+				...oldForm.eventDays.slice(dayIndex + 2)
+			]
+		}));
+	}
+
+	function removePackage(e: Event, packageIndex: number) {
 		e.preventDefault();
 		formData.update((oldForm) => ({
 			...oldForm,
@@ -41,8 +97,9 @@
 				...oldForm.packages.slice(packageIndex + 1)
 			]
 		}));
-	};
-	const addPackage = (e: Event) => {
+	}
+
+	function addPackage(e: Event) {
 		e.preventDefault();
 		formData.update((oldForm) => ({
 			...oldForm,
@@ -60,8 +117,9 @@
 				}
 			]
 		}));
-	};
-	const addService = (e: Event) => {
+	}
+
+	function addService(e: Event) {
 		e.preventDefault();
 		formData.update((oldForm) => {
 			return {
@@ -87,7 +145,7 @@
 				}))
 			};
 		});
-	};
+	}
 </script>
 
 <form action="?/updateBuyOption" method="post" use:enhance class="space-y-2">
@@ -113,7 +171,63 @@
 		</Field>
 	</div>
 	<Separator class="-mx-6 w-auto" />
-	<div class="py-4 space-y-4">
+	<section class="py-4 space-y-4">
+		<h3 class="font-semibold text-lg flex-grow">{$_("components.editBuyOptions.eventDays.header")}</h3>
+		{#each $formData.eventDays as _someDay, dayIndex}
+			<div class="flex flex-nowrap gap-4 items-end">
+				<Field class="flex-col flex justify-start" form={superform} name={`eventDays[${dayIndex}].totalCapacity`}>
+					<Control let:attrs>
+						<Label>{$_("components.editBuyOptions.eventDays.totalCapacity")}</Label>
+						<Input placeholder="Dienstag" {...attrs} bind:value={$formData.eventDays[dayIndex].totalCapacity} />
+					</Control>
+				</Field>
+				<Field class="flex-col flex justify-start" form={superform} name={`eventDays[${dayIndex}].remainingCapacity`}>
+					<Control let:attrs>
+						<Label>{$_("components.editBuyOptions.eventDays.remainingCapacity")}</Label>
+						<NumericInput class="w-[7ch]" {...attrs} bind:value={$formData.eventDays[dayIndex].remainingCapacity} />
+					</Control>
+				</Field>
+				<Field class="flex-col flex justify-start" form={superform} name={`eventDays[${dayIndex}].dayDate`}>
+					<Control let:attrs>
+						<Label>{$_("components.editBuyOptions.eventDays.dayDate")}</Label>
+						<Input
+							type="date"
+							bind:value={$formData.eventDays[dayIndex].dayDate}
+							{...attrs}
+						/>
+					</Control>
+				</Field>
+				<Button disabled={dayIndex === 0} variant="secondary" on:click={e => handleMoveEventDayUp(e, dayIndex)}>
+					<CaretUp />
+				</Button>
+				<Button disabled={dayIndex === $formData.eventDays.length - 1} variant="secondary"
+								on:click={e => handleMoveEventDayDown(e, dayIndex)}>
+					<CaretDown />
+				</Button>
+				<Button disabled={$formData.eventDays.length <= 1} variant="destructive" on:click={e => handleDeleteEventDay(e, dayIndex)}>
+					<TrashIcon />
+				</Button>
+			</div>
+		{/each}
+		<Button variant="link" on:click={handleCreateEventDay}>Add event day</Button>
+	</section>
+	{#if $formData.eventDays.length > 1}
+		<Separator class="-mx-6 w-auto" />
+		<section class="py-4 space-y-4">
+			<h3 class="font-semibold text-lg flex-grow">{$_("components.editBuyOptions.eventDays.signUpDays.header")}</h3>
+			<Tabs.Root bind:value={$signUpDaysProxy}>
+				<Tabs.List>
+					{#each $formData.eventDays as _someDay, dayIndex}
+						<Tabs.Trigger value={(dayIndex + 1).toString()}>{$_('components.editBuyOptions.eventDays.signUpDays.days', {
+							values: { days: (dayIndex + 1).toString() }
+						})}</Tabs.Trigger>
+					{/each}
+				</Tabs.List>
+			</Tabs.Root>
+		</section>
+	{/if}
+	<Separator class="-mx-6 w-auto" />
+	<section class="py-4 space-y-4">
 		<h3 class="font-semibold text-lg flex-grow">{$_("components.editBuyOptions.packages")}</h3>
 		<div class="rounded-lg overflow-x-scroll border">
 			<Table.Root class="min-w-full whitespace-no-wrap">
@@ -319,5 +433,6 @@
 			>{$_('common.saveAsDraft')}</Button
 			>
 		</div>
-	</div>
+		<SuperDebug data={$formData} />
+	</section>
 </form>

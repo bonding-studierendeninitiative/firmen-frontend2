@@ -1,8 +1,9 @@
-import { derived } from 'svelte/store';
+import { derived, type Readable } from 'svelte/store';
 import dayjs from 'dayjs';
 import 'dayjs/locale/de';
 import 'dayjs/locale/en';
 import relativeTime from 'dayjs/plugin/relativeTime';
+import localizedFormat from 'dayjs/plugin/localizedFormat';
 import {
 	dictionary,
 	locale as localeStore,
@@ -14,16 +15,23 @@ import {
 	init,
 	isLoading
 } from 'svelte-i18n';
+import { allFakers, type Faker } from '@faker-js/faker';
 
 const MESSAGE_FILE_URL_TEMPLATE = '/lang/{locale}.json';
 
 let cachedLocale: string;
+
+export const faker: Readable<Faker> = derived(
+	localeStore,
+	(value) => allFakers[value] || allFakers['en']
+);
 
 export const availableLocales = ['de', 'en'] as const;
 export type AvailableLocales = (typeof availableLocales)[number];
 
 function setupI18n() {
 	dayjs.extend(relativeTime);
+	dayjs.extend(localizedFormat);
 	availableLocales.map((locale) => {
 		const messagesFileUrl = MESSAGE_FILE_URL_TEMPLATE.replace('{locale}', locale);
 		register(locale, async () => {
