@@ -5,10 +5,7 @@ export const OrgAdvertisementSchema = object({
 	eventRegistration: object({
 		createdAt: pipe(string(), isoTimestamp()),
 		modifiedAt: nullish(pipe(string(), isoTimestamp())),
-		status: object({
-			code: number(),
-			text: string()
-		}),
+		status: string(),
 		userId: string(),
 		event: object({
 			id: string(),
@@ -19,10 +16,7 @@ export const OrgAdvertisementSchema = object({
 			dateTo: string()
 		})
 	}),
-	status: object({
-		code: number(),
-		text: string()
-	}),
+	status: string(),
 	url: string()
 });
 

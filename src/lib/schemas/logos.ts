@@ -5,10 +5,7 @@ export const OrgLogoSchema = object({
 	eventRegistration: object({
 		createdAt: pipe(string(), isoTimestamp()),
 		modifiedAt: nullish(pipe(string(), isoTimestamp())),
-		status: object({
-			code: number(),
-			text: string()
-		}),
+		status: string(),
 		userId: string(),
 		event: object({
 			id: string(),
@@ -19,10 +16,7 @@ export const OrgLogoSchema = object({
 			dateTo: string()
 		})
 	}),
-	status: object({
-		code: number(),
-		text: string()
-	}),
+	status: string(),
 	url: string()
 });
 
