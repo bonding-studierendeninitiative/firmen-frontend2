@@ -24,8 +24,8 @@
 		};
 	};
 
-	const unpublishedEvents = data.unpublishedEvents?.map(mapEvent) || [];
-	const archivedEvents = data.archivedEvents?.map(mapEvent) || [];
+	const unpublishedEvents = data.unpublishedEvents?.events.map(mapEvent) || [];
+	const archivedEvents = data.archivedEvents?.events.map(mapEvent) || [];
 
 	let activeTab = 0;
 	const tabHeadings = ['published', 'unpublished', 'archived'] as const;
@@ -58,7 +58,7 @@
 			<LoaderCircle class=" w-16 h-16 mx-auto animate-spin" />
 		{:then publishedEvents }
 			<PublishedEventsTab
-				publishedEvents={publishedEvents?.map(mapEvent) ?? []}
+				publishedEvents={publishedEvents?.events.map(mapEvent) ?? []}
 				handleEventRegistration={id => goto(`/admin/events/${id}/registrations/`)}
 				handleBuyOptions={id => goto(`/admin/events/${id}/buy-options/`)}
 			/>
