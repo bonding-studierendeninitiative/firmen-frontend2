@@ -23,7 +23,7 @@
 	import ExportCatalogueDataForm from './export-catalogue-data-form.svelte';
 	import SimpleEventRegistrationOrganization from './simple-event-registration-organization.svelte';
 	import type {
-		ExportCatalogueDataRequest, GetBuyOptionResponse,
+		ExportCatalogueDataRequest,
 		GetEventRegistrationsForEventResponse
 	} from '@schema';
 	import { getContext } from 'svelte';
@@ -36,7 +36,6 @@
 	export let addonPackages: string[] = [];
 	export let addons: string[] = [];
 
-	console.log('DataTable:', { data, packages, status, addonPackages, addons });
 	let exportCatalogueDataForm: SuperValidated<Infer<ExportCatalogueDataRequest>> = getContext('exportCatalogueDataForm');
 
 	let table = createTable(readable(data), {
@@ -62,8 +61,9 @@
 		addons: { [index: string]: number };
 	}>(
 		(acc, { purchasedPackage, status, addonPackages }) => {
-			if (purchasedPackage?.name) {return acc}
-			acc.package[purchasedPackage?.name] = (acc.package[purchasedPackage?.name] || 0) + 1;
+			if (purchasedPackage?.name) {
+				acc.package[purchasedPackage?.name] = (acc.package[purchasedPackage?.name] || 0) + 1;
+			}
 			if (status) {
 				acc.status[status] = (acc.status[status] || 0) + 1;
 			}
@@ -109,17 +109,22 @@
 			}
 		}),
 		table.column({
-			accessor: ({ organization }) => organization,
+			accessor: "organization",
 			header: $_('admin-pages.events.event-registrations.data-table.headers.org'),
 			id: 'organization',
 			cell: ({ value }) => {
 				return createRender(SimpleEventRegistrationOrganization, {
 					organization: value
 				});
+			},
+			plugins: {
+				filter: {
+					getFilterValue: ({name}) => name,
+				}
 			}
 		}),
 		table.column({
-			accessor: ({ purchasedPackage }) => purchasedPackage?.name ?? "kein Paket",
+			accessor: ({ purchasedPackage }) => purchasedPackage?.name ?? $_("admin-pages.events.event-registrations.data-table.packages.no-package"),
 			header: $_('admin-pages.events.event-registrations.data-table.headers.package'),
 			id: 'package',
 			plugins: {
@@ -139,12 +144,15 @@
 			}
 		}),
 		table.column({
-			accessor: ({ createdAt, modifiedAt }) => dayjs(modifiedAt ?? createdAt, {}, $locale ?? 'de').fromNow(),
+			accessor: ({ createdAt, modifiedAt }) => modifiedAt ?? createdAt,
 			header: $_('admin-pages.events.event-registrations.data-table.headers.last-modified'),
 			plugins: {
 				filter: {
 					exclude: true
 				}
+			},
+			cell({ value }) {
+				return dayjs(value, {}, $locale ?? 'de').fromNow()
 			}
 		}),
 		table.column({
@@ -225,7 +233,6 @@
 				},
 				addonPackageFilter: {
 					fn: ({ filterValue, value }) => {
-						console.log({ filterValue, value });
 						if (filterValue.length === 0) return true;
 						if (!Array.isArray(filterValue) || !Array.isArray(value)) return true;
 						return filterValue.some((filter) => {

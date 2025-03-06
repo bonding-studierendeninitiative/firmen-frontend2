@@ -161,7 +161,8 @@
         "header": "Event days",
         "dayName": "Label for the day",
         "dayDate": "Date",
-        "capacity": "Capacity",
+        "totalCapacity": "Total capacity",
+        "remainingCapacity": "Remaining capacity",
         "signUpDays": {
           "header": "Allowed sign up days per organization",
           "days": "{days, plural, one {{days, number} day max} other {{days, number} days max}}"
@@ -236,6 +237,18 @@
       "invite-dialog-description": "Send an invitation to add a new member to your organization.",
       "invite": "Invite",
       "invitationSuccess": "An invitation was sent"
+    },
+    "admin-create-event-registration": {
+      "trigger": "New registration",
+      "title": "New registration",
+      "description": "Register an existing organization to this event",
+      "org-card-header": "Organization",
+      "no-orgs-found": "No organizations found.",
+      "members-card-header": "Contact people",
+      "members-selected": "{members, plural, =0 {No contact persons selected} one {One contact person selected} other {{members, number} contact people selected} }",
+      "options": "Options",
+      "can-upload-advertisements": "Can upload advertisements",
+      "can-upload-advertisements-description": "Can this organization upload an advertisement for this event registration"
     }
   },
   "sidebar": {
@@ -737,7 +750,8 @@
             "copy-id": "Copy registration Id"
           },
           "packages": {
-            "all-packages": "All packages"
+            "all-packages": "All packages",
+            "no-package": "(No package)"
           }
         },
         "reject-event-registration": {

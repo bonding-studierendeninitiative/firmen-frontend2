@@ -161,7 +161,8 @@
         "header": "Veranstaltungstage",
         "dayName": "Label",
         "dayDate": "Datum",
-        "capacity": "Kapazität",
+        "totalCapacity": "Gesamtkapazität",
+        "remainingCapacity": "Verbliebene Kapazität",
         "signUpDays": {
           "header": "Erlaubte Anmeldetage pro Organisation",
           "days": "{days, plural, one {max. {days, number} Tag} other {max. {days, number} Tage}}"
@@ -236,6 +237,18 @@
       "invite-dialog-description": "Schicken Sie eine Einladung an eine neue Person aus Ihrer Organisation.",
       "invite": "Einladen",
       "invitationSuccess": "Eine Einladung wurde verschickt"
+    },
+    "admin-create-event-registration": {
+      "trigger": "Neue Anmeldung",
+      "title": "Neue Anmeldung",
+      "description": "Erstelle hier eine neue Anmeldung für eine existierende Organisation",
+      "org-card-header": "Organisation",
+      "no-orgs-found": "Es wurden keine Organisationen gefunden.",
+      "members-card-header": "Ansprechpersonen",
+      "members-selected": "{members, plural, =0 {Keine Ansprechpersonen ausgewählt} one {Eine Ansprechperson ausgewählt} other {{members, number} Ansprechpersonen ausgewählt} }",
+      "options": "Optionen",
+      "can-upload-advertisements": "Darf Imageanzeigen hochladen",
+      "can-upload-advertisements-description": "Darf diese Organisation eine Imageanzeige für diese Veranstaltungsanmeldung hochladen?"
     }
   },
   "sidebar": {
@@ -742,7 +755,8 @@
             "copy-id": "Anmelde-ID kopieren"
           },
           "packages": {
-            "all-packages": "Alle Pakete"
+            "all-packages": "Alle Pakete",
+            "no-package": "(Kein Paket)"
           }
         },
         "reject-event-registration": {

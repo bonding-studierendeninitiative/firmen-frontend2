@@ -195,13 +195,7 @@ export const AdminRegisterOrganizationToEventSchema = v.object({
 	eventId: v.pipe(v.string(), v.nonEmpty()),
 	organizationId: v.pipe(v.string(), v.nonEmpty()),
 	contactPeople: v.array(v.pipe(v.string(), v.nonEmpty())),
-	packageId: v.optional(v.string(), ''),
-	selectedAddonPackages: v.optional(v.array(v.string())),
-	selectedAddons: v.optional(v.array(v.string())),
-	selectedEventDays: v.optional(v.array(v.string())),
-	selectedAmountOfParticipationDays: v.optional(v.number()),
-	participationNote: v.optional(v.string(), ''),
-	language: v.optional(v.string(), 'ENGLISH')
+	canUploadAdvertisement: v.boolean()
 });
 
 export type AdminRegisterOrganizationToEvent = typeof AdminRegisterOrganizationToEventSchema;

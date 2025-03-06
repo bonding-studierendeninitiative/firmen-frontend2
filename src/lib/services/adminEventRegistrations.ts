@@ -16,6 +16,10 @@ export const adminCreateRegistration = async ({
 		data: formData
 	});
 
+	if (response.status === 409) {
+		error(409, 'The organization is already registered for this event');
+	}
+
 	if (response.status !== 201) {
 		error(500, 'The registration could not be created');
 	}

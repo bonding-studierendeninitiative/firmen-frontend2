@@ -6,7 +6,7 @@
 	import * as ToggleGroup from '@/components/ui/toggle-group';
 	import * as Avatar from '@/components/ui/avatar';
 	import { cn } from '@/utils';
-	import { Building, Check, ChevronsUpDown, LoaderCircle, Users } from 'lucide-svelte';
+	import { Building, Check, ChevronsUpDown, LoaderCircle, Settings, Users } from 'lucide-svelte';
 	import { type Organization, type OrganizationMembership } from 'svelte-clerk/server';
 	import { getContext, onMount, tick } from 'svelte';
 	import { Button } from '@/components/ui/button';
@@ -16,6 +16,10 @@
 	import Search from 'lucide-svelte/icons/search';
 	import { Label } from 'flowbite-svelte';
 	import { toast } from 'svelte-french-toast';
+	import { _ } from '@services';
+	import { Switch } from '@/components/ui/switch';
+	import { Description, Field } from '@/components/ui/form';
+	import { Control } from 'formsnap';
 
 	let organizations: Organization[] = [];
 	let organizationMembers: OrganizationMembership[] = [];
@@ -35,8 +39,10 @@
 		onResult: ({ result }) => {
 			if (result.type === 'success') {
 				open = false;
-				reset()
+				reset();
 				toast.success('Anmeldung erfolgreich erstellt');
+			} else if (result.status === 409) {
+				toast.error('Diese Organisation ist bereits angemeldet');
 			} else {
 				toast.error('Anmeldung konnte nicht erstellt werden');
 			}
@@ -79,25 +85,33 @@
 			document.getElementById(triggerId)?.focus();
 		});
 	}
+
+	function handleOrgSelect(newValue: string, ids: { trigger: string }) {
+		$formData.organizationId = newValue;
+		$formData.contactPeople = [];
+		orgName = organizations.find(org => org.id === $formData.organizationId)?.name;
+		loadOrgMembers(newValue);
+		closeAndFocusTrigger(ids.trigger);
+	}
 </script>
 
 <Dialog.Root bind:open>
 	<Dialog.Trigger>
-		<Button>Neue Anmeldung</Button>
+		<Button>{$_("modules.admin-create-event-registration.trigger")}</Button>
 	</Dialog.Trigger>
 	<Dialog.Content class="w-full max-w-lg">
 		<Dialog.Header>
-			<Dialog.Title>Neue Anmeldung</Dialog.Title>
-			<Dialog.Description>Erstelle hier eine neue Anmeldung für eine existierende Organisation
+			<Dialog.Title>{$_("modules.admin-create-event-registration.title")}</Dialog.Title>
+			<Dialog.Description>{$_("modules.admin-create-event-registration.description")}
 			</Dialog.Description>
 		</Dialog.Header>
-		<form id="createAdminEventRegistration" method="POST" action="?/createRegistration" use:enhance>
+		<form action="?/createRegistration" id="createAdminEventRegistration" method="POST" use:enhance>
 			<div class="space-y-4 w-full">
 				<Card.Root>
 					<Card.Header class="pb-2">
 						<Card.Title class="text-lg flex items-center">
 							<Building class="h-5 w-5 mr-2" />
-							Organisation
+							{$_("modules.admin-create-event-registration.org-card-header")}
 						</Card.Title>
 					</Card.Header>
 					<Card.Content class="space-y-2 pt-6">
@@ -105,11 +119,11 @@
 							<Popover.Root bind:open={isOrgsOpen} let:ids>
 								<Popover.Trigger asChild let:builder>
 									<Button
-										builders={[builder]}
-										variant="outline"
-										role="combobox"
 										aria-expanded={isOrgsOpen}
+										builders={[builder]}
 										class="w-full justify-between"
+										role="combobox"
+										variant="outline"
 									>
 										{orgName}
 										<ChevronsUpDown class="ml-2 h-4 w-4 shrink-0 opacity-50" />
@@ -119,7 +133,7 @@
 									<Command.Root shouldFilter={false}>
 										<Label class="flex items-center gap-2 py-2">
 											<Search class="h-5 w-5 ml-2" />
-											<input class="w-full outline-transparent border-transparent py-2" bind:value={orgQuery}
+											<input bind:value={orgQuery} class="w-full outline-transparent border-transparent py-2"
 														 on:input={handle_search} placeholder="Search orgs..." />
 										</Label>
 										<Command.Separator />
@@ -133,15 +147,11 @@
 													<Command.Item
 														value={organization.id}
 														onSelect={(currentValue) => {
-              $formData.organizationId = currentValue;
-							$formData.contactPeople = [];
-							orgName = organizations.find(org => org.id === $formData.organizationId)?.name
-							loadOrgMembers(currentValue);
-              closeAndFocusTrigger(ids.trigger);
-            }}
-													>
+              handleOrgSelect(currentValue, ids);
+            }}>
 														<Check
-															class={cn(
+															class={
+															cn(
                 "mr-2 h-4 w-4",
                 $formData.organizationId !== organization.id && "text-transparent"
               )}
@@ -151,20 +161,20 @@
 												{/each}
 											</Command.List>
 										{/if}
-										<Command.Empty>No orgs found.</Command.Empty>
+										<Command.Empty>{$_("modules.admin-create-event-registration.no-orgs-found")}</Command.Empty>
 									</Command.Root>
 								</Popover.Content>
 							</Popover.Root>
 						</div>
 					</Card.Content>
 				</Card.Root>
-				<input type="hidden" value={$formData.organizationId} name="organizationId" />
+				<input name="organizationId" type="hidden" value={$formData.organizationId} />
 				{#if $formData.organizationId}
 					<Card.Root>
 						<Card.Header class="pb-2">
 							<Card.Title class="text-lg flex items-center">
 								<Users class="h-5 w-5 mr-2" />
-								Ansprechpersonen
+								{$_("modules.admin-create-event-registration.members-card-header")}
 							</Card.Title>
 							<Card.Description></Card.Description>
 						</Card.Header>
@@ -200,23 +210,49 @@
 								</ToggleGroup.Root>
 							{/if}
 							<div class="text-sm text-muted-foreground">
-								{#if $formData.contactPeople.length > 0}
-									<p>
-										{$formData.contactPeople.length} member{$formData.contactPeople.length !== 1 ? "s" : ""} selected
-									</p>
-								{:else}
-									<p>No members selected</p>
-								{/if}
+								<p>{$_("modules.admin-create-event-registration.members-selected", { values: { members: $formData.contactPeople.length } })}</p>
 							</div>
 						</Card.Content>
 					</Card.Root>
 				{/if}
-				<input type="hidden" value={$formData.contactPeople} name="contactPeople" />
+				{#if $formData.contactPeople.length > 0}
+					<Card.Root>
+						<Card.Header class="pb-2">
+							<Card.Title class="text-lg flex items-center">
+								<Settings class="h-5 w-5 mr-2" />
+								{$_("modules.admin-create-event-registration.options")}
+							</Card.Title>
+						</Card.Header>
+						<Card.Content class="space-y-6 pt-2">
+							<Field
+								form={superform}
+								name="canUploadAdvertisement"
+								class="flex flex-row items-center justify-between rounded-lg border p-4"
+							>
+								<Control let:attrs>
+									<div class="space-y-0.5">
+										<Label>{$_("modules.admin-create-event-registration.can-upload-advertisements")}</Label>
+										<Description>
+											{$_("modules.admin-create-event-registration.can-upload-advertisements-description")}
+										</Description>
+									</div>
+									<Switch
+										includeInput
+										{...attrs}
+										bind:checked={$formData.canUploadAdvertisement}
+									/>
+								</Control>
+							</Field>
+						</Card.Content>
+					</Card.Root>
+				{/if}
+				<input name="contactPeople" type="hidden" value={$formData.contactPeople} />
 			</div>
 		</form>
 		<Dialog.Footer>
-			<Button form="createAdminEventRegistration" type="submit"
-							disabled={!$formData.eventId || !$formData.organizationId || !$formData.contactPeople.length}>Speichern
+			<Button disabled={!$formData.eventId || !$formData.organizationId || !$formData.contactPeople.length}
+							form="createAdminEventRegistration"
+							type="submit">{$_("common.submit")}
 			</Button>
 		</Dialog.Footer>
 	</Dialog.Content>
