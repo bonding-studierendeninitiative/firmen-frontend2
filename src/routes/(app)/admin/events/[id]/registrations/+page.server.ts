@@ -1,9 +1,10 @@
 import {
+	adminCreateRegistration,
 	confirmEventRegistration,
-	getEventRegistrationsForEvent,
 	rejectEventRegistration
-} from '@/services/eventRegistrations';
+} from '@/services/adminEventRegistrations';
 import {
+	AdminRegisterOrganizationToEventSchema,
 	ConfirmEventRegistrationSchema,
 	ExportCatalogueDataRequest,
 	RejectEventRegistrationSchema,
@@ -12,7 +13,12 @@ import {
 import { valibot } from 'sveltekit-superforms/adapters';
 import { superValidate } from 'sveltekit-superforms';
 import { fail } from '@sveltejs/kit';
-import { exportCatalogueData, reviewCatalogueData } from '@/services';
+import {
+	exportCatalogueData,
+	getActiveBuyOption,
+	getEventRegistrationsForEvent,
+	reviewCatalogueData
+} from '@/services';
 import { type AuthObject, clerkClient } from 'svelte-clerk/server';
 
 export const load = async ({ parent, params, isDataRequest }) => {
@@ -28,7 +34,9 @@ export const load = async ({ parent, params, isDataRequest }) => {
 		});
 
 		const packages = new Set(
-			eventRegistrations.map((eventRegistration) => eventRegistration.purchasedPackage.name)
+			eventRegistrations
+				.filter((value) => Boolean(value.purchasedPackage))
+				.map((eventRegistration) => eventRegistration.purchasedPackage?.name)
 		);
 		const status = new Set(eventRegistrations.map((eventRegistration) => eventRegistration.status));
 		const addonPackages = new Set(
@@ -44,6 +52,11 @@ export const load = async ({ parent, params, isDataRequest }) => {
 			)
 		);
 
+		const activeBuyOption = await getActiveBuyOption({
+			eventId: params.id,
+			accessToken: token.jwt
+		});
+
 		return {
 			eventRegistrations,
 			totalPages,
@@ -51,7 +64,8 @@ export const load = async ({ parent, params, isDataRequest }) => {
 			packages: [...packages],
 			status: [...status],
 			addonPackages: [...addonPackages],
-			addons: [...addons]
+			addons: [...addons],
+			activeBuyOption
 		};
 	}
 
@@ -67,11 +81,22 @@ export const load = async ({ parent, params, isDataRequest }) => {
 	const exportCatalogueDataForm = superValidate(valibot(ExportCatalogueDataRequest), {
 		id: 'exportCatalogueDataForm'
 	});
+	const createRegistrationForm = await superValidate(
+		{
+			eventId: params.id
+		},
+		valibot(AdminRegisterOrganizationToEventSchema),
+		{
+			id: 'registerOrganizationForm',
+			errors: false
+		}
+	);
 
 	return {
 		confirmForm,
 		rejectForm: isDataRequest ? rejectForm : await rejectForm,
 		reviewCatalogueDataForm,
+		createRegistrationForm,
 		exportCatalogueDataForm: isDataRequest
 			? exportCatalogueDataForm
 			: await exportCatalogueDataForm,
@@ -157,6 +182,29 @@ export const actions = {
 		const token = await clerkClient.sessions.getToken(session.sessionId, 'access_token');
 
 		await exportCatalogueData({
+			accessToken: token.jwt,
+			data: { ...form.data }
+		});
+	},
+	createRegistration: async ({ locals, request }) => {
+		const session = locals.auth as unknown as AuthObject;
+		if (!session || !session.sessionId) {
+			fail(403);
+			return;
+		}
+
+		const formData = await request.formData();
+
+		console.log(formData);
+
+		const form = await superValidate(formData, valibot(AdminRegisterOrganizationToEventSchema));
+		if (!form.valid) {
+			return fail(400, { form });
+		}
+
+		const token = await clerkClient.sessions.getToken(session.sessionId, 'access_token');
+
+		await adminCreateRegistration({
 			accessToken: token.jwt,
 			data: { ...form.data }
 		});

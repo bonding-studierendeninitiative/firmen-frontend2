@@ -1,8 +1,7 @@
 <script lang="ts">
 	import type { PageServerData } from './$types';
 	import { _ } from '@services';
-	import { NoDataFound, Modal } from '@/@svelte/components';
-	import Select from '../../../../../../lib/@svelte/components/Select/Select.svelte';
+	import { NoDataFound, Modal, Select } from '@/@svelte/components';
 	import toast from 'svelte-french-toast';
 	import DataTable from './data-table.svelte';
 	import { Button } from '@/components/ui/button';
@@ -13,23 +12,26 @@
 
 	export let data: PageServerData;
 
-	$: ({ rejectForm, confirmForm, reviewCatalogueDataForm, exportCatalogueDataForm } = data);
+	$: ({ rejectForm, confirmForm, reviewCatalogueDataForm, exportCatalogueDataForm, createRegistrationForm } = data);
 
 	let confirmFormStore = writable(confirmForm);
 	let rejectFormStore = writable(rejectForm);
 	let reviewCatalogueDataFormStore = writable(reviewCatalogueDataForm);
 	let exportCatalogueDataFormStore = writable(exportCatalogueDataForm);
+	let createRegistrationFormStore = writable(createRegistrationForm);
 	$: {
 		confirmFormStore.set(confirmForm);
 		rejectFormStore.set(rejectForm);
 		reviewCatalogueDataFormStore.set(reviewCatalogueDataForm);
 		exportCatalogueDataFormStore.set(exportCatalogueDataForm);
+		createRegistrationFormStore.set(createRegistrationForm);
 	}
 
 	setContext('confirmForm', confirmFormStore);
 	setContext('rejectForm', rejectFormStore);
 	setContext('reviewCatalogueDataForm', reviewCatalogueDataFormStore);
 	setContext('exportCatalogueDataForm', exportCatalogueDataFormStore);
+	setContext('createRegistrationForm', createRegistrationFormStore);
 
 	let isOpen = false;
 

@@ -23,11 +23,12 @@
 	import ExportCatalogueDataForm from './export-catalogue-data-form.svelte';
 	import SimpleEventRegistrationOrganization from './simple-event-registration-organization.svelte';
 	import type {
-		ExportCatalogueDataRequest,
+		ExportCatalogueDataRequest, GetBuyOptionResponse,
 		GetEventRegistrationsForEventResponse
 	} from '@schema';
 	import { getContext } from 'svelte';
-	import { type Infer, superForm, type SuperValidated } from 'sveltekit-superforms';
+	import { type Infer, type SuperValidated } from 'sveltekit-superforms';
+	import CreateEventRegistrationForm from './create-event-registration-form.svelte';
 
 	export let data: InferOutput<GetEventRegistrationsForEventResponse>['eventRegistrations'];
 	export let packages: string[] = [];
@@ -35,7 +36,7 @@
 	export let addonPackages: string[] = [];
 	export let addons: string[] = [];
 
-	console.log("DataTable:", {data, packages, status, addonPackages, addons});
+	console.log('DataTable:', { data, packages, status, addonPackages, addons });
 	let exportCatalogueDataForm: SuperValidated<Infer<ExportCatalogueDataRequest>> = getContext('exportCatalogueDataForm');
 
 	let table = createTable(readable(data), {
@@ -52,6 +53,8 @@
 		})
 	});
 
+	let open = false;
+
 	$: counts = data.reduce<{
 		package: { [index: string]: number };
 		status: { [index: string]: number };
@@ -59,7 +62,8 @@
 		addons: { [index: string]: number };
 	}>(
 		(acc, { purchasedPackage, status, addonPackages }) => {
-			acc.package[purchasedPackage.name] = (acc.package[purchasedPackage.name] || 0) + 1;
+			if (purchasedPackage?.name) {return acc}
+			acc.package[purchasedPackage?.name] = (acc.package[purchasedPackage?.name] || 0) + 1;
 			if (status) {
 				acc.status[status] = (acc.status[status] || 0) + 1;
 			}
@@ -110,12 +114,12 @@
 			id: 'organization',
 			cell: ({ value }) => {
 				return createRender(SimpleEventRegistrationOrganization, {
-					organization: value,
-				})
+					organization: value
+				});
 			}
 		}),
 		table.column({
-			accessor: ({ purchasedPackage }) => purchasedPackage.name,
+			accessor: ({ purchasedPackage }) => purchasedPackage?.name ?? "kein Paket",
 			header: $_('admin-pages.events.event-registrations.data-table.headers.package'),
 			id: 'package',
 			plugins: {
@@ -314,6 +318,7 @@
 			})).map(({ id }) => {
 				return $pageRows.find((row) => row.isData() && row.dataId === id)?.original.id;
 			})} />
+	<CreateEventRegistrationForm bind:open />
 </section>
 <section class="mt-10">
 	<div class="rounded-md border">

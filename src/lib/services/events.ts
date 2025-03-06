@@ -74,19 +74,3 @@ export const getEvent = async ({
 	const data = await response.json();
 	return parse(EventDetailsResponseSchema, data);
 };
-
-export const publishEvent = async ({
-	eventId,
-	accessToken
-}: {
-	eventId: string;
-	accessToken: string;
-}) => {
-	const response = await API.post({
-		route: `/event/${eventId}/publish`,
-		token: accessToken
-	});
-	if (response.status !== 204) {
-		error(400, response.statusText);
-	}
-};
