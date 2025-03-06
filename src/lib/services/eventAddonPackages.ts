@@ -24,7 +24,7 @@ export const createEventAddonPackage = async ({
 	buyOptionId: string;
 }) => {
 	const response = await API.post<InferInput<CreateEventAddonPackageResponse>>({
-		route: `/event/${eventId}/buy-option/${buyOptionId}/addon-package`,
+		route: `/admin/event/${eventId}/buy-option/${buyOptionId}/addon-package`,
 		token: accessToken,
 		data: request
 	});
@@ -44,7 +44,7 @@ export const deleteEventAddonPackage = async ({
 	buyOptionId: string;
 }) => {
 	const response = await API.delete({
-		route: `/event/${eventId}/buy-option/${buyOptionId}/addon-package/${addonPackageId}`,
+		route: `/admin/event/${eventId}/buy-option/${buyOptionId}/addon-package/${addonPackageId}`,
 		token: accessToken
 	});
 
@@ -61,7 +61,7 @@ export const getEventAddonPackage = async ({
 	addonPackageId: string;
 }) => {
 	const response = await API.get<InferInput<GetEventAddonPackageResponse>>({
-		route: `/addon-package-template/${addonPackageId}`,
+		route: `/admin/addon-package-template/${addonPackageId}`,
 		token: accessToken
 	});
 	const data = await response.json();
@@ -80,7 +80,7 @@ export const getEventAddonPackages = async ({
 	buyOptionId: string;
 }): Promise<InferOutput<GetEventAddonPackagesResponse>> => {
 	const response = await API.get<InferInput<GetEventAddonPackagesResponse>>({
-		route: `/event/${eventId}/buy-option/${buyOptionId}/addon-package?page=${page}&limit=6`,
+		route: `/admin/event/${eventId}/buy-option/${buyOptionId}/addon-package?page=${page}&limit=6`,
 		token: accessToken
 	});
 	const data = await response.json();

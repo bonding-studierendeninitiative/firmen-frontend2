@@ -12,7 +12,7 @@ export const publishEvent = async ({
 	accessToken: string;
 }) => {
 	const response = await API.post({
-		route: `/event/${eventId}/publish`,
+		route: `/admin/event/${eventId}/publish`,
 		token: accessToken
 	});
 	if (response.status !== 204) {
@@ -29,7 +29,7 @@ export const getEventRegistrationsForEvent = async ({
 	status?: 'PUBLISHED' | 'UNPUBLISHED' | 'ARCHIVED';
 }) => {
 	const response = await API.get<InferOutput<typeof GetEventRegistrationsForEventResponse>>({
-		route: `/event/${eventId}/event_registrations?page=0`,
+		route: `/admin/event/${eventId}/event_registrations?page=0`,
 		token: accessToken
 	});
 	const data = await response.json();

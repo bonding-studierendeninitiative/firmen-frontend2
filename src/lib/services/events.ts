@@ -4,7 +4,9 @@ import {
 	type GetEventsResponse,
 	GetEventsResponseSchema,
 	EventDetailsResponseSchema,
-	type EventDetailsResponse
+	type EventDetailsResponse,
+	type GetBuyOptionResponse,
+	GetBuyOptionResponseSchema
 } from '@schema';
 import { error } from '@sveltejs/kit';
 
@@ -73,4 +75,19 @@ export const getEvent = async ({
 
 	const data = await response.json();
 	return parse(EventDetailsResponseSchema, data);
+};
+
+export const getActiveBuyOption = async ({
+	accessToken,
+	eventId
+}: {
+	accessToken: string;
+	eventId: string;
+}) => {
+	const response = await API.get<InferInput<GetBuyOptionResponse>>({
+		route: `/event/${eventId}/active-buy-option`,
+		token: accessToken
+	});
+	const data = await response.json();
+	return parse(GetBuyOptionResponseSchema, data);
 };
