@@ -1,8 +1,8 @@
 <script lang="ts">
 	import {_} from "@services"
 	import Ellipsis from 'lucide-svelte/icons/ellipsis';
-	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
-	import { Button } from '$lib/components/ui/button';
+	import * as DropdownMenu from '@/components/ui/dropdown-menu';
+	import { Button } from '@/components/ui/button';
 
 	export let id: string;
 </script>

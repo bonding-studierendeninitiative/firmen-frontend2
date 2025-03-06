@@ -1,5 +1,4 @@
 import * as v from 'valibot';
-import type { GenericSchema, ObjectSchema } from 'valibot';
 
 export enum ValueType {
 	String = 'STRING',
@@ -15,6 +14,7 @@ export const GetBuyOptionsResponseSchema = v.object({
 			name: v.string(),
 			packagesCount: v.number(),
 			servicesCount: v.number(),
+			eventDaysCount: v.number(),
 			active: v.boolean()
 		})
 	),
@@ -49,7 +49,15 @@ export const GetBuyOptionResponseSchema = v.object({
 			valueType: v.enum(ValueType)
 		})
 	),
-	active: v.boolean()
+	eventDays: v.array(
+		v.object({
+			dayDate: v.pipe(v.string(), v.isoDate()),
+			remainingCapacity: v.number(),
+			totalCapacity: v.number()
+		})
+	),
+	active: v.boolean(),
+	allowedSignUpDays: v.nullish(v.number())
 });
 export type GetBuyOptionResponse = typeof GetBuyOptionResponseSchema;
 
@@ -77,7 +85,15 @@ export const UpdateBuyOptionsResponseSchema = v.object({
 					description: v.nullable(v.string()),
 					valueType: v.enum(ValueType)
 				})
-			)
+			),
+			eventDays: v.array(
+				v.object({
+					dayDate: v.pipe(v.string(), v.isoDate()),
+					remainingCapacity: v.number(),
+					totalCapacity: v.number()
+				})
+			),
+			allowedSignUpDays: v.nullish(v.number())
 		})
 	)
 });
@@ -107,7 +123,15 @@ export const UpdateBuyOptionsRequestSchema = v.object({
 					description: v.nullable(v.string(), ''),
 					valueType: v.enum(ValueType)
 				})
-			)
+			),
+			eventDays: v.array(
+				v.object({
+					dayDate: v.pipe(v.string(), v.isoDate()),
+					remainingCapacity: v.number(),
+					totalCapacity: v.number()
+				})
+			),
+			allowedSignUpDays: v.nullish(v.number())
 		})
 	)
 });
@@ -153,7 +177,15 @@ export const UpdateBuyOptionRequestSchema = v.object({
 			description: v.nullable(v.string(), ''),
 			valueType: v.enum(ValueType)
 		})
-	)
+	),
+	eventDays: v.array(
+		v.object({
+			dayDate: v.pipe(v.string(), v.isoDate()),
+			remainingCapacity: v.number(),
+			totalCapacity: v.number()
+		})
+	),
+	allowedSignUpDays: v.number()
 });
 
 export type UpdateBuyOptionRequest = typeof UpdateBuyOptionRequestSchema;

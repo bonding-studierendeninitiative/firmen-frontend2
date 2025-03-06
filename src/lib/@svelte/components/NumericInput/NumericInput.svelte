@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { NumberInput, Helper, Label } from 'flowbite-svelte';
 	import { clsx } from 'clsx';
-	import { cn } from '@/utils';
+	import { cn } from '@/utils/tailwind';
 
 	export let placeholder = '';
 	export let ref: any = null;

@@ -2,19 +2,21 @@
 	import { goto } from '$app/navigation';
 	import { ReturnIcon } from '@/@svelte/icons';
 	import { LinkTabs, Spinner } from '@/@svelte/components';
-	import type { LayoutServerData } from './$types';
 	import { page, navigating } from '$app/stores';
 	import { fade } from 'svelte/transition';
 	import { Event } from '@/@svelte/components';
 	import { Button } from '@/components/ui/button';
 	import { _ } from '@services';
+	import { LoaderCircle } from 'lucide-svelte';
 
-	export let data: LayoutServerData;
-	$: tabs = [
-		{ href: `/admin/events/${data.event?.id}/registrations`, name: 'registrations' },
-		{ name: 'buy-options', href: `/admin/events/${data.event?.id}/buy-options` }
-		// { name: 'details', href: `/admin/events/${data.event?.id}/details` }
-	];
+	export let data;
+	function getTabs(event: { id: string }) {
+		return [
+			{ href: `/admin/events/${event?.id}/registrations`, name: 'registrations' },
+			{ name: 'buy-options', href: `/admin/events/${event?.id}/buy-options` }
+			// { name: 'details', href: `/admin/events/${data.event?.id}/details` }
+		]
+	}
 
 	function getEventInfo(url?: URL) {
 		const match = url?.pathname.match(/\/events\/([^/]+)\/([^/]+)/);
@@ -30,33 +32,30 @@
 		>
 			<ReturnIcon />
 		</button>
-		<Event event={data.event} />
-		<div class="flex-grow"></div>
-		{#if data.event?.status === 'UNPUBLISHED'}
-			<form action={`/admin/events/${$page.params.id}/?/publishEvent`} method="POST">
-				<Button type="submit">{$_("common.publish")}</Button>
-			</form>
-		{/if}
+		{#await data.event}
+			<LoaderCircle class="h-10 w-10 mx-auto animate-spin" />
+		{:then event}
+			<Event {event} />
+			<div class="flex-grow"></div>
+			{#if event?.status === 'UNPUBLISHED'}
+				<form action={`/admin/events/${$page.params.id}/?/publishEvent`} method="POST">
+					<Button type="submit">{$_("common.publish")}</Button>
+				</form>
+			{/if}
+		{:catch error}
+			<div class="text-red-500">Error: {error.message}</div>
+		{/await}
 	</div>
 
-	<div class="mt-12">
-		<LinkTabs {tabs} />
-	</div>
-	{#if $navigating}
-		{@const fromInfo = getEventInfo($navigating?.from?.url)}
-		{@const toInfo = getEventInfo($navigating?.to?.url)}
-		{#if fromInfo && toInfo && fromInfo.eventId === toInfo.eventId && fromInfo.page !== toInfo.page}
-			<div class="grid justify-center items-center h-full text-orange-400">
-				<Spinner color="red" />
-			</div>
-		{:else}
-			<div in:fade>
-				<slot />
-			</div>
-		{/if}
-	{:else}
-		<div in:fade>
-			<slot />
+	{#await data.event}
+		<LoaderCircle class="h-10 w-10 mx-auto animate-spin" />
+	{:then event}
+		<div class="mt-12">
+			<LinkTabs tabs={getTabs(event)} />
 		</div>
-	{/if}
+	{:catch error}
+		<div class="text-red-500">Error: {error.message}</div>
+	{/await}
+
+	<slot />
 </div>

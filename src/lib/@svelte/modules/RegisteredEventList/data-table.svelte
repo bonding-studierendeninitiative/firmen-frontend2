@@ -45,10 +45,10 @@
 			}
 		}),
 		table.column({
-			accessor: ({ status }) => status?.text,
+			accessor: ({ status }) => status,
 			header: 'Status',
 			cell: ({ value }) => {
-				return createRender(Chip, { status: value, variant: 'success' });
+				return createRender(Chip, { status: $_(`status-text.${value}`), variant: value });
 			},
 			plugins: {
 				filter: {
@@ -67,8 +67,8 @@
 			}
 		}),
 		table.column({
-			accessor: ({ portraitStatus }) => portraitStatus?.text,
-			cell: ({ value }) => createRender(PortraitStatusIcon, { variant: value }),
+			accessor: ({ portraitStatus }) => portraitStatus,
+			cell: ({ value }) => createRender(PortraitStatusIcon, { variant: value, title: $_(`status-text.${value}`) }),
 			header: 'Portrait',
 			plugins: {
 				filter: {
@@ -77,8 +77,8 @@
 			}
 		}),
 		table.column({
-			accessor: ({ logoStatus }) => logoStatus?.text,
-			cell: ({ value }) => createRender(LogoStatusIcon, { variant: value }),
+			accessor: ({ logoStatus }) => logoStatus,
+			cell: ({ value }) => createRender(LogoStatusIcon, { variant: value, title: $_(`status-text.${value}`)  }),
 			header: 'Logo',
 			plugins: {
 				filter: {
@@ -87,8 +87,8 @@
 			}
 		}),
 		table.column({
-			accessor: ({ advertisementStatus }) => advertisementStatus?.text,
-			cell: ({ value }) => createRender(AdvertStatusIcon, { variant: value }),
+			accessor: ({ advertisementStatus }) => advertisementStatus,
+			cell: ({ value }) => createRender(AdvertStatusIcon, { variant: value, title: $_(`status-text.${value}`)  }),
 			header: $_('user-pages.dashboard.advert'),
 			plugins: {
 				filter: {

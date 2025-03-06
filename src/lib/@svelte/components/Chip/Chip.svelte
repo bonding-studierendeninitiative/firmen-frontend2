@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { cn } from '@/utils';
+	import { cn } from '@/utils/tailwind';
 	import { tv, type VariantProps } from 'tailwind-variants';
 
 	export let status: string;

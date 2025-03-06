@@ -42,9 +42,8 @@
 			icon: FileImage
 		}
 	] as const;
-	let selectedDocumentType = documentTypeOptions[1];
 	onMount(() => {
-		$formData.documentType = selectedDocumentType.value;
+		$formData.documentType = documentTypeOptions[1].value;
 		$formData.eventRegistrationId = id;
 	});
 
@@ -88,10 +87,16 @@
 					<input type="hidden" bind:value={id} name={attrs.name} />
 				</Control>
 			</Field>
+			<Field form={superCatalogueDataUploadForm} name="orgSlug">
+				<Control let:attrs>
+					<input type="hidden" bind:value={id} name={attrs.name} />
+				</Control>
+			</Field>
 			<Dialog.Footer>
 				<Button disabled={!isTainted($tainted) || $submitting}
 								type="submit">{$_("modules.upload-catalogue-data.upload")}</Button>
 			</Dialog.Footer>
 		</form>
+		<SuperDebug data={$formData} />
 	</Dialog.Content>
 </Dialog.Root>

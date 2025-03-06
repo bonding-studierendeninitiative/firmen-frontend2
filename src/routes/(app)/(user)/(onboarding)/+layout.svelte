@@ -1,18 +1,7 @@
 <script lang="ts">
-
 	import { ColorLogoIcon } from '@/@svelte/icons';
 	import { LanguageSelect } from '@/@svelte/components';
 	import { _ } from '@services';
-	import { currentOrganizationSlugStore } from '@/stores/currentOrganizationSlugStore';
-	import { goto } from '$app/navigation';
-
-	currentOrganizationSlugStore.subscribe(slug => {
-		console.log(slug)
-		if (slug) {
-
-			goto(`/${slug}/dashboard`);
-		}
-	})
 </script>
 	<div class=" flex w-full h-screen">
 			<div class=" w-3/4 flex-row">

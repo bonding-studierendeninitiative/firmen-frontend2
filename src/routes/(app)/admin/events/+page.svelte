@@ -1,12 +1,12 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import type { PageServerData } from './$types';
-	import { Tabs } from '$lib/@svelte/components';
+	import { Tabs } from '@/@svelte/components';
 	import { _ } from '@services';
 	import { Button } from '@/components/ui/button';
 	import { PublishedEventsTab, UnpublishedEventsTab } from '@/@svelte/pages';
+	import { LoaderCircle } from 'lucide-svelte';
 
-	export let data: PageServerData;
+	export let data;
 
 	const mapEvent = (event: {
 		id: string;
@@ -24,9 +24,8 @@
 		};
 	};
 
-	const publishedEvents = data.publishedEvents?.map(mapEvent) || [];
-	const unpublishedEvents = data.unpublishedEvents?.map(mapEvent) || [];
-	const archivedEvents = data.archivedEvents?.map(mapEvent) || [];
+	const unpublishedEvents = data.unpublishedEvents?.events.map(mapEvent) || [];
+	const archivedEvents = data.archivedEvents?.events.map(mapEvent) || [];
 
 	let activeTab = 0;
 	const tabHeadings = ['published', 'unpublished', 'archived'] as const;
@@ -55,11 +54,19 @@
 		<Tabs {tabHeadings} {activeTab} {handleTabChange} />
 	</div>
 	{#if activeTab === 0}
-		<PublishedEventsTab
-			{publishedEvents}
-			handleEventRegistration={id => goto(`/admin/events/${id}/registrations/`)}
-			handleBuyOptions={id => goto(`/admin/events/${id}/buy-options/`)}
-		/>
+		{#await data.publishedEvents}
+			<LoaderCircle class=" w-16 h-16 mx-auto animate-spin" />
+		{:then publishedEvents }
+			<PublishedEventsTab
+				publishedEvents={publishedEvents?.events.map(mapEvent) ?? []}
+				handleEventRegistration={id => goto(`/admin/events/${id}/registrations/`)}
+				handleBuyOptions={id => goto(`/admin/events/${id}/buy-options/`)}
+			/>
+		{:catch error}
+			<div class=" text-center text-stone-500">
+				{error.message}
+			</div>
+		{/await}
 	{/if}
 	{#if activeTab === 1}
 		<UnpublishedEventsTab

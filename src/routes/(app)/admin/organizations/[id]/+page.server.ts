@@ -2,45 +2,41 @@ import type { Actions, PageServerLoad } from './$types';
 import {
 	generateOrgInvite,
 	getEventRegistrationsForOrganization,
-	getOrganizationDetails,
 	getOrganizationMembers,
 	getPortraitTemplates
 } from '@/services';
 import { superValidate } from 'sveltekit-superforms';
 import { valibot } from 'sveltekit-superforms/adapters';
 import { CreateOrgInviteRequestSchema } from '@schema';
-import { APP_URL } from '$env/static/private';
+import { PUBLIC_APP_URL } from '$env/static/public';
 import { fail } from '@sveltejs/kit';
+import { clerkClient, type AuthObject } from 'svelte-clerk/server';
 
 export const load: PageServerLoad = async ({ parent, params }) => {
-	const { session } = await parent();
-	if (!session?.user) return;
+	const { initialState, organizations } = await parent();
+	if (!initialState.sessionId) return;
 
-	const orgMembers = await getOrganizationMembers({
-		// @ts-expect-error we define accessToken in parent
-		accessToken: session?.accessToken,
-		slug: params.id
-	});
+	const organization = organizations?.find((org) => org.slug === params.id) || {};
 
-	const organization = await getOrganizationDetails({
-		// @ts-expect-error we define accessToken in parent
-		accessToken: session?.accessToken,
-		slug: params.id
-	});
+	const orgMembers = await getOrganizationMembers({ slug: organization.id });
 
-	const createInviteForm = await superValidate(valibot(CreateOrgInviteRequestSchema));
-	createInviteForm.data.organizationSlug = organization.slug;
-	createInviteForm.data.redirectURL = APP_URL;
+	const createInviteForm = await superValidate(
+		{
+			organizationSlug: organization.slug || initialState.orgId,
+			redirectURL: PUBLIC_APP_URL
+		},
+		valibot(CreateOrgInviteRequestSchema)
+	);
+
+	const token = await clerkClient.sessions.getToken(initialState.sessionId, 'access_token');
 
 	const { portraitTemplates } = await getPortraitTemplates({
-		// @ts-expect-error we define accessToken in parent
-		accessToken: session?.accessToken,
+		accessToken: token.jwt,
 		org: params.id
 	});
 
 	const { eventRegistrations } = await getEventRegistrationsForOrganization({
-		// @ts-expect-error we define accessToken in parent
-		accessToken: session?.accessToken,
+		accessToken: token.jwt,
 		organizationSlug: params.id
 	});
 
@@ -55,9 +51,8 @@ export const load: PageServerLoad = async ({ parent, params }) => {
 
 export const actions: Actions = {
 	createInvite: async ({ locals, request }) => {
-		const session = await locals.auth();
-		// @ts-expect-error we define accessToken in parent
-		if (!session || !session.accessToken) {
+		const session = locals.auth as unknown as AuthObject;
+		if (!session || !session.sessionId) {
 			fail(403);
 			return;
 		}
@@ -66,8 +61,10 @@ export const actions: Actions = {
 		if (!form.valid) {
 			return fail(400, { form });
 		}
-		// @ts-expect-error  we define accessToken in parent
-		await generateOrgInvite({ accessToken: session?.accessToken, data: form.data });
+
+		const token = await clerkClient.sessions.getToken(session.sessionId, 'access_token');
+
+		await generateOrgInvite({ accessToken: token.jwt, data: form.data });
 		return { form };
 	}
 };

@@ -5,40 +5,44 @@ import { error } from '@sveltejs/kit';
 import {
 	type CreateEventRegistration,
 	CreateEventRegistrationResponse,
-	GetEventRegistrationsForEventResponse,
 	GetEventRegistrationsForOrganizationResponse,
 	type GetEventRegistrationsForOrganizationResponse as responseType
 } from '@schema';
 
-export const getEventRegistrationsForEvent = async ({
-	accessToken,
-	eventId
-}: {
-	accessToken: string;
-	eventId: string;
-	status?: 'PUBLISHED' | 'UNPUBLISHED' | 'ARCHIVED';
-}) => {
-	const response = await API.get<v.InferInput<typeof GetEventRegistrationsForEventResponse>>({
-		route: `/event/${eventId}/event_registrations?page=0`,
-		token: accessToken
-	});
-	const data = await response.json();
-	return v.parse(GetEventRegistrationsForEventResponse, data);
-};
-
 export const getEventRegistrationsForOrganization = async ({
 	accessToken,
-	organizationSlug
+	organizationSlug,
+	page = '0',
+	limit = '4'
 }: {
 	accessToken: string;
 	organizationSlug: string;
+	page?: string;
+	limit?: string;
 }) => {
-	const response = await API.get<v.InferInput<responseType>>({
-		route: `/event-registration?organizationId=${organizationSlug}`,
-		token: accessToken
+	const searchParams = new URLSearchParams({
+		page,
+		limit,
+		organizationId: organizationSlug
 	});
-	const data = await response.json();
-	return v.parse(GetEventRegistrationsForOrganizationResponse, data);
+	try {
+		const response = await API.get<v.InferInput<responseType>>({
+			route: `/event-registration?${searchParams}`,
+			token: accessToken
+		});
+		const data = await response.json();
+		console.log(data);
+		return v.parse(GetEventRegistrationsForOrganizationResponse, data);
+	} catch (error) {
+		console.error(error);
+		return {
+			eventRegistrations: [],
+			totalElements: 0,
+			totalPages: 0,
+			pageNumber: 0,
+			pageSize: 10
+		};
+	}
 };
 
 export const registerContactPersonToEvent = async ({
@@ -64,38 +68,4 @@ export const registerContactPersonToEvent = async ({
 	}
 
 	return v.parse(CreateEventRegistrationResponse, data);
-};
-
-export const confirmEventRegistration = async ({
-	accessToken,
-	eventRegistrationId
-}: {
-	accessToken: string;
-	eventRegistrationId: string;
-}) => {
-	const response = await API.post({
-		route: `/event-registration/${eventRegistrationId}/confirm`,
-		token: accessToken
-	});
-
-	if (response.status !== 204) {
-		error(500, 'The registration could not be confirmed');
-	}
-};
-
-export const rejectEventRegistration = async ({
-	accessToken,
-	eventRegistrationId
-}: {
-	accessToken: string;
-	eventRegistrationId: string;
-}) => {
-	const response = await API.post({
-		route: `/event-registration/${eventRegistrationId}/reject`,
-		token: accessToken
-	});
-
-	if (response.status !== 204) {
-		error(500, 'The registration could not be rejected');
-	}
 };

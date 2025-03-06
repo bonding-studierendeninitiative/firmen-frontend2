@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { clsx } from 'clsx';
-	import { cn } from '@/utils';
+	import { cn } from '@/utils/tailwind';
 
 	export let href: string;
 </script>

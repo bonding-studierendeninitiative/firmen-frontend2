@@ -1,5 +1,4 @@
-import { activateBuyOption, deleteBuyOption, getBuyOption, updateBuyOption } from '$lib/services';
-import type { PageServerLoad } from './$types';
+import { activateBuyOption, deleteBuyOption, getBuyOption, updateBuyOption } from '@/services';
 import { superValidate } from 'sveltekit-superforms';
 import { valibot } from 'sveltekit-superforms/adapters';
 import { UpdateBuyOptionRequestSchema } from '@schema';
@@ -10,40 +9,58 @@ import {
 	getEventAddonPackages
 } from '@/services/eventAddonPackages';
 import { CreateEventAddonPackageSchema } from '@schema/eventAddonPackages';
+import { type AuthObject, clerkClient } from 'svelte-clerk/server';
 
-export const load: PageServerLoad = async ({ parent, params }) => {
-	const { session } = await parent();
-	if (!session?.user) return;
+export const load = async ({ parent, params, isDataRequest, depends }) => {
+	depends('buyOption');
 
-	const buyOption = await getBuyOption({
-		// @ts-expect-error we define accessToken in parent
-		accessToken: session?.accessToken,
-		buyOptionId: params.buyOptionId,
-		eventId: params.id
-	});
+	async function loadUpdateForm(eventId: string, buyOptionId: string) {
+		const { initialState } = await parent();
+		if (!initialState.sessionId) return;
 
-	const { addonPackages } = await getEventAddonPackages({
-		// @ts-expect-error we define accessToken in parent
-		accessToken: session?.accessToken,
-		buyOptionId: params.buyOptionId,
-		eventId: params.id
-	});
+		const token = await clerkClient.sessions.getToken(initialState.sessionId, 'access_token');
 
-	const updateForm = await superValidate(buyOption, valibot(UpdateBuyOptionRequestSchema));
-	const createAddonPackageForm = await superValidate(valibot(CreateEventAddonPackageSchema));
+		const buyOption = await getBuyOption({
+			accessToken: token.jwt,
+			buyOptionId: buyOptionId,
+			eventId
+		});
+
+		return await superValidate(buyOption, valibot(UpdateBuyOptionRequestSchema));
+	}
+
+	async function loadAddonPackages(eventId: string, buyOptionId: string) {
+		const { initialState } = await parent();
+		if (!initialState.sessionId) return;
+
+		const token = await clerkClient.sessions.getToken(initialState.sessionId, 'access_token');
+
+		const { addonPackages } = await getEventAddonPackages({
+			accessToken: token.jwt,
+			buyOptionId: buyOptionId,
+			eventId
+		});
+
+		return addonPackages;
+	}
+
+	const createAddonPackageForm = superValidate(valibot(CreateEventAddonPackageSchema));
 
 	return {
-		addonPackages,
-		updateForm,
-		createAddonPackageForm
+		addonPackages: isDataRequest
+			? loadAddonPackages(params.id, params.buyOptionId)
+			: await loadAddonPackages(params.id, params.buyOptionId),
+		updateForm: isDataRequest
+			? loadUpdateForm(params.id, params.buyOptionId)
+			: await loadUpdateForm(params.id, params.buyOptionId),
+		createAddonPackageForm: isDataRequest ? createAddonPackageForm : await createAddonPackageForm
 	};
 };
 
 export const actions = {
 	updateBuyOption: async ({ locals, request, params }) => {
-		const session = await locals.auth();
-		// @ts-expect-error we define accessToken in parent
-		if (!session || !session.accessToken) {
+		const session = locals.auth as unknown as AuthObject;
+		if (!session || !session.sessionId) {
 			fail(403);
 			return;
 		}
@@ -53,9 +70,10 @@ export const actions = {
 			return fail(400, { form });
 		}
 
+		const token = await clerkClient.sessions.getToken(session.sessionId, 'access_token');
+
 		await updateBuyOption({
-			// @ts-expect-error we define accessToken in parent
-			accessToken: session?.accessToken,
+			accessToken: token.jwt,
 			data: form.data,
 			eventId: params.id,
 			buyOptionId: params.buyOptionId
@@ -65,16 +83,16 @@ export const actions = {
 		};
 	},
 	deleteBuyOption: async ({ locals, params }) => {
-		const session = await locals.auth();
-		// @ts-expect-error we define accessToken in parent
-		if (!session || !session.accessToken) {
+		const session = locals.auth as unknown as AuthObject;
+		if (!session || !session.sessionId) {
 			fail(403);
 			return;
 		}
 
+		const token = await clerkClient.sessions.getToken(session.sessionId, 'access_token');
+
 		await deleteBuyOption({
-			// @ts-expect-error we define accessToken in parent
-			accessToken: session?.accessToken,
+			accessToken: token.jwt,
 			eventId: params.id,
 			buyOptionId: params.buyOptionId
 		});
@@ -82,24 +100,23 @@ export const actions = {
 		redirect(302, `/admin/events/${params.id}/buy-options`);
 	},
 	activateBuyOption: async ({ locals, params }) => {
-		const session = await locals.auth();
-		// @ts-expect-error we define accessToken in parent
-		if (!session || !session.accessToken) {
+		const session = locals.auth as unknown as AuthObject;
+		if (!session || !session.sessionId) {
 			fail(403);
 			return;
 		}
 
+		const token = await clerkClient.sessions.getToken(session.sessionId, 'access_token');
+
 		await activateBuyOption({
 			buyOptionId: params.buyOptionId,
 			eventId: params.id,
-			// @ts-expect-error we define accessToken in parent
-			accessToken: session?.accessToken
+			accessToken: token.jwt
 		});
 	},
 	createAddonPackage: async ({ locals, params, request }) => {
-		const session = await locals.auth();
-		// @ts-expect-error we define accessToken in parent
-		if (!session || !session.accessToken) {
+		const session = locals.auth as unknown as AuthObject;
+		if (!session || !session.sessionId) {
 			fail(403);
 			return;
 		}
@@ -109,9 +126,10 @@ export const actions = {
 			return fail(400, { form });
 		}
 
+		const token = await clerkClient.sessions.getToken(session.sessionId, 'access_token');
+
 		await createEventAddonPackage({
-			// @ts-expect-error we define accessToken in parent
-			accessToken: session?.accessToken,
+			accessToken: token.jwt,
 			data: form.data,
 			buyOptionId: params.buyOptionId,
 			eventId: params.id
@@ -121,9 +139,8 @@ export const actions = {
 		};
 	},
 	deleteAddonPackage: async ({ locals, params: { buyOptionId, id }, request }) => {
-		const session = await locals.auth();
-		// @ts-expect-error we define accessToken in parent
-		if (!session || !session.accessToken) {
+		const session = locals.auth as unknown as AuthObject;
+		if (!session || !session.sessionId) {
 			fail(403);
 			return;
 		}
@@ -136,9 +153,10 @@ export const actions = {
 			return;
 		}
 
+		const token = await clerkClient.sessions.getToken(session.sessionId, 'access_token');
+
 		await deleteEventAddonPackage({
-			// @ts-expect-error we define accessToken in parent
-			accessToken: session?.accessToken,
+			accessToken: token.jwt,
 			addonPackageId,
 			buyOptionId,
 			eventId: id

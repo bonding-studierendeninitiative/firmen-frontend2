@@ -13,7 +13,7 @@
 	import { _ } from '@services';
 	import { Textarea } from '@/components/ui/textarea';
 	import { CheckIcon, FileIcon, FileImage, MessageCircleX, RefreshCwIcon, Shield } from 'lucide-svelte';
-	import CatalogueDataPreview from '@/@svelte/modules/ReviewCatalogueData/CatalogueDataPreview.svelte';
+	import { CatalogueDataPreview } from '@/@svelte/components';
 
 	export let isOpen: boolean;
 	export let id: string;

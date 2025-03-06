@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { Button, Control, Field, FieldErrors, Label } from '@/components/ui/form';
 	import { Separator } from '@/components/ui/separator';
-	import { type Infer, superForm, type SuperValidated } from 'sveltekit-superforms';
+	import SuperDebug, { type Infer, superForm, type SuperValidated } from 'sveltekit-superforms';
 	import { Input } from '@/components/ui/input';
 	import { _ } from '@services';
 	import * as Dialog from '@/components/ui/dialog';
@@ -14,6 +14,7 @@
 
 	const superform = superForm<Infer<CreateBillingAddressTemplateForm>>(createBillingAddressTemplateForm, {
 		validators: valibotClient(formSchema),
+		dataType: 'json',
 		onResult({ result }) {
 			if (result.type === 'success') {
 				open = false;
@@ -101,6 +102,7 @@
 				>{$_('modules.add-billing-address-template.addAddress')}</Button
 				>
 			</Dialog.Footer>
+	<SuperDebug data={formData} />
 		</Dialog.Content>
 	</form>
 </Dialog.Root>

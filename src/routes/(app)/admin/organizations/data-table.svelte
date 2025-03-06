@@ -7,10 +7,10 @@
 	import { DataTableFacetedFilter, SearchInput } from '@/@svelte/components';
 	import DataTableActions from './data-table-actions.svelte';
 	import DataTableCheckbox from './data-table-checkbox.svelte';
-	import type { GetOrgDetailsResponse } from '@schema';
 	import { Building, Network, Star } from 'lucide-svelte';
+	import type { getOrgs } from '@/services';
 
-	export let data: GetOrgDetailsResponse[] = [];
+	export let data: Awaited<ReturnType<typeof getOrgs>> = [];
 	const table = createTable(readable(data), {
 		filter: addTableFilter({
 			fn: ({ value, filterValue }) => value.toLowerCase().includes(filterValue.toLowerCase())
@@ -36,8 +36,8 @@
 	const counts = data.reduce<{
 		type: { [index: string]: number };
 	}>(
-		(acc, { organizationType }) => {
-			acc.type[organizationType] = (acc.type[organizationType] || 0) + 1;
+		(acc, { publicMetadata }) => {
+			acc.type[publicMetadata?.type] = (acc.type[publicMetadata?.type] || 0) + 1;
 			return acc;
 		},
 		{
@@ -73,15 +73,11 @@
 			header: $_(`admin-pages.organizations.data-table.headers.name`)
 		}),
 		table.column({
-			accessor: 'organizationPhone',
-			header: $_(`admin-pages.organizations.data-table.headers.phone`)
+			accessor: 'membersCount',
+			header: $_(`admin-pages.organizations.data-table.headers.members-count`)
 		}),
 		table.column({
-			accessor: 'organizationEmail',
-			header: $_(`admin-pages.organizations.data-table.headers.email`)
-		}),
-		table.column({
-			accessor: ({ createdAt, modifiedAt }) => dayjs(modifiedAt ?? createdAt).fromNow(),
+			accessor: ({ createdAt }) => dayjs(createdAt).fromNow(),
 			header: $_(`admin-pages.organizations.data-table.headers.last-modified`),
 			plugins: {
 				filter: {
@@ -90,11 +86,11 @@
 			}
 		}),
 		table.column({
-			accessor: 'organizationType',
+			accessor: ({ publicMetadata }) => publicMetadata?.type,
 			id: 'organizationType',
 			header: $_(`admin-pages.organizations.data-table.headers.type`),
 			cell: ({ value }) => {
-				return $_(`common.org-types.${value}`)
+				return $_(`common.org-types.${value}`);
 			},
 			plugins: {
 				filter: {

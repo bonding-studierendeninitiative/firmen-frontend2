@@ -1,10 +1,10 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { _ } from '@services';
-	import { Tabs } from '$lib/@svelte/components';
-	import { ReturnIcon, CalenderIcon, LocationIcon } from '$lib/@svelte/icons';
-	import { CompanyInformationTab, PortraitTab } from '$lib/@svelte/pages';
-	import UploadsTab from '$lib/@svelte/pages/Events/UploadsTab/UploadsTab.svelte';
+	import { Tabs } from '@/@svelte/components';
+	import { ReturnIcon, CalenderIcon, LocationIcon } from '@/@svelte/icons';
+	import { CompanyInformationTab, PortraitTab } from '@/@svelte/pages';
+	import UploadsTab from '../../../../../../lib/@svelte/pages/Events/UploadsTab/UploadsTab.svelte';
 	import { Button } from '@/components/ui/button';
 
 	let activeTab = 0;

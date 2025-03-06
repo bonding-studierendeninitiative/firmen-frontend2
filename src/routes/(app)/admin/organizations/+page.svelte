@@ -1,12 +1,11 @@
 <script lang="ts">
 	import { _ } from '@services';
-	import type { PageServerData } from './$types';
+	import type { LayoutServerData, PageServerData } from './$types';
 	import DataTable from './data-table.svelte';
 
 	export let data: PageServerData;
 
-	const organizations = data?.organizations;
-
+	console.log(data);
 </script>
 
 <div>
@@ -16,6 +15,6 @@
 		</h1>
 	</section>
 	<section class=" mt-10">
-		<DataTable data={organizations} />
+		<DataTable data={data?.organizations} />
 	</section>
 </div>

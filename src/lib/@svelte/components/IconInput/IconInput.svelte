@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { ErrorMessage } from '../ErrorMessage';
-	import { cn } from '@/utils';
+	import { cn } from '@/utils/tailwind';
 
 	type HandleInputType = undefined | { (e: any): void };
 	export let required: boolean = false;

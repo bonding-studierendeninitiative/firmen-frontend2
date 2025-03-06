@@ -48,10 +48,7 @@ export const GetEventAddonPackagesResponseSchema = v.object({
 			...v.object({ id: v.string() }).entries
 		})
 	),
-	totalElements: v.number(),
-	totalPages: v.number(),
-	pageNumber: v.number(),
-	pageSize: v.number()
+	totalElements: v.number()
 });
 
 export type GetEventAddonPackagesResponse = typeof GetEventAddonPackagesResponseSchema;

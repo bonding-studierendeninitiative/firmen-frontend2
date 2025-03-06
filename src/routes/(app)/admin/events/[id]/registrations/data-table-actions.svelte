@@ -1,23 +1,40 @@
 <script lang="ts">
 	import Ellipsis from 'lucide-svelte/icons/ellipsis';
-	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
-	import { Button } from '$lib/components/ui/button';
+	import ReviewRegistrationForm from './review-registration-form.svelte';
+	import * as DropdownMenu from '@/components/ui/dropdown-menu';
+	import { Button } from '@/components/ui/button';
 	import type {
-		EventRegistration, OrgEventRegistration
+		EventRegistration, GetEventRegistrationsForEventResponse
 	} from '@schema';
 	import { ConfirmEventRegistration, RejectEventRegistration, ReviewCatalogueData } from '@/@svelte/modules';
 	import type { InferOutput } from 'valibot';
 	import { _ } from '@services';
+	import { getContext } from 'svelte';
 
 	export let id: string;
-	export let eventRegistration: InferOutput<EventRegistration>;
+	export let eventRegistration: InferOutput<GetEventRegistrationsForEventResponse>['eventRegistrations'][number];
+	let rejectForm = getContext('rejectForm');
+	let confirmForm = getContext('confirmForm');
 	let isConfirmOpen = false;
 	let isRejectOpen = false;
 	let isReviewCatalogueDataOpen = false;
 </script>
 
-<ConfirmEventRegistration {eventRegistration} {id} bind:isOpen={isConfirmOpen} />
-<RejectEventRegistration {id} bind:isOpen={isRejectOpen} />
+{#await confirmForm}
+	<div></div>
+{:then form}
+	<!--<ReviewRegistrationForm />-->
+	<ConfirmEventRegistration confirmForm={form} {eventRegistration} {id} bind:isOpen={isConfirmOpen} />
+{:catch error}
+	<div>{error.message}</div>
+{/await}
+{#await rejectForm}
+	<div></div>
+{:then form}
+	<RejectEventRegistration rejectForm={form} {id} bind:isOpen={isRejectOpen} />
+{:catch error}
+	<div>{error.message}</div>
+{/await}
 <ReviewCatalogueData {eventRegistration} {id} bind:isOpen={isReviewCatalogueDataOpen} />
 
 <DropdownMenu.Root>
