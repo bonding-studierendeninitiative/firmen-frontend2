@@ -9,15 +9,15 @@
 	$: tabs = [
 		{
 			name: 'catalogue-data-portraits',
-			href: `/${data.initialState.orgSlug}/catalogue-data/portraits`
+			href: `/${data.orgSlug}/catalogue-data/portraits`
 		},
 		{
 			name: 'catalogue-data-logos',
-			href: `/${data.initialState.orgSlug}/catalogue-data/logos`
+			href: `/${data.orgSlug}/catalogue-data/logos`
 		},
 		{
 			name: 'catalogue-data-adverts',
-			href: `/${data.initialState.orgSlug}/catalogue-data/adverts`
+			href: `/${data.orgSlug}/catalogue-data/adverts`
 		}
 	];
 </script>

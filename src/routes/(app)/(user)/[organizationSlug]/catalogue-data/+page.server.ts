@@ -1,11 +1,10 @@
 import { redirect } from '@sveltejs/kit';
 
 export async function load({ parent }) {
-	const { initialState, organization } = await parent();
-	if (!initialState.orgId) {
+	const { initialState } = await parent();
+	if (!initialState.orgSlug) {
 		return;
 	}
 
-	const org = await organization;
-	redirect(302, `/${org.slug}/catalogue-data/portraits`);
+	redirect(302, `/${initialState.orgSlug}/catalogue-data/portraits`);
 }
