@@ -1,7 +1,7 @@
 import * as v from 'valibot';
 
 export const CreateOrgInviteRequestSchema = v.object({
-	organizationSlug: v.string(),
+	organizationID: v.string(),
 	userMail: v.pipe(
 		v.string(),
 		v.nonEmpty('Please provide an email address'),
