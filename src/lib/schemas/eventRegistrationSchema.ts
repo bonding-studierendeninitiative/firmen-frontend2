@@ -142,17 +142,18 @@ export const GetEventRegistrationsForEventResponse = v.object({
 			modifiedAt: v.nullable(v.pipe(v.string(), v.isoTimestamp())),
 			organizationComment: v.nullable(v.string()),
 			participationNote: v.nullable(v.string()),
-			userId: v.string(),
 			organizationId: v.string(),
 			status: v.string(),
 			portraitStatus: v.string(),
 			logoStatus: v.string(),
 			advertisementStatus: v.string(),
 			addonPackages: v.array(EventRegistrationAddonPackageSchema),
-			purchasedPackage: v.object({
-				price: v.number(),
-				name: v.string()
-			}),
+			purchasedPackage: v.nullable(
+				v.object({
+					price: v.nullable(v.number()),
+					name: v.nullable(v.string())
+				})
+			),
 			advertisement: v.nullish(
 				v.object({
 					status: v.string(),
@@ -189,3 +190,12 @@ export const GetEventRegistrationsForOrganizationResponse = v.object({
 
 export type GetEventRegistrationsForOrganizationResponse =
 	typeof GetEventRegistrationsForOrganizationResponse;
+
+export const AdminRegisterOrganizationToEventSchema = v.object({
+	eventId: v.pipe(v.string(), v.nonEmpty()),
+	organizationId: v.pipe(v.string(), v.nonEmpty()),
+	contactPeople: v.array(v.pipe(v.string(), v.nonEmpty())),
+	canUploadAdvertisement: v.boolean()
+});
+
+export type AdminRegisterOrganizationToEvent = typeof AdminRegisterOrganizationToEventSchema;

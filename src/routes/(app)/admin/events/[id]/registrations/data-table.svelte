@@ -27,7 +27,8 @@
 		GetEventRegistrationsForEventResponse
 	} from '@schema';
 	import { getContext } from 'svelte';
-	import { type Infer, superForm, type SuperValidated } from 'sveltekit-superforms';
+	import { type Infer, type SuperValidated } from 'sveltekit-superforms';
+	import CreateEventRegistrationForm from './create-event-registration-form.svelte';
 
 	export let data: InferOutput<GetEventRegistrationsForEventResponse>['eventRegistrations'];
 	export let packages: string[] = [];
@@ -35,7 +36,6 @@
 	export let addonPackages: string[] = [];
 	export let addons: string[] = [];
 
-	console.log("DataTable:", {data, packages, status, addonPackages, addons});
 	let exportCatalogueDataForm: SuperValidated<Infer<ExportCatalogueDataRequest>> = getContext('exportCatalogueDataForm');
 
 	let table = createTable(readable(data), {
@@ -52,6 +52,8 @@
 		})
 	});
 
+	let open = false;
+
 	$: counts = data.reduce<{
 		package: { [index: string]: number };
 		status: { [index: string]: number };
@@ -59,7 +61,9 @@
 		addons: { [index: string]: number };
 	}>(
 		(acc, { purchasedPackage, status, addonPackages }) => {
-			acc.package[purchasedPackage.name] = (acc.package[purchasedPackage.name] || 0) + 1;
+			if (purchasedPackage?.name) {
+				acc.package[purchasedPackage?.name] = (acc.package[purchasedPackage?.name] || 0) + 1;
+			}
 			if (status) {
 				acc.status[status] = (acc.status[status] || 0) + 1;
 			}
@@ -105,17 +109,22 @@
 			}
 		}),
 		table.column({
-			accessor: ({ organization }) => organization,
+			accessor: "organization",
 			header: $_('admin-pages.events.event-registrations.data-table.headers.org'),
 			id: 'organization',
 			cell: ({ value }) => {
 				return createRender(SimpleEventRegistrationOrganization, {
-					organization: value,
-				})
+					organization: value
+				});
+			},
+			plugins: {
+				filter: {
+					getFilterValue: ({name}) => name,
+				}
 			}
 		}),
 		table.column({
-			accessor: ({ purchasedPackage }) => purchasedPackage.name,
+			accessor: ({ purchasedPackage }) => purchasedPackage?.name ?? $_("admin-pages.events.event-registrations.data-table.packages.no-package"),
 			header: $_('admin-pages.events.event-registrations.data-table.headers.package'),
 			id: 'package',
 			plugins: {
@@ -135,12 +144,15 @@
 			}
 		}),
 		table.column({
-			accessor: ({ createdAt, modifiedAt }) => dayjs(modifiedAt ?? createdAt, {}, $locale ?? 'de').fromNow(),
+			accessor: ({ createdAt, modifiedAt }) => modifiedAt ?? createdAt,
 			header: $_('admin-pages.events.event-registrations.data-table.headers.last-modified'),
 			plugins: {
 				filter: {
 					exclude: true
 				}
+			},
+			cell({ value }) {
+				return dayjs(value, {}, $locale ?? 'de').fromNow()
 			}
 		}),
 		table.column({
@@ -221,7 +233,6 @@
 				},
 				addonPackageFilter: {
 					fn: ({ filterValue, value }) => {
-						console.log({ filterValue, value });
 						if (filterValue.length === 0) return true;
 						if (!Array.isArray(filterValue) || !Array.isArray(value)) return true;
 						return filterValue.some((filter) => {
@@ -314,6 +325,7 @@
 			})).map(({ id }) => {
 				return $pageRows.find((row) => row.isData() && row.dataId === id)?.original.id;
 			})} />
+	<CreateEventRegistrationForm bind:open />
 </section>
 <section class="mt-10">
 	<div class="rounded-md border">

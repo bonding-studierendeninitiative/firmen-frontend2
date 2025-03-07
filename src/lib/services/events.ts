@@ -4,7 +4,9 @@ import {
 	type GetEventsResponse,
 	GetEventsResponseSchema,
 	EventDetailsResponseSchema,
-	type EventDetailsResponse
+	type EventDetailsResponse,
+	type GetBuyOptionResponse,
+	GetBuyOptionResponseSchema
 } from '@schema';
 import { error } from '@sveltejs/kit';
 
@@ -75,18 +77,17 @@ export const getEvent = async ({
 	return parse(EventDetailsResponseSchema, data);
 };
 
-export const publishEvent = async ({
-	eventId,
-	accessToken
+export const getActiveBuyOption = async ({
+	accessToken,
+	eventId
 }: {
-	eventId: string;
 	accessToken: string;
+	eventId: string;
 }) => {
-	const response = await API.post({
-		route: `/event/${eventId}/publish`,
+	const response = await API.get<InferInput<GetBuyOptionResponse>>({
+		route: `/event/${eventId}/active-buy-option`,
 		token: accessToken
 	});
-	if (response.status !== 204) {
-		error(400, response.statusText);
-	}
+	const data = await response.json();
+	return parse(GetBuyOptionResponseSchema, data);
 };

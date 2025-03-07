@@ -5,52 +5,9 @@ import { error } from '@sveltejs/kit';
 import {
 	type CreateEventRegistration,
 	CreateEventRegistrationResponse,
-	GetEventRegistrationsForEventResponse,
 	GetEventRegistrationsForOrganizationResponse,
 	type GetEventRegistrationsForOrganizationResponse as responseType
 } from '@schema';
-import { clerkClient } from 'svelte-clerk/server';
-
-export const getEventRegistrationsForEvent = async ({
-	accessToken,
-	eventId
-}: {
-	accessToken: string;
-	eventId: string;
-	status?: 'PUBLISHED' | 'UNPUBLISHED' | 'ARCHIVED';
-}) => {
-	const response = await API.get<v.InferInput<typeof GetEventRegistrationsForEventResponse>>({
-		route: `/event/${eventId}/event_registrations?page=0`,
-		token: accessToken
-	});
-	const data = await response.json();
-	const { eventRegistrations, totalPages, totalElements, pageNumber, pageSize } = v.parse(
-		GetEventRegistrationsForEventResponse,
-		data
-	);
-	return {
-		eventRegistrations: await Promise.all(
-			eventRegistrations.map(async (eventRegistration) => {
-				const org = await clerkClient.organizations.getOrganization({
-					organizationId: eventRegistration.organizationId
-				});
-
-				return {
-					...eventRegistration,
-					organization: {
-						name: org.name,
-						address: 'no address found',
-						logo: org.imageUrl
-					}
-				};
-			})
-		),
-		totalElements,
-		totalPages,
-		pageNumber,
-		pageSize
-	};
-};
 
 export const getEventRegistrationsForOrganization = async ({
 	accessToken,
@@ -110,38 +67,4 @@ export const registerContactPersonToEvent = async ({
 	}
 
 	return v.parse(CreateEventRegistrationResponse, data);
-};
-
-export const confirmEventRegistration = async ({
-	accessToken,
-	eventRegistrationId
-}: {
-	accessToken: string;
-	eventRegistrationId: string;
-}) => {
-	const response = await API.post({
-		route: `/event-registration/${eventRegistrationId}/confirm`,
-		token: accessToken
-	});
-
-	if (response.status !== 204) {
-		error(500, 'The registration could not be confirmed');
-	}
-};
-
-export const rejectEventRegistration = async ({
-	accessToken,
-	eventRegistrationId
-}: {
-	accessToken: string;
-	eventRegistrationId: string;
-}) => {
-	const response = await API.post({
-		route: `/event-registration/${eventRegistrationId}/reject`,
-		token: accessToken
-	});
-
-	if (response.status !== 204) {
-		error(500, 'The registration could not be rejected');
-	}
 };

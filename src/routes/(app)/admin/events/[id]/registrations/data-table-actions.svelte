@@ -23,8 +23,8 @@
 {#await confirmForm}
 	<div></div>
 {:then form}
-	<ReviewRegistrationForm />
-<!--<ConfirmEventRegistration confirmForm={form} {eventRegistration} {id} bind:isOpen={isConfirmOpen} />-->
+	<!--<ReviewRegistrationForm />-->
+	<ConfirmEventRegistration confirmForm={form} {eventRegistration} {id} bind:isOpen={isConfirmOpen} />
 {:catch error}
 	<div>{error.message}</div>
 {/await}

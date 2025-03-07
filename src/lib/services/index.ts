@@ -9,3 +9,5 @@ export * from './catalogueData';
 export * from './billingAddressTemplates';
 export * from './advertisements';
 export * from './logos';
+export * from './adminEventRegistrations';
+export * from './adminEvents';
