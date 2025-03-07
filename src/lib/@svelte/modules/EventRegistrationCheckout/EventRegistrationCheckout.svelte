@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { _, locale } from '@services';
-	import { AddonList, Modal } from '@/@svelte/components';
+	import { AddonList, LocalizedDate, Modal } from '@/@svelte/components';
 	import { Input } from '@/components/ui/input';
 	import { Button } from '@/components/ui/button';
 	import { FilledCheckIcon } from '@/@svelte/icons';
@@ -414,7 +414,6 @@
 				{#each buyOption?.eventDays as day}
 					{@const dayjsData = dayjs(day.dayDate, { locale: $locale ?? "de-DE" })}
 					{@const dayName = dayjsData.format("dddd")}
-					{@const dayDate = dayjsData.format("LL")}
 					<Label
 						for={day.dayDate}
 						class="border-muted bg-popover cursor-pointer hover:bg-accent hover:text-accent-foreground [&:has([data-state=on])]:border-primary [&:has([disabled])]:cursor-not-allowed rounded-md border-2 p-4">
@@ -425,9 +424,9 @@
 							<div>
 								<div class="flex items-center gap-2 mb-2">
 									<CalendarDays class="h-5 w-5 text-muted-foreground" />
-									<span class="font-medium text-lg text-nowrap">{dayDate}</span>
+									<LocalizedDate date={day.dayDate} format="LL" class="font-medium text-lg text-nowrap" />
 								</div>
-								<p class="text-muted-foreground text-nowrap">{dayName}</p>
+								<LocalizedDate date={day.dayDate} format="dddd" class="text-muted-foreground text-nowrap" />
 							</div>
 							{#if $formData.selectedEventDays.includes(day.dayDate)}
 								<div

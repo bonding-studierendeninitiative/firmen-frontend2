@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { CalenderIcon, LocationIcon } from '@/@svelte/icons';
-	import { dayjs, locale } from '@services';
+	import { LocalizedDate } from '@/@svelte/components';
 
 	export let event:
 		| {
@@ -16,8 +16,10 @@
 	<div class=" flex mt-2">
 		<div class=" flex items-center mr-2">
 			<CalenderIcon />
-			<p
-				class=" ml-2 text-sm text-stone-800 font-medium">{dayjs(event?.dateFrom, { locale: $locale ?? "de" }).format('ll')}</p>
+			<LocalizedDate date={event?.dateFrom}
+										 format="medium"
+										 hoverFormat="relative"
+										 class=" ml-2 text-sm text-stone-800 font-medium" />
 		</div>
 		<div class=" flex items-center">
 			<LocationIcon />

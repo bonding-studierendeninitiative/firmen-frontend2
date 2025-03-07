@@ -8,6 +8,7 @@
 	import { ClerkProvider } from 'svelte-clerk';
 	import { deDE, enUS } from '@clerk/localizations';
 	import { PUBLIC_CLERK_PUBLISHABLE_KEY } from '$env/static/public';
+	import { blur } from 'svelte/transition';
 
 	onMount(() => {
 		document.dir = $dir;
@@ -24,9 +25,11 @@
 		</div>
 	</div>
 {:else}
-	<ClerkProvider publishableKey={PUBLIC_CLERK_PUBLISHABLE_KEY} localization={$locale === 'de' ? deDE : enUS}>
+	<div in:blur>
+		<ClerkProvider publishableKey={PUBLIC_CLERK_PUBLISHABLE_KEY} localization={$locale === 'de' ? deDE : enUS}>
 			<slot />
-	</ClerkProvider>
-	<SuperDebug data={page} />
+		</ClerkProvider>
+		<SuperDebug data={page} />
+	</div>
 {/if}
 <Toaster containerClassName="mr-7 mb-16" position="bottom-right" {toastOptions} />

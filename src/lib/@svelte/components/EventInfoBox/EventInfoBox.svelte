@@ -1,9 +1,8 @@
 <script lang="ts">
 	import { _ } from '@services';
 	import { CalenderIcon } from '$lib/@svelte/icons';
-	import { Link } from '@/@svelte/components';
+	import { LocalizedDate } from '@/@svelte/components';
 	import { Button } from '@/components/ui/button';
-	import Ellipsis from 'lucide-svelte/icons/ellipsis';
 
 	export let heading: string;
 	export let subHeading: string;
@@ -18,7 +17,7 @@
 	<div class=" flex justify-between items-center mt-5">
 		<div class=" flex items-center">
 			<CalenderIcon />
-			<p class=" ml-2 text-sm text-stone-800 font-medium">{date}</p>
+			<LocalizedDate date={date} format="short" hoverFormat="none" class=" ml-2 text-sm text-stone-800 font-medium" />
 		</div>
 		<a {href}><Button>{$_(`common.${buttonText}`)}</Button></a>
 	</div>

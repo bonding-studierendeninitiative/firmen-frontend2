@@ -10,9 +10,12 @@ export const APIEvent = v.object({
 });
 
 export const GetEventsResponseSchema = v.object({
-	events: v.array(APIEvent),
+	data: v.array(APIEvent),
 	totalElements: v.number(),
-	totalPages: v.number()
+	totalPages: v.number(),
+	page: v.number(),
+	size: v.number(),
+	status: v.nullish(v.array(v.string()))
 });
 export type GetEventsResponse = typeof GetEventsResponseSchema;
 

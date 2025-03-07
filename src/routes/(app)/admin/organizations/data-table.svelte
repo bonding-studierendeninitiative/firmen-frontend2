@@ -1,18 +1,16 @@
 <script lang="ts">
 	import { createTable, Subscribe, Render, createRender } from 'svelte-headless-table';
-	import { _, dayjs } from '@services';
+	import { _ } from '@services';
 	import { addColumnFilters, addPagination, addSelectedRows, addTableFilter, addSortBy } from 'svelte-headless-table/plugins';
 	import * as Table from '@/components/ui/table';
 	import { get, readable, writable } from 'svelte/store';
-	import { DataTableFacetedFilter, Input, SearchInput } from '@/@svelte/components';
+	import { Input, LocalizedDate, SearchInput } from '@/@svelte/components';
 	import DataTableActions from './data-table-actions.svelte';
 	import DataTableCheckbox from './data-table-checkbox.svelte';
-	import { Building, Network, Star } from 'lucide-svelte';
 	import type { getOrgs } from '@/services';
 	import { Button } from '$lib/components/ui/button';
 	import { CirclePlus } from 'lucide-svelte';
 	import * as Select from "$lib/components/ui/select";
-
 	import * as Dialog from '$lib/components/ui/dialog';
 	import SuperDebug, { superForm, type SuperValidated } from 'sveltekit-superforms';
 	import type { InferOutput } from 'valibot';
@@ -102,9 +100,12 @@
 			header: $_(`admin-pages.organizations.data-table.headers.members-count`)
 		}),
 		table.column({
-			accessor: ({ createdAt }) => dayjs(createdAt).fromNow(),
+			accessor: ({ createdAt }) => createdAt,
 			header: $_(`admin-pages.organizations.data-table.headers.last-modified`),
 			id: "created_at",
+			cell: ({ value }) => {
+				return createRender(LocalizedDate, {date: value, format: "relative"});
+			},
 			plugins: {
 				filter: {
 					exclude: true

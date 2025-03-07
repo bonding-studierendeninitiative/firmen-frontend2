@@ -12,12 +12,13 @@
 		LocationIcon
 	} from '@/@svelte/icons';
 	import { number } from '@services/i18n';
-	import { AddonList } from '@/@svelte/components';
+	import { AddonList, LocalizedDate } from '@/@svelte/components';
 	import type { InferOutput } from 'valibot';
 	import type { GetAddonPackageTemplateResponse } from '@schema';
 	import { Label } from '@/components/ui/label';
 	import { CalendarDays, Check, Users } from 'lucide-svelte';
 	import { Progress } from '@/components/ui/progress';
+	import { LocalizedDateRange } from '@/@svelte/components/LocalizedDateRange';
 
 	export let event;
 	export let buyOption;
@@ -68,14 +69,11 @@
 					<div class=" flex items-center mr-2">
 						<CalenderIcon />
 						{#if event?.dateTo && dayjs(event?.dateFrom) !== dayjs(event?.dateTo)}
-							<p class=" ml-2 text-sm text-stone-800 font-medium">
-								{dayjs(event?.dateFrom, { locale: $locale ?? 'de-DE' }).format('L')}
-								- {dayjs(event?.dateTo, { locale: $locale ?? 'de-DE' }).format('L')}
-							</p>
+							<LocalizedDateRange class=" ml-2 text-sm text-stone-800 font-medium" format="short" hoverFormat="none"
+																	dateFrom={event?.dateFrom} dateTo={event?.dateTo} />
 						{:else}
-							<p class=" ml-2 text-sm text-stone-800 font-medium">
-								{dayjs(event?.dateFrom, { locale: $locale ?? 'de-DE' }).format('L')}
-							</p>
+							<LocalizedDate class=" ml-2 text-sm text-stone-800 font-medium" format="short" hoverFormat="none"
+														 date={event?.dateFrom} />
 						{/if}
 					</div>
 					<div class=" flex items-center">
@@ -176,7 +174,7 @@
 			<div class="my-4">
 				<Tabs.Root bind:value={selectedAmountOfParticipationDays}>
 					<Tabs.List>
-						{#each buyOption.eventDays as _someDay, dayIndex}
+						{#each buyOption?.eventDays as _someDay, dayIndex}
 							<Tabs.Trigger value={(dayIndex + 1).toString()}>{$_('user-pages.events.sign-up-days.days', {
 								values: { days: (dayIndex + 1).toString() }
 							})}</Tabs.Trigger>
@@ -197,7 +195,6 @@
 				{#each buyOption?.eventDays as day}
 					{@const dayjsData = dayjs(day.dayDate, { locale: $locale ?? "de-DE" })}
 					{@const dayName = dayjsData.format("dddd")}
-					{@const dayDate = dayjsData.format("LL")}
 					<Label
 						for={day.dayDate}
 						class="border-muted bg-popover cursor-pointer hover:bg-accent hover:text-accent-foreground [&:has([data-state=on])]:border-primary [&:has([disabled])]:cursor-not-allowed rounded-md border-2 p-4">
@@ -208,9 +205,11 @@
 							<div>
 								<div class="flex items-center gap-2 mb-2">
 									<CalendarDays class="h-5 w-5 text-muted-foreground" />
-									<span class="font-medium text-lg text-nowrap">{dayDate}</span>
+									<LocalizedDate format="LL" hoverFormat="none" date={day.dayDate}
+																 class="font-medium text-lg text-nowrap" />
 								</div>
-								<p class="text-muted-foreground text-nowrap">{dayName}</p>
+								<LocalizedDate format="dddd" hoverFormat="none" date={day.dayDate}
+															 class="text-muted-foreground text-nowrap" />
 							</div>
 							{#if selectedEventDays.includes(day.dayDate)}
 								<div
