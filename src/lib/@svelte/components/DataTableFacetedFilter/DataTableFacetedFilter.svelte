@@ -1,6 +1,5 @@
 <script lang="ts">
-	import PlusCircled from 'svelte-radix/PlusCircled.svelte';
-	import Check from 'svelte-radix/Check.svelte';
+ 	import Check from 'svelte-radix/Check.svelte';
 	import { Button } from '@/components/ui/button';
 	import * as Popover from '@/components/ui/popover';
 	import * as Command from '@/components/ui/command';
@@ -9,6 +8,7 @@
 	import { cn } from '@/utils/tailwind';
 	import { _ } from '@services';
 	import type { Component } from 'svelte-eslint-parser/lib/parser/svelte-ast-types-for-v5';
+	import { Filter } from 'lucide-svelte';
 
 	type Options = {
 		label: string;
@@ -33,8 +33,8 @@
 
 <Popover.Root bind:open>
 	<Popover.Trigger asChild let:builder>
-		<Button builders={[builder]} variant="outline" size="sm" class="h-8 border-dashed">
-			<PlusCircled class="mr-2 h-4 w-4" />
+		<Button builders={[builder]} variant="outline" class="border">
+			<Filter class="mr-2 h-4 w-4" />
 			{title}
 
 			{#if filterValues?.length > 0}

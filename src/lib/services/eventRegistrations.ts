@@ -74,7 +74,6 @@ export const getEventRegistrationsForOrganization = async ({
 			token: accessToken
 		});
 		const data = await response.json();
-		console.log(data);
 		return v.parse(GetEventRegistrationsForOrganizationResponse, data);
 	} catch (error) {
 		console.error(error);

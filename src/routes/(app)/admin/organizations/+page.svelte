@@ -1,11 +1,13 @@
 <script lang="ts">
 	import { _ } from '@services';
-	import type { LayoutServerData, PageServerData } from './$types';
 	import DataTable from './data-table.svelte';
+	import SuperDebug, { type SuperValidated } from 'sveltekit-superforms';
+	import type { InferOutput } from 'valibot';
+	import type { CreateOrgRequest } from '@schema';
+	import { LoaderCircle } from 'lucide-svelte';
 
-	export let data: PageServerData;
-
-	console.log(data);
+	export let data;
+	let createOrgForm: SuperValidated<InferOutput<CreateOrgRequest>> | undefined =data.createForm;
 </script>
 
 <div>
@@ -15,6 +17,12 @@
 		</h1>
 	</section>
 	<section class=" mt-10">
-		<DataTable data={data?.organizations} />
+		{#await data.organizationInfo}
+			<LoaderCircle class="w-10 h-10 mx-auto animate-spin" />
+		{:then organizationInfo}
+			<DataTable organizations={organizationInfo?.organizations} {createOrgForm}/>
+		{:catch error}
+			<p>{error.message}</p>
+		{/await}
 	</section>
 </div>

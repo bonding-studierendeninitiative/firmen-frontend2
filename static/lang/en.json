@@ -118,7 +118,7 @@
     "org-types": {
       "nonprofit": "Nonprofit",
       "company": "Company",
-      "other": "Organization"
+      "other": "Other"
     },
     "next": "Next",
     "previous": "Previous",
@@ -130,7 +130,8 @@
     },
     "confirm": "Confirm",
     "request-changes": "Request changes",
-    "reject": "Reject"
+    "reject": "Reject",
+    "create": "Create"
   },
   "components": {
     "addonPackage": {
@@ -296,7 +297,9 @@
     "event": "Event",
     "location": "Location",
     "role": "Role",
-    "joined": "Joined"
+    "joined": "Joined",
+    "firstName": "First Name",
+    "lastName": "Last Name"
   },
   "breadcrumbs": {
     "events": "Events"
@@ -603,6 +606,11 @@
       "federalState": "Federal State",
       "organizationPhone": "Phone Number",
       "organizationEmail": "Email Address",
+      "createOrganization": "Create organization",
+      "createOrganizationDescription": "Here you can create a new organisation",
+      "createOrgSuccess": "Organisation created successfully",
+      "ownerMail": "Mail of Owner",
+      "createdBy": "Created by",
       "members": {
         "owner": "Owner",
         "member": "Member",

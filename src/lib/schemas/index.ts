@@ -13,3 +13,4 @@ export * from './catalogueData';
 export * from './billingAddressTemplates';
 export * from './logos';
 export * from './advertisements';
+export * from "./organizationCreation"

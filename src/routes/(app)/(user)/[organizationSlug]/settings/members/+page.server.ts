@@ -43,7 +43,11 @@ export const actions: Actions = {
 			return fail(400, { form });
 		}
 		// @ts-expect-error  we define accessToken in parent
-		await generateOrgInvite({ accessToken: token.jwt, data: form.data });
+		await generateOrgInvite({
+			organizationID: form.data.organizationID,
+			role: "org:member",
+			email: form.data.userMail
+		});
 		return { form };
 	}
 };

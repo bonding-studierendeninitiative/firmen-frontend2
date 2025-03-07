@@ -118,7 +118,7 @@
     "org-types": {
       "nonprofit": "Gemeinnützig",
       "company": "Unternehmen",
-      "other": "Organisation"
+      "other": "Andere"
     },
     "next": "Weiter",
     "previous": "Zurück",
@@ -130,7 +130,8 @@
     },
     "confirm": "Bestätigen",
     "request-changes": "Änderungen anfragen",
-    "reject": "Ablehnen"
+    "reject": "Ablehnen",
+    "create": "Erstellen"
   },
   "components": {
     "addonPackage": {
@@ -297,7 +298,9 @@
     "event": "Veranstaltung",
     "location": "Ort",
     "role": "Rolle",
-    "joined": "Trat bei"
+    "joined": "Trat bei",
+    "firstName": "Vorname",
+    "lastName": "Nachname"
   },
   "breadcrumbs": {
     "events": "Veranstaltungen"
@@ -608,6 +611,11 @@
       "federalState": "Federal State",
       "organizationPhone": "Telefonnummer",
       "organizationEmail": "E-Mail-Adresse",
+      "createOrganization": "Organisation erstellen",
+      "createOrganizationDescription": "Hier kann eine neue Organisation erstellt werden",
+      "createOrgSuccess": "Organisation erfolgreich erstellt",
+      "ownerMail": "Mail des Besitzers",
+      "createdBy": "Erstellt von",
       "members": {
         "owner": "Besitzer",
         "member": "Mitglied",

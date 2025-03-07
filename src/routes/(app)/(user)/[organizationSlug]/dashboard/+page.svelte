@@ -6,7 +6,7 @@
 	import { RegisteredEventList } from '@/@svelte/modules/RegisteredEventList';
 	import { LoaderCircle } from 'lucide-svelte';
 	import { fade } from 'svelte/transition';
-
+	import * as Dialog from '$lib/components/ui/dialog';
 	export let data: PageData;
 	const handleViewAllEvent = () => {
 		goto('/events');
@@ -15,6 +15,7 @@
 </script>
 
 <div>
+
 	<h1 class=" text-stone-950 text-3xl font-extrabold">{$_('user-pages.dashboard.dashboard')}</h1>
 	<h4 class=" text-stone-500">
 		{$_('user-pages.dashboard.subHeading', {

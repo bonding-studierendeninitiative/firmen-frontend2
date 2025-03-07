@@ -9,10 +9,8 @@
 	import type { OrganizationMembership } from 'svelte-clerk/server';
 	import { LoaderCircle } from 'lucide-svelte';
 
-	//export let organizationInfo: { label: string; value: string }[]; {Object.entries(orgData?.organization || {}).filter(filterOrgEntries).map(([key, value]) => ({ label: key, value }))}
-	export let createInviteForm: SuperValidated<InferOutput<CreateOrgInviteRequest>>
-	export let orgMembers: { data: OrganizationMembership[]; totalCount: number };
-	export let organizationDetails;
+
+	export let data;
 
 	function filterOrgEntries(tuple: [string, any]): tuple is [string, string] {
 		const [key, value] = tuple;
@@ -24,11 +22,11 @@
 </script>
 
 <section class="space-y-5">
-	{#await organizationDetails}
+	{#await data.organizationDetails}
 		<LoaderCircle class="w-12 h-12 animate-spin mx-auto" />
 	{:then organizationDetails}
-		{@const organizationInfo = Object.entries(organizationDetails).filter(filterOrgEntries).map(([key, value]) => ({ label: key, value }))}
-		<div class="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full">
+		{@const organizationInfo = Object.entries(organizationDetails?.organization).filter(filterOrgEntries).map(([key, value]) => ({ label: key, value }))}
+		<div class="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full mt-5">
 			{#each organizationInfo as { label, value } (label)}
 				<p class=" font-normal text-sm text-stone-500">{$_(`admin-pages.organizations.${label}`)}</p>
 				<p class=" w-full text-right font-normal text-sm text-stone-800">{value}</p>{/each}
@@ -39,8 +37,15 @@
 
 	<section>
 		<h3 class=" text-xl font-semibold text-stone-800">{$_(`admin-pages.organizations.contactPeople`)}</h3>
-		{#if createInviteForm}
-			<ManageOrgMembers organizationMembers={orgMembers} createInviteForm={createInviteForm} />
-		{/if}
+		{#await data.orgData}
+			<LoaderCircle class="w-12 h-12 animate-spin mx-auto" />
+		{:then orgData}
+			{#if orgData?.createInviteForm}
+				<ManageOrgMembers organizationMembers={orgData?.orgMembers} createInviteForm={orgData?.createInviteForm} />
+			{/if}
+		{:catch error}
+			<p>{error.message}</p>
+		{/await}
+
 	</section>
 </section>

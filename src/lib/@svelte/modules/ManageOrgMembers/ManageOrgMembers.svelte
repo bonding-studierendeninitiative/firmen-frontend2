@@ -18,7 +18,7 @@
 	export let createInviteForm: SuperValidated<InferOutput<CreateOrgInviteRequest>> | undefined;
 	export let organizationMembers: { data: OrganizationMembership[]; totalCount: number };
 
-	const superform = superForm(createInviteForm, {
+	let superform = superForm(createInviteForm, {
 		validators: valibot(CreateOrgInviteRequestSchema),
 		applyAction: true,
 		dataType: 'json',
@@ -32,7 +32,7 @@
 			}
 		}
 	});
-	const { form: formData, enhance, submitting } = superform;
+	let { form: formData, enhance, submitting } = superform;
 </script>
 
 <div {...$$restProps} >
@@ -51,7 +51,7 @@
 			<div class=" flex flex-col gap-1">
 				<Field form={superform} name="userMail">
 					<Control let:attrs>
-						<Label>{$_('modules.manage-org-members.emailAddress')}</Label>
+						<Label>{$_("admin-pages.organizations.organizationEmail")}</Label>
 						<Input
 							{...attrs}
 							bind:value={$formData.userMail}
