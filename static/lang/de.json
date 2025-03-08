@@ -128,6 +128,11 @@
       "confirmed": "Bestätigt",
       "rejected": "Abgelehnt"
     },
+    "event-status": {
+      "published": "veröffentlicht",
+      "unpublished": "unveröffentlicht",
+      "archived": "archiviert"
+    },
     "confirm": "Bestätigen",
     "request-changes": "Änderungen anfragen",
     "reject": "Ablehnen",
@@ -172,6 +177,11 @@
     },
     "table": {
       "no-records": "Es wurden keine Datensätze gefunden."
+    },
+    "event-status-filter": {
+      "heading": "Nach Status filtern",
+      "clear": "Zurücksetzen",
+      "label": "Status"
     }
   },
   "modules": {
@@ -714,6 +724,8 @@
     "events": {
       "heading": "Veranstaltungsplanung",
       "subHeading": "In Notes veröffentliche Veranstaltungen werden alle paar Stunden ins Firmenintranet importiert. Du kannst sie veröffentlichen, um Firmen die Anmeldung zu ermöglichen.",
+      "no-data-heading": "Keine Veranstaltungen mit diesen Kriterien gefunden",
+      "no-data-message": "Wahrscheinlich gibt es keine Veranstatltungen mit diesen Suchkriterien",
       "publishNewEvents": "Neue Veranstaltungen veröffentlichen",
       "viewRegistrations": "Anmeldungen anzeigen",
       "viewDetails": "Details anzeigen",

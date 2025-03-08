@@ -133,6 +133,9 @@ export const activateBuyOption = async ({
 		route: `/admin/event/${eventId}/buy-option/${buyOptionId}/activate`,
 		token: accessToken
 	});
+	if (response.status === 404) {
+		error(404, 'No active buy option found.');
+	}
 	if (response.status !== 204 && response.status !== 200) {
 		error(400, 'Bad Request');
 	}

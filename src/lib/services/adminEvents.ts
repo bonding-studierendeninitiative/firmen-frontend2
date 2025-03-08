@@ -1,8 +1,12 @@
 import { API } from '@api';
 import { error } from '@sveltejs/kit';
-import { GetEventRegistrationsForEventResponse } from '@schema';
+import {
+	GetEventRegistrationsForEventResponse,
+	type GetEventsResponse,
+	GetEventsResponseSchema
+} from '@schema';
 import { clerkClient } from 'svelte-clerk/server';
-import { type InferOutput, parse } from 'valibot';
+import { type InferInput, type InferOutput, parse, safeParse } from 'valibot';
 
 export const publishEvent = async ({
 	eventId,
@@ -26,7 +30,6 @@ export const getEventRegistrationsForEvent = async ({
 }: {
 	accessToken: string;
 	eventId: string;
-	status?: 'PUBLISHED' | 'UNPUBLISHED' | 'ARCHIVED';
 }) => {
 	const response = await API.get<InferOutput<typeof GetEventRegistrationsForEventResponse>>({
 		route: `/admin/event/${eventId}/event_registrations?page=0`,
@@ -58,5 +61,45 @@ export const getEventRegistrationsForEvent = async ({
 		totalPages,
 		pageNumber,
 		pageSize
+	};
+};
+
+export const getAllEvents = async ({
+	accessToken,
+	status = ['PUBLISHED'],
+	size = '4',
+	page = '0'
+}: {
+	accessToken: string;
+	status?: ('PUBLISHED' | 'UNPUBLISHED' | 'ARCHIVED')[];
+	size?: string;
+	page?: string;
+}) => {
+	try {
+		const searchParams = new URLSearchParams();
+		searchParams.append('page', page);
+		searchParams.append('size', size);
+		status.forEach((s) => searchParams.append('event_status', s));
+		const response = await API.get<InferInput<GetEventsResponse>>({
+			route: `/admin/event?${searchParams}`,
+			token: accessToken
+		});
+		const data = await response.json();
+		const parseResult = safeParse(GetEventsResponseSchema, data);
+		if (parseResult.success) {
+			return parseResult.output;
+		} else {
+			console.error("Couldn't parse result of getAllEvents:", parseResult.issues);
+		}
+	} catch (error) {
+		console.error(error);
+	}
+	return {
+		data: [],
+		status: [],
+		totalElements: 0,
+		totalPages: 0,
+		pageNumber: 0,
+		pageSize: 10
 	};
 };

@@ -4,45 +4,61 @@ import type { InferOutput } from 'valibot';
 import { clerkClient } from 'svelte-clerk/server';
 import { makeSerializable } from '@/utils/serializable';
 
-
-
-export const generateOrgInvite = async ({email, organizationID, role}: {email: string; organizationID: string; role: "org:admin" | "org:member"}) => {
+export const generateOrgInvite = async ({
+	email,
+	organizationID,
+	role
+}: {
+	email: string;
+	organizationID: string;
+	role: 'org:admin' | 'org:member';
+}) => {
 	try {
 		const orgInvite = await clerkClient.organizations.createOrganizationInvitation({
 			organizationId: organizationID,
 			emailAddress: email,
 			inviterUserId: null, // TODO: Make PR for clerkClient Repo as it is not required.
 			role: role
-		})
+		});
 		return makeSerializable(orgInvite);
-	}catch (e) {
+	} catch (e) {
 		// @ts-expect-error the error likely has a message
 		error(e.status || 500, e.message);
 	}
 };
 
-export const createOrganization = async ({name}: {name: string}) => {
+export const createOrganization = async ({ name }: { name: string }) => {
 	try {
-		const organization = await clerkClient.organizations.createOrganization({name: name});
+		const organization = await clerkClient.organizations.createOrganization({ name: name });
 
 		return makeSerializable(organization);
-	}catch (e) {
+	} catch (e) {
 		// @ts-expect-error the error likely has a message
 		error(e.status || 500, e.message);
 	}
-}
+};
 
+export type MembershipQueryData = {
+	id: string;
+	limit?: number;
+	offset?: number;
+	query?: string;
+	orderBy?: string;
+};
 
-export type MembershipQueryData = { id: string, limit?: number, offset?: number, query?: string, orderBy?: string };
-
-
-export const getOrganizationMembers = async ({ id, limit, offset, query, orderBy }: MembershipQueryData) => {
+export const getOrganizationMembers = async ({
+	id,
+	limit,
+	offset,
+	query,
+	orderBy
+}: MembershipQueryData) => {
 	try {
 		const orgMemberships = await clerkClient.organizations.getOrganizationMembershipList({
 			organizationId: id,
 			limit: limit || 10,
 			offset: offset || 0,
-			query: query || "",
+			query: query || '',
 			orderBy: orderBy || undefined
 		});
 
@@ -90,19 +106,35 @@ export const setOrgDetails = async ({
 	});
 };
 
-export type OrganizationsQueryData = { limit?: number, offset?: number, query?: string, orderBy?: string };
+type WithSign<T extends string> = `-${T}` | `+${T}`;
 
-export const getOrgs = async ({ limit = 10, offset = 0, query="", orderBy="-created_at" }: OrgsQueryData) => {
+export type OrganizationsQueryData = {
+	limit?: number;
+	offset?: number;
+	query?: string;
+	orderBy?: WithSign<'name' | 'created_at' | 'members_count'>;
+};
+
+export const getOrgs = async ({
+	limit = 10,
+	offset = 0,
+	query = '',
+	orderBy = '-created_at'
+}: OrganizationsQueryData) => {
 	try {
 		const organizations = await clerkClient.organizations.getOrganizationList({
 			includeMembersCount: true,
 			limit,
 			offset,
 			query,
-			orderBy,
+			orderBy
 		});
 		return makeSerializable(organizations);
 	} catch (e) {
-		error(e?.status || 500, e?.message);
+		console.error(e?.status || 500, e?.message);
+		return {
+			data: [],
+			totalCount: 0
+		};
 	}
 };

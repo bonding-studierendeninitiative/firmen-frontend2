@@ -43,4 +43,6 @@ export * from './CatalogueDataPreview';
 export * from './AdvertisementItem';
 export * from './PdfFilePreview';
 export * from './LogoItem';
-export * from "./PortraitCard"
+export * from "./PortraitCard";
+export * from './LocalizedDate';
+export * from './LocalizedDateRange';

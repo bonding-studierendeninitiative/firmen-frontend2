@@ -66,8 +66,10 @@
 					<slot />
 				</div>
 			</div>
-			<UserButton appearance={{elements: {
-				rootBox: 'text-white'
+			<UserButton showName="true" appearance={{elements: {
+				rootBox: 'text-white',
+				userButtonOuterIdentifier: 'text-white',
+				userButtonBox: 'flex-row-reverse',
 			}}} />
 		</div>
 	</div>

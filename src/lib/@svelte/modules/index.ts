@@ -17,3 +17,5 @@ export * from './EditOrganizationDetailsForm';
 export * from './EventsList';
 export * from './EventDetails';
 export * from './EventRegistrationCheckout';
+export * from './CreateOrgDialog';
+export * from './SubmitPortraitDialog';

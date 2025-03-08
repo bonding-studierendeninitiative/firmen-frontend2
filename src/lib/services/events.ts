@@ -8,21 +8,26 @@ import {
 	type GetBuyOptionResponse,
 	GetBuyOptionResponseSchema
 } from '@schema';
-import { error } from '@sveltejs/kit';
 
-export const getEvents = async ({
+export const getPublishedEvents = async ({
 	accessToken,
-	status = 'PUBLISHED'
+	page = '0',
+	limit = '4'
 }: {
 	accessToken: string;
-	status?: 'PUBLISHED' | 'UNPUBLISHED' | 'ARCHIVED';
+	page?: string;
+	limit?: string;
 }) => {
 	try {
+		const searchParams = new URLSearchParams();
+		searchParams.append('page', page);
+		searchParams.append('limit', limit);
 		const response = await API.get<InferInput<GetEventsResponse>>({
-			route: `/event?event_status=${status}&page=0&limit=4`,
+			route: `/event/published?${searchParams}`,
 			token: accessToken
 		});
 		const data = await response.json();
+		console.log(data);
 		return parse(GetEventsResponseSchema, data);
 	} catch (error) {
 		console.error(error);
@@ -58,7 +63,7 @@ export const getUnregisteredEvents = async ({
 		token: accessToken
 	});
 	const data = await response.json();
-	return parse(GetEventsResponseSchema, data).events;
+	return parse(GetEventsResponseSchema, data).data;
 };
 
 export const getEvent = async ({
@@ -88,6 +93,11 @@ export const getActiveBuyOption = async ({
 		route: `/event/${eventId}/active-buy-option`,
 		token: accessToken
 	});
+
+	if (response.status === 404) {
+		return null;
+	}
+
 	const data = await response.json();
 	return parse(GetBuyOptionResponseSchema, data);
 };

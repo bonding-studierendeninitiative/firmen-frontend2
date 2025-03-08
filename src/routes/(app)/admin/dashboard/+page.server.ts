@@ -1,4 +1,4 @@
-import { getEvents } from '@/services/events';
+import { getAllEvents } from '@/services/adminEvents';
 import { clerkClient } from 'svelte-clerk/server';
 
 export async function load({ parent, isDataRequest }) {
@@ -8,7 +8,7 @@ export async function load({ parent, isDataRequest }) {
 
 		const token = await clerkClient.sessions.getToken(initialState.sessionId, 'access_token');
 
-		return (await getEvents({ accessToken: token.jwt, status })) ?? [];
+		return (await getAllEvents({ accessToken: token.jwt, status: [status] })) ?? [];
 	}
 
 	return {

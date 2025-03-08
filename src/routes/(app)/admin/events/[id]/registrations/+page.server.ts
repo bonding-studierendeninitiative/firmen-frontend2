@@ -15,7 +15,6 @@ import { superValidate } from 'sveltekit-superforms';
 import { fail } from '@sveltejs/kit';
 import {
 	exportCatalogueData,
-	getActiveBuyOption,
 	getEventRegistrationsForEvent,
 	reviewCatalogueData
 } from '@/services';
@@ -52,11 +51,6 @@ export const load = async ({ parent, params, isDataRequest }) => {
 			)
 		);
 
-		const activeBuyOption = await getActiveBuyOption({
-			eventId: params.id,
-			accessToken: token.jwt
-		});
-
 		return {
 			eventRegistrations,
 			totalPages,
@@ -64,8 +58,7 @@ export const load = async ({ parent, params, isDataRequest }) => {
 			packages: [...packages],
 			status: [...status],
 			addonPackages: [...addonPackages],
-			addons: [...addons],
-			activeBuyOption
+			addons: [...addons]
 		};
 	}
 

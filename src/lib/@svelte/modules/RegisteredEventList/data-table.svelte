@@ -3,7 +3,7 @@
 	import { addPagination } from 'svelte-headless-table/plugins';
 	import { readable } from 'svelte/store';
 	import * as Table from '$lib/components/ui/table';
-	import { AdvertStatusIcon, Chip, LogoStatusIcon, PortraitStatusIcon } from '@/@svelte/components';
+	import { AdvertStatusIcon, Chip, LocalizedDateRange, LocalizedDate, LogoStatusIcon, PortraitStatusIcon } from '@/@svelte/components';
 	import { _ } from '@services';
 	import { Button } from '$lib/components/ui/button';
 	import { writable } from 'svelte/store';
@@ -36,8 +36,15 @@
 			header: $_('user-pages.dashboard.hsg')
 		}),
 		table.column({
-			accessor: ({ event }) => event.dateTo ? event.dateFrom + ' - ' + event.dateTo : event.dateFrom,
+			accessor: ({ event }) => event.dateTo ? [event.dateFrom , event.dateTo] : event.dateFrom,
 			header: $_('user-pages.dashboard.date'),
+			cell: ({ value }) => {
+				if (Array.isArray(value)) {
+					return createRender(LocalizedDateRange, {dateFrom: value[0], dateTo: value[1], format: "dd L", hoverFormat: "medium"})
+				} else {
+					return createRender(LocalizedDate, {date: value, format: "dd L", hoverFormat: "medium"})
+				}
+			},
 			plugins: {
 				filter: {
 					exclude: true

@@ -128,6 +128,11 @@
       "confirmed": "Confirmed",
       "rejected": "Rejected"
     },
+    "event-status": {
+      "published": "published",
+      "unpublished": "unpublished",
+      "archived": "archived"
+    },
     "confirm": "Confirm",
     "request-changes": "Request changes",
     "reject": "Reject",
@@ -172,6 +177,11 @@
     },
     "table": {
       "no-records": "No records were found."
+    },
+    "event-status-filter": {
+      "heading": "Filter by status",
+      "clear": "Reset",
+      "label": "Status"
     }
   },
   "modules": {
@@ -709,6 +719,8 @@
     "events": {
       "heading": "Events",
       "subHeading": "Have a look at recent events for showcasing your company!",
+      "no-data-heading": "Nothing to see here.",
+      "no-data-message": "No events with the selected criteria found.",
       "publishNewEvents": "Publish New Events",
       "viewRegistrations": "View Registrations",
       "viewDetails": "View Details",
