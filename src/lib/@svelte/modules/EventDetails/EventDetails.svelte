@@ -12,13 +12,12 @@
 		LocationIcon
 	} from '@/@svelte/icons';
 	import { number } from '@services/i18n';
-	import { AddonList, LocalizedDate } from '@/@svelte/components';
+	import { AddonList, LocalizedDate, LocalizedDateRange } from '@/@svelte/components';
 	import type { InferOutput } from 'valibot';
 	import type { GetAddonPackageTemplateResponse } from '@schema';
 	import { Label } from '@/components/ui/label';
 	import { CalendarDays, Check, Users } from 'lucide-svelte';
 	import { Progress } from '@/components/ui/progress';
-	import { LocalizedDateRange } from '@/@svelte/components/LocalizedDateRange';
 
 	export let event;
 	export let buyOption;

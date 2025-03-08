@@ -44,3 +44,4 @@ export * from './AdvertisementItem';
 export * from './PdfFilePreview';
 export * from './LogoItem';
 export * from './LocalizedDate';
+export * from './LocalizedDateRange';

@@ -3,13 +3,15 @@
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
 	import { Button } from '$lib/components/ui/button';
 	import { _ } from '@services';
-	import { UploadCatalogueData } from '@/@svelte/modules';
+	import { SubmitPortraitDialog, UploadCatalogueData } from '@/@svelte/modules';
 
 	export let id: string;
 	let isUploadCatalogueDataOpen = false;
+	let isSubmitPortraitOpen = false;
 </script>
 
 <UploadCatalogueData {id} bind:isOpen={isUploadCatalogueDataOpen} />
+<SubmitPortraitDialog bind:isOpen={isSubmitPortraitOpen} />
 
 <DropdownMenu.Root>
 	<DropdownMenu.Trigger asChild let:builder>
@@ -28,6 +30,9 @@
 		<DropdownMenu.Separator />
 		<DropdownMenu.Item on:click={() => (isUploadCatalogueDataOpen = true)}>
 			{$_("user-pages.dashboard.data-table.actions.upload-catalogue-data")}
+		</DropdownMenu.Item>
+		<DropdownMenu.Item on:click={() => (isSubmitPortraitOpen = true)}>
+			{$_("user-pages.dashboard.data-table.actions.submit-portrait")}
 		</DropdownMenu.Item>
 	</DropdownMenu.Content>
 </DropdownMenu.Root>

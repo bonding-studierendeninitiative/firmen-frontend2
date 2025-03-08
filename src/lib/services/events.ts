@@ -93,6 +93,11 @@ export const getActiveBuyOption = async ({
 		route: `/event/${eventId}/active-buy-option`,
 		token: accessToken
 	});
+
+	if (response.status === 404) {
+		return null;
+	}
+
 	const data = await response.json();
 	return parse(GetBuyOptionResponseSchema, data);
 };

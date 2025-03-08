@@ -3,14 +3,13 @@
 	import { addPagination } from 'svelte-headless-table/plugins';
 	import { readable } from 'svelte/store';
 	import * as Table from '$lib/components/ui/table';
-	import { AdvertStatusIcon, Chip, LocalizedDate, LogoStatusIcon, PortraitStatusIcon } from '@/@svelte/components';
+	import { AdvertStatusIcon, Chip, LocalizedDateRange, LocalizedDate, LogoStatusIcon, PortraitStatusIcon } from '@/@svelte/components';
 	import { _ } from '@services';
 	import { Button } from '$lib/components/ui/button';
 	import { writable } from 'svelte/store';
 	import DataTableActions from './data-table-actions.svelte';
 	import type { InferOutput } from 'valibot';
 	import { createRender, createTable, Render, Subscribe } from 'svelte-headless-table';
-	import { LocalizedDateRange } from '@/@svelte/components/LocalizedDateRange';
 
 	export let eventRegistrations: InferOutput<GetEventRegistrationsForOrganizationResponse>;
 	let currentServerItemCount = writable(eventRegistrations.totalElements);
