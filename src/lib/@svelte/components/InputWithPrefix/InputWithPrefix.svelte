@@ -1,33 +1,19 @@
 <script lang="ts">
-	import { ButtonGroup, InputAddon, Input, Label, type SizeType } from 'flowbite-svelte';
+	import {Input } from "@/components/ui/input";
+
 
 	export let prefixText: string = '';
-	export let label: string = '';
 	export let name: string = '';
-	export let size: SizeType = 'md';
 	export let required: boolean = false;
-	export let addonClass: string = '';
 	export let value: string = '';
 </script>
 
-<div>
-	{#if label}
-		<Label class="block mb-1.5 font-medium text-stone-800" for={name}
-			>{label}
-			{#if required}
-				<span class="text-pink-500">*</span>
-			{/if}
-		</Label>
-	{/if}
-	<ButtonGroup {size} class="w-full">
-		<InputAddon class={addonClass}>{prefixText}</InputAddon>
-		<Input
-			on:change={(e) => console.log(e)}
-			id={name}
-			{name}
-			{required}
-			bind:value
-			{...$$restProps}
-		/>
-	</ButtonGroup>
+<div class="relative">
+	<div class="absolute inset-y-0 left-0 flex items-center">
+		<span class="flex h-full items-center rounded-l-md border border-r-0 border-input bg-muted px-3 text-sm text-muted-foreground">
+			{prefixText}
+		</span>
+	</div>
+
+	<Input {name} {required} bind:value class="pl-20" />
 </div>

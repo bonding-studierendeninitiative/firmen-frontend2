@@ -1,8 +1,8 @@
 export const disciplines = [
-	{ value: 'civil-engineering', name: 'Bauingenieurwesen' },
-	{ value: 'electrical-engineering', name: 'Elektrotechnik' },
-	{ value: 'computer-science', name: 'Informatik' },
-	{ value: 'humanities', name: 'Geistes- & Wirtschaftswissenschaften' },
-	{ value: 'mechanical-engineering', name: 'Maschinenbau' },
-	{ value: 'natural-sciences', name: 'Naturwissenschaft und Mathematik' }
+	{ value: 'civil-engineering', label: 'Bauingenieurwesen' },
+	{ value: 'electrical-engineering', label: 'Elektrotechnik' },
+	{ value: 'computer-science', label: 'Informatik' },
+	{ value: 'humanities', label: 'Geistes- & Wirtschaftswissenschaften' },
+	{ value: 'mechanical-engineering', label: 'Maschinenbau' },
+	{ value: 'natural-sciences', label: 'Naturwissenschaft und Mathematik' }
 ];

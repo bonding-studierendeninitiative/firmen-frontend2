@@ -139,6 +139,7 @@
 		}),
 		table.column({
 			accessor: ({ slug }) => slug,
+			id: 'slug',
 			header: '',
 			cell: ({ value }) => {
 				return createRender(DataTableActions, { id: value });
@@ -260,7 +261,7 @@
 								<Subscribe attrs={cell.attrs()} let:attrs>
 									<Table.Cell {...attrs}>
 										{#if cell.id === "name"}
-											<a href={`/admin/organizations/`} class="hover:underline">
+											<a href={`/admin/organizations/${row.original.slug}`} class="hover:underline">
 												<Render of={cell.render()} />
 											</a>
 										{:else }

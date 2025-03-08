@@ -19,7 +19,7 @@ export const load: PageServerLoad = async ({ parent, url, isDataRequest }) => {
 		const { initialState, organization } = await parent();
 		if (!initialState?.sessionId) return;
 
-		const deleteForm = superValidate(valibot(DeletePortraitTemplateRequestSchema));
+		const deleteForm = await superValidate(valibot(DeletePortraitTemplateRequestSchema));
 
 		const org = await organization;
 
@@ -79,6 +79,7 @@ export const actions: Actions = {
 		}
 
 		const form = await superValidate(request, valibot(DeletePortraitTemplateRequestSchema));
+
 		if (!form.valid) {
 			return fail(400, { form });
 		}
