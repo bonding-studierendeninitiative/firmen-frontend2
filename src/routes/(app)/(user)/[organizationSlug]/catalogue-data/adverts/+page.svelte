@@ -19,7 +19,7 @@
 		}} />
 	{:else}
 		{@const groupedAdvertisements = advertisements?.reduce((acc, advertisement) => {
-			const year = dayjs(advertisement.eventRegistration.createdAt).year();
+			const year = dayjs(advertisement.eventRegistration?.createdAt).year();
 
 			if (!acc[year]) {
 				acc[year] = [];
