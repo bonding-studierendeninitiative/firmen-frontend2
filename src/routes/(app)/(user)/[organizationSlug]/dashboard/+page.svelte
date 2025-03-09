@@ -7,6 +7,8 @@
 	import { LoaderCircle } from 'lucide-svelte';
 	import { fade } from 'svelte/transition';
 	import * as Dialog from '$lib/components/ui/dialog';
+	import RegistrationCard from './registration-card.svelte';
+
 	export let data: PageData;
 	const handleViewAllEvent = () => {
 		goto('/events');
@@ -64,10 +66,15 @@
 		{#await data.dashboardData}
 			<LoaderCircle class="w-10 h-10 mx-auto animate-spin" />
 		{:then dashboardData}
-			<div in:fade class="mt-2">
+			<div in:fade class="mt-2 @container/registrations">
 				{#if dashboardData?.eventRegistrations?.eventRegistrations?.length > 0 }
-					<RegisteredEventList uploadCatalogueDataForm={dashboardData?.uploadCatalogueDataForm}
-															 eventRegistrations={dashboardData?.eventRegistrations} />
+					<div class="grid grid-cols-1 @4xl/registrations:grid-cols-2 gap-8 items-start">
+					{#each dashboardData?.eventRegistrations?.eventRegistrations as eventRegistration, index}
+						<RegistrationCard registration={eventRegistration} uploadCatalogueDataForm={dashboardData?.uploadCatalogueDataForm} />
+					{/each}
+					</div>
+					<!--<RegisteredEventList uploadCatalogueDataForm={dashboardData?.uploadCatalogueDataForm}
+															 eventRegistrations={dashboardData?.eventRegistrations} />-->
 				{:else }
 					<NoDataFound
 						heading={$_('user-pages.dashboard.noEventsRegistered')}

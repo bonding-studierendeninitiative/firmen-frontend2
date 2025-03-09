@@ -182,6 +182,16 @@
       "heading": "Filter by status",
       "clear": "Reset",
       "label": "Status"
+    },
+    "registration-card": {
+      "catalogue-data": "Catalogue data",
+      "package": "{ package } package",
+      "catalogue-data-completion": "{ completion, number, ::percent } completed",
+      "desired-participation-days": "{days, plural, =0 {No preferred days selected} one {One preferred day selected} other {{days, number} preferred days selected} }",
+      "contact-people": "Contact people",
+      "addons": "Additional services",
+      "last-updated": "Last edited:",
+      "id": "ID:"
     }
   },
   "modules": {

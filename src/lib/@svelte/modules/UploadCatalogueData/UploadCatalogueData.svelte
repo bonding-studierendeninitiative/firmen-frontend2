@@ -16,9 +16,9 @@
 
 	export let isOpen: boolean;
 	export let id: string;
-	let catalogueDataUploadForm: Writable<SuperValidated<Infer<UploadCatalogueDataForm>>> = getContext('uploadCatalogueDataForm');
+	let catalogueDataUploadForm: SuperValidated<Infer<UploadCatalogueDataForm>> = getContext('uploadCatalogueDataForm');
 
-	const superCatalogueDataUploadForm = superForm($catalogueDataUploadForm, {
+	const superCatalogueDataUploadForm = superForm(catalogueDataUploadForm, {
 		// validators: valibotClient(UploadCatalogueDataRequest),
 		onResult({ result }) {
 			if (result.type === 'success') {

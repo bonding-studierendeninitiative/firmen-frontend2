@@ -8,6 +8,7 @@ import {
 	GetEventRegistrationsForOrganizationResponse,
 	type GetEventRegistrationsForOrganizationResponse as responseType
 } from '@schema';
+import { clerkClient } from 'svelte-clerk/server';
 
 export const getEventRegistrationsForOrganization = async ({
 	accessToken,
@@ -31,7 +32,28 @@ export const getEventRegistrationsForOrganization = async ({
 			token: accessToken
 		});
 		const data = await response.json();
-		return v.parse(GetEventRegistrationsForOrganizationResponse, data);
+		const result = v.parse(GetEventRegistrationsForOrganizationResponse, data);
+		return {
+			...result,
+			eventRegistrations: await Promise.all(
+				result.eventRegistrations.map(async (eventRegistration) => {
+					return {
+						...eventRegistration,
+						contactPeople: await Promise.all(
+							eventRegistration.contactPeople?.map(async (contactPersonId) => {
+								const user = await clerkClient.users.getUser(contactPersonId);
+
+								return {
+									name: user.fullName,
+									image: user.imageUrl,
+									email: user.primaryEmailAddress?.emailAddress
+								};
+							}) ?? []
+						)
+					};
+				})
+			)
+		};
 	} catch (error) {
 		console.error(error);
 		return {

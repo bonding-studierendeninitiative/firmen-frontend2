@@ -6,7 +6,6 @@ export const OrgAdvertisementSchema = object({
 		createdAt: pipe(string(), isoTimestamp()),
 		modifiedAt: nullish(pipe(string(), isoTimestamp())),
 		status: string(),
-		userId: string(),
 		event: object({
 			id: string(),
 			name: string(),
