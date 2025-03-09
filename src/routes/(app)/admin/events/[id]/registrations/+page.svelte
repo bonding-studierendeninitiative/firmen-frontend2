@@ -12,16 +12,25 @@
 
 	export let data: PageServerData;
 
-	$: ({ rejectForm, confirmForm, reviewCatalogueDataForm, exportCatalogueDataForm, createRegistrationForm } = data);
+	$: ({
+		rejectForm,
+		confirmForm,
+		reviewCatalogueDataForm,
+		exportCatalogueDataForm,
+		createRegistrationForm,
+		deleteForm
+	} = data);
 
 	let confirmFormStore = writable(confirmForm);
 	let rejectFormStore = writable(rejectForm);
+	let deleteFormStore = writable(deleteForm);
 	let reviewCatalogueDataFormStore = writable(reviewCatalogueDataForm);
 	let exportCatalogueDataFormStore = writable(exportCatalogueDataForm);
 	let createRegistrationFormStore = writable(createRegistrationForm);
 	$: {
 		confirmFormStore.set(confirmForm);
 		rejectFormStore.set(rejectForm);
+		deleteFormStore.set(deleteForm);
 		reviewCatalogueDataFormStore.set(reviewCatalogueDataForm);
 		exportCatalogueDataFormStore.set(exportCatalogueDataForm);
 		createRegistrationFormStore.set(createRegistrationForm);
@@ -29,6 +38,7 @@
 
 	setContext('confirmForm', confirmFormStore);
 	setContext('rejectForm', rejectFormStore);
+	setContext('deleteForm', deleteFormStore);
 	setContext('reviewCatalogueDataForm', reviewCatalogueDataFormStore);
 	setContext('exportCatalogueDataForm', exportCatalogueDataFormStore);
 	setContext('createRegistrationForm', createRegistrationFormStore);
@@ -62,10 +72,10 @@
 	</footer>
 </Modal>
 
-	{#await data.tableData}
-		<LoaderCircle class="w-10 h-10 mx-auto animate-spin" />
-	{:then data}
-<section in:fade class=" mt-6">
+{#await data.tableData}
+	<LoaderCircle class="w-10 h-10 mx-auto animate-spin" />
+{:then data}
+	<section in:fade class=" mt-6">
 		{#if !data?.eventRegistrations}
 			<section class=" mt-10">
 				<NoDataFound
@@ -85,8 +95,8 @@
 				/>
 			</section>
 		{/if}
-</section>
-	{:catch error}
-		<p>{error.message}</p>
-	{/await}
+	</section>
+{:catch error}
+	<p>{error.message}</p>
+{/await}
 <!--<SuperDebug data={page} />-->

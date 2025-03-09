@@ -1,7 +1,7 @@
 import { API } from '@api';
 import { error } from '@sveltejs/kit';
 import {
-	GetEventRegistrationsForEventResponse,
+	AdminEventRegistrationsResponse,
 	type GetEventsResponse,
 	GetEventsResponseSchema
 } from '@schema';
@@ -31,13 +31,13 @@ export const getEventRegistrationsForEvent = async ({
 	accessToken: string;
 	eventId: string;
 }) => {
-	const response = await API.get<InferOutput<typeof GetEventRegistrationsForEventResponse>>({
+	const response = await API.get<InferOutput<typeof AdminEventRegistrationsResponse>>({
 		route: `/admin/event/${eventId}/event_registrations?page=0`,
 		token: accessToken
 	});
 	const data = await response.json();
 	const { eventRegistrations, totalPages, totalElements, pageNumber, pageSize } = parse(
-		GetEventRegistrationsForEventResponse,
+		AdminEventRegistrationsResponse,
 		data
 	);
 	return {

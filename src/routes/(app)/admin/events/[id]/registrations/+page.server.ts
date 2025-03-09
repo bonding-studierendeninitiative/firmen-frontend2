@@ -1,11 +1,13 @@
 import {
 	adminCreateRegistration,
 	confirmEventRegistration,
+	deleteEventRegistration,
 	rejectEventRegistration
 } from '@/services/adminEventRegistrations';
 import {
 	AdminRegisterOrganizationToEventSchema,
 	ConfirmEventRegistrationSchema,
+	DeleteEventRegistrationSchema,
 	ExportCatalogueDataRequest,
 	RejectEventRegistrationSchema,
 	ReviewCatalogueDataForm
@@ -62,6 +64,9 @@ export const load = async ({ parent, params, isDataRequest }) => {
 		};
 	}
 
+	const deleteForm = superValidate(valibot(DeleteEventRegistrationSchema), {
+		id: 'deleteForm'
+	});
 	const confirmForm = await superValidate(valibot(ConfirmEventRegistrationSchema), {
 		id: 'confirmForm'
 	});
@@ -87,6 +92,7 @@ export const load = async ({ parent, params, isDataRequest }) => {
 
 	return {
 		confirmForm,
+		deleteForm: isDataRequest ? deleteForm : await deleteForm,
 		rejectForm: isDataRequest ? rejectForm : await rejectForm,
 		reviewCatalogueDataForm,
 		createRegistrationForm,
@@ -132,6 +138,25 @@ export const actions = {
 		const token = await clerkClient.sessions.getToken(session.sessionId, 'access_token');
 
 		await rejectEventRegistration({
+			accessToken: token.jwt,
+			eventRegistrationId: form.data.eventRegistrationId
+		});
+	},
+	deleteEventRegistration: async ({ locals, request }) => {
+		const session = locals.auth as unknown as AuthObject;
+		if (!session || !session.sessionId) {
+			fail(403);
+			return;
+		}
+
+		const form = await superValidate(request, valibot(DeleteEventRegistrationSchema));
+		if (!form.valid) {
+			return fail(400, { form });
+		}
+
+		const token = await clerkClient.sessions.getToken(session.sessionId, 'access_token');
+
+		await deleteEventRegistration({
 			accessToken: token.jwt,
 			eventRegistrationId: form.data.eventRegistrationId
 		});

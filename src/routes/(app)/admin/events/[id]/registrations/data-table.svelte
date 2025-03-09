@@ -24,13 +24,13 @@
 	import SimpleEventRegistrationOrganization from './simple-event-registration-organization.svelte';
 	import type {
 		ExportCatalogueDataRequest,
-		GetEventRegistrationsForEventResponse
+		AdminEventRegistrationsResponse
 	} from '@schema';
 	import { getContext } from 'svelte';
 	import { type Infer, type SuperValidated } from 'sveltekit-superforms';
 	import CreateEventRegistrationForm from './create-event-registration-form.svelte';
 
-	export let data: InferOutput<GetEventRegistrationsForEventResponse>['eventRegistrations'];
+	export let data: InferOutput<AdminEventRegistrationsResponse>['eventRegistrations'];
 	export let packages: string[] = [];
 	export let status: string[] = [];
 	export let addonPackages: string[] = [];

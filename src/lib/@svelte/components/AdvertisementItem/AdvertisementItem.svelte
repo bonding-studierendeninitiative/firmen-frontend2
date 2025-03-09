@@ -14,7 +14,7 @@
 			<PdfFilePreview url={`${advertisement.url}#toolbar=0&navpanes=0&scrollbar=0`} />
 		</Card.Header>
 		<Card.Content>
-			<Event event={advertisement.eventRegistration.event} />
+			<Event event={advertisement.eventRegistration?.event} />
 		</Card.Content>
 	</Card.Root>
 </section>

@@ -2,20 +2,21 @@ import { array, number, isoTimestamp, object, pipe, string, nullish } from 'vali
 
 export const OrgAdvertisementSchema = object({
 	name: string(),
-	eventRegistration: object({
-		createdAt: pipe(string(), isoTimestamp()),
-		modifiedAt: nullish(pipe(string(), isoTimestamp())),
-		status: string(),
-		userId: string(),
-		event: object({
-			id: string(),
-			name: string(),
-			location: string(),
-			projectHSG: string(),
-			dateFrom: string(),
-			dateTo: string()
+	eventRegistration: nullish(
+		object({
+			createdAt: pipe(string(), isoTimestamp()),
+			modifiedAt: nullish(pipe(string(), isoTimestamp())),
+			status: string(),
+			event: object({
+				id: string(),
+				name: string(),
+				location: string(),
+				projectHSG: string(),
+				dateFrom: string(),
+				dateTo: string()
+			})
 		})
-	}),
+	),
 	status: string(),
 	url: string()
 });

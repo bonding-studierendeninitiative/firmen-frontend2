@@ -59,8 +59,13 @@ export const RejectEventRegistrationSchema = v.object({
 	eventRegistrationId: v.string()
 });
 
+export const DeleteEventRegistrationSchema = v.object({
+	eventRegistrationId: v.string()
+});
+
 export type ConfirmEventRegistrationSchema = typeof ConfirmEventRegistrationSchema;
 export type RejectEventRegistrationSchema = typeof RejectEventRegistrationSchema;
+export type DeleteEventRegistrationSchema = typeof DeleteEventRegistrationSchema;
 
 export const EventRegistrationSchema = v.object({
 	id: v.string(),
@@ -102,7 +107,6 @@ export const OrgEventRegistrationSchema = v.object({
 	modifiedAt: v.nullable(v.pipe(v.string(), v.isoTimestamp())),
 	organizationComment: v.nullable(v.string()),
 	participationNote: v.nullable(v.string()),
-	userId: v.string(),
 	organizationId: v.string(),
 	status: v.string(),
 	event: APIEvent,
@@ -110,10 +114,12 @@ export const OrgEventRegistrationSchema = v.object({
 	logoStatus: v.string(),
 	advertisementStatus: v.string(),
 	addonPackages: v.array(EventRegistrationAddonPackageSchema),
-	purchasedPackage: v.object({
-		price: v.number(),
-		name: v.string()
-	}),
+	purchasedPackage: v.nullish(
+		v.object({
+			price: v.number(),
+			name: v.string()
+		})
+	),
 	advertisement: v.nullish(
 		v.object({
 			status: v.string(),
@@ -128,13 +134,16 @@ export const OrgEventRegistrationSchema = v.object({
 			name: v.string(),
 			url: v.nullish(v.string())
 		})
-	)
+	),
+	desiredEventRegistrationDays: v.nullish(v.array(v.string())),
+	contactPeople: v.nullish(v.array(v.string())),
+	canUploadAdvertisement: v.nullish(v.boolean())
 });
 
 export type EventRegistration = typeof EventRegistrationSchema;
 export type OrgEventRegistration = typeof OrgEventRegistrationSchema;
 
-export const GetEventRegistrationsForEventResponse = v.object({
+export const AdminEventRegistrationsResponse = v.object({
 	eventRegistrations: v.array(
 		v.object({
 			id: v.string(),
@@ -169,7 +178,8 @@ export const GetEventRegistrationsForEventResponse = v.object({
 					url: v.nullish(v.string())
 				})
 			),
-			desiredEventRegistrationDays: v.nullish(v.array(v.string()))
+			desiredEventRegistrationDays: v.nullish(v.array(v.string())),
+			contactPeople: v.nullish(v.array(v.string()))
 		})
 	),
 	totalElements: v.number(),
@@ -178,7 +188,7 @@ export const GetEventRegistrationsForEventResponse = v.object({
 	pageSize: v.number()
 });
 
-export type GetEventRegistrationsForEventResponse = typeof GetEventRegistrationsForEventResponse;
+export type AdminEventRegistrationsResponse = typeof AdminEventRegistrationsResponse;
 
 export const GetEventRegistrationsForOrganizationResponse = v.object({
 	eventRegistrations: v.array(OrgEventRegistrationSchema),

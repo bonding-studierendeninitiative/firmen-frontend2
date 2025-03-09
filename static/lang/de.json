@@ -182,6 +182,16 @@
       "heading": "Nach Status filtern",
       "clear": "Zurücksetzen",
       "label": "Status"
+    },
+    "registration-card": {
+      "catalogue-data": "Katalogdaten",
+      "package": "{ package } Paket",
+      "catalogue-data-completion": "{ completion, number, ::percent } abgeschlossen",
+      "desired-participation-days": "{days, plural, =0 {Keine Wunschtage ausgewählt} one {Ein Wunschtag ausgewählt} other {{days, number} Wunschtage ausgewählt} }",
+      "contact-people": "Kontaktpersonen",
+      "addons": "Zusatzleistungen",
+      "last-updated": "Zuletzt bearbeitet:",
+      "id": "ID:"
     }
   },
   "modules": {

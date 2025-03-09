@@ -1,10 +1,11 @@
 <script lang="ts">
 	import Ellipsis from 'lucide-svelte/icons/ellipsis';
 	import ReviewRegistrationForm from './review-registration-form.svelte';
+	import DeleteEventRegistrationForm from './delete-event-registration-form.svelte';
 	import * as DropdownMenu from '@/components/ui/dropdown-menu';
 	import { Button } from '@/components/ui/button';
 	import type {
-		EventRegistration, GetEventRegistrationsForEventResponse
+		EventRegistration, AdminEventRegistrationsResponse
 	} from '@schema';
 	import { ConfirmEventRegistration, RejectEventRegistration, ReviewCatalogueData } from '@/@svelte/modules';
 	import type { InferOutput } from 'valibot';
@@ -12,12 +13,14 @@
 	import { getContext } from 'svelte';
 
 	export let id: string;
-	export let eventRegistration: InferOutput<GetEventRegistrationsForEventResponse>['eventRegistrations'][number];
+	export let eventRegistration: InferOutput<AdminEventRegistrationsResponse>['eventRegistrations'][number];
 	let rejectForm = getContext('rejectForm');
 	let confirmForm = getContext('confirmForm');
+	let deleteForm = getContext('deleteForm');
 	let isConfirmOpen = false;
 	let isRejectOpen = false;
 	let isReviewCatalogueDataOpen = false;
+	let isDeleteOpen = false;
 </script>
 
 {#await confirmForm}
@@ -32,6 +35,13 @@
 	<div></div>
 {:then form}
 	<RejectEventRegistration rejectForm={form} {id} bind:isOpen={isRejectOpen} />
+{:catch error}
+	<div>{error.message}</div>
+{/await}
+{#await deleteForm}
+	<div></div>
+{:then form}
+	<DeleteEventRegistrationForm deleteForm={form} eventRegistrationId={id} bind:open={isDeleteOpen} />
 {:catch error}
 	<div>{error.message}</div>
 {/await}
@@ -60,6 +70,9 @@
 		</DropdownMenu.Item>
 		<DropdownMenu.Item on:click={() => (isReviewCatalogueDataOpen = true)}>
 			{$_("admin-pages.events.event-registrations.data-table.actions.review-catalogue-data")}
+		</DropdownMenu.Item>
+		<DropdownMenu.Item class="text-red-500" on:click={() => (isDeleteOpen = true)}>
+			{$_("admin-pages.events.event-registrations.data-table.actions.delete-event-registration")}
 		</DropdownMenu.Item>
 	</DropdownMenu.Content>
 </DropdownMenu.Root>

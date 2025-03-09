@@ -42,6 +42,23 @@ export const rejectEventRegistration = async ({
 	}
 };
 
+export const deleteEventRegistration = async ({
+	accessToken,
+	eventRegistrationId
+}: {
+	accessToken: string;
+	eventRegistrationId: string;
+}) => {
+	const response = await API.delete({
+		route: `/admin/event-registration/${eventRegistrationId}`,
+		token: accessToken
+	});
+
+	if (response.status !== 200) {
+		error(500, 'The registration could not be deleted');
+	}
+};
+
 export async function confirmEventRegistration({
 	accessToken,
 	eventRegistrationId
