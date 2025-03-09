@@ -1,13 +1,13 @@
 <script lang="ts">
 	import type { InferOutput } from 'valibot';
-	import type { EventRegistration, GetEventRegistrationsForEventResponse } from '@schema';
+	import type { EventRegistration, AdminEventRegistrationsResponse } from '@schema';
 	import { AddonList, Chip } from '@/@svelte/components';
 	import Organization from './Organization.svelte';
 	import ContactPerson from './ContactPerson.svelte';
 	import Package from './Package.svelte';
 	import { dayjs } from '@services/i18n';
 
-	export let eventRegistration: InferOutput<GetEventRegistrationsForEventResponse>['eventRegistrations'][number];
+	export let eventRegistration: InferOutput<AdminEventRegistrationsResponse>['eventRegistrations'][number];
 </script>
 
 <section {...$$props}>

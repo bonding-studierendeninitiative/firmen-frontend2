@@ -4,7 +4,7 @@
 	import { type Infer, superForm, type SuperValidated } from 'sveltekit-superforms';
 	import type {
 		ConfirmEventRegistrationSchema,
-		EventRegistration as EventRegistrationSchema, GetEventRegistrationsForEventResponse
+		EventRegistration as EventRegistrationSchema, AdminEventRegistrationsResponse
 	} from '@schema';
 	import { toast } from 'svelte-french-toast';
 	import type { InferOutput } from 'valibot';
@@ -14,7 +14,7 @@
 	export let isOpen: boolean;
 	export let id: string;
 	export let confirmForm: SuperValidated<Infer<ConfirmEventRegistrationSchema>>;
-	export let eventRegistration: InferOutput<GetEventRegistrationsForEventResponse>['eventRegistrations'][number];
+	export let eventRegistration: InferOutput<AdminEventRegistrationsResponse>['eventRegistrations'][number];
 
 
 	const superConfirmForm = superForm(confirmForm, {
