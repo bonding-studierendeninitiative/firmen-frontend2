@@ -49,23 +49,22 @@ export const PortraitTemplateSchema = v.object({
 	displayName: v.pipe(v.string('Display name is required'), v.minLength(1, 'Display name is required')),
 });
 
-export const GetPortraitTemplateResponse = v.union([
-	PortraitTemplateSchema,
-	v.object({
-		id: v.string()
-	})
-]);
+export const GetPortraitTemplateResponse = v.object({
+	id: v.string(),
+	...PortraitTemplateSchema.entries,
+});
 
+export const UpdatePortraitTemplateRequestSchema = GetPortraitTemplateResponse;
 
 export const DeletePortraitTemplateRequestSchema = v.object({
 	id: v.string()
 });
 
 export type CreatePortraitTemplateRequest = typeof PortraitTemplateSchema;
-export type UpdatePortraitTemplateRequest = CreatePortraitTemplateRequest;
+export type UpdatePortraitTemplateRequest = typeof UpdatePortraitTemplateRequestSchema;
 export type DeletePortraitTemplateRequest = typeof DeletePortraitTemplateRequestSchema;
-
 export type CreatePortraitTemplateResponse = typeof GetPortraitTemplateResponse;
+
 export type PortraitCompanyDetails = Pick<
 	v.InferInput<CreatePortraitTemplateRequest>,
 	| 'industry'

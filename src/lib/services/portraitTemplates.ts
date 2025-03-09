@@ -15,15 +15,17 @@ import {
 export const getPortraitTemplates = async ({
 	accessToken,
 	org,
-	page = 0
+	page = 0,
+	query = ""
 }: {
 	accessToken: string;
 	org: string;
 	page?: number;
+	query?: string;
 }) => {
 	try {
 		const response = await API.get<v.InferInput<typeof GetPortraitTemplatesResponse>>({
-			route: `/portrait-template?organizationId=${org}&page=${page}&limit=6`,
+			route: `/portrait-template?organizationId=${org}&title=${query}&page=${page}&limit=9`,
 			token: accessToken
 		});
 		if (response.status === 401) {

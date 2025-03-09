@@ -19,3 +19,4 @@ export * from './EventDetails';
 export * from './EventRegistrationCheckout';
 export * from './CreateOrgDialog';
 export * from './SubmitPortraitDialog';
+export * from "./PortraitForm";
