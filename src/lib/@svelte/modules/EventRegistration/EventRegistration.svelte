@@ -13,7 +13,7 @@
 <section {...$$props}>
 	<div class=" grid grid-cols-1 gap-4">
 		<span>{eventRegistration.organizationName}</span>
-			<span>Wunschtage</span>
+		<span>Wunschtage</span>
 		<div>
 			{#each eventRegistration.desiredEventRegistrationDays ?? [] as day}
 				{@const date = dayjs(day)}
@@ -27,7 +27,9 @@
 		{#if eventRegistration.participationNote }
 			<div class="rounded-md border p-4">{eventRegistration.participationNote}</div>
 		{/if}
-		<Package _package={eventRegistration.purchasedPackage} />
+		{#if eventRegistration.purchasedPackage }
+			<Package _package={eventRegistration.purchasedPackage} />
+		{/if}
 	</div>
 
 	<AddonList addons={eventRegistration.addonPackages} />

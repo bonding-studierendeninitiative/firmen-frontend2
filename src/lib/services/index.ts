@@ -11,3 +11,7 @@ export * from './advertisements';
 export * from './logos';
 export * from './adminEventRegistrations';
 export * from './adminEvents';
+export * from './adminAdvertisements';
+export * from './adminLogos';
+export * from './jobs';
+export * from './exports';

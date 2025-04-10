@@ -163,7 +163,11 @@
 		</div>
 		<Field class="flex-col flex justify-start" form={superform} name="name">
 			<Control let:attrs>
-				<Label>{$_("components.editBuyOptions.buyOptionName")}</Label>
+				<Label>{$_("components.editBuyOptions.buyOptionName", {
+					values: {
+						buyOptionName: $formData.name
+					}
+				})}</Label>
 				<Input class="w-[40ch]" {...attrs} bind:value={$formData.name} />
 			</Control>
 			<Description />
@@ -204,7 +208,8 @@
 								on:click={e => handleMoveEventDayDown(e, dayIndex)}>
 					<CaretDown />
 				</Button>
-				<Button disabled={$formData.eventDays.length <= 1} variant="destructive" on:click={e => handleDeleteEventDay(e, dayIndex)}>
+				<Button disabled={$formData.eventDays.length <= 1} variant="destructive"
+								on:click={e => handleDeleteEventDay(e, dayIndex)}>
 					<TrashIcon />
 				</Button>
 			</div>
@@ -236,7 +241,11 @@
 						<Table.Head
 							class="text-center tracking-wide uppercase font-semibold text-xs text-gray-500"
 							colspan={2}
-						>{$_("components.editBuyOptions.buyOption")}
+						>{$_("components.editBuyOptions.buyOption", {
+							values: {
+								"buyOptionName": $formData.name
+							}
+						})}
 						</Table.Head>
 						<Table.Head
 							class="border-s text-center tracking-wide uppercase font-semibold text-xs text-gray-500"

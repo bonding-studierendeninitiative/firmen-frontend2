@@ -44,6 +44,7 @@ export const getEventRegistrationsForOrganization = async ({
 								const user = await clerkClient.users.getUser(contactPersonId);
 
 								return {
+									id: user.id,
 									name: user.fullName,
 									image: user.imageUrl,
 									email: user.primaryEmailAddress?.emailAddress

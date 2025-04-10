@@ -1,51 +1,25 @@
 <script lang="ts">
 	import Ellipsis from 'lucide-svelte/icons/ellipsis';
-	import ReviewRegistrationForm from './review-registration-form.svelte';
 	import DeleteEventRegistrationForm from './delete-event-registration-form.svelte';
 	import * as DropdownMenu from '@/components/ui/dropdown-menu';
 	import { Button } from '@/components/ui/button';
 	import type {
-		EventRegistration, AdminEventRegistrationsResponse
+		AdminEventRegistrationsResponse
 	} from '@schema';
-	import { ConfirmEventRegistration, RejectEventRegistration, ReviewCatalogueData } from '@/@svelte/modules';
+	import { ConfirmEventRegistration, RejectEventRegistration } from '@/@svelte/modules';
 	import type { InferOutput } from 'valibot';
 	import { _ } from '@services';
-	import { getContext } from 'svelte';
 
 	export let id: string;
 	export let eventRegistration: InferOutput<AdminEventRegistrationsResponse>['eventRegistrations'][number];
-	let rejectForm = getContext('rejectForm');
-	let confirmForm = getContext('confirmForm');
-	let deleteForm = getContext('deleteForm');
 	let isConfirmOpen = false;
 	let isRejectOpen = false;
-	let isReviewCatalogueDataOpen = false;
 	let isDeleteOpen = false;
 </script>
 
-{#await confirmForm}
-	<div></div>
-{:then form}
-	<!--<ReviewRegistrationForm />-->
-	<ConfirmEventRegistration confirmForm={form} {eventRegistration} {id} bind:isOpen={isConfirmOpen} />
-{:catch error}
-	<div>{error.message}</div>
-{/await}
-{#await rejectForm}
-	<div></div>
-{:then form}
-	<RejectEventRegistration rejectForm={form} {id} bind:isOpen={isRejectOpen} />
-{:catch error}
-	<div>{error.message}</div>
-{/await}
-{#await deleteForm}
-	<div></div>
-{:then form}
-	<DeleteEventRegistrationForm deleteForm={form} eventRegistrationId={id} bind:open={isDeleteOpen} />
-{:catch error}
-	<div>{error.message}</div>
-{/await}
-<ReviewCatalogueData {eventRegistration} {id} bind:isOpen={isReviewCatalogueDataOpen} />
+<ConfirmEventRegistration {eventRegistration} {id} bind:isOpen={isConfirmOpen} />
+<RejectEventRegistration {id} bind:isOpen={isRejectOpen} />
+<DeleteEventRegistrationForm eventRegistrationId={id} bind:open={isDeleteOpen} />
 
 <DropdownMenu.Root>
 	<DropdownMenu.Trigger asChild let:builder>
@@ -67,9 +41,6 @@
 		</DropdownMenu.Item>
 		<DropdownMenu.Item on:click={() => (isRejectOpen = true)}>
 			{$_("admin-pages.events.event-registrations.data-table.actions.reject")}
-		</DropdownMenu.Item>
-		<DropdownMenu.Item on:click={() => (isReviewCatalogueDataOpen = true)}>
-			{$_("admin-pages.events.event-registrations.data-table.actions.review-catalogue-data")}
 		</DropdownMenu.Item>
 		<DropdownMenu.Item class="text-red-500" on:click={() => (isDeleteOpen = true)}>
 			{$_("admin-pages.events.event-registrations.data-table.actions.delete-event-registration")}

@@ -26,7 +26,7 @@
 			{/each}
 		</div>
 	{:else}
-		<div class="grid grid-cols-1 sm:grid-cols-1 md:sm:grid-cols-1 lg:sm:grid-cols-2 gap-8">
+		<div class="grid grid-cols-1 sm:grid-cols-1 md:sm:grid-cols-1 lg:sm:grid-cols-2 gap-4">
 			{#each publishedEvents as { heading, subHeading, date, id }, index (index)}
 				<EventInfoBox
 					{heading}

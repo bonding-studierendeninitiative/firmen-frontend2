@@ -164,9 +164,9 @@ export const UpdateBuyOptionRequestSchema = v.object({
 			price: v.nullable(v.number()),
 			benefits: v.array(
 				v.object({
-					numericValue: v.nullable(v.number()),
-					stringValue: v.nullable(v.string()),
-					booleanValue: v.nullable(v.boolean())
+					numericValue: v.nullish(v.number()),
+					stringValue: v.nullish(v.string()),
+					booleanValue: v.nullish(v.boolean())
 				})
 			)
 		})

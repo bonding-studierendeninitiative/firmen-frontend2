@@ -8,7 +8,6 @@
 	import { valibot } from 'sveltekit-superforms/adapters';
 	import { toast } from 'svelte-french-toast';
 	import { Button } from '@/components/ui/button';
-	import * as Dialog from '@/components/ui/dialog';
 	import { signOut } from '@auth/sveltekit/client';
 	import { type UpdateUserDetails, UpdateUserDetailsRequest } from '@schema';
 

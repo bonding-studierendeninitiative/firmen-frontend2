@@ -9,6 +9,8 @@
 	import { type GetBuyOptionsResponse } from '@schema';
 	import { LoaderCircle } from 'lucide-svelte';
 	import { fade } from 'svelte/transition';
+	import { writable } from 'svelte/store';
+	import { setContext } from 'svelte';
 
 	export let data;
 
@@ -21,7 +23,8 @@
 		};
 	}
 
-	let isDialogOpen = false;
+	let isDialogOpen = writable(false);
+	setContext('isCreateBuyOptionDialogOpen', isDialogOpen);
 
 </script>
 
@@ -29,11 +32,10 @@
 	<LoaderCircle class="animate-spin w-14 h-14 mx-auto" />
 {:then buyOptions}
 	<section in:fade class="mt-10 flex flex-col gap-y-8">
-		{#if buyOptions?.totalElements > 0}
+		{#if (buyOptions?.totalElements ?? 0) > 0}
 			{@const activeBuyOption = buyOptions?.buyOptions?.find((buyOption) => buyOption.active)}
 			<nav class="flex justify-between gap-x-2">
 				<BuyOptionSelector
-					bind:isDialogOpen
 					buyOptions={buyOptions?.buyOptions.map(mapBuyOptionToValue) ?? []}
 					value={$page.params.buyOptionId}
 					onSelect={async (value) =>{
@@ -53,7 +55,7 @@
 			<slot />
 		{:else}
 			<NoDataFound
-				onButtonClick={() => (isDialogOpen = true)}
+				onButtonClick={() => ($isDialogOpen = true)}
 				buttonText="Create a new buy option&hellip;"
 				heading="This event does not have any buy options yet."
 				subHeading="Create a buy option now to enable organizations to sign up to this event."
@@ -66,7 +68,7 @@
 {#await data.createForm}
 	<LoaderCircle class="animate-spin w-16 h-16" />
 {:then createForm}
-	<CreateBuyOption bind:isDialogOpen {createForm} />
+	<CreateBuyOption bind:isDialogOpen={$isDialogOpen} {createForm} />
 {:catch error}
 	<p class="text-red-500">Error: {error.message}</p>
 {/await}

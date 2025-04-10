@@ -573,7 +573,7 @@
 </div>
 
 <style>
-    /* Scoped styling - it will only affect elements inside this component */
+    /* Scoped styling - it will only affect elements inside this Layout */
     :global(.undertaking-text a) {
         /* Example Tailwind-like styles */
         color: #3b82f6; /* equivalent to text-blue-500 */

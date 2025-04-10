@@ -1,5 +1,4 @@
 <script lang="ts">
-	import type { PageServerData } from './$types';
 	import { _ } from '@services';
 	import { NoDataFound, Modal, Select } from '@/@svelte/components';
 	import toast from 'svelte-french-toast';
@@ -10,37 +9,25 @@
 	import { LoaderCircle } from 'lucide-svelte';
 	import { fade } from 'svelte/transition';
 
-	export let data: PageServerData;
+	export let data;
 
 	$: ({
-		rejectForm,
-		confirmForm,
-		reviewCatalogueDataForm,
-		exportCatalogueDataForm,
+		reviewAdvertisementForm,
+		reviewLogoForm,
 		createRegistrationForm,
-		deleteForm
 	} = data);
 
-	let confirmFormStore = writable(confirmForm);
-	let rejectFormStore = writable(rejectForm);
-	let deleteFormStore = writable(deleteForm);
-	let reviewCatalogueDataFormStore = writable(reviewCatalogueDataForm);
-	let exportCatalogueDataFormStore = writable(exportCatalogueDataForm);
+	let reviewAdvertisementFormStore = writable(reviewAdvertisementForm);
+	let reviewLogoFormStore = writable(reviewLogoForm);
 	let createRegistrationFormStore = writable(createRegistrationForm);
 	$: {
-		confirmFormStore.set(confirmForm);
-		rejectFormStore.set(rejectForm);
-		deleteFormStore.set(deleteForm);
-		reviewCatalogueDataFormStore.set(reviewCatalogueDataForm);
-		exportCatalogueDataFormStore.set(exportCatalogueDataForm);
+		reviewAdvertisementFormStore.set(reviewAdvertisementForm);
+		reviewLogoFormStore.set(reviewLogoForm);
 		createRegistrationFormStore.set(createRegistrationForm);
 	}
 
-	setContext('confirmForm', confirmFormStore);
-	setContext('rejectForm', rejectFormStore);
-	setContext('deleteForm', deleteFormStore);
-	setContext('reviewCatalogueDataForm', reviewCatalogueDataFormStore);
-	setContext('exportCatalogueDataForm', exportCatalogueDataFormStore);
+	setContext('reviewAdvertisementForm', reviewAdvertisementFormStore);
+	setContext('reviewLogoForm', reviewLogoFormStore);
 	setContext('createRegistrationForm', createRegistrationFormStore);
 
 	let isOpen = false;
@@ -66,9 +53,7 @@
 		</div>
 	</div>
 	<footer class=" flex items-center justify-end">
-		<Button variant="gradient" class="!py-1.5" on:click={handleUpdateStatus}
-		>{$_('common.update')}</Button
-		>
+		<Button variant="gradient" class="!py-1.5" on:click={handleUpdateStatus}>{$_('common.update')}</Button>
 	</footer>
 </Modal>
 
@@ -93,6 +78,7 @@
 					status={data?.status}
 					packages={data?.packages}
 				/>
+				<!--<SuperDebug data={data} />-->
 			</section>
 		{/if}
 	</section>

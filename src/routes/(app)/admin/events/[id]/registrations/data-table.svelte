@@ -9,34 +9,28 @@
 	} from 'svelte-headless-table/plugins';
 	import type { InferOutput } from 'valibot';
 	import * as Table from '@/components/ui/table';
-	import { get, readable } from 'svelte/store';
+	import { derived, get, readable } from 'svelte/store';
 	import {
-		AdvertStatusIcon,
 		Chip,
 		DataTableFacetedFilter,
 		PortraitStatusIcon,
-		LogoStatusIcon,
 		SearchInput
 	} from '@/@svelte/components';
 	import DataTableActions from './data-table-actions.svelte';
 	import DataTableCheckbox from './data-table-checkbox.svelte';
-	import ExportCatalogueDataForm from './export-catalogue-data-form.svelte';
+	import ExportCatalogueDataDialog from './export-catalogue-data-form.svelte';
 	import SimpleEventRegistrationOrganization from './simple-event-registration-organization.svelte';
 	import type {
-		ExportCatalogueDataRequest,
 		AdminEventRegistrationsResponse
 	} from '@schema';
-	import { getContext } from 'svelte';
-	import { type Infer, type SuperValidated } from 'sveltekit-superforms';
 	import CreateEventRegistrationForm from './create-event-registration-form.svelte';
+	import { AdminViewAdvertisementDialog, AdminViewLogoDialog } from '@/@svelte/modules';
 
 	export let data: InferOutput<AdminEventRegistrationsResponse>['eventRegistrations'];
 	export let packages: string[] = [];
 	export let status: string[] = [];
 	export let addonPackages: string[] = [];
 	export let addons: string[] = [];
-
-	let exportCatalogueDataForm: SuperValidated<Infer<ExportCatalogueDataRequest>> = getContext('exportCatalogueDataForm');
 
 	let table = createTable(readable(data), {
 		filter: addTableFilter({
@@ -89,9 +83,12 @@
 		table.column({
 			accessor: 'id',
 			header: (_, { pluginStates }) => {
-				const { allPageRowsSelected } = pluginStates.select;
+				const { allPageRowsSelected, somePageRowsSelected } = pluginStates.select;
+				const checked = derived([allPageRowsSelected, somePageRowsSelected], ([a, b]) => {
+					return a ? true : b ? 'indeterminate' : false;
+				});
 				return createRender(DataTableCheckbox, {
-					checked: allPageRowsSelected
+					checked
 				});
 			},
 			cell: ({ row }, { pluginStates }) => {
@@ -109,7 +106,7 @@
 			}
 		}),
 		table.column({
-			accessor: "organization",
+			accessor: 'organization',
 			header: $_('admin-pages.events.event-registrations.data-table.headers.org'),
 			id: 'organization',
 			cell: ({ value }) => {
@@ -119,12 +116,12 @@
 			},
 			plugins: {
 				filter: {
-					getFilterValue: ({name}) => name,
+					getFilterValue: ({ name }) => name
 				}
 			}
 		}),
 		table.column({
-			accessor: ({ purchasedPackage }) => purchasedPackage?.name ?? $_("admin-pages.events.event-registrations.data-table.packages.no-package"),
+			accessor: ({ purchasedPackage }) => purchasedPackage?.name ?? $_('admin-pages.events.event-registrations.data-table.packages.no-package'),
 			header: $_('admin-pages.events.event-registrations.data-table.headers.package'),
 			id: 'package',
 			plugins: {
@@ -152,7 +149,7 @@
 				}
 			},
 			cell({ value }) {
-				return dayjs(value, {}, $locale ?? 'de').fromNow()
+				return dayjs(value, {}, $locale ?? 'de').fromNow();
 			}
 		}),
 		table.column({
@@ -189,8 +186,8 @@
 			}
 		}),
 		table.column({
-			accessor: ({ logoStatus }) => logoStatus,
-			cell: ({ value }) => createRender(LogoStatusIcon, { variant: value }),
+			accessor: ({ logo }) => logo,
+			cell: ({ value }) => createRender(AdminViewLogoDialog, { logo: value }),
 			header: $_('admin-pages.events.event-registrations.data-table.headers.logo-status'),
 			plugins: {
 				filter: {
@@ -199,8 +196,8 @@
 			}
 		}),
 		table.column({
-			accessor: ({ advertisementStatus }) => advertisementStatus,
-			cell: ({ value }) => createRender(AdvertStatusIcon, { variant: value }),
+			accessor: ({ advertisement }) => advertisement,
+			cell: ({ value }) => createRender(AdminViewAdvertisementDialog, { advertisement: value }),
 			header: $_('admin-pages.events.event-registrations.data-table.headers.advert-status'),
 			plugins: {
 				filter: {
@@ -275,7 +272,16 @@
 	export let { filterValues: statusFilterValues } = pluginStates.statusFilter;
 	export let { filterValues: addonPackageFilterValues } = pluginStates.addonPackageFilter;
 	export let { filterValues: addonFilterValues } = pluginStates.addonFilter;
-	export let { hiddenColumnIds } = pluginStates.hide;
+
+	const selectedEventRegistrationIds = derived([pluginStates.select.selectedDataIds, pageRows], ([selectedDataIds, rows]) => Object.entries(selectedDataIds).map(([id, selected]) => {
+
+
+		const row = rows.find((row) => row.isData() && row.dataId === id);
+
+		console.log(row);
+		return row?.original.id;
+	}));
+	// export let { hiddenColumnIds } = pluginStates.hide;
 </script>
 
 <section class="flex gap-4 flex-wrap justify-end">
@@ -319,12 +325,8 @@
 		title={$_("admin-pages.events.event-registrations.data-table.filters.addons")}
 		counts={counts?.addons}
 	/>
-	<ExportCatalogueDataForm disabled={!$enableExport} {exportCatalogueDataForm} selectedEventRegistrations={Object.entries(get(pluginStates.select.selectedDataIds)).map(([id, selected]) => ({
-				id,
-				selected
-			})).map(({ id }) => {
-				return $pageRows.find((row) => row.isData() && row.dataId === id)?.original.id;
-			})} />
+	<ExportCatalogueDataDialog disabled={!$enableExport}
+														 selectedEventRegistrations={selectedEventRegistrationIds} />
 	<CreateEventRegistrationForm bind:open />
 </section>
 <section class="mt-10">

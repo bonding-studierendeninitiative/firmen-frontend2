@@ -7,12 +7,12 @@
 	import * as Avatar from '@/components/ui/avatar';
 	import { cn } from '@/utils';
 	import { Building, Check, ChevronsUpDown, LoaderCircle, Settings, Users } from 'lucide-svelte';
-	import { type Organization, type OrganizationMembership } from 'svelte-clerk/server';
-	import { getContext, onMount, tick } from 'svelte';
+	import { page } from '$app/stores';
+	import { getContext, tick } from 'svelte';
 	import { Button } from '@/components/ui/button';
 	import type { AdminRegisterOrganizationToEvent } from '@schema';
 	import { type Infer, superForm, type SuperValidated } from 'sveltekit-superforms';
-	import type { Writable } from 'svelte/store';
+	import { writable, type Writable } from 'svelte/store';
 	import Search from 'lucide-svelte/icons/search';
 	import { Label } from 'flowbite-svelte';
 	import { toast } from 'svelte-french-toast';
@@ -20,14 +20,17 @@
 	import { Switch } from '@/components/ui/switch';
 	import { Description, Field } from '@/components/ui/form';
 	import { Control } from 'formsnap';
+	import { trpc } from '@/trpc/client';
+	import { debouncer } from '@/stores/debouncer';
 
-	let organizations: Organization[] = [];
-	let organizationMembers: OrganizationMembership[] = [];
-	let isLoadingOrgs = false;
-	let orgQuery = '';
-	let isLoadingMembers = false;
+	let orgQuery = writable('');
+	let selectedOrg = writable({
+		organizationId: ''
+	});
+	let organizationMembers = trpc($page).admin.orgMembers.createQuery(selectedOrg);
+	let organizations = trpc($page).admin.orgs.createQuery(debouncer(orgQuery));
 	let isOrgsOpen = false;
-	let timeout = null;
+
 	export let open: boolean;
 
 	let createForm: Writable<SuperValidated<Infer<AdminRegisterOrganizationToEvent>>> = getContext('createRegistrationForm');
@@ -51,31 +54,6 @@
 
 	let { form: formData, enhance, reset } = superform;
 
-	function handle_search() {
-		isLoadingOrgs = true;
-		if (timeout) clearTimeout(timeout);
-		timeout = setTimeout(loadOrgs, 300);
-	}
-
-	async function loadOrgs() {
-		const searchParams = new URLSearchParams();
-		searchParams.append('q', orgQuery);
-		const orgs = await fetch(`/admin/api/organizations/?${searchParams}`, { method: 'GET', headers: {} });
-		organizations = await orgs.json();
-		isLoadingOrgs = false;
-	}
-
-	async function loadOrgMembers(orgId: string) {
-		isLoadingMembers = true;
-		const orgMembers = await fetch(`/admin/api/organizations/${orgId}/members`, { method: 'GET', headers: {} });
-		organizationMembers = await orgMembers.json();
-		isLoadingMembers = false;
-	}
-
-	onMount(async () => {
-		await loadOrgs();
-	});
-
 	// We want to refocus the trigger button when the user selects
 	// an item from the list so users can continue navigating the
 	// rest of the form with the keyboard.
@@ -89,8 +67,9 @@
 	function handleOrgSelect(newValue: string, ids: { trigger: string }) {
 		$formData.organizationId = newValue;
 		$formData.contactPeople = [];
-		orgName = organizations.find(org => org.id === $formData.organizationId)?.name;
-		loadOrgMembers(newValue);
+		orgName = $organizations.data?.find(org => org.id === $formData.organizationId)?.name;
+
+		selectedOrg.update(() => ({ organizationId: newValue }));
 		closeAndFocusTrigger(ids.trigger);
 	}
 </script>
@@ -133,17 +112,17 @@
 									<Command.Root shouldFilter={false}>
 										<Label class="flex items-center gap-2 py-2">
 											<Search class="h-5 w-5 ml-2" />
-											<input bind:value={orgQuery} class="w-full outline-transparent border-transparent py-2"
-														 on:input={handle_search} placeholder="Search orgs..." />
+											<input bind:value={$orgQuery} class="w-full outline-transparent border-transparent py-2"
+														 placeholder="Search orgs..." />
 										</Label>
 										<Command.Separator />
-										{#if isLoadingOrgs}
+										{#if $organizations.isLoading}
 											<Command.Loading class="flex items-center justify-center py-2">
 												<LoaderCircle class="h-6 w-6 text-primary animate-spin" />
 											</Command.Loading>
 										{:else}
 											<Command.List>
-												{#each organizations as organization}
+												{#each $organizations?.data ?? [] as organization}
 													<Command.Item
 														value={organization.id}
 														onSelect={(currentValue) => {
@@ -179,7 +158,7 @@
 							<Card.Description></Card.Description>
 						</Card.Header>
 						<Card.Content class="space-y-6 pt-2">
-							{#if isLoadingMembers}
+							{#if $organizationMembers.isLoading}
 								<LoaderCircle class="h-5 w-5 text-primary animate-spin" />
 							{:else}
 								<ToggleGroup.Root
@@ -188,7 +167,7 @@
 									class="flex flex-wrap gap-2"
 									bind:value={$formData.contactPeople}
 								>
-									{#each organizationMembers as member}
+									{#each $organizationMembers.data ?? [] as member}
 										<ToggleGroup.Item
 											value={member.publicUserData?.userId}
 											class={cn(

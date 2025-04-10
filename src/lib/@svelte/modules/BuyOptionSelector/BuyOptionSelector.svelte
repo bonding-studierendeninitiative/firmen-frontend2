@@ -5,7 +5,7 @@
 	import { ChevronsUpDown, PlusCircle } from 'lucide-svelte';
 	import Check from 'lucide-svelte/icons/check';
 	import { cn } from '@/utils/tailwind';
-	import { tick } from 'svelte';
+	import { getContext, tick } from 'svelte';
 	import { Badge } from '@/components/ui/badge';
 	import { _ } from '@services';
 
@@ -13,7 +13,7 @@
 	export let buyOptions: { label: string; value: string; active: boolean }[];
 	export let onSelect: (value: string) => void;
 	export let value = '';
-	export let isDialogOpen = false;
+	export let isDialogOpen = getContext('isCreateBuyOptionDialogOpen');
 
 	$: selectedValue = buyOptions.find((f) => f.value === value)?.label ?? 'Select a framework...';
 

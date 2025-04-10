@@ -21,7 +21,7 @@ export const getBuyOptions = async ({
 	eventId: string;
 }) => {
 	const response = await API.get<InferInput<GetBuyOptionsResponse>>({
-		route: `/admin/event/${eventId}/buy-option?page=0&limit=4&sortBy=createdAt&sortOrder=desc`,
+		route: `/admin/event/${eventId}/buy-option?page=0&limit=4&sortBy=creationDate&sortOrder=desc`,
 		token: accessToken
 	});
 	const data = await response.json();

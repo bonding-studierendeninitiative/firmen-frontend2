@@ -9,7 +9,17 @@
 	import { deDE, enUS } from '@clerk/localizations';
 	import { PUBLIC_CLERK_PUBLISHABLE_KEY } from '$env/static/public';
 	import { blur } from 'svelte/transition';
+	import { browser } from '$app/environment';
+	import { QueryClient, QueryClientProvider } from '@tanstack/svelte-query';
+	import { SvelteQueryDevtools } from '@tanstack/svelte-query-devtools';
 
+	const queryClient = new QueryClient({
+		defaultOptions: {
+			queries: {
+				enabled: browser
+			}
+		}
+	});
 	onMount(() => {
 		document.dir = $dir;
 		setupI18n();
@@ -26,9 +36,12 @@
 	</div>
 {:else}
 	<div in:blur>
-		<ClerkProvider publishableKey={PUBLIC_CLERK_PUBLISHABLE_KEY} localization={$locale === 'de' ? deDE : enUS}>
-			<slot />
-		</ClerkProvider>
+		<QueryClientProvider client={queryClient}>
+			<SvelteQueryDevtools />
+			<ClerkProvider publishableKey={PUBLIC_CLERK_PUBLISHABLE_KEY} localization={$locale === 'de' ? deDE : enUS}>
+				<slot />
+			</ClerkProvider>
+		</QueryClientProvider>
 		<SuperDebug data={page} />
 	</div>
 {/if}

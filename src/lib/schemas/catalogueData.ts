@@ -1,21 +1,16 @@
-import { object, string, union, intersect, literal, file, nonEmpty, pipe, array } from 'valibot';
-
-export const ReviewCatalogueDataRequest = object({
-	feedback: string(),
-	feedbackType: union([literal('confirmation'), literal('change-request'), literal('rejection')]),
-	documentType: union([literal('advert'), literal('portrait'), literal('logo')])
-});
-
-export type ReviewCatalogueDataRequest = typeof ReviewCatalogueDataRequest;
-
-export const ReviewCatalogueDataForm = intersect([
-	ReviewCatalogueDataRequest,
-	object({
-		eventRegistrationId: string()
-	})
-]);
-
-export type ReviewCatalogueDataForm = typeof ReviewCatalogueDataForm;
+import {
+	object,
+	string,
+	union,
+	intersect,
+	literal,
+	file,
+	nonEmpty,
+	pipe,
+	array,
+	transform,
+	nullable
+} from 'valibot';
 
 export const ExportCatalogueDataRequest = object({
 	documentType: union([literal('advert'), literal('logo')]),
@@ -40,3 +35,33 @@ export const UploadCatalogueDataForm = intersect([
 ]);
 
 export type UploadCatalogueDataForm = typeof UploadCatalogueDataForm;
+
+export const UploadAdvertisementRequest = object({
+	orgId: pipe(string(), nonEmpty()),
+	title: pipe(string(), nonEmpty('Cannot be empty')),
+	file: file()
+});
+
+export type UploadAdvertisementRequest = typeof UploadAdvertisementRequest;
+
+export const UploadLogoRequest = object({
+	orgId: pipe(string(), nonEmpty()),
+	title: pipe(string(), nonEmpty('Cannot be empty')),
+	file: file()
+});
+
+export type UploadLogoRequest = typeof UploadLogoRequest;
+
+export const DocumentFeedbackSchema = object({
+	message: nullable(string()),
+	feedbackType: pipe(
+		string(),
+		transform((input) => input.toLowerCase().replace('_', '-')),
+		union([
+			literal('confirmation'),
+			literal('change-request'),
+			literal('rejection'),
+			literal('upload')
+		])
+	)
+});

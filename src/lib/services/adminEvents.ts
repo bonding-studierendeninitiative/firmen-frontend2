@@ -19,7 +19,9 @@ export const publishEvent = async ({
 		route: `/admin/event/${eventId}/publish`,
 		token: accessToken
 	});
-	if (response.status !== 204) {
+	if (response.status === 404) {
+		error(404, response.statusText);
+	} else if (response.status !== 204) {
 		error(400, response.statusText);
 	}
 };

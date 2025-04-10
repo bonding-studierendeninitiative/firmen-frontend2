@@ -26,17 +26,17 @@ export const USER_SIDEBAR_LINKS: SidebarLinkTypes[] = [
 		route: '/dashboard',
 		Icon: 'DashboardIcon'
 	},
-	{
+	/*{
 		label: 'events',
 		route: '/events',
 		Icon: 'EventsIcon'
-	},
+	},*/
 	{
 		label: 'catalogue-data',
 		route: '/catalogue-data',
 		Icon: 'PortraitIcon'
-	},
-	{
+	}
+	/*{
 		label: 'notifications',
 		route: '/notifications',
 		Icon: 'NotificationIcon'
@@ -45,7 +45,7 @@ export const USER_SIDEBAR_LINKS: SidebarLinkTypes[] = [
 		label: 'settings',
 		route: '/settings',
 		Icon: 'SettingsIcon'
-	}
+	}*/
 ];
 
 export const ADMIN_SIDEBAR_LINKS: SidebarLinkTypes[] = [

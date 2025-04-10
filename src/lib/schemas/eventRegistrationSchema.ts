@@ -1,5 +1,7 @@
 import * as v from 'valibot';
 import { APIEvent } from '@schema/events';
+import { LogoSchema } from '@schema/logos';
+import { AdvertisementSchema } from '@schema/advertisements';
 
 export const CreateEventRegistrationSchema = v.object({
 	eventId: v.pipe(v.string(), v.nonEmpty()),
@@ -120,21 +122,8 @@ export const OrgEventRegistrationSchema = v.object({
 			name: v.string()
 		})
 	),
-	advertisement: v.nullish(
-		v.object({
-			status: v.string(),
-			name: v.string(),
-			url: v.nullish(v.string())
-		})
-	),
-	logo: v.nullish(
-		v.object({
-			status: v.string(),
-			mimeType: v.string(),
-			name: v.string(),
-			url: v.nullish(v.string())
-		})
-	),
+	advertisement: v.nullish(AdvertisementSchema),
+	logo: v.nullish(LogoSchema),
 	desiredEventRegistrationDays: v.nullish(v.array(v.string())),
 	contactPeople: v.nullish(v.array(v.string())),
 	canUploadAdvertisement: v.nullish(v.boolean())
@@ -163,21 +152,8 @@ export const AdminEventRegistrationsResponse = v.object({
 					name: v.nullable(v.string())
 				})
 			),
-			advertisement: v.nullish(
-				v.object({
-					status: v.string(),
-					name: v.string(),
-					url: v.nullish(v.string())
-				})
-			),
-			logo: v.nullish(
-				v.object({
-					status: v.string(),
-					mimeType: v.string(),
-					name: v.string(),
-					url: v.nullish(v.string())
-				})
-			),
+			advertisement: v.nullish(AdvertisementSchema),
+			logo: v.nullish(LogoSchema),
 			desiredEventRegistrationDays: v.nullish(v.array(v.string())),
 			contactPeople: v.nullish(v.array(v.string()))
 		})

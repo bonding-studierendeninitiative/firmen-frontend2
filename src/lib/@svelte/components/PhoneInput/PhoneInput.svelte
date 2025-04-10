@@ -185,7 +185,7 @@
 									}}
 								>
 									<div class="inline-flex items-center text-left">
-										<span class="flag flag-{country.iso2.toLowerCase()} flex-shrink-0 mr-3" />
+										<span class="flag flag-{country.iso2.toLowerCase()} flex-shrink-0 mr-3"></span>
 										<span class="mr-2">{country.name}</span>
 										<span class="text-gray-500">+{country.dialCode}</span>
 									</div>

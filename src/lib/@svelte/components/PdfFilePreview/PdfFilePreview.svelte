@@ -1,7 +1,14 @@
 <script lang="ts">
 	import { cn } from '@/utils';
+	import type { HTMLEmbedAttributes } from 'svelte/elements';
 
-	let { url, title, class: clazz, ...restProps } = $props();
+	type Props = {
+		url: string;
+		title?: string;
+		class?: string;
+	} & HTMLEmbedAttributes;
+
+	let { url, title = "", class: clazz = "", ...restProps }: Props = $props();
 </script>
 
 <embed

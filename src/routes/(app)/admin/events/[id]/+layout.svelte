@@ -1,27 +1,28 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { ReturnIcon } from '@/@svelte/icons';
-	import { LinkTabs, Spinner } from '@/@svelte/components';
-	import { page, navigating } from '$app/stores';
-	import { fade } from 'svelte/transition';
+	import { LinkTabs } from '@/@svelte/components';
+	import { page } from '$app/stores';
 	import { Event } from '@/@svelte/components';
 	import { Button } from '@/components/ui/button';
 	import { _ } from '@services';
 	import { LoaderCircle } from 'lucide-svelte';
+	import { toast } from 'svelte-french-toast';
+	import { trpc } from '@/trpc/client';
+	import { cn } from '@/utils';
 
 	export let data;
+
 	function getTabs(event: { id: string }) {
 		return [
 			{ href: `/admin/events/${event?.id}/registrations`, name: 'registrations' },
-			{ name: 'buy-options', href: `/admin/events/${event?.id}/buy-options` }
+			{ name: 'buy-options', href: `/admin/events/${event?.id}/buy-options` },
+			{ name: 'exports', href: `/admin/events/${event?.id}/exports` }
 			// { name: 'details', href: `/admin/events/${data.event?.id}/details` }
-		]
+		];
 	}
 
-	function getEventInfo(url?: URL) {
-		const match = url?.pathname.match(/\/events\/([^/]+)\/([^/]+)/);
-		return match ? { eventId: match[1], page: match[2] } : null;
-	}
+	const publishEvent = trpc($page).admin.events.publish.createMutation();
 </script>
 
 <div>
@@ -38,9 +39,16 @@
 			<Event {event} />
 			<div class="flex-grow"></div>
 			{#if event?.status === 'UNPUBLISHED'}
-				<form action={`/admin/events/${$page.params.id}/?/publishEvent`} method="POST">
-					<Button type="submit">{$_("common.publish")}</Button>
-				</form>
+				<Button class={cn($publishEvent.isPending && "animate-pulse")} disabled={$publishEvent.isPending} on:click={() => $publishEvent.mutate({
+					eventId: event.id
+					}, {
+						onError: (error) => {
+							toast.error(error.message);
+						},
+						onSuccess: () => {
+							toast.success('Event published successfully');
+						}
+					})}>{$_("common.publish")}</Button>
 			{/if}
 		{:catch error}
 			<div class="text-red-500">Error: {error.message}</div>

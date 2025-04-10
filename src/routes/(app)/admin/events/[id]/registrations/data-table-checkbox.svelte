@@ -2,7 +2,7 @@
 	import { Checkbox } from '@/components/ui/checkbox';
 	import type { Writable } from 'svelte/store';
 
-	export let checked: Writable<boolean>;
+	export let checked: Writable<boolean | "indeterminate">;
 </script>
 
 <Checkbox bind:checked={$checked} />

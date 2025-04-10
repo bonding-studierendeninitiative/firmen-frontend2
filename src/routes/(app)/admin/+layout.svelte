@@ -1,9 +1,33 @@
 <script lang="ts">
-	import { Sidebar, SidebarItem } from '@/@svelte/modules';
+	import { AdminJobs, Sidebar, SidebarItem } from '@/@svelte/modules';
 	import { ADMIN_SIDEBAR_LINKS } from '@constant';
 	import { page } from '$app/stores';
+	import { trpc } from '$lib/trpc/client';
+	import { LoaderCircle } from 'lucide-svelte';
+	import { writable } from 'svelte/store';
 
 	$: activeUrl = $page.url.pathname;
+
+	export let data;
+
+	const api = trpc($page);
+	const filter = writable<{
+		limit: string,
+		offset: string,
+		stateName: 'SUCCEEDED' | 'FAILED' | 'PROCESSING' | 'ENQUEUED' | 'SCHEDULED' | 'DELETED'
+	}>({
+		limit: '10',
+		offset: '0',
+		stateName: 'SUCCEEDED'
+	});
+	const opts = writable(
+		api.admin.jobs.createQuery.opts({
+			initialData: data.jobs,
+			refetchInterval: Infinity
+		})
+	);
+
+	const jobs = api.admin.jobs.createQuery(filter, opts);
 </script>
 
 <div class=" lg:flex w-full">
@@ -16,8 +40,15 @@
 	</Sidebar>
 
 	<div class="h-[100dvh] w-full flex-grow overflow-y-scroll">
+		{#if $jobs.isLoading}
+			<LoaderCircle class="w-16 h-16 mx-auto animate-spin" />
+		{:else if $jobs.data}
+			<AdminJobs jobs={$jobs.data?.jobs ?? []} />
+		{/if}
 		<div class="w-full px-16 py-22 bg-white">
 			<slot />
 		</div>
 	</div>
+
+
 </div>

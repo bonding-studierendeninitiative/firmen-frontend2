@@ -1,10 +1,9 @@
 import { getUnregisteredEvents } from '@/services/events';
-import { getEventRegistrationsForOrganization, uploadCatalogueData } from '@/services';
-import { fail, superValidate, withFiles } from 'sveltekit-superforms';
-import { UploadCatalogueDataForm } from '@schema';
-
+import { getEventRegistrationsForOrganization } from '@/services';
+import { clerkClient } from 'svelte-clerk/server';
+import { superValidate } from 'sveltekit-superforms';
 import { valibot } from 'sveltekit-superforms/adapters';
-import { type AuthObject, clerkClient } from 'svelte-clerk/server';
+import { UploadCatalogueDataForm } from '@schema';
 
 export const load = async ({ parent, url, isDataRequest }) => {
 	const page = url.searchParams.get('page') || '0';
@@ -65,31 +64,4 @@ export const load = async ({ parent, url, isDataRequest }) => {
 		dashboardData: isDataRequest ? loadDashboardData() : await loadDashboardData(),
 		events: isDataRequest ? loadEvents() : await loadEvents()
 	};
-};
-
-export const actions = {
-	uploadCatalogueData: async ({ locals, request }) => {
-		const session = locals.auth as unknown as AuthObject;
-		if (!session || !session.sessionId) {
-			fail(403);
-			return;
-		}
-
-		const token = await clerkClient.sessions.getToken(session.sessionId, 'access_token');
-
-		const form = await superValidate(request, valibot(UploadCatalogueDataForm), {
-			strict: true
-		});
-		if (!form.valid) {
-			return fail(400, withFiles({ form }));
-		}
-
-		await uploadCatalogueData({
-			accessToken: token.jwt,
-			eventRegistrationId: form.data.eventRegistrationId,
-			data: form.data
-		});
-
-		return withFiles({ form });
-	}
 };

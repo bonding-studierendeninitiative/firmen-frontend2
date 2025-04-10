@@ -1,26 +1,24 @@
 import {
-	adminCreateRegistration,
-	confirmEventRegistration,
-	deleteEventRegistration,
-	rejectEventRegistration
-} from '@/services/adminEventRegistrations';
-import {
 	AdminRegisterOrganizationToEventSchema,
-	ConfirmEventRegistrationSchema,
-	DeleteEventRegistrationSchema,
 	ExportCatalogueDataRequest,
-	RejectEventRegistrationSchema,
-	ReviewCatalogueDataForm
+	ReviewAdvertisementRequest,
+	ReviewLogoRequest
 } from '@schema';
 import { valibot } from 'sveltekit-superforms/adapters';
 import { superValidate } from 'sveltekit-superforms';
 import { fail } from '@sveltejs/kit';
 import {
-	exportCatalogueData,
+	exportAdvertisements,
 	getEventRegistrationsForEvent,
-	reviewCatalogueData
+	reviewAdvertisement,
+	reviewLogo,
+	adminCreateRegistration,
+	exportLogos
 } from '@/services';
 import { type AuthObject, clerkClient } from 'svelte-clerk/server';
+import { createLogger } from 'vite';
+
+const logger = createLogger();
 
 export const load = async ({ parent, params, isDataRequest }) => {
 	async function loadTableData() {
@@ -64,20 +62,11 @@ export const load = async ({ parent, params, isDataRequest }) => {
 		};
 	}
 
-	const deleteForm = superValidate(valibot(DeleteEventRegistrationSchema), {
-		id: 'deleteForm'
+	const reviewAdvertisementForm = await superValidate(valibot(ReviewAdvertisementRequest), {
+		id: 'reviewAdvertisementForm'
 	});
-	const confirmForm = await superValidate(valibot(ConfirmEventRegistrationSchema), {
-		id: 'confirmForm'
-	});
-	const rejectForm = superValidate(valibot(RejectEventRegistrationSchema), {
-		id: 'rejectForm'
-	});
-	const reviewCatalogueDataForm = await superValidate(valibot(ReviewCatalogueDataForm), {
-		id: 'reviewCatalogueDataForm'
-	});
-	const exportCatalogueDataForm = superValidate(valibot(ExportCatalogueDataRequest), {
-		id: 'exportCatalogueDataForm'
+	const reviewLogoForm = await superValidate(valibot(ReviewLogoRequest), {
+		id: 'reviewLogoForm'
 	});
 	const createRegistrationForm = await superValidate(
 		{
@@ -89,79 +78,16 @@ export const load = async ({ parent, params, isDataRequest }) => {
 			errors: false
 		}
 	);
-
 	return {
-		confirmForm,
-		deleteForm: isDataRequest ? deleteForm : await deleteForm,
-		rejectForm: isDataRequest ? rejectForm : await rejectForm,
-		reviewCatalogueDataForm,
+		reviewAdvertisementForm,
+		reviewLogoForm,
 		createRegistrationForm,
-		exportCatalogueDataForm: isDataRequest
-			? exportCatalogueDataForm
-			: await exportCatalogueDataForm,
 		tableData: isDataRequest ? loadTableData() : await loadTableData()
 	};
 };
 
 export const actions = {
-	confirmEventRegistration: async ({ locals, request }) => {
-		const session = locals.auth as unknown as AuthObject;
-		if (!session || !session.sessionId) {
-			fail(403);
-			return;
-		}
-
-		const form = await superValidate(request, valibot(ConfirmEventRegistrationSchema));
-		if (!form.valid) {
-			return fail(400, { form });
-		}
-
-		const token = await clerkClient.sessions.getToken(session.sessionId, 'access_token');
-
-		await confirmEventRegistration({
-			accessToken: token.jwt,
-			eventRegistrationId: form.data.eventRegistrationId
-		});
-	},
-	rejectEventRegistration: async ({ locals, request }) => {
-		const session = locals.auth as unknown as AuthObject;
-		if (!session || !session.sessionId) {
-			fail(403);
-			return;
-		}
-
-		const form = await superValidate(request, valibot(RejectEventRegistrationSchema));
-		if (!form.valid) {
-			return fail(400, { form });
-		}
-
-		const token = await clerkClient.sessions.getToken(session.sessionId, 'access_token');
-
-		await rejectEventRegistration({
-			accessToken: token.jwt,
-			eventRegistrationId: form.data.eventRegistrationId
-		});
-	},
-	deleteEventRegistration: async ({ locals, request }) => {
-		const session = locals.auth as unknown as AuthObject;
-		if (!session || !session.sessionId) {
-			fail(403);
-			return;
-		}
-
-		const form = await superValidate(request, valibot(DeleteEventRegistrationSchema));
-		if (!form.valid) {
-			return fail(400, { form });
-		}
-
-		const token = await clerkClient.sessions.getToken(session.sessionId, 'access_token');
-
-		await deleteEventRegistration({
-			accessToken: token.jwt,
-			eventRegistrationId: form.data.eventRegistrationId
-		});
-	},
-	reviewCatalogueData: async ({ locals, request }) => {
+	reviewAdvertisement: async ({ locals, request }) => {
 		const session = locals.auth as unknown as AuthObject;
 		if (!session || !session.sessionId) {
 			fail(403);
@@ -170,16 +96,38 @@ export const actions = {
 
 		const formData = await request.formData();
 
-		const form = await superValidate(formData, valibot(ReviewCatalogueDataForm));
+		const form = await superValidate(formData, valibot(ReviewAdvertisementRequest));
 		if (!form.valid) {
 			return fail(400, { form });
 		}
 
 		const token = await clerkClient.sessions.getToken(session.sessionId, 'access_token');
 
-		await reviewCatalogueData({
+		await reviewAdvertisement({
 			accessToken: token.jwt,
-			eventRegistrationId: form.data?.eventRegistrationId,
+			advertisementId: form.data.advertisementId,
+			data: { ...form.data }
+		});
+	},
+	reviewLogo: async ({ locals, request }) => {
+		const session = locals.auth as unknown as AuthObject;
+		if (!session || !session.sessionId) {
+			fail(403);
+			return;
+		}
+
+		const formData = await request.formData();
+
+		const form = await superValidate(formData, valibot(ReviewLogoRequest));
+		if (!form.valid) {
+			return fail(400, { form });
+		}
+
+		const token = await clerkClient.sessions.getToken(session.sessionId, 'access_token');
+
+		await reviewLogo({
+			accessToken: token.jwt,
+			logoId: form.data.logoId,
 			data: { ...form.data }
 		});
 	},
@@ -192,17 +140,28 @@ export const actions = {
 
 		const formData = await request.formData();
 
+		console.log(`Exporting catalogue data`, formData);
+
 		const form = await superValidate(formData, valibot(ExportCatalogueDataRequest));
 		if (!form.valid) {
 			return fail(400, { form });
 		}
 
+		logger.info('Exporting catalogue data');
+
 		const token = await clerkClient.sessions.getToken(session.sessionId, 'access_token');
 
-		await exportCatalogueData({
-			accessToken: token.jwt,
-			data: { ...form.data }
-		});
+		if (form.data.documentType === 'advert') {
+			await exportAdvertisements({
+				accessToken: token.jwt,
+				data: { ...form.data }
+			});
+		} else {
+			await exportLogos({
+				accessToken: token.jwt,
+				data: { ...form.data }
+			});
+		}
 	},
 	createRegistration: async ({ locals, request }) => {
 		const session = locals.auth as unknown as AuthObject;

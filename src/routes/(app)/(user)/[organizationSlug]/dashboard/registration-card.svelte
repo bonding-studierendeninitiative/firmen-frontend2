@@ -14,20 +14,13 @@
 	import type { OrgEventRegistration } from '@schema';
 
 	// Status mapping for visual indicators
-	const statusConfig = {
-		'changes-requested': { color: 'bg-blue-500', label: 'New' },
-		created: { color: 'bg-blue-500', label: 'Created' },
-		confirmed: { color: 'bg-green-500', label: 'Confirmed' },
-		rejected: { color: 'bg-red-500', label: 'Rejected' },
-		uploaded: { color: 'bg-yellow-500', label: 'Pending' }
-	};
 	const catalogueDataStatusConfig = {
-		'changes-requested': { color: 'text-blue-500', label: 'New' },
+		'changes-requested': { color: 'text-yellow-500', label: 'New' },
 		created: { color: 'text-blue-500', label: 'Created' },
 		confirmed: { color: 'text-green-500', label: 'Confirmed' },
 		rejected: { color: 'text-red-500', label: 'Rejected' },
 		missing: { color: 'text-red-500', label: 'Rejected' },
-		uploaded: { color: 'text-yellow-500', label: 'Pending' }
+		uploaded: { color: 'text-blue-500', label: 'Pending' }
 	};
 
 	// Calculate the completion percentage for catalogue data
@@ -78,27 +71,50 @@
 	import { Progress } from '@/components/ui/progress';
 	import { Separator } from '@/components/ui/separator';
 	import * as Tooltip from '@/components/ui/tooltip';
-	import { LocalizedDate, LocalizedDateRange } from '@/@svelte/components';
+	import {
+		AdvertisementPreview,
+		LocalizedDate,
+		LocalizedDateRange,
+		LogoPreview
+	} from '@/@svelte/components';
 	import { buttonVariants, Button } from '@/components/ui/button';
 	import { cn } from '@/utils';
 	import { type getEventRegistrationsForOrganization } from '@/services';
 	import { _ } from '@services';
-	import { UploadCatalogueData } from '@/@svelte/modules';
-	import type { Infer, SuperValidated } from 'sveltekit-superforms';
-	import type { UploadCatalogueDataForm } from '@schema';
-	import { setContext } from 'svelte';
+	import {
+		EditContactPersons,
+		PickLogoDialog,
+		ViewAdvertisementDialog,
+		ViewLogoDialog
+	} from '@/@svelte/modules';
+	import { PickAdvertisementDialog } from '@/@svelte/modules/PickAdvertisementDialog';
+	import { PenLine, Plus } from 'lucide-svelte';
 
 	let isAddonsOpen = false;
 	export let registration: Awaited<ReturnType<typeof getEventRegistrationsForOrganization>>['eventRegistrations'][number];
-	export let uploadCatalogueDataForm: SuperValidated<Infer<UploadCatalogueDataForm>>;
 
-	setContext("uploadCatalogueDataForm", uploadCatalogueDataForm);
-	let catalogueDataOpen = false;
+	const statusConfig = {
+		created: { color: 'bg-blue-500', label: $_('status-text.created') },
+		confirmed: { color: 'bg-green-500', label: $_('status-text.confirmed') },
+		rejected: { color: 'bg-red-500', label: $_('status-text.rejected') },
+		withdrawn: { color: 'bg-gray-500', label: $_('status-text.withdrawn') }
+	};
+
+	let pickAdvertisementOpen = false;
+	let viewAdvertisementOpen = false;
+	let editContactPersonsOpen = false;
+	let viewLogoOpen = false;
+	let pickLogoOpen = false;
 </script>
 
-<UploadCatalogueData bind:isOpen={catalogueDataOpen} id={registration.id} />
-
 <Card class="w-full max-w-2xl shadow-md hover:shadow-lg transition-shadow">
+
+	<PickAdvertisementDialog bind:open={pickAdvertisementOpen} id={registration.id} orgId={registration.organizationId} />
+	<ViewAdvertisementDialog bind:open={viewAdvertisementOpen} advertisement={registration.advertisement} />
+	<EditContactPersons bind:open={editContactPersonsOpen} contactPeople={registration.contactPeople.map(({id})=> id)}
+											eventRegistrationId={registration.id} />
+	<PickLogoDialog bind:open={pickLogoOpen} id={registration.id} orgId={registration.organizationId} />
+	<ViewLogoDialog bind:open={viewLogoOpen} logo={registration.logo} />
 	<CardHeader class="pb-2">
 		<div class="flex justify-between items-start">
 			<div>
@@ -157,7 +173,14 @@
 					<Tooltip.Trigger>
 						<Button
 							class={cn("flex items-center gap-1 text-xs", catalogueDataStatusConfig[registration.logoStatus]?.color)}
-							variant="ghost" size="sm" on:click={() => catalogueDataOpen = true}>
+							variant="ghost" size="sm" on:click={() => {
+								if (registration.logo !== null) {
+									viewLogoOpen = true;
+								} else {
+
+								pickLogoOpen = true
+								}
+								}}>
 							{#if registration.logoStatus === "confirmed"}
 								<CheckCircle2 class="h-3.5 w-3.5" />
 							{:else}
@@ -167,7 +190,11 @@
 						</Button>
 					</Tooltip.Trigger>
 					<Tooltip.Content>
-						{registration.logoStatus === "confirmed" ? "Logo uploaded" : "Logo needs to be uploaded"}
+						{#if registration.logoStatus !== "missing"}
+							<LogoPreview class="max-w-64" logo={registration.logo} />
+						{:else}
+							{$_("components.registration-card.logo-tooltip-content." + registration.logoStatus)}
+						{/if}
 					</Tooltip.Content>
 				</Tooltip.Root>
 
@@ -175,15 +202,29 @@
 					<Tooltip.Root group="registration-card">
 						<Tooltip.Trigger
 							class={`flex items-center text-xs ${catalogueDataStatusConfig[registration.advertisementStatus]?.color}`}>
-							{#if registration.advertisementStatus === "confirmed"}
-								<CheckCircle2 class="h-3.5 w-3.5 mr-1" />
-							{:else}
-								<Info class="h-3.5 w-3.5 mr-1" />
-							{/if}
-							{$_("common.advert")}
+							<Button
+								class={cn("flex items-center gap-1 text-xs", catalogueDataStatusConfig[registration.advertisementStatus]?.color)}
+								variant="ghost" size="sm" on:click={() =>{
+									if (registration.advertisement !== null) {
+										viewAdvertisementOpen = true;
+									} else {
+										pickAdvertisementOpen = true;
+									}
+								}}>
+								{#if registration.advertisementStatus === "confirmed"}
+									<CheckCircle2 class="h-3.5 w-3.5 mr-1" />
+								{:else}
+									<Info class="h-3.5 w-3.5 mr-1" />
+								{/if}
+								{$_("common.advert")}
+							</Button>
 						</Tooltip.Trigger>
 						<Tooltip.Content>
-							{registration.advertisementStatus === "confirmed" ? "Ad PDF uploaded" : "Ad PDF needs to be uploaded (optional)"}
+							{#if registration.advertisementStatus !== "missing"}
+								<AdvertisementPreview class="max-w-64" advertisement={registration.advertisement} />
+							{:else}
+								{$_("components.registration-card.advertisement-tooltip-content." + registration.advertisementStatus)}
+							{/if}
 						</Tooltip.Content>
 					</Tooltip.Root>
 				{/if}
@@ -209,12 +250,25 @@
 
 		<Separator />
 
-		{#if registration.contactPeople.length > 0}
-			<div class="space-y-2 @container/contact-people">
+		<div class="space-y-2 @container/contact-people">
+			<div class="flex items-center justify-between">
 				<h4 class="text-sm font-medium flex items-center">
 					<Users class="h-4 w-4 mr-2" />
 					{$_("components.registration-card.contact-people")}
 				</h4>
+
+				<Button variant="outline" class="rounded-full px-2 py-1 text-sm font-semibold h-auto" on:click={() => {
+					editContactPersonsOpen = true;
+				}}>
+					{#if registration.contactPeople.length < 1}
+						<Plus class="h-4 w-4 mr-1" />
+						{$_("common.select")}
+					{:else}
+						<PenLine class="w-4 h-4 mr-1" />{$_("common.edit")}
+					{/if}
+				</Button>
+			</div>
+			{#if registration.contactPeople.length > 0}
 				<div class="grid grid-cols-1 @lg/contact-people:grid-cols-2 gap-2">
 					{#each registration.contactPeople ?? [] as contact (contact.name)}
 						<div class="text-sm flex items-center gap-3 rounded-full border border-muted py-1 px-1.5">
@@ -229,8 +283,8 @@
 						</div>
 					{/each}
 				</div>
-			</div>
-		{/if}
+			{/if}
+		</div>
 
 		{#if registration.addonPackages.length > 0}
 			<Collapsible bind:open={isAddonsOpen} class="w-full">

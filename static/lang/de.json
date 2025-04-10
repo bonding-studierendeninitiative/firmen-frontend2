@@ -133,10 +133,16 @@
       "unpublished": "unveröffentlicht",
       "archived": "archiviert"
     },
+    "catalogue-data-history": {
+      "rejection": "Ablehnung",
+      "change-request": "Änderungsanfrage",
+      "confirmation": "Bestätigung"
+    },
     "confirm": "Bestätigen",
     "request-changes": "Änderungen anfragen",
     "reject": "Ablehnen",
-    "create": "Erstellen"
+    "create": "Erstellen",
+    "view-details": "Details anzeigen"
   },
   "components": {
     "addonPackage": {
@@ -149,7 +155,7 @@
     },
     "editBuyOptions": {
       "buyOption": "Kaufoption {buyOptionName}",
-      "buyOptionName": "Name der Kaufoption",
+      "buyOptionName": "Name der Kaufoption (intern)",
       "packages": "Pakete",
       "services": "Leistungen",
       "packageName": "Paketname",
@@ -173,7 +179,19 @@
           "header": "Erlaubte Anmeldetage pro Organisation",
           "days": "{days, plural, one {max. {days, number} Tag} other {max. {days, number} Tage}}"
         }
-      }
+      },
+      "service": "Leistung",
+      "editService": "Leistung bearbeiten",
+      "editServiceDescription": "Stell hier die Leistungdetails und den Leistungstyp ein.",
+      "editPackage": "Paket bearbeiten",
+      "editPackageDescription": "Stell hier die Paketdetails und den Paketpreis ein.",
+      "buyOptionEditor": "Kaufoptioneditor",
+      "editorDescription": "Konfiguriere Pakete und Leistungen für deine Veranstaltung.",
+      "editor": "Editor",
+      "preview": "Vorschau",
+      "generalInformation": "Grundinformationen",
+      "saveBuyOption": "Kaufoption speichern",
+      "packageBenefitConfiguration": "Paketvorteile"
     },
     "table": {
       "no-records": "Es wurden keine Datensätze gefunden."
@@ -191,7 +209,21 @@
       "contact-people": "Kontaktpersonen",
       "addons": "Zusatzleistungen",
       "last-updated": "Zuletzt bearbeitet:",
-      "id": "ID:"
+      "id": "ID:",
+      "advertisement-tooltip-content": {
+        "confirmed": "Ihr hochgeladene Image-Anzeige wurde bestätigt",
+        "missing": "Noch keine Image-Anzeige ausgewählt. Jetzt auswählen",
+        "uploaded": "Image-Anzeige hochgeladen",
+        "rejected": "Image-Anzeige abgelehnt. Bitte eine neue Image-Anzeige hochladen",
+        "changes-requested": "Änderungen wurden angefragt, bitte eine neue Version hochladen"
+      },
+      "logo-tooltip-content": {
+        "confirmed": "Ihr hochgeladenes Logo wurde bestätigt",
+        "missing": "Noch kein Logo ausgewählt. Jetzt auswählen",
+        "uploaded": "Logo hochgeladen",
+        "rejected": "Logo abgelehnt. Bitte ein neues Logo hochladen",
+        "changes-requested": "Änderungen wurden angefragt, bitte eine neue Version hochladen"
+      }
     }
   },
   "modules": {
@@ -270,6 +302,36 @@
       "options": "Optionen",
       "can-upload-advertisements": "Darf Imageanzeigen hochladen",
       "can-upload-advertisements-description": "Darf diese Organisation eine Imageanzeige für diese Veranstaltungsanmeldung hochladen?"
+    },
+    "edit-contact-persons": {
+      "title": "Kontaktpersonen bearbeiten",
+      "description": "Wählen Sie hier aus, welche Kontaktpersonen aus Ihrer Organisation mit dieser Veranstaltung verknüpft sind.",
+      "no-members": "Es wurden keine Kontaktpersonen für Ihre Organisation gefunden.",
+      "members-card-header": "Kontaktpersonen",
+      "members-selected": "{members, plural, =0 {Keine Kontaktpersonen ausgewählt} one {Eine Kontaktpersonen ausgewählt} other {{members, number} Kontaktpersonen ausgewählt} }"
+    },
+    "view-advertisement-dialog": {
+      "file-information": "Dateiinformationen",
+      "file-type": "Dateityp:",
+      "file-size": "Dateigröße:",
+      "file-created": "Erstellt:",
+      "file-modified": "Bearbeitet:",
+      "status-history": "Statusänderungen"
+    },
+    "view-logo-dialog": {
+      "file-information": "Dateiinformationen",
+      "file-type": "Dateityp:",
+      "file-size": "Dateigröße:",
+      "file-created": "Erstellt:",
+      "file-modified": "Bearbeitet:",
+      "status-history": "Statusänderungen"
+    },
+    "pick-logo-dialog": {
+      "title": "Wählen Sie ein Logo aus",
+      "description": "Sollte das ausgewählte Logo noch nicht überprüft sein, kümmert sich das Veranstaltungsteam darum.",
+      "no-data-heading": "Keine Logos gefunden",
+      "no-data-sub-heading": "Ihre Organization hat noch keine Logos hinterlegt",
+      "no-data-action": "Jetzt Logo hochladen"
     }
   },
   "sidebar": {
@@ -337,6 +399,13 @@
   },
   "breadcrumbs": {
     "events": "Veranstaltungen"
+  },
+  "file-types": {
+    "application/pdf": "Vektorgrafik (PDF)",
+    "image/png": "Rastergrafik (PNG)",
+    "image/jpeg": "Rastergrafik (JPEG)",
+    "image/svg+xml": "Vektorgrafik (SVG)",
+    "unknown": "Unbekannt"
   },
   "status-text": {
     "verification": "Überprüfung",

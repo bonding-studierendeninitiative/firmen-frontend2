@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { EditBuyOptions } from '@/@svelte/modules/EditBuyOptions';
+	import { EditBuyOptionsV2 } from '@/@svelte/modules/EditBuyOptions';
 	import { AddonPackage } from '@/@svelte/components';
 	import { CreateAddonPackage } from '@/@svelte/modules/CreateAddonPackage';
 	import { _ } from '@services';
@@ -13,7 +13,7 @@
 	{#await data.updateForm}
 		<LoaderCircle class="w-12 h-12 animate-spin mx-auto" />
 	{:then form}
-		<EditBuyOptions {form} />
+		<EditBuyOptionsV2 {form} />
 	{:catch error}
 		<p>{error.message}</p>
 	{/await}
