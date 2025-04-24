@@ -12,13 +12,12 @@
 	import { Button } from '@/components/ui/button';
 	import { writable } from 'svelte/store';
 	import Search from 'lucide-svelte/icons/search';
-	import { Label } from 'flowbite-svelte';
 	import { toast } from 'svelte-french-toast';
 	import { _ } from '@services';
 	import { Switch } from '@/components/ui/switch';
-	import { Description } from '@/components/ui/form';
 	import { trpc } from '@/trpc/client';
 	import { debouncer } from '@/stores/debouncer';
+	import { Label } from '@/components/ui/label';
 
 	let orgFilters = writable({
 		query: '',
@@ -191,9 +190,9 @@
 						>
 							<div class="space-y-0.5">
 								<Label>{$_("modules.admin-create-event-registration.can-upload-advertisements")}</Label>
-								<Description>
+								<p class="text-muted text-sm">
 									{$_("modules.admin-create-event-registration.can-upload-advertisements-description")}
-								</Description>
+								</p>
 							</div>
 							<Switch
 								includeInput
