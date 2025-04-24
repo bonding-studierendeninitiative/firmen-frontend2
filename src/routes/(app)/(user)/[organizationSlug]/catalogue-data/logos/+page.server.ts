@@ -7,29 +7,13 @@ import { uploadLogo } from '@/services';
 import { createCaller } from '@/trpc/router';
 
 export const load: PageServerLoad = async (event) => {
-	const page = event.url.searchParams.get('page') || '0';
-
-	const { organization } = await event.parent();
-
 	const api = await createCaller(event);
-
-	const org = await organization;
-
-	const uploadLogoForm = await superValidate(
-		{
-			orgId: org.id
-		},
-		valibot(UploadLogoRequest),
-		{
-			errors: false
-		}
-	);
 
 	return {
 		data: api.catalogueData.logos.getAll({
-			cursor: page
-		}),
-		uploadForm: uploadLogoForm
+			cursor: '0',
+			limit: '10'
+		})
 	};
 };
 

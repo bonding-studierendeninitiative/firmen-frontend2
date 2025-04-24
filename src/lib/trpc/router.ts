@@ -5,12 +5,14 @@ import { adminRouter } from '@/trpc/routers/admin';
 import { catalogueDataRouter } from '@/trpc/routers/catalogueData';
 import { orgMembersRouter } from '@/trpc/routers/orgMembers';
 import { eventRegistrationsRouter } from '@/trpc/routers/eventRegistrations';
+import { eventRouter } from '@/trpc/routers/events';
 
 export const mainRouter = router({
 	admin: adminRouter,
 	catalogueData: catalogueDataRouter,
 	orgMembers: orgMembersRouter,
-	eventRegistrations: eventRegistrationsRouter
+	eventRegistrations: eventRegistrationsRouter,
+	events: eventRouter
 });
 
 const factory = createCallerFactory(mainRouter);

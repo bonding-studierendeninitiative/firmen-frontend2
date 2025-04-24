@@ -24,8 +24,12 @@
 	</Dialog.Trigger>
 	<Dialog.Content>
 		<Dialog.Header>
-			<Dialog.Title>Delete Logo</Dialog.Title>
-			<Dialog.Description>Are you sure you want to delete this logo?</Dialog.Description>
+			<Dialog.Title>{$_("modules.delete-logo-dialog.title", {
+				values: {
+					logoName: logo.title
+				}
+			})}</Dialog.Title>
+			<Dialog.Description>{$_("modules.delete-logo-dialog.description")}</Dialog.Description>
 		</Dialog.Header>
 		<Dialog.Footer class="pt-6">
 			<Dialog.Close class={buttonVariants({variant: "outline"})}>{$_("common.cancel")}</Dialog.Close>

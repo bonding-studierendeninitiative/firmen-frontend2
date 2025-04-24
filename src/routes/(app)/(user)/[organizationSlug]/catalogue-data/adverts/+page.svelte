@@ -6,49 +6,78 @@
 	import { fade } from 'svelte/transition';
 	import { UploadAdvertisementDialog } from '@/@svelte/modules/UploadAdvertisementDialog';
 	import { Button } from '@/components/ui/button';
+	import { trpc } from '@/trpc/client';
+	import { page } from '$app/stores';
+	import { _ } from '@services';
 
 	export let data: PageServerData;
 	let isUploadOpen = false;
 
-</script>
-{#await data.advertisementData}
-	<LoaderCircle class="w-10 h-10 mx-auto animate-spin" />
-{:then advertisementData}
-	<div in:fade>
-		{#if advertisementData?.data?.advertisements?.length <= 0}
-			<NoDataFound heading="No advertisements found" subHeading="You can create one from the advertisements page"
-									 buttonText="Upload an advertisement" onButtonClick={() => {
-isUploadOpen = true;
-		}} />
-		{:else}
-			{@const groupedAdvertisements = advertisementData?.data?.advertisements?.reduce((acc, advertisement) => {
-				const year = dayjs().year();
+	const api = trpc($page);
+	const utils = api.createUtils();
 
-				if (!acc[year]) {
-					acc[year] = [];
-				}
-				acc[year].push(advertisement);
-				return acc;
-			}, {})}
-			<div class="flex justify-end">
-				<Button class="mr-2" on:click={() => {isUploadOpen = true;}}>
-					<Plus class="h-4 w-4 mr-2" />
-					Upload an advertisement
-				</Button>
-			</div>
-			{#each Object.entries(groupedAdvertisements) as [year, advertisements]}
-				<div class="space-y-4 @container/adverts">
-					<h2 class="text-xl font-bold border-b">{year}</h2>
-					<div class="grid grid-cols-1 @lg:grid-cols-2 @3xl/adverts:grid-cols-3 @5xl/adverts:grid-cols-4 gap-4">
-						{#each advertisements as advertisement}
-							<AdvertisementItem {advertisement} />
-						{/each}
-					</div>
-				</div>
-			{/each}
+	const [advertsQuery, resolveAdverts] =
+		api.catalogueData.advertisements.getAll.createInfiniteQuery(
+			{ limit: '10' },
+			{
+				getNextPageParam: (lastPage) => Math.max(lastPage.pageNumber + 1, lastPage.totalPages - 1).toString(),
+				lazy: true
+			}
+		);
+	const uploadFormQuery = api.catalogueData.advertisements.uploadForm.createQuery(undefined, {
+		staleTime: Infinity
+	});
+</script>
+<div in:fade class="space-y-4">
+	<div class="flex justify-end">
+		{#if $uploadFormQuery.isLoading}
+			<Button class="min-w-32 mr-2" disabled>
+				<LoaderCircle class="w-5 h-5 mx-auto animate-spin" />
+			</Button>
+		{:else if $uploadFormQuery.data}
+			<UploadAdvertisementDialog bind:open={isUploadOpen} advertisementUploadForm={$uploadFormQuery.data} />
 		{/if}
 	</div>
-	<UploadAdvertisementDialog bind:open={isUploadOpen} advertisementUploadForm={advertisementData?.uploadForm} />
-{:catch error}
-	<p>{error.message}</p>
-{/await}
+	{#await resolveAdverts(data.advertisementData)}
+		<LoaderCircle class="w-10 h-10 mx-auto animate-spin" />
+	{:then _ignored}
+		{#if $advertsQuery?.data}
+			{@const allAdverts = $advertsQuery.data.pages.flatMap((page) => page.advertisements)}
+			{#if allAdverts.length === 0}
+				<NoDataFound heading="No advertisements found" subHeading="You can create one from the advertisements page"
+										 buttonText="Upload an advertisement" onButtonClick={() => {
+isUploadOpen = true;
+		}} />
+			{:else}
+				{@const groupedAdvertisements = allAdverts.reduce((acc, advertisement) => {
+					const year = dayjs(advertisement.createdAt).year();
+
+					if (!acc[year]) {
+						acc[year] = [];
+					}
+					acc[year].push(advertisement);
+					return acc;
+				}, {})}
+				{#each Object.entries(groupedAdvertisements).sort(([ayear, aadverts], [byear, badverts]) => byear.localeCompare(ayear)) as [year, advertisements]}
+					<div class="space-y-4 @container/adverts">
+						<h2 class="text-xl font-bold border-b">{year}</h2>
+						<div class="grid grid-cols-1 @lg:grid-cols-2 @3xl/adverts:grid-cols-3 @5xl/adverts:grid-cols-4 gap-4">
+							{#each advertisements as advertisement}
+								<AdvertisementItem {advertisement} />
+							{/each}
+						</div>
+					</div>
+				{/each}
+			{/if}
+		{/if}
+	{:catch error}
+		<p>{error.message}</p>
+	{/await}
+	{#if $advertsQuery.isPending || $advertsQuery.isFetching}
+		<LoaderCircle class="w-10 h-10 mx-auto animate-spin" />
+	{:else if $advertsQuery.isError}
+		<article>
+			Error loading adverts: {$advertsQuery.error}
+		</article>
+	{/if}
+</div>

@@ -1,7 +1,7 @@
 import { getEvent } from '@/services';
 import { clerkClient } from 'svelte-clerk/server';
 
-export const load = async ({ parent, params, isDataRequest }) => {
+export const load = async ({ parent, params }) => {
 	const { initialState } = await parent();
 	if (!initialState.sessionId) return;
 

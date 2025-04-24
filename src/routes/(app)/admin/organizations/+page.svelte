@@ -2,12 +2,46 @@
 	import { _ } from '@services';
 	import DataTable from './data-table.svelte';
 	import { LoaderCircle } from 'lucide-svelte';
-	import { writable } from 'svelte/store';
+	import { derived, type Readable, readable, writable } from 'svelte/store';
 	import { SearchInput } from '@/@svelte/components';
 	import { CreateOrgDialog } from '@/@svelte/modules';
+	import { type AdminOrgsOutput, trpc } from '@/trpc/client';
+	import { page } from '$app/stores';
+	import { debouncer } from '@/stores/debouncer.js';
+	import { queryParameters } from 'sveltekit-search-params';
+	import OrganizationsDataTable from './organizations-data-table.svelte';
+	
+	let params = queryParameters({
+		sort: false,
+		page: false,
+		limit: false
+	});
 
 	export let data;
-	let filterValue = writable('');
+
+	let queryValue = writable('');
+
+	let filters = derived([queryValue, params], ([queryValue, params]) => ({ 
+		query: queryValue,
+		page: Number(params.page) || 0, 
+		limit: Number(params.limit) || 10, 
+		includeMembersCount: true, 
+		orderBy: params.sort ? decodeURIComponent(params.sort!) : undefined 
+	}));
+
+	const api = trpc($page);
+	const opts = writable(
+		api.admin.orgs.list.createQuery.opts({
+			initialData: data.orgs,
+			staleTime: 0
+		})
+	);
+
+	const orgsQuery = api.admin.orgs.list.createQuery(debouncer(filters), opts);
+	const orgsData: Readable<AdminOrgsOutput['data']> = derived([orgsQuery], ([query]) => {
+		if (query.isLoading) return [];
+		return query.data?.data ?? [];
+	});
 </script>
 
 <div>
@@ -16,29 +50,19 @@
 			{$_('admin-pages.organizations.allOrganizations')}
 		</h1>
 	</section>
-	<section class="flex gap-x-4 mt-4">
+	<section class="flex gap-x-4 mt-6">
 		<SearchInput
 			class="max-w-sm"
 			placeholder={$_('common.search')}
 			type="text"
-			bind:value={$filterValue}
+			bind:value={$queryValue}
 		/>
 		<div class="flex-grow"></div>
-		{#await data.createForm}
-			<LoaderCircle class="w-10 h-10 mx-auto animate-spin" />
-		{:then createForm}
-			<CreateOrgDialog {createForm} />
-		{:catch error}
-			<p>{error.message}</p>
-		{/await}
+			<CreateOrgDialog />
 	</section>
-	<section class=" mt-10">
-		{#await data.organizationInfo}
+		{#if $orgsQuery.isLoading}
 			<LoaderCircle class="w-10 h-10 mx-auto animate-spin" />
-		{:then organizationInfo}
-			<DataTable organizations={organizationInfo?.organizations} bind:filterValue />
-		{:catch error}
-			<p>{error.message}</p>
-		{/await}
-	</section>
+		{:else if $orgsData}
+			<OrganizationsDataTable isLoading={$orgsQuery.isFetching} organizations={$orgsData} totalCount={derived([orgsQuery], ([query]) => query.data?.totalCount ?? 0)} />
+		{/if}
 </div>

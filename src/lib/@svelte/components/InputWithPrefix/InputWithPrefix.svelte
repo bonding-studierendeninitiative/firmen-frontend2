@@ -15,5 +15,5 @@
 		</span>
 	</div>
 
-	<Input {name} {required} bind:value class="pl-20" />
+	<Input {name} {required} bind:value class="pl-20" {...$$restProps} />
 </div>

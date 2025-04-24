@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { createRender, createTable, Render, Subscribe } from 'svelte-headless-table';
-	import { readable, writable } from 'svelte/store';
+	import { derived, type Readable } from 'svelte/store';
 	import * as Table from '$lib/components/ui/table';
 	import * as Select from '$lib/components/ui/select';
 	import DataTableActions from './data-table-actions.svelte';
@@ -14,14 +14,17 @@
 	import type { OrganizationMembership } from 'svelte-clerk/server';
 	import { page } from '$app/stores';
 
-	export let inviteMemberDialogOpen;
-	export let memberResponse: { data: OrganizationMembership[]; totalCount: number };
+	export let memberResponse: Readable<{ data: OrganizationMembership[]; totalCount: number }>;
 	import { LocalizedDate, SearchInput } from '@/@svelte/components';
+	import CreateOrgInviteDialog from './create-org-invite-dialog.svelte';
 
-	let table = createTable(readable(memberResponse.data), {
+	let data = derived([memberResponse], ([memberResponse]) => memberResponse.data)
+	let totalCount = derived([memberResponse], ([memberResponse]) => memberResponse.totalCount)
+
+	let table = createTable(data, {
 		page: addPagination({
 			serverSide: true,
-			serverItemCount: writable(memberResponse.totalCount),
+			serverItemCount: totalCount,
 			initialPageIndex: $page.url.searchParams.get('page')
 				? Number($page.url.searchParams.get('page'))
 				: undefined,
@@ -30,8 +33,7 @@
 				: undefined
 		}),
 		sort: addSortBy({
-			serverSide: true,
-			initialSortKey: $page.url.searchParams.get('sort') ? decodeURIComponent($page.url.searchParams.get('sort')!) : undefined
+			serverSide: true
 		}),
 		filter: addTableFilter({
 			serverSide: true,
@@ -42,13 +44,13 @@
 
 	let columns = table.createColumns([
 		table.column({
-			accessor: ({ publicUserData }) => [`${publicUserData?.firstName} ${publicUserData?.lastName}`, publicUserData.imageUrl],
+			accessor: ({ publicUserData }) => [`${publicUserData?.firstName} ${publicUserData?.lastName}`, publicUserData?.imageUrl],
 			id: 'user-profile',
 			header: '',
 			cell: ({ value: [userName, imageUrl] }) => {
 				return createRender(DataTableUserIcon, {
-					src: imageUrl,
-					userName: userName
+					src: imageUrl ?? "", // TODO: Placeholder image url
+					userName: userName ?? "Unknown"
 				});
 			}
 		}),
@@ -114,7 +116,7 @@
 	const { filterValue } = pluginStates.filter;
 	const { sortKeys } = pluginStates.sort;
 
-	let timeout = null;
+	let timeout: NodeJS.Timeout | string | number | null = null;
 
 	filterValue.subscribe(value => {
 		if (value === '' && $page.url.searchParams.get('filter') === null) return;
@@ -176,9 +178,7 @@
 			type="text"
 			bind:value={$filterValue}
 		/>
-		<Button variant="outline" on:click={() => (inviteMemberDialogOpen = true)}
-		>{$_('modules.manage-org-members.invite')}</Button
-		>
+		<CreateOrgInviteDialog />
 	</div>
 	<div class="rounded-md border">
 		<Table.Root {...$tableAttrs} class="w-full whitespace-no-wrap">
@@ -224,10 +224,11 @@
 	<div class="flex items-center justify-end space-x-4">
 		<div class="min-w-min">
 			<Select.Root bind:selected={selectedPageSize} onSelectedChange={(v) => {
-         pageSize.set(v.value);
+				if (v?.value)
+         			pageSize.set(v?.value);
         }}>
 				<Select.Trigger>
-					{selectedPageSize.label}
+					{selectedPageSize?.label}
 				</Select.Trigger>
 				<Select.Content>
 					{#each pageSizes as size}

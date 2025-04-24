@@ -1,24 +1,9 @@
-import {
-	AdminRegisterOrganizationToEventSchema,
-	ExportCatalogueDataRequest,
-	ReviewAdvertisementRequest,
-	ReviewLogoRequest
-} from '@schema';
+import { ReviewAdvertisementRequest, ReviewLogoRequest } from '@schema';
 import { valibot } from 'sveltekit-superforms/adapters';
 import { superValidate } from 'sveltekit-superforms';
 import { fail } from '@sveltejs/kit';
-import {
-	exportAdvertisements,
-	getEventRegistrationsForEvent,
-	reviewAdvertisement,
-	reviewLogo,
-	adminCreateRegistration,
-	exportLogos
-} from '@/services';
+import { getEventRegistrationsForEvent, reviewAdvertisement, reviewLogo } from '@/services';
 import { type AuthObject, clerkClient } from 'svelte-clerk/server';
-import { createLogger } from 'vite';
-
-const logger = createLogger();
 
 export const load = async ({ parent, params, isDataRequest }) => {
 	async function loadTableData() {
@@ -61,27 +46,7 @@ export const load = async ({ parent, params, isDataRequest }) => {
 			addons: [...addons]
 		};
 	}
-
-	const reviewAdvertisementForm = await superValidate(valibot(ReviewAdvertisementRequest), {
-		id: 'reviewAdvertisementForm'
-	});
-	const reviewLogoForm = await superValidate(valibot(ReviewLogoRequest), {
-		id: 'reviewLogoForm'
-	});
-	const createRegistrationForm = await superValidate(
-		{
-			eventId: params.id
-		},
-		valibot(AdminRegisterOrganizationToEventSchema),
-		{
-			id: 'registerOrganizationForm',
-			errors: false
-		}
-	);
 	return {
-		reviewAdvertisementForm,
-		reviewLogoForm,
-		createRegistrationForm,
 		tableData: isDataRequest ? loadTableData() : await loadTableData()
 	};
 };
@@ -128,61 +93,6 @@ export const actions = {
 		await reviewLogo({
 			accessToken: token.jwt,
 			logoId: form.data.logoId,
-			data: { ...form.data }
-		});
-	},
-	exportCatalogueData: async ({ locals, request }) => {
-		const session = locals.auth as unknown as AuthObject;
-		if (!session || !session.sessionId) {
-			fail(403);
-			return;
-		}
-
-		const formData = await request.formData();
-
-		console.log(`Exporting catalogue data`, formData);
-
-		const form = await superValidate(formData, valibot(ExportCatalogueDataRequest));
-		if (!form.valid) {
-			return fail(400, { form });
-		}
-
-		logger.info('Exporting catalogue data');
-
-		const token = await clerkClient.sessions.getToken(session.sessionId, 'access_token');
-
-		if (form.data.documentType === 'advert') {
-			await exportAdvertisements({
-				accessToken: token.jwt,
-				data: { ...form.data }
-			});
-		} else {
-			await exportLogos({
-				accessToken: token.jwt,
-				data: { ...form.data }
-			});
-		}
-	},
-	createRegistration: async ({ locals, request }) => {
-		const session = locals.auth as unknown as AuthObject;
-		if (!session || !session.sessionId) {
-			fail(403);
-			return;
-		}
-
-		const formData = await request.formData();
-
-		console.log(formData);
-
-		const form = await superValidate(formData, valibot(AdminRegisterOrganizationToEventSchema));
-		if (!form.valid) {
-			return fail(400, { form });
-		}
-
-		const token = await clerkClient.sessions.getToken(session.sessionId, 'access_token');
-
-		await adminCreateRegistration({
-			accessToken: token.jwt,
 			data: { ...form.data }
 		});
 	}

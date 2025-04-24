@@ -1,16 +1,25 @@
-import { publicProcedure, router } from '@/trpc/server';
+import { authorizedOrgMemberProcedure, router } from '@/trpc/server';
 import { nonEmpty, nullish, object, parse, pipe, string } from 'valibot';
-import { clerkClient } from 'svelte-clerk/server';
 import {
 	deleteAdvertisement,
 	deleteLogo,
+	deletePortraitTemplate,
 	getOrgAdvertisements,
 	getOrgLogos,
 	pickAdvertisement,
 	pickLogo
 } from '@/services';
-import { TRPCError } from '@trpc/server';
-import { PickAdvertisementRequest, PickLogoRequest } from '@schema';
+import {
+	DeletePortraitTemplateRequestSchema,
+	PickAdvertisementRequest,
+	PickLogoRequest,
+	UploadAdvertisementRequest,
+	UploadCatalogueDataForm,
+	UploadLogoRequest
+} from '@schema';
+import { superValidate } from 'sveltekit-superforms';
+import { valibot } from 'sveltekit-superforms/adapters';
+import { API } from '@api';
 
 const GetCatalogDataSchema = object({
 	limit: nullish(string(), '10'),
@@ -19,95 +28,143 @@ const GetCatalogDataSchema = object({
 
 export const catalogueDataRouter = router({
 	logos: router({
-		getAll: publicProcedure
+		getAll: authorizedOrgMemberProcedure
 			.input((input) => parse(GetCatalogDataSchema, input))
-			.query(async ({ ctx, input: { cursor: start = '0', limit = '10' } }) => {
-				if (ctx.session.sessionId === null || ctx.session.orgId === null)
-					throw new TRPCError({ code: 'UNAUTHORIZED', message: 'Invalid session!' });
-				const token = await clerkClient.sessions.getToken(ctx.session.sessionId, 'access_token');
-				// Fetch organizations from Clerk
+			.query(async ({ ctx, input: { cursor: start, limit } }) => {
 				return await getOrgLogos({
-					accessToken: token.jwt,
+					accessToken: ctx.token.jwt,
 					organizationId: ctx.session.orgId,
 					page: start,
 					limit
 				});
 			}),
-		deleteLogo: publicProcedure
+		deleteLogo: authorizedOrgMemberProcedure
 			.input((input) => parse(pipe(string(), nonEmpty()), input))
 			.mutation(async ({ ctx, input }) => {
-				if (!ctx.session.sessionId || !ctx.session.orgId) {
-					throw new TRPCError({ code: 'UNAUTHORIZED', message: 'Invalid session!' });
-				}
-
-				const token = await clerkClient.sessions.getToken(ctx.session.sessionId, 'access_token');
-
 				await deleteLogo({
-					accessToken: token.jwt,
+					accessToken: ctx.token.jwt,
 					data: {
 						logoId: input,
 						organizationId: ctx.session.orgId
 					}
 				});
 			}),
-		pick: publicProcedure
+		pick: authorizedOrgMemberProcedure
 			.input((input) => parse(PickLogoRequest, input))
 			.mutation(async ({ ctx, input }) => {
-				if (!ctx.session.sessionId || !ctx.session.orgId) {
-					throw new TRPCError({ code: 'UNAUTHORIZED', message: 'Invalid session!' });
-				}
-
-				const token = await clerkClient.sessions.getToken(ctx.session.sessionId, 'access_token');
-
 				await pickLogo({
-					accessToken: token.jwt,
+					accessToken: ctx.token.jwt,
 					data: input
 				});
+			}),
+		uploadForm: authorizedOrgMemberProcedure.query(async ({ ctx }) => {
+			return await superValidate(
+				{
+					orgId: ctx.session.orgId
+				},
+				valibot(UploadLogoRequest),
+				{
+					errors: false
+				}
+			);
+		}),
+		generateDownloadLink: authorizedOrgMemberProcedure
+			.input((input) =>
+				parse(
+					object({
+						organizationId: string(),
+						logoId: string()
+					}),
+					input
+				)
+			)
+			.output((output) => parse(string(), output))
+			.mutation(async ({ ctx, input }) => {
+				const response = await API.get<string>({
+					route: `/organization/${input.organizationId}/logo/${input.logoId}/download`,
+					token: ctx.token.jwt
+				});
+				return await response.text();
 			})
 	}),
 	advertisements: router({
-		getAll: publicProcedure
+		getAll: authorizedOrgMemberProcedure
 			.input((input) => parse(GetCatalogDataSchema, input))
 			.query(async ({ ctx, input }) => {
-				if (ctx.session.sessionId === null || ctx.session.orgId === null)
-					throw new TRPCError({ code: 'UNAUTHORIZED', message: 'Invalid session!' });
-				const token = await clerkClient.sessions.getToken(ctx.session.sessionId, 'access_token');
-
 				return await getOrgAdvertisements({
-					accessToken: token.jwt,
-					organizationId: ctx.session.orgId
+					accessToken: ctx.token.jwt,
+					organizationId: ctx.session.orgId,
+					page: input.cursor
 				});
 			}),
-		deleteAdvertisement: publicProcedure
+		deleteAdvertisement: authorizedOrgMemberProcedure
 			.input((input) => parse(pipe(string(), nonEmpty()), input))
 			.mutation(async ({ ctx, input }) => {
-				if (!ctx.session.sessionId || !ctx.session.orgId) {
-					throw new TRPCError({ code: 'UNAUTHORIZED', message: 'Invalid session!' });
-				}
-
-				const token = await clerkClient.sessions.getToken(ctx.session.sessionId, 'access_token');
-
 				await deleteAdvertisement({
-					accessToken: token.jwt,
+					accessToken: ctx.token.jwt,
 					data: {
 						advertisementId: input,
 						organizationId: ctx.session.orgId
 					}
 				});
 			}),
-		pick: publicProcedure
+		pick: authorizedOrgMemberProcedure
 			.input((input) => parse(PickAdvertisementRequest, input))
 			.mutation(async ({ ctx, input }) => {
-				if (!ctx.session.sessionId || !ctx.session.orgId) {
-					throw new TRPCError({ code: 'UNAUTHORIZED', message: 'Invalid session!' });
-				}
-
-				const token = await clerkClient.sessions.getToken(ctx.session.sessionId, 'access_token');
-
 				await pickAdvertisement({
-					accessToken: token.jwt,
+					accessToken: ctx.token.jwt,
+					data: input
+				});
+			}),
+		uploadForm: authorizedOrgMemberProcedure.query(async ({ ctx }) => {
+			return await superValidate(
+				{
+					orgId: ctx.session.orgId
+				},
+				valibot(UploadAdvertisementRequest),
+				{
+					errors: false
+				}
+			);
+		}),
+		generateDownloadLink: authorizedOrgMemberProcedure
+			.input((input) =>
+				parse(
+					object({
+						organizationId: string(),
+						advertisementId: string()
+					}),
+					input
+				)
+			)
+			.output((output) => parse(string(), output))
+			.mutation(async ({ ctx, input }) => {
+				const response = await API.get<string>({
+					route: `/organization/${input.organizationId}/advertisement/${input.advertisementId}/download`,
+					token: ctx.token.jwt
+				});
+				return await response.text();
+			})
+	}),
+	portraits: router({
+		deletePortrait: authorizedOrgMemberProcedure
+			.input((input) => parse(DeletePortraitTemplateRequestSchema, input))
+			.mutation(async ({ ctx, input }) => {
+				await deletePortraitTemplate({
+					accessToken: ctx.token.jwt,
 					data: input
 				});
 			})
+	}),
+	uploadForm: authorizedOrgMemberProcedure.query(async ({ ctx }) => {
+		return await superValidate(
+			{
+				orgSlug: ctx.session.orgId
+			},
+			valibot(UploadCatalogueDataForm),
+			{
+				errors: false
+			}
+		);
 	})
 });

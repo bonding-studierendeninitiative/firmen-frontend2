@@ -17,7 +17,10 @@
 
 	const api = trpc($page)
 
-	let logos = api.catalogueData.logos.getAll.createQuery({ })
+	let logos = api.catalogueData.logos.getAll.createQuery({
+		limit: '10',
+		cursor: '0',
+	})
 	let pickLogo = api.catalogueData.logos.pick.createMutation()
 
 	let selectedLogo = ""

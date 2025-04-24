@@ -2,13 +2,14 @@
 	import { page } from '$app/stores';
 	import * as Dialog from '@/components/ui/dialog';
 	import * as RadioGroup from '@/components/ui/radio-group';
-	import { AdvertisementItem } from '@/@svelte/components';
+	import { AdvertisementItem, NoDataFound } from '@/@svelte/components';
 	import { Label } from '@/components/ui/label';
 	import { CheckCircle, CircleDashed, LoaderCircle } from 'lucide-svelte';
 	import { ScrollArea } from '@/components/ui/scroll-area';
 	import { Button } from '@/components/ui/form';
 	import { _ } from '@services';
 	import { trpc } from '@/trpc/client';
+	import { goto } from '$app/navigation';
 
 	export let open = false;
 	export let id: string;
@@ -25,12 +26,17 @@
 <Dialog.Root bind:open>
 	<Dialog.Content class="max-w-[80dvw] max-h-[80dvh] @container/pickAdvertisement">
 		<Dialog.Header>
-			<Dialog.Title>Pick an advertisement</Dialog.Title>
-			<Dialog.Description></Dialog.Description>
+			<Dialog.Title>{$_("modules.pick-advertisement-dialog.title")}</Dialog.Title>
+			<Dialog.Description>{$_("modules.pick-advertisement-dialog.description")}</Dialog.Description>
 		</Dialog.Header>
 		<ScrollArea class="max-h-[70dvh]">
 			{#if $advertisements.isLoading}
 				<LoaderCircle class="w-10 h-10 mx-auto animate-spin" />
+			{:else if $advertisements.data?.advertisements.length === 0}
+				<NoDataFound heading={$_("modules.pick-advertisement-dialog.no-data")}
+										 subHeading={$_("modules.pick-advertisement-dialog.no-data-sub-heading")}
+										 buttonText={$_("modules.pick-advertisement-dialog.no-data-action")}
+										 onButtonClick={() => goto(`/${orgId}/catalogue-data/adverts`)} />
 			{:else}
 				<RadioGroup.Root bind:value={selectedAdvertisement}>
 					<div class="grid grid-cols-1 gap-4 @sm/pickAdvertisement:grid-cols-2 @xl/pickAdvertisement:grid-cols-4">

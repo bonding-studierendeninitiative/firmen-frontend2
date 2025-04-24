@@ -8,8 +8,29 @@
 	import { getHumanReadableFileSize } from '@/utils';
 	import { DeleteAdvertisementDialog, ReviewAdvertisementDialog } from '@/@svelte/modules';
 	import { Button } from '@/components/ui/button';
+	import { trpc } from '@/trpc/client';
+	import { page } from '$app/stores';
 
 	export let advertisement: InferOutput<AdvertisementSchema>;
+
+	const download = trpc($page).catalogueData.advertisements.generateDownloadLink.createMutation();
+
+	function handleDownload() {
+		$download.mutate({
+			organizationId: advertisement.id,
+			advertisementId: advertisement.id
+		}, {
+			onSuccess: (url) => {
+				const a = document.createElement('a');
+				a.href = url;
+				a.target = '_blank';
+				a.download = url.split('/').pop();
+				document.body.appendChild(a);
+				a.click();
+				document.body.removeChild(a);
+			}
+		});
+	}
 </script>
 <Dialog.Root>
 	{#if advertisement}
@@ -35,32 +56,32 @@
 						</Dialog.Description>
 					</Dialog.Header>
 					<div>
-						<h4 class="font-semibold mb-2">{$_("modules.view-advertisement-dialog.file-information")}</h4>
+						<h4 class="font-semibold mb-2">{$_("modules.admin-view-advertisement-dialog.file-information")}</h4>
 						<div class="space-y-2">
 							<div class="flex justify-between">
 								<span
-									class="text-gray-600 dark:text-gray-400">{$_("modules.view-advertisement-dialog.file-type")}</span>
+									class="text-gray-600 dark:text-gray-400">{$_("modules.admin-view-advertisement-dialog.file-type")}</span>
 								<span>{$_("file-types." + (advertisement.mimeType ?? "unknown"))}</span>
 							</div>
 							<div class="flex justify-between">
 								<span
-									class="text-gray-600 dark:text-gray-400">{$_("modules.view-advertisement-dialog.file-size")}</span>
+									class="text-gray-600 dark:text-gray-400">{$_("modules.admin-view-advertisement-dialog.file-size")}</span>
 								<span>{getHumanReadableFileSize(advertisement.size ?? 0)}</span>
 							</div>
 							<div class="flex justify-between">
 								<span
-									class="text-gray-600 dark:text-gray-400">{$_("modules.view-advertisement-dialog.file-created")}</span>
+									class="text-gray-600 dark:text-gray-400">{$_("modules.admin-view-advertisement-dialog.file-created")}</span>
 								<LocalizedDate date={advertisement.createdAt} />
 							</div>
 							<div class="flex justify-between">
 								<span
-									class="text-gray-600 dark:text-gray-400">{$_("modules.view-advertisement-dialog.file-modified")}</span>
+									class="text-gray-600 dark:text-gray-400">{$_("modules.admin-view-advertisement-dialog.file-modified")}</span>
 								<LocalizedDate date={advertisement.modifiedAt} />
 							</div>
 						</div>
 					</div>
 					<div>
-						<h4 class="font-semibold mb-2">{$_("modules.view-advertisement-dialog.status-history")}</h4>
+						<h4 class="font-semibold mb-2">{$_("modules.admin-view-advertisement-dialog.status-history")}</h4>
 						<div class="space-y-3">
 							{#each advertisement.history ?? [] as history}
 								<div class="border-l-2 pl-3" class:border-yellow-500={history.feedbackType === 'change-request'}
@@ -79,9 +100,8 @@
 					<div class="flex-grow"></div>
 					<Dialog.Footer class="flex justify-end">
 						<ReviewAdvertisementDialog {advertisement} />
-						<a href={advertisement.url} download target="_blank" class="pr-2">
-							<Button variant="outline">{$_("common.download")}</Button>
-						</a>
+						<Button disabled={$download.isPending} on:click={handleDownload}>{$_("common.download")}
+						</Button>
 						<DeleteAdvertisementDialog {advertisement} />
 					</Dialog.Footer>
 				</div>

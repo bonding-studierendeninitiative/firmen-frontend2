@@ -1,51 +1,83 @@
 <script lang="ts">
 	import { _ } from '@services';
-	import type { CreateOrgInviteRequest, GetOrgMembersResponse } from '@schema';
-	import SuperDebug, { type SuperValidated } from 'sveltekit-superforms';
-	import type { InferOutput } from 'valibot';
-	import { getContext } from 'svelte';
-	import type { ReadOrWritable } from 'svelte-headless-table';
 	import { ManageOrgMembers } from '@/@svelte/modules';
-	import type { OrganizationMembership } from 'svelte-clerk/server';
 	import { LoaderCircle } from 'lucide-svelte';
-
+	import { page } from '$app/stores';
+	import { trpc } from '@/trpc/client.js';
+	import { queryParameters } from 'sveltekit-search-params';
+	import { derived } from 'svelte/store';
 
 	export let data;
 
+	let params = queryParameters({
+		page: false,
+		limit: false,
+		sort: false
+	});
+
 	function filterOrgEntries(tuple: [string, any]): tuple is [string, string] {
 		const [key, value] = tuple;
-		const excludedKeys = ['id', 'createdAt', 'modifiedAt', 'slug', 'name', 'organizationType', "imageUrl"];
+		const excludedKeys = [
+			'id',
+			'createdAt',
+			'modifiedAt',
+			'slug',
+			'name',
+			'organizationType',
+			'imageUrl'
+		];
 		const keyValid = key != undefined && !excludedKeys.includes(key);
 		const valueValid = typeof value === 'string';
 		return keyValid && valueValid;
 	}
+
+	const api = trpc($page);
+
+	const opts = api.admin.orgs.members.getAll.createQuery.opts({
+		initialData: data.orgMembers,
+		staleTime: 0
+	});
+
+	const filters = derived([params], ([params]) => ({
+		organizationId: data.organizationId,
+		limit: Number(params.limit || '10'),
+		page: Number(params.page || '0'),
+		sort: params.sort
+	}));
+
+	const orgMembersQuery = api.admin.orgs.members.getAll.createQuery(filters, opts);
+	const orgDetailsQuery = api.admin.orgs.getDetails.createQuery({
+		organizationId: data.organizationId
+	});
+	const orgMembersData = derived([orgMembersQuery], ([orgMembersQuery]) => {
+		return orgMembersQuery.data;
+	});
 </script>
 
 <section class="space-y-5">
-	{#await data.organizationDetails}
+	{#if $orgDetailsQuery.isLoading}
 		<LoaderCircle class="w-12 h-12 animate-spin mx-auto" />
-	{:then organizationDetails}
-		{@const organizationInfo = Object.entries(organizationDetails?.organization).filter(filterOrgEntries).map(([key, value]) => ({ label: key, value }))}
+	{/if}
+	{#if $orgDetailsQuery.data}
+		{@const organizationInfo = Object.entries($orgDetailsQuery.data?)
+			.filter(filterOrgEntries)
+			.map(([key, value]) => ({ label: key, value }))}
 		<div class="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full mt-5">
 			{#each organizationInfo as { label, value } (label)}
-				<p class=" font-normal text-sm text-stone-500">{$_(`admin-pages.organizations.${label}`)}</p>
+				<p class=" font-normal text-sm text-stone-500">
+					{$_(`admin-pages.organizations.${label}`)}
+				</p>
 				<p class=" w-full text-right font-normal text-sm text-stone-800">{value}</p>{/each}
 		</div>
-	{:catch error}
-		<p>{error.message}</p>
-	{/await}
+	{/if}
 
-	<section>
-		<h3 class=" text-xl font-semibold text-stone-800">{$_(`admin-pages.organizations.contactPeople`)}</h3>
-		{#await data.orgData}
-			<LoaderCircle class="w-12 h-12 animate-spin mx-auto" />
-		{:then orgData}
-			{#if orgData?.createInviteForm}
-				<ManageOrgMembers organizationMembers={orgData?.orgMembers} createInviteForm={orgData?.createInviteForm} />
-			{/if}
-		{:catch error}
-			<p>{error.message}</p>
-		{/await}
-
-	</section>
+	<h3 class=" text-xl font-semibold text-stone-800">
+		{$_(`admin-pages.organizations.contactPeople`)}
+	</h3>
+	{#if $orgMembersQuery.isLoading}
+		<LoaderCircle class="w-12 h-12 animate-spin mx-auto" />
+	{/if}
+	{#if $orgMembersQuery.data}
+		<ManageOrgMembers memberResponse={orgMembersData} />
+	{/if}
 </section>

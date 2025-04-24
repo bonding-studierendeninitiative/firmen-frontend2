@@ -8,7 +8,6 @@
 	} from '@schema';
 	import { toast } from 'svelte-french-toast';
 	import { getContext, onMount } from 'svelte';
-	import type { Writable } from 'svelte/store';
 	import { Control, Description, Field, FieldErrors, Label } from '@/components/ui/form';
 	import { _ } from '@services';
 	import { Input } from '@/components/ui/input';

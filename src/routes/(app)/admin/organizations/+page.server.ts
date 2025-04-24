@@ -3,38 +3,24 @@ import { error, fail } from '@sveltejs/kit';
 import { superValidate } from 'sveltekit-superforms';
 import { valibot } from 'sveltekit-superforms/adapters';
 import { CreateOrgRequestSchema } from '@schema';
-import {
-	createOrganization,
-	generateOrgInvite,
-	getOrgs,
-	type OrganizationsQueryData
-} from '@/services';
+import { createOrganization, generateOrgInvite } from '@/services';
+import { createCaller } from '@/trpc/router';
 
-export const load = async ({ url, isDataRequest }) => {
-	const orgsQuery: OrganizationsQueryData = {
-		limit: Number(url.searchParams.get('limit') || '10'),
-		offset: Number(url.searchParams.get('offset') || '0'),
-		query: url.searchParams.get('filter') || '',
-		orderBy: url.searchParams.get('sort')
-			? decodeURIComponent(url.searchParams.get('sort')!)
-			: undefined
+export const load = async (event) => {
+	const orgsQuery = {
+		limit: Number(event.url.searchParams.get('limit') || '10'),
+		page: Number(event.url.searchParams.get('page') || '0'),
+		query: event.url.searchParams.get('filter') || '',
+		orderBy: event.url.searchParams.get('sort')
+			? decodeURIComponent(event.url.searchParams.get('sort')!)
+			: undefined,
+		includeMembersCount: true
 	};
 
-	async function loadOrganizationData(queryData: OrganizationsQueryData) {
-		const organizations = await getOrgs(queryData);
-
-		return {
-			organizations
-		};
-	}
-
-	const createForm = superValidate(valibot(CreateOrgRequestSchema));
+	const api = await createCaller(event);
 
 	return {
-		createForm: isDataRequest ? createForm : await createForm,
-		organizationInfo: isDataRequest
-			? loadOrganizationData(orgsQuery)
-			: await loadOrganizationData(orgsQuery)
+		orgs: await api.admin.orgs.list(orgsQuery)
 	};
 };
 

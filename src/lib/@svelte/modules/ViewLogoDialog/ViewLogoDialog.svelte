@@ -8,9 +8,30 @@
 	import { Badge } from '@/components/ui/badge';
 	import { DeleteLogoDialog } from '@/@svelte/modules';
 	import { Button } from '@/components/ui/button';
+	import { trpc } from '@/trpc/client';
+	import { page } from '$app/stores';
 
 	export let open = false;
 	export let logo: InferOutput<LogoSchema>;
+
+	const download = trpc($page).catalogueData.logos.generateDownloadLink.createMutation();
+
+	function handleDownload() {
+		$download.mutate({
+			organizationId: logo.id,
+			logoId: logo.id
+		}, {
+			onSuccess: (url) => {
+				const a = document.createElement('a');
+				a.href = url;
+				a.target = '_blank';
+				a.download = url.split('/').pop();
+				document.body.appendChild(a);
+				a.click();
+				document.body.removeChild(a);
+			}
+		});
+	}
 </script>
 <Dialog.Root bind:open>
 	<Dialog.Content class="sm:max-w-4xl">
@@ -75,7 +96,8 @@
 				</div>
 			</div>
 			<Dialog.Footer>
-				<a href={logo.url} download><Button>{$_("common.download")}</Button></a>
+				<Button disabled={$download.isPending} on:click={handleDownload}>{$_("common.download")}
+				</Button>
 				<DeleteLogoDialog {logo} />
 			</Dialog.Footer>
 		{/if}

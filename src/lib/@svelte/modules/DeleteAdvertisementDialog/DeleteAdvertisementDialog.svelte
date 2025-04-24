@@ -23,8 +23,12 @@
 	</Dialog.Trigger>
 	<Dialog.Content>
 		<Dialog.Header>
-			<Dialog.Title>Delete Advertisement</Dialog.Title>
-			<Dialog.Description>Are you sure you want to delete this advertisement?</Dialog.Description>
+			<Dialog.Title>{$_("modules.delete-advertisement-dialog.title", {
+				values: {
+					advertisementName: advertisement.title
+				}
+			})}</Dialog.Title>
+			<Dialog.Description>{$_("modules.delete-advertisement-dialog.description")}</Dialog.Description>
 		</Dialog.Header>
 		<Dialog.Footer class="pt-6">
 			<Dialog.Close class={buttonVariants({variant: "outline"})}>{$_("common.cancel")}</Dialog.Close>
@@ -35,7 +39,7 @@
 						},
 						onSuccess: () => {
 							toast.success('Advertisement deleted');
-							utils.catalogueData.logos.getAll.invalidate()
+							utils.catalogueData.advertisements.getAll.invalidate()
 							open = false
 						}
 					})

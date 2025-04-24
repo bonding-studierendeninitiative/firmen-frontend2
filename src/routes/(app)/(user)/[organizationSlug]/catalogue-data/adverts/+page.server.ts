@@ -1,45 +1,19 @@
 import type { PageServerLoad } from './$types';
 import { type AuthObject, clerkClient } from 'svelte-clerk/server';
-import { getOrgAdvertisements } from '@/services/advertisements';
 import { UploadAdvertisementRequest } from '@schema';
 import { fail, superValidate, withFiles } from 'sveltekit-superforms';
 import { valibot } from 'sveltekit-superforms/adapters';
 import { uploadAdvertisement } from '@/services';
+import { createCaller } from '@/trpc/router';
 
-export const load: PageServerLoad = async ({ parent, url, isDataRequest }) => {
-	const page = url.searchParams.get('page') || '0';
-
-	async function loadOrgAdvertisements() {
-		const { initialState, organization } = await parent();
-		if (!initialState?.sessionId) return;
-
-		const token = await clerkClient.sessions.getToken(initialState.sessionId, 'access_token');
-
-		const org = await organization;
-
-		const uploadAdvertisementForm = await superValidate(
-			{
-				orgId: org.id
-			},
-			valibot(UploadAdvertisementRequest),
-			{
-				errors: false
-			}
-		);
-
-		const result = await getOrgAdvertisements({
-			accessToken: token.jwt,
-			organizationId: org.id,
-			page
-		});
-		return {
-			data: result,
-			uploadForm: uploadAdvertisementForm
-		};
-	}
+export const load: PageServerLoad = async (event) => {
+	const api = await createCaller(event);
 
 	return {
-		advertisementData: isDataRequest ? loadOrgAdvertisements() : await loadOrgAdvertisements()
+		advertisementData: api.catalogueData.advertisements.getAll({
+			limit: '10',
+			cursor: '0'
+		})
 	};
 };
 

@@ -8,9 +8,30 @@
 	import { getHumanReadableFileSize } from '@/utils';
 	import { DeleteAdvertisementDialog } from '@/@svelte/modules';
 	import { Button } from '@/components/ui/button';
+	import { trpc } from '@/trpc/client';
+	import { page } from '$app/stores';
 
 	export let open = false;
 	export let advertisement: InferOutput<AdvertisementSchema>;
+
+	const download = trpc($page).catalogueData.advertisements.generateDownloadLink.createMutation();
+
+	function handleDownload() {
+		$download.mutate({
+			organizationId: advertisement.id,
+			advertisementId: advertisement.id
+		}, {
+			onSuccess: (url) => {
+				const a = document.createElement('a');
+				a.href = url;
+				a.target = '_blank';
+				a.download = url.split('/').pop();
+				document.body.appendChild(a);
+				a.click();
+				document.body.removeChild(a);
+			}
+		});
+	}
 </script>
 <Dialog.Root bind:open>
 	<Dialog.Content class="sm:max-w-4xl max-h-[80vh] overflow-y-auto">
@@ -72,7 +93,8 @@
 					</div>
 					<div class="flex-grow"></div>
 					<Dialog.Footer>
-						<a href={advertisement.url} download><Button>{$_("common.download")}</Button></a>
+						<Button disabled={$download.isPending} on:click={handleDownload}>{$_("common.download")}
+						</Button>
 						<DeleteAdvertisementDialog {advertisement} />
 					</Dialog.Footer>
 				</div>

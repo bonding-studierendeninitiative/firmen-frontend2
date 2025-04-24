@@ -19,12 +19,12 @@ import { allFakers, type Faker } from '@faker-js/faker';
 
 const MESSAGE_FILE_URL_TEMPLATE = '/lang/{locale}.json';
 
-let cachedLocale: string;
-
-export const faker: Readable<Faker> = derived(
-	localeStore,
-	(value) => allFakers[value] || allFakers['en']
-);
+export const faker: Readable<Faker> = derived(localeStore, (value) => {
+	if (!value || !Object.prototype.hasOwnProperty.call(allFakers, value)) {
+		return allFakers['en'];
+	}
+	return allFakers[value as keyof typeof allFakers];
+});
 
 export const availableLocales = ['de', 'en'] as const;
 export type AvailableLocales = (typeof availableLocales)[number];
@@ -46,13 +46,6 @@ function setupI18n() {
 	});
 }
 
-function formatDate(
-	dateValue: string | number | Date,
-	options: Intl.DateTimeFormatOptions
-): string {
-	return new Intl.DateTimeFormat(cachedLocale, options).format(new Date(dateValue));
-}
-
 const isLocaleLoaded = derived(localeStore, ($locale) => typeof $locale === 'string');
 const isInitializing = derived(
 	[isLocaleLoaded, isLoading],
@@ -66,7 +59,6 @@ export {
 	localeStore as locale,
 	dir,
 	setupI18n,
-	formatDate,
 	isLocaleLoaded,
 	date,
 	time,

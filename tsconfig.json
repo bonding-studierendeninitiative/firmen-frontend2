@@ -8,7 +8,6 @@
 		"resolveJsonModule": true,
 		"skipLibCheck": true,
 		"sourceMap": true,
-		"inlineSourceMap": true,
 		"strict": true,
 		"moduleResolution": "bundler",
 		"verbatimModuleSyntax": true

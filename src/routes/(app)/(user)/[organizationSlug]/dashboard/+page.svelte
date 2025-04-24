@@ -5,9 +5,20 @@
 	import { LoaderCircle } from 'lucide-svelte';
 	import { fade } from 'svelte/transition';
 	import RegistrationCard from './registration-card.svelte';
+	import { trpc } from '@/trpc/client';
+	import { page } from '$app/stores';
 
 	export let data: PageData;
 
+	const api = trpc($page);
+
+	const [eventRegistrationsQuery, resolveEventRegistrationsQuery] = api.eventRegistrations.forOrganization.createInfiniteQuery(
+		{ limit: '10' },
+		{
+			getNextPageParam: (lastPage) => Math.max(lastPage.pageNumber + 1, lastPage.totalPages - 1).toString(),
+			lazy: true
+		}
+	);
 </script>
 
 <div>
@@ -27,16 +38,17 @@
 				{$_('user-pages.dashboard.registeredEvents')}
 			</h2>
 		</div>
-		{#await data.dashboardData}
+		{#await resolveEventRegistrationsQuery(data.eventRegistrations)}
 			<LoaderCircle class="w-10 h-10 mx-auto animate-spin" />
-		{:then dashboardData}
+		{:then _ignored}
+			{@const allEventRegistrations = $eventRegistrationsQuery?.data?.pages.flatMap(page => page.eventRegistrations) ?? []}
 			<div in:fade class="mt-2 @container/registrations">
-				{#if dashboardData?.eventRegistrations?.eventRegistrations?.length > 0 }
+				{#if allEventRegistrations.length > 0 }
 					<div class="grid grid-cols-1 @4xl/registrations:grid-cols-2 gap-8 items-start">
-					{#each dashboardData?.eventRegistrations?.eventRegistrations as eventRegistration, index}
-						<RegistrationCard registration={eventRegistration}
-						/>
-					{/each}
+						{#each allEventRegistrations as eventRegistration, index}
+							<RegistrationCard registration={eventRegistration}
+							/>
+						{/each}
 					</div>
 				{:else }
 					<NoDataFound

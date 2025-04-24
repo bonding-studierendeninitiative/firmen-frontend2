@@ -1,10 +1,8 @@
-import type {
-	PageServerLoad
-} from './$types';
+import type { PageServerLoad } from './$types';
 import { clerkClient } from 'svelte-clerk/server';
 import { getPortraitTemplates } from '@/services';
 
-export const load: PageServerLoad = async ({ parent, params, isDataRequest, url }) => {
+export const load: PageServerLoad = async ({ parent, params, isDataRequest }) => {
 	async function loadPortraitData(slug: string) {
 		const { initialState } = await parent();
 		if (!initialState.sessionId) return;
@@ -18,10 +16,10 @@ export const load: PageServerLoad = async ({ parent, params, isDataRequest, url 
 
 		return {
 			portraitTemplates
-		}
+		};
 	}
 
 	return {
 		portraitData: isDataRequest ? loadPortraitData(params.id) : await loadPortraitData(params.id)
-	}
-}
+	};
+};

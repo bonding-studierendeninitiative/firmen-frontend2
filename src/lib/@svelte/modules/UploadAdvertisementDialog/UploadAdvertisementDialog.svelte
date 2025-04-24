@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Button } from '@/components/ui/button';
+	import { Button, buttonVariants } from '@/components/ui/button';
 	import * as Dialog from '@/components/ui/dialog';
 	import SuperDebug, { type Infer, superForm, type SuperValidated } from 'sveltekit-superforms';
 	import { toast } from 'svelte-french-toast';
@@ -8,6 +8,8 @@
 	import { Input } from '@/components/ui/input';
 	import { valibotClient } from 'sveltekit-superforms/adapters';
 	import { UploadAdvertisementRequest } from '@schema';
+	import { cn } from '@/utils';
+	import { Plus } from 'lucide-svelte';
 
 	export let open: boolean;
 	export let advertisementUploadForm: SuperValidated<Infer<UploadAdvertisementRequest>>;
@@ -28,6 +30,10 @@
 </script>
 
 <Dialog.Root bind:open>
+	<Dialog.Trigger class={cn(buttonVariants({variant: 'default'}), "mr-2")}>
+		<Plus class="h-4 w-4 mr-2" />
+		{$_("common.upload")}
+	</Dialog.Trigger>
 	<Dialog.Content>
 		<form action="?/uploadAdvertisement" enctype="multipart/form-data" method="post" use:enhance class="space-y-4">
 			<Dialog.Header class="space-y-4">

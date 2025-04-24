@@ -14,7 +14,6 @@ import { DocumentFeedbackSchema } from '@schema/catalogueData';
 
 export const AdvertisementSchema = object({
 	id: string(),
-	name: string(),
 	title: string(),
 	mimeType: string(),
 	size: nullish(number()),

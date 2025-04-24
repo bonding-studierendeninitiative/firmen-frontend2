@@ -1,6 +1,6 @@
 // lib/trpc/context.ts
 import type { RequestEvent } from '@sveltejs/kit';
-import type { AuthObject } from 'svelte-clerk/server';
+import { type AuthObject } from 'svelte-clerk/server';
 
 export async function createContext({ locals }: RequestEvent) {
 	return {

@@ -1,53 +1,49 @@
-import { publicProcedure, router } from '@/trpc/server';
+import { adminProcedure, router } from '@/trpc/server';
 import { parse } from 'valibot';
 import {
+	AdminRegisterOrganizationToEventSchema,
 	ConfirmEventRegistrationSchema,
 	DeleteEventRegistrationSchema,
 	RejectEventRegistrationSchema
 } from '@schema';
-import { TRPCError } from '@trpc/server';
-import { clerkClient } from 'svelte-clerk/server';
 import {
+	adminCreateRegistration,
 	confirmEventRegistration,
 	deleteEventRegistration,
 	rejectEventRegistration
 } from '@/services';
 
 export const adminEventRegistrationsRouter = router({
-	confirm: publicProcedure
+	confirm: adminProcedure
 		.input((input) => parse(ConfirmEventRegistrationSchema, input))
 		.mutation(async ({ ctx, input: { eventRegistrationId } }) => {
-			if (ctx.session.sessionId === null)
-				throw new TRPCError({ code: 'UNAUTHORIZED', message: 'Invalid session!' });
-			const token = await clerkClient.sessions.getToken(ctx.session.sessionId, 'access_token');
-
 			await confirmEventRegistration({
-				accessToken: token.jwt,
+				accessToken: ctx.token.jwt,
 				eventRegistrationId
 			});
 		}),
-	reject: publicProcedure
+	reject: adminProcedure
 		.input((input) => parse(RejectEventRegistrationSchema, input))
 		.mutation(async ({ ctx, input: { eventRegistrationId } }) => {
-			if (ctx.session.sessionId === null)
-				throw new TRPCError({ code: 'UNAUTHORIZED', message: 'Invalid session!' });
-			const token = await clerkClient.sessions.getToken(ctx.session.sessionId, 'access_token');
-
 			await rejectEventRegistration({
-				accessToken: token.jwt,
+				accessToken: ctx.token.jwt,
 				eventRegistrationId
 			});
 		}),
-	delete: publicProcedure
+	delete: adminProcedure
 		.input((input) => parse(DeleteEventRegistrationSchema, input))
 		.mutation(async ({ ctx, input: { eventRegistrationId } }) => {
-			if (ctx.session.sessionId === null)
-				throw new TRPCError({ code: 'UNAUTHORIZED', message: 'Invalid session!' });
-			const token = await clerkClient.sessions.getToken(ctx.session.sessionId, 'access_token');
-
 			await deleteEventRegistration({
-				accessToken: token.jwt,
+				accessToken: ctx.token.jwt,
 				eventRegistrationId
+			});
+		}),
+	create: adminProcedure
+		.input((input) => parse(AdminRegisterOrganizationToEventSchema, input))
+		.mutation(async ({ ctx, input }) => {
+			await adminCreateRegistration({
+				accessToken: ctx.token.jwt,
+				data: input
 			});
 		})
 });

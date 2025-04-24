@@ -1,57 +1,43 @@
-import type {
-	PageServerLoad, Actions
-} from './$types';
-import { generateOrgInvite, getOrganizationMembers, type MembershipQueryData } from '@/services';
+import type { PageServerLoad, Actions } from './$types';
+import { generateOrgInvite } from '@/services';
 import { superValidate } from 'sveltekit-superforms';
-import { PUBLIC_APP_URL } from '$env/static/public';
 import { valibot } from 'sveltekit-superforms/adapters';
 import { CreateOrgInviteRequestSchema } from '@schema';
-import { type AuthObject, clerkClient } from 'svelte-clerk/server';
+import { type AuthObject } from 'svelte-clerk/server';
 import { fail } from '@sveltejs/kit';
+import { createCaller } from '@/trpc/router';
+import { makeSerializable } from '@/utils';
 
-export const load: PageServerLoad = async ({ parent, params, isDataRequest, url , depends}) => {
+export const load: PageServerLoad = async (event) => {
 
-	depends("app:orgData")
+	const membershipQueryData = {
+		limit: Number(event.url.searchParams.get('limit') || '25'),
+		page: Number(event.url.searchParams.get('page') || '0'),
+		orderBy: event.url.searchParams.get('sort')
+			? decodeURIComponent(event.url.searchParams.get('sort')!)
+			: undefined
+	};
 
-	const membershipQueryData: MembershipQueryData = {
-		id: null,
-		limit: Number(url.searchParams.get('limit') || "25"),
-		query: url.searchParams.get('filter') || "",
-		offset: Number(url.searchParams.get('page') || "0") * Number(url.searchParams.get('limit') || "10"),
-		orderBy: url.searchParams.get('sort') ? decodeURIComponent(url.searchParams.get('sort')!) : undefined
-	}
-
-
-	async function loadOrgData(queryData: MembershipQueryData) {
-		const { initialState,organizationDetails } = await parent();
+		const { initialState, organizationDetails } = await event.parent();
 		if (!initialState.sessionId) return;
 
 		const details = await organizationDetails;
-		const organization = details.organization
+		const organization = details.organization;
 
-		queryData.id = organization.id;
-		const orgMembers = await getOrganizationMembers(queryData);
+		const api = await createCaller(event)
 
-		const createInviteForm = await superValidate(
-			{
-				organizationID: organization.id,
-				redirectURL: PUBLIC_APP_URL
-			},
-			valibot(CreateOrgInviteRequestSchema), {errors: false}
-		);
-
-		return {
-			orgMembers,
-			createInviteForm
-		}
-	}
-
+	
 	return {
-		orgData: isDataRequest ? loadOrgData(membershipQueryData) : await loadOrgData(membershipQueryData),
+		organizationId: organization.id,
+		orgMembers: makeSerializable(await api.admin.orgs.members.getAll({
+			organizationId: organization.id,
+			limit: membershipQueryData.limit,
+			page: membershipQueryData.page,
+			sort: membershipQueryData.orderBy
+		}))
 	}
-
-}
-
+	
+};
 
 export const actions: Actions = {
 	createInvite: async ({ locals, request }) => {
@@ -66,9 +52,11 @@ export const actions: Actions = {
 			return fail(400, { form });
 		}
 
-		const token = await clerkClient.sessions.getToken(session.sessionId, 'access_token');
-
-		await generateOrgInvite({ role: "org:member", email: form.data.userMail, organizationID: form.data.organizationID });
+		await generateOrgInvite({
+			role: 'org:member',
+			email: form.data.userMail,
+			organizationID: form.data.organizationID
+		});
 		return { form };
 	}
 };

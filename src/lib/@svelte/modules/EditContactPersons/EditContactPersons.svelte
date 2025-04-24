@@ -44,7 +44,7 @@
 				</Card.Header>
 				<Card.Content class="space-y-6 pt-2">
 					{#if $organizationMembers.isLoading}
-						<LoaderCircle class="h-5 w-5 text-primary animate-spin" />
+						<LoaderCircle class="h-5 w-5 text-primary animate-spin mx-auto" />
 					{/if}
 					{#if ($organizationMembers.data?.length ?? 0) < 1 && !$organizationMembers.isLoading}
 						<p>{$_("modules.edit-contact-persons.no-members")}</p>

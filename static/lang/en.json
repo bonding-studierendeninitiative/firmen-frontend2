@@ -142,7 +142,8 @@
     "request-changes": "Request changes",
     "reject": "Reject",
     "create": "Create",
-    "view-details": "View details"
+    "view-details": "View details",
+    "export": "Export…"
   },
   "components": {
     "addonPackage": {
@@ -312,12 +313,43 @@
       "file-modified": "Modified:",
       "status-history": "Status history"
     },
+    "admin-view-advertisement-dialog": {
+      "file-information": "File information",
+      "file-type": "File type::",
+      "file-size": "File size:",
+      "file-created": "Created:",
+      "file-modified": "Modified:",
+      "status-history": "Status history"
+    },
+    "admin-view-logo-dialog": {
+      "file-information": "File information",
+      "file-type": "File type::",
+      "file-size": "File size:",
+      "file-created": "Created:",
+      "file-modified": "Modified:",
+      "status-history": "Status history"
+    },
     "pick-logo-dialog": {
       "title": "Pick a logo",
       "description": "If the selected logo is not yet confirmed, the event team will take care of it.",
       "no-data-heading": "No logos found",
       "no-data-sub-heading": "Your organization hasn't uploaded any logos yet",
       "no-data-action": "Upload a logo now"
+    },
+    "pick-advertisement-dialog": {
+      "title": "Pick a advertisement",
+      "description": "If the selected advertisement is not yet confirmed, the event team will take care of it.",
+      "no-data-heading": "No advertisements found",
+      "no-data-sub-heading": "Your organization hasn't uploaded any advertisements yet",
+      "no-data-action": "Upload a advertisement now"
+    },
+    "delete-logo-dialog": {
+      "title": "Delete logo \"{logoName}\"",
+      "description": "Do you really want to delete this logo?"
+    },
+    "delete-advertisement-dialog": {
+      "title": "Delete advert \"{advertisementName}\"",
+      "description": "Do you really want to delete this advert?"
     }
   },
   "sidebar": {
@@ -358,7 +390,8 @@
     "portrait-company": "Company details",
     "portrait-contact": "Contact info",
     "registrations": "Registrations",
-    "buy-options": "Buy Options"
+    "buy-options": "Buy Options",
+    "exports": "Catalogue data exports"
   },
   "table-headings": {
     "company": "Company",

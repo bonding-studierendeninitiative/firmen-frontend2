@@ -12,19 +12,19 @@ import { clerkClient } from 'svelte-clerk/server';
 
 export const getEventRegistrationsForOrganization = async ({
 	accessToken,
-	organizationSlug,
+	organizationId,
 	page = '0',
 	limit = '4'
 }: {
 	accessToken: string;
-	organizationSlug: string;
+	organizationId: string;
 	page?: string;
 	limit?: string;
 }) => {
 	const searchParams = new URLSearchParams({
 		page,
 		limit,
-		organizationId: organizationSlug
+		organizationId: organizationId
 	});
 	try {
 		const response = await API.get<v.InferInput<responseType>>({

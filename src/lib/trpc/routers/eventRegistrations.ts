@@ -1,11 +1,11 @@
-import { publicProcedure, router } from '@/trpc/server';
-import { array, object, parse, string } from 'valibot';
+import { authorizedOrgMemberProcedure, router } from '@/trpc/server';
+import { array, nullish, object, parse, string } from 'valibot';
 import { TRPCError } from '@trpc/server';
-import { clerkClient } from 'svelte-clerk/server';
 import { API } from '@api';
+import { getEventRegistrationsForOrganization } from '@/services';
 
 export const eventRegistrationsRouter = router({
-	changeContactPeople: publicProcedure
+	changeContactPeople: authorizedOrgMemberProcedure
 		.input((input) =>
 			parse(
 				object({
@@ -16,13 +16,9 @@ export const eventRegistrationsRouter = router({
 			)
 		)
 		.mutation(async ({ ctx, input }) => {
-			if (ctx.session.sessionId === null)
-				throw new TRPCError({ code: 'UNAUTHORIZED', message: 'Invalid session!' });
-			const token = await clerkClient.sessions.getToken(ctx.session.sessionId, 'access_token');
-
 			const result = await API.post({
 				route: `/event-registration/${input.eventRegistrationId}/change-contact-people`,
-				token: token.jwt,
+				token: ctx.token.jwt,
 				data: {
 					contactPeople: input.contactPeople
 				}
@@ -33,5 +29,23 @@ export const eventRegistrationsRouter = router({
 			}
 
 			return result;
+		}),
+	forOrganization: authorizedOrgMemberProcedure
+		.input((input) =>
+			parse(
+				object({
+					cursor: nullish(string(), '0'),
+					limit: nullish(string(), '10')
+				}),
+				input
+			)
+		)
+		.query(async ({ ctx, input: { cursor: page, limit } }) => {
+			return await getEventRegistrationsForOrganization({
+				accessToken: ctx.token.jwt,
+				organizationId: ctx.session.orgId,
+				limit,
+				page
+			});
 		})
 });

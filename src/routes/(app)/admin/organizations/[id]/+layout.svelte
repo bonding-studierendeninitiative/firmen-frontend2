@@ -1,37 +1,9 @@
 <script lang="ts">
-	import { Link, LinkTabs, Tabs } from '@/@svelte/components';
-	import {
-		BookingsTab,
-		CompanyInformationTab,
-		PortraitsTab
-	} from '@/@svelte/modules/CompanyDetails/components';
-
-	import { fade } from 'svelte/transition';
+	import { Link, LinkTabs } from '@/@svelte/components';
 	import { _ } from '@services';
 	import { LoaderCircle } from 'lucide-svelte';
-	import SuperDebug from 'sveltekit-superforms';
 
 	export let data;
-
-	let activeTab = 0;
-	const tabHeadings = ['companyInformation', 'portraits', 'bookings'];
-
-	const handleTabChange = (tabIndex: number) => {
-		activeTab = tabIndex;
-	};
-
-
-	const tabs = [{
-		name: 'companyInformation',
-		href: './overview'
-	}, {
-		name: 'portraits',
-		href: './portraits'
-	}, {
-		name: 'bookings',
-		href: './registrations'
-	}];
-
 
 </script>
 

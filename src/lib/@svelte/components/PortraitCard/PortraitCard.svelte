@@ -1,6 +1,5 @@
 <script lang="ts">
 	import {
-		type DeletePortraitTemplateRequest, DeletePortraitTemplateRequestSchema,
 		type GetPortraitTemplatesResponse
 	} from '@schema';
 	import type { InferOutput } from 'valibot';
@@ -10,32 +9,17 @@
 	import { FileText, LoaderCircle, Trash2 } from 'lucide-svelte';
 	import * as Dialog from '@/components/ui/dialog';
 	import { _ } from '@services';
-	import { type Infer, superForm, type SuperValidated } from 'sveltekit-superforms';
-	import { valibotClient } from 'sveltekit-superforms/adapters';
 	import { page } from '$app/stores';
 	import { toast } from 'svelte-french-toast';
+	import { trpc } from '@/trpc/client';
 
 	export let portrait: InferOutput<GetPortraitTemplatesResponse>['portraitTemplates'][number];
-	export let deletePortraitForm: SuperValidated<Infer<DeletePortraitTemplateRequest>>;
+
+	const api = trpc($page);
+
+	const deletePortrait = api.catalogueData.portraits.deletePortrait.createMutation();
 
 	let deleteDialogOpen = false;
-	const superform = superForm(deletePortraitForm, {
-		onSubmit: ({ formData }) => {
-			formData.set('id', portrait.id);
-			console.log(formData);
-		},
-		validators: valibotClient(DeletePortraitTemplateRequestSchema),
-		onResult: async ({ result }) => {
-			if (result.status === 200) {
-				deleteDialogOpen = false;
-				toast.success($_('user-pages.portraits.portraitDeletedSuccessMessage'));
-			} else {
-				console.log(result);
-				toast.error($_('user-pages.portraits.portraitDeletedErrorMessage'));
-			}
-		}
-	});
-	const { enhance, submitting } = superform;
 </script>
 
 
@@ -67,22 +51,30 @@
 			<p>{$_('user-pages.portraits.deletePortraitDescription')}</p>
 			<p class="mt-2 font-medium">{$_('user-pages.portraits.nameOfPortrait')}:</p>
 			<p>{portrait.title}</p>
-			<form action="?/deletePortrait" method="post" id={`delete-portrait-form-${portrait.id}`} use:enhance>
-				<input type="hidden" name="id" value={portrait.id} />
-			</form>
 		</Dialog.Description>
 		<Dialog.Footer class="flex justify-end items-center w-full">
 			<Button variant="secondary" on:click={() => deleteDialogOpen=false}>{$_('common.cancel')}</Button>
-			{#if $submitting}
-				<Button form={`delete-portrait-form-${portrait.id}`} disabled>
+			{#if $deletePortrait.isPending}
+				<Button form={`delete-portrait-form-${portrait.id}`} disabled variant="destructive">
 					<LoaderCircle class="mr-2 h-4 w-4 animate-spin" />{$_('common.delete')}
 				</Button>
 			{:else}
-				<Button type="submit" form={`delete-portrait-form-${portrait.id}`}
-								variant="destructive">{$_('common.delete')}</Button>
-
+				<Button on:click={
+				() => {
+					$deletePortrait.mutate({
+					id: portrait.id
+					}, {
+						onError: (error) => {
+							toast.error(error.message);
+						},
+						onSuccess: () => {
+							toast.success($_('user-pages.portraits.portraitDeletedSuccessMessage'));
+							deleteDialogOpen = false;
+						}
+					});
+				}
+				} variant="destructive">{$_('common.delete')}</Button>
 			{/if}
-
 		</Dialog.Footer>
 	</Dialog.Content>
 </Dialog.Root>

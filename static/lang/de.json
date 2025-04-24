@@ -142,7 +142,8 @@
     "request-changes": "Änderungen anfragen",
     "reject": "Ablehnen",
     "create": "Erstellen",
-    "view-details": "Details anzeigen"
+    "view-details": "Details anzeigen",
+    "export": "Export\u2026"
   },
   "components": {
     "addonPackage": {
@@ -326,12 +327,43 @@
       "file-modified": "Bearbeitet:",
       "status-history": "Statusänderungen"
     },
+    "admin-view-advertisement-dialog": {
+      "file-information": "Dateiinformationen",
+      "file-type": "Dateityp:",
+      "file-size": "Dateigröße:",
+      "file-created": "Erstellt:",
+      "file-modified": "Bearbeitet:",
+      "status-history": "Statusänderungen"
+    },
+    "admin-view-logo-dialog": {
+      "file-information": "Dateiinformationen",
+      "file-type": "Dateityp:",
+      "file-size": "Dateigröße:",
+      "file-created": "Erstellt:",
+      "file-modified": "Bearbeitet:",
+      "status-history": "Statusänderungen"
+    },
     "pick-logo-dialog": {
       "title": "Wählen Sie ein Logo aus",
       "description": "Sollte das ausgewählte Logo noch nicht überprüft sein, kümmert sich das Veranstaltungsteam darum.",
       "no-data-heading": "Keine Logos gefunden",
       "no-data-sub-heading": "Ihre Organization hat noch keine Logos hinterlegt",
       "no-data-action": "Jetzt Logo hochladen"
+    },
+    "pick-advertisement-dialog": {
+      "title": "Wählen Sie eine Imageanzeige aus",
+      "description": "Sollte die ausgewählte Imageanzeige noch nicht überprüft sein, kümmert sich das Veranstaltungsteam darum.",
+      "no-data-heading": "Keine Imageanzeigen gefunden",
+      "no-data-sub-heading": "Ihre Organization hat noch keine Imageanzeigen hinterlegt",
+      "no-data-action": "Jetzt Imageanzeige hochladen"
+    },
+    "delete-logo-dialog": {
+      "title": "Logo \"{logoName}\" löschen",
+      "description": "Möchten Sie dieses Logo wirklich löschen?"
+    },
+    "delete-advertisement-dialog": {
+      "title": "Imageanzeige \"{advertisementName}\" löschen",
+      "description": "Möchten Sie diese Imageanzeige wirklich löschen?"
     }
   },
   "sidebar": {
@@ -373,7 +405,8 @@
     "portrait-company": "Ausstellerdetails",
     "portrait-contact": "Kontaktinformationen",
     "registrations": "Anmeldungen",
-    "buy-options": "Kaufoptionen"
+    "buy-options": "Kaufoptionen",
+    "exports": "Katalogdaten-Exporte"
   },
   "table-headings": {
     "company": "Firma",

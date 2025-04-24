@@ -1,255 +1,202 @@
 <script lang="ts">
-	import { createTable, Subscribe, Render, createRender } from 'svelte-headless-table';
 	import { _ } from '@services';
-	import {
-		addColumnFilters,
-		addPagination,
-		addSelectedRows,
-		addTableFilter,
-		addSortBy
-	} from 'svelte-headless-table/plugins';
 	import * as Table from '@/components/ui/table';
-	import { get, readable, writable } from 'svelte/store';
-	import { LocalizedDate } from '@/@svelte/components';
-	import DataTableActions from './data-table-actions.svelte';
-	import DataTableCheckbox from './data-table-checkbox.svelte';
-	import type { getOrgs } from '@/services';
+	import { derived, type Readable } from 'svelte/store';
 	import { Button } from '$lib/components/ui/button';
 	import * as Select from '$lib/components/ui/select';
-	import { page } from '$app/stores';
-	import { goto } from '$app/navigation';
-	import ArrowUpDown from 'lucide-svelte/icons/arrow-up-down';
+	import { queryParameters } from 'sveltekit-search-params';
+	import { Skeleton } from '@/components/ui/skeleton';
+	import type { Snippet } from 'svelte';
 
-	export let organizations: Awaited<ReturnType<typeof getOrgs>> = [];
+	type CellSnippet<TProps> = {
+		snippet: Snippet<[TProps]>;
+		props: TProps;
+	};
 
-	const table = createTable(readable(organizations.data), {
-		page: addPagination({
-			serverSide: true,
-			serverItemCount: writable(organizations.totalCount),
-			initialPageIndex: $page.url.searchParams.get('page')
-				? Number($page.url.searchParams.get('page'))
-				: undefined,
-			initialPageSize: $page.url.searchParams.get('limit')
-				? Number($page.url.searchParams.get('limit'))
-				: undefined
-		}),
-		sort: addSortBy({
-			serverSide: true,
-			initialSortKey: $page.url.searchParams.get('sort') ? decodeURIComponent($page.url.searchParams.get('sort')!) : undefined
-		}),
-		filter: addTableFilter({
-			serverSide: true,
-			initialFilterValue: $page.url.searchParams.get('filter') || undefined,
-			fn: ({ value, filterValue }) => value.toLowerCase().includes(filterValue.toLowerCase())
-		}),
-		typeFilter: addColumnFilters(),
-		select: addSelectedRows()
+	interface TableState<T> {
+		selectedRows: Set<T>;
+		totalRows: number;
+		isLoading: boolean;
+	}
+
+	// Generic type for column definition
+	export interface ColumnDef<T> {
+		id: string;
+		header: string | ((state: TableState<T>) => CellSnippet<unknown>);
+		accessor?: (row: T) => any;
+		cell: (row: T, state: TableState<T>) => CellSnippet<unknown>;
+		sortable?: boolean;
+		align?: 'left' | 'center' | 'right';
+	}
+
+	// Generic type for data table props
+	export interface DataTableProps<T> {
+		data: T[];
+		totalCount: Readable<number>;
+		isLoading?: boolean;
+		columns: ColumnDef<T>[];
+		pageSizes?: number[];
+		onRowClick?: (row: T) => void;
+		onSelectionChange?: (selectedRows: T[]) => void;
+	}
+
+	// Default props
+	let {
+		data,
+		totalCount,
+		isLoading = false,
+		columns,
+		pageSizes = [10, 20, 50, 100],
+		onRowClick,
+		onSelectionChange
+	}: DataTableProps<any> = $props();
+
+	let params = queryParameters({
+		sort: false,
+		page: false,
+		limit: false
 	});
 
-
-	const columns = table.createColumns([
-		table.column({
-			accessor: 'id',
-			header: (_, { pluginStates }) => {
-				const { allPageRowsSelected } = pluginStates.select;
-				return createRender(DataTableCheckbox, {
-					checked: allPageRowsSelected
-				});
-			},
-			cell: ({ row }, { pluginStates }) => {
-				const { getRowState } = pluginStates.select;
-				const { isSelected } = getRowState(row);
-
-				return createRender(DataTableCheckbox, {
-					checked: isSelected
-				});
-			},
-			plugins: {
-				filter: {
-					exclude: true
-				}
-			}
-		}),
-		table.column({
-			accessor: 'name',
-			id: 'name',
-			header: $_(`admin-pages.organizations.data-table.headers.name`)
-		}),
-		table.column({
-			accessor: 'membersCount',
-			id: 'members_count',
-			header: $_(`admin-pages.organizations.data-table.headers.members-count`)
-		}),
-		table.column({
-			accessor: ({ createdAt }) => createdAt,
-			header: $_(`admin-pages.organizations.data-table.headers.last-modified`),
-			id: 'created_at',
-			cell: ({ value }) => {
-				return createRender(LocalizedDate, { date: value, format: 'relative' });
-			},
-			plugins: {
-				filter: {
-					exclude: true
-				}
-			}
-		}),
-		table.column({
-			accessor: ({ publicMetadata }) => publicMetadata?.type,
-			id: 'organizationType',
-			header: $_(`admin-pages.organizations.data-table.headers.type`),
-			cell: ({ value }) => {
-				return value ? $_(`common.org-types.${value}`) : '';
-			},
-			plugins: {
-				filter: {
-					exclude: true
-				},
-				typeFilter: {
-					fn: ({ filterValue, value }) => {
-						if (filterValue.length === 0) return true;
-						if (!Array.isArray(filterValue) || typeof value !== 'string') return false;
-						return filterValue.some((filter) => {
-							return value.includes(filter);
-						});
-					},
-					initialFilterValue: [],
-					render: ({ filterValue }) => {
-						return get(filterValue);
-					}
-				}
-			}
-		}),
-		table.column({
-			accessor: ({ slug }) => slug,
-			id: 'slug',
-			header: '',
-			cell: ({ value }) => {
-				return createRender(DataTableActions, { id: value });
-			},
-			plugins: {
-				filter: {
-					exclude: true
-				}
-			}
-		})
-
-	]);
-
-
-	const { headerRows, pageRows, tableAttrs, tableBodyAttrs, pluginStates } = table.createViewModel(columns);
-	const { hasNextPage, hasPreviousPage, pageIndex, pageSize } = pluginStates.page;
-	export let { filterValue } = pluginStates.filter;
-	const { sortKeys } = pluginStates.sort;
-
-
-	let timeout: unknown | null = null;
-
-	filterValue.subscribe(value => {
-		if (value === '' && $page.url.searchParams.get('filter') === null) return;
-		if ($page.url.searchParams.get('filter') === value) return;
-
-		if (timeout) clearTimeout(timeout);
-		timeout = setTimeout(async () => {
-				const q = new URLSearchParams($page.url.searchParams);
-				q.set('filter', value);
-				goto(`?${q}`, { noScroll: true });
-			}, 600
-		);
-	});
-
-	sortKeys.subscribe(value => {
-		if (value.length) {
-			const q = new URLSearchParams($page.url.searchParams);
-			q.set('sort', (value[0].order === 'asc' ? '+' : '-') + value[0].id);
-			goto(`?${q}`, { noScroll: true });
+	// Row selection state
+	let selectedRows = $state(new Set<any>());
+	$effect(() => {
+		if (onSelectionChange) {
+			onSelectionChange([...selectedRows]);
 		}
 	});
 
-	function nextPage() {
-		console.log($pageIndex);
+	function toggleRowSelection(row: any) {
+		if (selectedRows.has(row)) {
+			selectedRows.delete(row);
+		} else {
+			selectedRows.add(row);
+		}
+		selectedRows = selectedRows; // Trigger reactivity
+	}
 
-		$pageIndex = $pageIndex + 1;
-		const q = new URLSearchParams($page.url.searchParams);
-		q.set('page', $pageIndex.toString());
-		goto(`?${q}`, { noScroll: true });
+	function toggleAllSelection() {
+		if (selectedRows.size === data.length) {
+			selectedRows.clear();
+		} else {
+			data.forEach(row => selectedRows.add(row));
+		}
+		selectedRows = selectedRows; // Trigger reactivity
+	}
+
+	// Table state
+	let tableState = $state({
+		selectedRows,
+		totalRows: data.length,
+		isLoading
+	});
+
+	$effect(() => {
+		tableState = {
+			selectedRows,
+			totalRows: data.length,
+			isLoading
+		};
+	});
+
+	// Pagination functions
+	let selectedPageSize = derived([params], ([params]) => ({
+		label: params.limit ?? '10',
+		value: Number(params.limit ?? '10')
+	}));
+
+	function nextPage() {
+		const currentPage = Number($params.page);
+		$params.page = (currentPage + 1).toString();
 	}
 
 	function previousPage() {
-		$pageIndex = $pageIndex - 1;
-		const q = new URLSearchParams($page.url.searchParams);
-		q.set('page', $pageIndex.toString());
-		goto(`?${q}`, { noScroll: true });
+		const currentPage = Number($params.page);
+		$params.page = (currentPage - 1).toString();
 	}
 
-	const pageSizes = [10, 20, 50, 100];
-	$: selectedPageSize = $pageSize
-		? {
-			label: String($pageSize),
-			value: $pageSize
-		}
-		: undefined;
-	pageSize.subscribe(value => {
-		const q = new URLSearchParams($page.url.searchParams);
-		q.set('limit', String(value));
-		goto(`?${q}`, { noScroll: true });
+	let hasNextPage = derived([totalCount, params], ([totalCount, params]) => {
+		const currentPage = Number(params.page);
+		const limit = Number(params.limit);
+		return currentPage * limit + limit < totalCount;
+	});
+
+	let hasPreviousPage = derived([params], ([params]) => {
+		const currentPage = Number(params.page);
+		return currentPage > 0;
 	});
 </script>
 
-<section class="mt-10">
+<section class="mt-4 space-y-4">
 	<div class="rounded-md border">
-		<Table.Root {...$tableAttrs}>
+		<Table.Root>
 			<Table.Header>
-				{#each $headerRows as headerRow}
-					<Subscribe rowAttrs={headerRow.attrs()}>
-						<Table.Row>
-							{#each headerRow.cells as cell (cell.id)}
-								<Subscribe attrs={cell.attrs()} let:attrs props={cell.props()} let:props>
-									<Table.Head {...attrs}>
-										{#if cell.id === 'name' || cell.id === 'members_count' || cell.id === 'created_at'}
-											<Button class="px-0" variant="ghost" on:click={props.sort.toggle}>
-												<Render of={cell.render()} />
-												<ArrowUpDown class={'h-4 w-4'} />
-											</Button>
-										{:else}
-											<Render of={cell.render()} />
-										{/if}
-									</Table.Head>
-								</Subscribe>
-							{/each}
-						</Table.Row>
-					</Subscribe>
-				{/each}
+				<Table.Row>
+					{#each columns as column}
+						<Table.Head
+							class={column.align === 'right'
+								? 'text-right'
+								: column.align === 'center'
+									? 'text-center'
+									: ''}
+						>
+							{#if typeof column.header === 'string'}
+								{column.header}
+							{:else}
+								{@const headerSnippet = column.header(tableState)}
+								{@render headerSnippet.snippet(headerSnippet.props)}
+							{/if}
+						</Table.Head>
+					{/each}
+				</Table.Row>
 			</Table.Header>
-			<Table.Body {...$tableBodyAttrs}>
-				{#each $pageRows as row (row.id)}
-					<Subscribe rowAttrs={row.attrs()} let:rowAttrs>
-						<Table.Row {...rowAttrs}>
-							{#each row.cells as cell (cell.id)}
-								<Subscribe attrs={cell.attrs()} let:attrs>
-									<Table.Cell {...attrs}>
-										{#if cell.id === "name"}
-											<a href={`/admin/organizations/${row.original.slug}`} class="hover:underline">
-												<Render of={cell.render()} />
-											</a>
-										{:else }
-											<Render of={cell.render()} />
-										{/if}
-									</Table.Cell>
-								</Subscribe>
+			<Table.Body>
+				{#if !isLoading}
+					{#each data as row}
+						<Table.Row>
+							{#each columns as column}
+								<Table.Cell
+									class={column.align === 'right'
+										? 'text-right'
+										: column.align === 'center'
+											? 'text-center'
+											: ''}
+								>
+									{#if column.cell}
+										{@const cellSnippet = column.cell(row, tableState)}
+										{@render cellSnippet.snippet(cellSnippet.props)}
+									{:else if column.accessor}
+										{column.accessor(row)}
+									{:else}
+										{row[column.id]}
+									{/if}
+								</Table.Cell>
 							{/each}
 						</Table.Row>
-					</Subscribe>
-				{/each}
+					{/each}
+				{:else}
+					{#each { length: Number($params.limit) || 10 } as _, i}
+						<Table.Row>
+							{#each columns as column}
+								<Table.Cell>
+									<Skeleton class="w-full min-w-6 h-6" />
+								</Table.Cell>
+							{/each}
+						</Table.Row>
+					{/each}
+				{/if}
 			</Table.Body>
 		</Table.Root>
 	</div>
 	<div class="flex items-center justify-end space-x-4">
 		<div class="min-w-min">
-			<Select.Root bind:selected={selectedPageSize} onSelectedChange={(v) => {
-         pageSize.set(v?.value);
-        }}>
+			<Select.Root
+				bind:selected={$selectedPageSize}
+				onSelectedChange={(v) => {
+					$params.limit = String(v?.value);
+				}}
+			>
 				<Select.Trigger>
-					{selectedPageSize?.label}
+					{$selectedPageSize?.label}
 				</Select.Trigger>
 				<Select.Content>
 					{#each pageSizes as size}
@@ -260,21 +207,11 @@
 				</Select.Content>
 			</Select.Root>
 		</div>
-		<Button
-			variant="outline"
-			size="sm"
-			on:click={previousPage}
-			disabled={!$hasPreviousPage}
-		>{$_("common.previous")}
+		<Button variant="outline" size="sm" on:click={previousPage} disabled={!$hasPreviousPage}
+			>{$_('common.previous')}
 		</Button>
-		<Button
-			variant="outline"
-			size="sm"
-			disabled={!$hasNextPage}
-			on:click={nextPage}
-		>{$_("common.next")}
+		<Button variant="outline" size="sm" disabled={!$hasNextPage} on:click={nextPage}
+			>{$_('common.next')}
 		</Button>
 	</div>
 </section>
-
-

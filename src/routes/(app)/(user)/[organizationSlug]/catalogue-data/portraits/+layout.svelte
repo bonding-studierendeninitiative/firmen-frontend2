@@ -62,7 +62,7 @@
 	<LoaderCircle class="w-10 h-10 mx-auto animate-spin my-6" />
 {:then portraitTemplateData}
 	<section in:fade class="mt-4 flex flex-col gap-y-4">
-		{#if portraitTemplateData?.portraits.portraitTemplates?.length < 1}
+		{#if (portraitTemplateData?.portraitTemplates?.length ?? 0) < 1}
 			<NoDataFound
 				heading={$_('user-pages.portraits.noPortraitsFound')}
 				subHeading={$_('user-pages.portraits.noPortraitsFoundDescription')}
@@ -71,12 +71,12 @@
 			/>
 		{:else}
 			<div class="grid grid-cols-3 gap-6">
-				{#each portraitTemplateData?.portraits.portraitTemplates as portrait}
-					<PortraitCard portrait={portrait} deletePortraitForm={portraitTemplateData?.deleteForm} />
+				{#each portraitTemplateData?.portraitTemplates ?? [] as portrait}
+					<PortraitCard portrait={portrait} />
 				{/each}
 			</div>
-			<Pagination.Root perPage={10} page={portraitTemplateData?.portraits.pageNumber + 1}
-											 count={portraitTemplateData?.portraits.totalElements} let:pages let:currentPage onPageChange={(pageNumber) => {
+			<Pagination.Root perPage={10} page={(portraitTemplateData?.pageNumber ?? 0) + 1}
+											 count={portraitTemplateData?.totalElements} let:pages let:currentPage onPageChange={(pageNumber) => {
 				const p = new URLSearchParams($page.url.searchParams);
 				p.set("page", String(pageNumber-1))
 			 	goto(`?${p}`, {noScroll: true, replaceState: true})

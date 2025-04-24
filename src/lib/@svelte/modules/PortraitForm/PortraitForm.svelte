@@ -3,9 +3,7 @@
 	import {
 		InputWithPrefix
 	} from '$lib/@svelte/components';
-	import { CloudUploadIcon } from '$lib/@svelte/icons';
-	import Dropzone from 'svelte-file-dropzone';
-	import SuperDebug, { superForm, type SuperValidated, type Infer } from 'sveltekit-superforms';
+	import { superForm, type SuperValidated, type Infer } from 'sveltekit-superforms';
 	import { page } from '$app/stores';
 	import { toast } from 'svelte-french-toast';
 	import { goto } from '$app/navigation';
@@ -18,34 +16,27 @@
 	import * as Select from '@/components/ui/select';
 	import {
 		type CreatePortraitTemplateRequest,
-		GetPortraitTemplateResponse,
 		PortraitTemplateSchema, type UpdatePortraitTemplateRequest,
 		UpdatePortraitTemplateRequestSchema
 	} from '@schema';
 	import * as Sheet from '@/components/ui/sheet';
-	import { Control, Description, Field, FieldErrors, Label, Legend } from '@/components/ui/form';
+	import { Control, Description, Field, FieldErrors, Label } from '@/components/ui/form';
 	import { valibotClient } from 'sveltekit-superforms/adapters';
 	import { cn } from '@/utils';
 	import { BookOpen, Briefcase, Globe, LoaderCircle } from 'lucide-svelte';
 
 	export let isOpen: boolean = false;
-	export let onDialogChange: (open: boolean) => void = _ => {};
-
-	let currentStep = 1;
-	let files: any = {
-		accepted: [],
-		rejected: []
-	};
+	export let onDialogChange: (open: boolean) => void = () => {};
 
 	const isEditMode = $page.url.searchParams.get('edit') !== null;
 	const portraitId = isEditMode ? $page.url.searchParams.get('edit') : "";
 
-	export let validated: SuperValidated<Infer<CreatePortraitTemplateRequest>> | SuperValidated<Infer<UpdatePortraitTemplateRequest>> | undefined;
+	export let validated: SuperValidated<Infer<CreatePortraitTemplateRequest>> | SuperValidated<Infer<UpdatePortraitTemplateRequest>>;
 	const superform = superForm(validated, {
 		dataType: "json",
 		validators: isEditMode ? valibotClient(UpdatePortraitTemplateRequestSchema) : valibotClient(PortraitTemplateSchema),
 		onSubmit: async ({ formData }) => {
-			if (isEditMode) {
+			if (isEditMode && portraitId) {
 				formData.set("id", portraitId);
 			}
 		},
@@ -187,7 +178,7 @@
 							<FieldErrors />
 						</Field>
 
-						<Field form={superform} name="industy">
+						<Field form={superform} name="industry">
 							<Control>
 								<Label>{$_('user-pages.portraits.branch')}</Label>
 								<Select.Root multiple bind:selected={selectedIndustries}>
@@ -227,6 +218,7 @@
 							<Field form={superform} name="revenue_germany" class="mt-2">
 								<Control let:attrs>
 									<InputWithPrefix
+										{...attrs}
 										bind:value={$formData.revenue_germany}
 										prefixText={$_('user-pages.portraits.inland')}
 									/>
@@ -237,6 +229,7 @@
 							<Field form={superform} name="revenue_europe">
 								<Control let:attrs>
 									<InputWithPrefix
+										{...attrs}
 										bind:value={$formData.revenue_europe}
 										prefixText={$_('user-pages.portraits.eu')}
 									/>
@@ -247,6 +240,7 @@
 							<Field form={superform} name="revenue_germany">
 								<Control let:attrs>
 									<InputWithPrefix
+										{...attrs}
 										bind:value={$formData.revenue_worldwide}
 										prefixText={$_('user-pages.portraits.global')}
 									/>
@@ -265,6 +259,7 @@
 							<Field form={superform} name="locations_germany" class="mt-2">
 								<Control let:attrs>
 									<InputWithPrefix
+										{...attrs}
 										bind:value={$formData.locations_germany}
 										prefixText={$_('user-pages.portraits.inland')}
 									/>
@@ -275,6 +270,7 @@
 							<Field form={superform} name="locations_europe">
 								<Control let:attrs>
 									<InputWithPrefix
+										{...attrs}
 										bind:value={$formData.locations_europe}
 										prefixText={$_('user-pages.portraits.eu')}
 									/>
@@ -285,6 +281,7 @@
 							<Field form={superform} name="locations_worldwide">
 								<Control let:attrs>
 									<InputWithPrefix
+										{...attrs}
 										bind:value={$formData.locations_worldwide}
 										prefixText={$_('user-pages.portraits.global')}
 									/>
@@ -301,6 +298,7 @@
 							<Field form={superform} name="employees_germany" class="mt-2">
 								<Control let:attrs>
 									<InputWithPrefix
+										{...attrs}
 										bind:value={$formData.employees_germany}
 										prefixText={$_('user-pages.portraits.inland')}
 									/>
@@ -311,6 +309,7 @@
 							<Field form={superform} name="employees_europe">
 								<Control let:attrs>
 									<InputWithPrefix
+										{...attrs}
 										bind:value={$formData.employees_europe}
 										prefixText={$_('user-pages.portraits.eu')}
 									/>
@@ -321,6 +320,7 @@
 							<Field form={superform} name="employees_worldwide">
 								<Control let:attrs>
 									<InputWithPrefix
+										{...attrs}
 										bind:value={$formData.employees_worldwide}
 										prefixText={$_('user-pages.portraits.global')}
 									/>
@@ -442,6 +442,7 @@
 								<Control let:attrs>
 									<Label>{$_('user-pages.portraits.website')}</Label>
 									<InputWithPrefix
+										{...attrs}
 										prefixText="https://"
 										{...attrs}
 										bind:value={$formData.website}
