@@ -190,7 +190,7 @@
 						>
 							<div class="space-y-0.5">
 								<Label>{$_("modules.admin-create-event-registration.can-upload-advertisements")}</Label>
-								<p class="text-muted text-sm">
+								<p class="text-muted-foreground text-sm">
 									{$_("modules.admin-create-event-registration.can-upload-advertisements-description")}
 								</p>
 							</div>
