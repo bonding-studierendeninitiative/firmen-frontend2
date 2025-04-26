@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { Button, buttonVariants } from '@/components/ui/button';
 	import * as Dialog from '@/components/ui/dialog';
-	import SuperDebug, { type Infer, superForm, type SuperValidated } from 'sveltekit-superforms';
+	import { type Infer, superForm, type SuperValidated } from 'sveltekit-superforms';
 	import { toast } from 'svelte-french-toast';
 	import { Control, Description, Field, FieldErrors, Label } from '@/components/ui/form';
 	import { _ } from '@services';
@@ -42,7 +42,7 @@
 			</Dialog.Header>
 			<Field class="flex-col flex justify-start" form={superform} name="title">
 				<Control let:attrs>
-					<Label>{$_("modules.upload-advertisement.title")}</Label>
+					<Label>{$_("modules.upload-advertisement.name")}</Label>
 					<Input {...attrs} bind:value={$formData.title}/>
 				</Control>
 				<Description />
@@ -64,13 +64,8 @@
 			</Field>
 			<Dialog.Footer>
 				<Button disabled={!isTainted($tainted)}
-								type="submit">{$_("modules.upload-advertisement.upload")}</Button>
+								type="submit">{$_("common.upload")}</Button>
 			</Dialog.Footer>
 		</form>
-		<SuperDebug data={{
-			tainted: $tainted,
-			submitting: $submitting,
-			formData: $formData,
-		}} />
 	</Dialog.Content>
 </Dialog.Root>

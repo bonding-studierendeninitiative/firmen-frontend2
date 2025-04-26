@@ -1,0 +1,1 @@
+export {default as QueryDataTable} from "./QueryDataTable.svelte"

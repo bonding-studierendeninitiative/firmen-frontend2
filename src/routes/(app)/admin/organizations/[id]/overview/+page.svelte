@@ -16,6 +16,7 @@
 	});
 
 	function filterOrgEntries(tuple: [string, any]): tuple is [string, string] {
+		console.log(tuple);
 		const [key, value] = tuple;
 		const excludedKeys = [
 			'id',
@@ -67,7 +68,18 @@
 				<p class=" font-normal text-sm text-stone-500">
 					{$_(`admin-pages.organizations.${label}`)}
 				</p>
-				<p class=" w-full text-right font-normal text-sm text-stone-800">{value}</p>{/each}
+				<p class=" w-full text-right font-normal text-sm text-stone-800">
+					{#if label === 'createdBy'}
+						{@const creator = $orgMembersData?.data.find((item) => {
+							return item.publicUserData?.userId === value;
+						})}
+						{creator?.publicUserData?.firstName}
+						{creator?.publicUserData?.lastName}
+					{:else}
+						{value}
+					{/if}
+				</p>
+			{/each}
 		</div>
 	{/if}
 

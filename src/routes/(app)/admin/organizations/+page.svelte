@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { _ } from '@services';
-	import DataTable from './data-table.svelte';
 	import { LoaderCircle } from 'lucide-svelte';
 	import { derived, type Readable, readable, writable } from 'svelte/store';
 	import { SearchInput } from '@/@svelte/components';
@@ -10,7 +9,7 @@
 	import { debouncer } from '@/stores/debouncer.js';
 	import { queryParameters } from 'sveltekit-search-params';
 	import OrganizationsDataTable from './organizations-data-table.svelte';
-	
+
 	let params = queryParameters({
 		sort: false,
 		page: false,
@@ -21,12 +20,12 @@
 
 	let queryValue = writable('');
 
-	let filters = derived([queryValue, params], ([queryValue, params]) => ({ 
+	let filters = derived([queryValue, params], ([queryValue, params]) => ({
 		query: queryValue,
-		page: Number(params.page) || 0, 
-		limit: Number(params.limit) || 10, 
-		includeMembersCount: true, 
-		orderBy: params.sort ? decodeURIComponent(params.sort!) : undefined 
+		page: Number(params.page) || 0,
+		limit: Number(params.limit) || 10,
+		includeMembersCount: true,
+		orderBy: params.sort ? decodeURIComponent(params.sort!) : undefined
 	}));
 
 	const api = trpc($page);
@@ -40,6 +39,13 @@
 	const orgsQuery = api.admin.orgs.list.createQuery(debouncer(filters), opts);
 	const orgsData: Readable<AdminOrgsOutput['data']> = derived([orgsQuery], ([query]) => {
 		if (query.isLoading) return [];
+		// check if the loaded page is "out of bounds"
+		else if (
+			query.data?.data.length === 0 &&
+			Math.floor(query.data.totalCount / query.data.limit) < query.data.page
+		) {
+			$params.page = '0';
+		}
 		return query.data?.data ?? [];
 	});
 </script>
@@ -58,11 +64,15 @@
 			bind:value={$queryValue}
 		/>
 		<div class="flex-grow"></div>
-			<CreateOrgDialog />
+		<CreateOrgDialog />
 	</section>
-		{#if $orgsQuery.isLoading}
-			<LoaderCircle class="w-10 h-10 mx-auto animate-spin" />
-		{:else if $orgsData}
-			<OrganizationsDataTable isLoading={$orgsQuery.isFetching} organizations={$orgsData} totalCount={derived([orgsQuery], ([query]) => query.data?.totalCount ?? 0)} />
-		{/if}
+	{#if $orgsQuery.isLoading}
+		<LoaderCircle class="w-10 h-10 mx-auto animate-spin" />
+	{:else if $orgsData}
+		<OrganizationsDataTable
+			isLoading={$orgsQuery.isFetching}
+			organizations={$orgsData}
+			totalCount={derived([orgsQuery], ([query]) => query.data?.totalCount ?? 0)}
+		/>
+	{/if}
 </div>

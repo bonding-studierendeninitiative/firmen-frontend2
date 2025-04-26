@@ -42,7 +42,10 @@ function setupI18n() {
 	});
 	init({
 		initialLocale: 'de',
-		fallbackLocale: 'de'
+		fallbackLocale: 'de',
+		handleMissingMessage(input) {
+			console.warn("Translation missing", input.id, input.locale)
+		},
 	});
 }
 

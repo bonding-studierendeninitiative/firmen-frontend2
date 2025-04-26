@@ -1,30 +1,15 @@
-<script lang="ts">
-	import { _ } from '@services';
-	import * as Table from '@/components/ui/table';
-	import { derived, type Readable } from 'svelte/store';
-	import { Button } from '$lib/components/ui/button';
-	import * as Select from '$lib/components/ui/select';
-	import { queryParameters } from 'sveltekit-search-params';
-	import { Skeleton } from '@/components/ui/skeleton';
-	import type { Snippet } from 'svelte';
-
+<script lang="ts" module>
 	type CellSnippet<TProps> = {
 		snippet: Snippet<[TProps]>;
 		props: TProps;
 	};
-
-	interface TableState<T> {
-		selectedRows: Set<T>;
-		totalRows: number;
-		isLoading: boolean;
-	}
 
 	// Generic type for column definition
 	export interface ColumnDef<T> {
 		id: string;
 		header: string | ((state: TableState<T>) => CellSnippet<unknown>);
 		accessor?: (row: T) => any;
-		cell: (row: T, state: TableState<T>) => CellSnippet<unknown>;
+		cell?: (row: T, state: TableState<T>) => CellSnippet<unknown>;
 		sortable?: boolean;
 		align?: 'left' | 'center' | 'right';
 	}
@@ -36,9 +21,19 @@
 		isLoading?: boolean;
 		columns: ColumnDef<T>[];
 		pageSizes?: number[];
-		onRowClick?: (row: T) => void;
-		onSelectionChange?: (selectedRows: T[]) => void;
 	}
+</script>
+
+<script lang="ts">
+	import { _ } from '@services';
+	import * as Table from '@/components/ui/table';
+	import { derived, type Readable } from 'svelte/store';
+	import { Button } from '$lib/components/ui/button';
+	import * as Select from '$lib/components/ui/select';
+	import { queryParameters } from 'sveltekit-search-params';
+	import { Skeleton } from '@/components/ui/skeleton';
+	import type { Snippet } from 'svelte';
+	import { TableViewModel, type TableState } from './table-state.svelte';
 
 	// Default props
 	let {
@@ -46,10 +41,12 @@
 		totalCount,
 		isLoading = false,
 		columns,
-		pageSizes = [10, 20, 50, 100],
-		onRowClick,
-		onSelectionChange
+		pageSizes = [10, 20, 50, 100]
 	}: DataTableProps<any> = $props();
+
+	const tableState = new TableViewModel({
+		data
+	});
 
 	let params = queryParameters({
 		sort: false,
@@ -57,45 +54,8 @@
 		limit: false
 	});
 
-	// Row selection state
-	let selectedRows = $state(new Set<any>());
 	$effect(() => {
-		if (onSelectionChange) {
-			onSelectionChange([...selectedRows]);
-		}
-	});
-
-	function toggleRowSelection(row: any) {
-		if (selectedRows.has(row)) {
-			selectedRows.delete(row);
-		} else {
-			selectedRows.add(row);
-		}
-		selectedRows = selectedRows; // Trigger reactivity
-	}
-
-	function toggleAllSelection() {
-		if (selectedRows.size === data.length) {
-			selectedRows.clear();
-		} else {
-			data.forEach(row => selectedRows.add(row));
-		}
-		selectedRows = selectedRows; // Trigger reactivity
-	}
-
-	// Table state
-	let tableState = $state({
-		selectedRows,
-		totalRows: data.length,
-		isLoading
-	});
-
-	$effect(() => {
-		tableState = {
-			selectedRows,
-			totalRows: data.length,
-			isLoading
-		};
+		tableState.data = data;
 	});
 
 	// Pagination functions
@@ -116,7 +76,8 @@
 
 	let hasNextPage = derived([totalCount, params], ([totalCount, params]) => {
 		const currentPage = Number(params.page);
-		const limit = Number(params.limit);
+		const limit = Number(params.limit ?? '10');
+        console.log("Limit:", limit, "Page:", currentPage)
 		return currentPage * limit + limit < totalCount;
 	});
 
@@ -142,8 +103,8 @@
 							{#if typeof column.header === 'string'}
 								{column.header}
 							{:else}
-								{@const headerSnippet = column.header(tableState)}
-								{@render headerSnippet.snippet(headerSnippet.props)}
+								{@const { snippet, props } = column.header(tableState)}
+								{@render snippet(props)}
 							{/if}
 						</Table.Head>
 					{/each}

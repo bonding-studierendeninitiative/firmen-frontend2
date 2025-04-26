@@ -113,7 +113,7 @@
     "logo": "Logo",
     "portrait": "Portrait",
     "advert": "Image-Advert",
-    "loading": "Loading\u2026",
+    "loading": "Loading…",
     "publish": "Veröffentlichen",
     "org-types": {
       "nonprofit": "Nonprofit",
@@ -122,7 +122,7 @@
     },
     "next": "Next",
     "previous": "Previous",
-    "open-menu": "Open menu\u2026",
+    "open-menu": "Open menu…",
     "event-registration-status": {
       "created": "New",
       "confirmed": "Confirmed",
@@ -220,8 +220,8 @@
     "buy-option-selector": {
       "no-buy-options": "No buy option found.",
       "active": "active",
-      "search-placeholder": "Search for a buy option\u2026",
-      "create-new": "Create a new buy option\u2026"
+      "search-placeholder": "Search for a buy option…",
+      "create-new": "Create a new buy option…"
     },
     "contact-person": {
       "full-name": "Contact Person:"
@@ -251,7 +251,7 @@
       "title": "Review event registration",
       "description": "Do you want to review this event registration?",
       "proceed": "Review registration",
-      "document-type": "Review the\u2026",
+      "document-type": "Review the…",
       "feedback-type": "Type of feedback"
     },
     "add-billing-address-template": {
@@ -267,7 +267,8 @@
       "city": "City",
       "state": "State",
       "country": "Country",
-      "billingReference": "Internal billing reference (optional)"
+      "billingReference": "Internal billing reference (optional)",
+      "billingAddressAddedSuccessfully": "The billing address was successfully created!"
     },
     "manage-org-members": {
       "owner": "Owner",
@@ -335,6 +336,18 @@
       "no-data-heading": "No logos found",
       "no-data-sub-heading": "Your organization hasn't uploaded any logos yet",
       "no-data-action": "Upload a logo now"
+    },
+    "upload-logo": {
+      "title": "Upload a logo here",
+      "description": "Uploaded logos can be used as catalogue data in events and projects.",
+      "file": "File",
+      "name": "Title"
+    },
+    "upload-advertisement": {
+      "title": "Upload a advertisement here",
+      "description": "Uploaded advertisements can be used as catalogue data in events and projects.",
+      "file": "File",
+      "name": "Title"
     },
     "pick-advertisement-dialog": {
       "title": "Pick a advertisement",
@@ -432,7 +445,8 @@
     "created": "Created",
     "missing": "Missing",
     "uploaded": "Uploaded",
-    "changes-requested": "Changes requested"
+    "changes-requested": "Changes requested",
+    "withdrawn": "Withdrawn"
   },
   "user-pages": {
     "settings": {
@@ -495,7 +509,9 @@
       "newAddress": "New Address",
       "addAddress": "Add Address",
       "archivedEvents": "Archived Events",
-      "billingAddressAddedSuccessfully": "Billing address added successfully"
+      "billingAddressAddedSuccessfully": "Billing address added successfully",
+      "deleteAddress": "Delete Address",
+      "deleteAddressDescription": "Do you want to delete this address?"
     },
     "notifications": {
       "notifications": "Notifications",
@@ -575,7 +591,9 @@
       "deletePortrait": "Delete Portrait",
       "deletePortraitDescription": "Are you sure you want to delete the portrait?",
       "portraitDeletedSuccessMessage": "Portrait deleted successfully.",
-      "portraitDeletedErrorMessage": "An error occurred. Portrait could not be deleted."
+      "portraitDeletedErrorMessage": "An error occurred. Portrait could not be deleted.",
+      "employees": "Employees",
+      "portraitUpdatedSuccessfully": "The portrait was updated successfully"
     },
     "events": {
       "event-registration": {
@@ -644,7 +662,8 @@
         "header": "Number of participation days",
         "description": "Select on how many days you would like to participate in the event",
         "days": "{days, plural, one {{days, number} day} other {{days, number} days} }"
-      }
+      },
+      "eventUpdatedSuccessfully": "The buy option was successfully updated!"
     },
     "dashboard": {
       "dashboard": "Dashboard",
@@ -719,13 +738,15 @@
           "phoneNumber": "999 5555",
           "email": "alice.anderson@work.com",
           "responsibility": "E. g. Head of HR, Outreach Champion, etc.",
-          "title": "Mrs, Mr, Other, etc."
+          "title": "Mrs, Mr, Other, etc.",
+          "phoneCountryCodeSearch": "Search your country"
         },
         "hints": {
           "email": "This should be your work email that you will receive notifications and confirmations to.",
           "phone": "",
           "fullName": ""
-        }
+        },
+        "successCreated": "User successfully created!"
       }
     }
   },
@@ -753,13 +774,12 @@
         "guest": "Guest"
       },
       "eventRegistrations": {
-        "none-found": "No Event Registrations for this company where found",
-        "": ""
+        "none-found": "No Event Registrations for this company where found"
       },
-      "openMenu": "Open menu\u2026",
+      "openMenu": "Open menu…",
       "data-table": {
         "actions": {
-          "view-details": "View details\u2026",
+          "view-details": "View details…",
           "title": "Actions",
           "copy-id": "Copy org id"
         },
@@ -876,11 +896,12 @@
           },
           "actions": {
             "review-catalogue-data": "Katalogdaten überprüfen",
-            "confirm": "Bestätigen\u2026",
-            "reject": "Ablehnen\u2026",
-            "open-menu": "Open menu\u2026",
+            "confirm": "Bestätigen…",
+            "reject": "Ablehnen…",
+            "open-menu": "Open menu…",
             "actions": "Actions",
-            "copy-id": "Copy registration Id"
+            "copy-id": "Copy registration Id",
+            "delete-event-registration": "Delete this event registration"
           },
           "packages": {
             "all-packages": "All packages",
@@ -895,13 +916,14 @@
         "confirm-event-registration": {
           "title": "Confirm event registration",
           "description": "Do you want to confirm this event registration?",
-          "proceed": "Confirm registration"
+          "proceed": "Confirm registration",
+          "success": "The event registration was successfully confirmed!"
         },
         "review-event-registration": {
           "title": "Review event registration",
           "description": "Do you want to review this event registration?",
           "proceed": "Review registration",
-          "document-type": "Review the\u2026"
+          "document-type": "Review the…"
         },
         "purchased-package": "Purchased package",
         "purchased-addons": "Purchased addons",

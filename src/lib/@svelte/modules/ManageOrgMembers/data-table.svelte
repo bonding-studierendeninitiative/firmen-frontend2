@@ -17,9 +17,12 @@
 	export let memberResponse: Readable<{ data: OrganizationMembership[]; totalCount: number }>;
 	import { LocalizedDate, SearchInput } from '@/@svelte/components';
 	import CreateOrgInviteDialog from './create-org-invite-dialog.svelte';
+	import QueryDataTable, {
+		type ColumnDef
+	} from '@/@svelte/components/QueryDataTable/QueryDataTable.svelte';
 
-	let data = derived([memberResponse], ([memberResponse]) => memberResponse.data)
-	let totalCount = derived([memberResponse], ([memberResponse]) => memberResponse.totalCount)
+	let data = derived([memberResponse], ([memberResponse]) => memberResponse.data);
+	let totalCount = derived([memberResponse], ([memberResponse]) => memberResponse.totalCount);
 
 	let table = createTable(data, {
 		page: addPagination({
@@ -42,145 +45,96 @@
 		})
 	});
 
-	let columns = table.createColumns([
-		table.column({
-			accessor: ({ publicUserData }) => [`${publicUserData?.firstName} ${publicUserData?.lastName}`, publicUserData?.imageUrl],
+	let columns = [
+		{
 			id: 'user-profile',
 			header: '',
-			cell: ({ value: [userName, imageUrl] }) => {
-				return createRender(DataTableUserIcon, {
-					src: imageUrl ?? "", // TODO: Placeholder image url
-					userName: userName ?? "Unknown"
-				});
-			}
-		}),
-		table.column({
+			cell: (row) => ({
+				snippet: userIcon,
+				props: {
+					userName: `${row.publicUserData?.firstName} ${row.publicUserData?.lastName}`,
+					src: row.publicUserData?.imageUrl
+				}
+			})
+		},
+		{
 			accessor: ({ publicUserData }) => publicUserData?.firstName ?? '',
 			id: 'first_name',
 			header: $_('table-headings.firstName')
-		}),
+		},
 
-		table.column({
+		{
 			accessor: ({ publicUserData }) => publicUserData?.lastName ?? '',
 			id: 'last_name',
 			header: $_('table-headings.lastName')
-		}),
+		},
 
-		table.column({
+		{
 			accessor: ({ publicUserData }) => publicUserData?.identifier,
 			id: 'email_address',
 			header: $_('table-headings.emailAddress')
-
-		}),
-		table.column({
-			accessor: item => item.role,
+		},
+		{
 			id: 'role',
 			header: $_('table-headings.role'),
-			cell: ({ value }) => {
-				if (value == 'org:owner') {
-					return $_('modules.manage-org-members.owner');
-				} else if (value == 'org:member') {
-					return $_('modules.manage-org-members.member');
-				} else if (value == 'org:admin') {
-					return $_('modules.manage-org-members.admin');
-				} else {
-					return value;
+			cell: (row) => ({
+				snippet: userRole,
+				props: {
+					value: row.role
 				}
-			}
-		}),
-		table.column({
-			accessor: item => item.createdAt,
+			})
+		},
+		{
 			id: 'createdAt',
 			header: $_('table-headings.joined'),
-			cell: ({ value }) => createRender(LocalizedDate, { date: value, format: 'relative', hoverFormat: 'long' })
-		}),
-		table.column({
-			accessor: ({ publicUserData }) => publicUserData?.userId,
-			header: '',
-			cell: () => {
-				return createRender(DataTableActions);
-			},
-			plugins: {
-				sort: {
-					disable: true
-				},
-				filter: {
-					exclude: true
+			cell: (row) => ({
+				snippet: localizedDate,
+				props: {
+					date: row.createdAt
 				}
-			}
-		})
-	]);
-
-	const { headerRows, pageRows, tableAttrs, tableBodyAttrs, pluginStates } = table.createViewModel(columns);
-	const { hasNextPage, hasPreviousPage, pageIndex, pageSize } = pluginStates.page;
-	const { filterValue } = pluginStates.filter;
-	const { sortKeys } = pluginStates.sort;
-
-	let timeout: NodeJS.Timeout | string | number | null = null;
-
-	filterValue.subscribe(value => {
-		if (value === '' && $page.url.searchParams.get('filter') === null) return;
-		if ($page.url.searchParams.get('filter') === value) return;
-
-		if (timeout) clearTimeout(timeout);
-		timeout = setTimeout(async () => {
-				const q = new URLSearchParams($page.url.searchParams);
-				q.set('filter', value);
-				goto(`?${q}`, { noScroll: true });
-			}, 600
-		);
-	});
-
-	sortKeys.subscribe(value => {
-		if (value.length) {
-			const q = new URLSearchParams($page.url.searchParams);
-			q.set('sort', (value[0].order === 'asc' ? '+' : '-') + value[0].id);
-			goto(`?${q}`, { noScroll: true });
+			})
+		},
+		{
+			header: '',
+			cell: () => ({
+				snippet: actions,
+				props: {}
+			})
 		}
-	});
-
-	function nextPage() {
-		console.log($pageIndex);
-
-		$pageIndex = $pageIndex + 1;
-		const q = new URLSearchParams($page.url.searchParams);
-		q.set('page', $pageIndex.toString());
-		goto(`?${q}`, { noScroll: true });
-	}
-
-	function previousPage() {
-		$pageIndex = $pageIndex - 1;
-		const q = new URLSearchParams($page.url.searchParams);
-		q.set('page', $pageIndex.toString());
-		goto(`?${q}`, { noScroll: true });
-	}
-
-	const pageSizes = [10, 20, 50, 100];
-	$: selectedPageSize = $pageSize
-		? {
-			label: String($pageSize),
-			value: $pageSize
-		}
-		: undefined;
-	pageSize.subscribe(value => {
-		const q = new URLSearchParams($page.url.searchParams);
-		q.set('limit', String(value));
-		goto(`?${q}`, { noScroll: true });
-	});
+	];
 </script>
 
-<div class={cn(`space-y-4`, $$props.class)}
-		 {...$$restProps}>
+{#snippet userIcon({ src, userName }: { src: string; userName: string })}
+	<DataTableUserIcon {src} {userName} />
+{/snippet}
+
+{#snippet userRole({ value }: { value: string })}
+	{#if value == 'org:owner'}
+		{$_('modules.manage-org-members.owner')}
+	{:else if value == 'org:member'}
+		{$_('modules.manage-org-members.member')}
+	{:else if value == 'org:admin'}
+		{$_('modules.manage-org-members.admin')}
+	{:else}
+		{value}
+	{/if}
+{/snippet}
+
+{#snippet actions()}
+	<DataTableActions />
+{/snippet}
+
+{#snippet localizedDate({ date }: { date: any })}
+	<LocalizedDate {date} />
+{/snippet}
+
+<div class={cn(`space-y-4`, $$props.class)} {...$$restProps}>
 	<div class={cn(`flex items-center justify-between gap-4`)}>
-		<SearchInput
-			class="max-w-sm"
-			placeholder={$_('common.search')}
-			type="text"
-			bind:value={$filterValue}
-		/>
+		<SearchInput class="max-w-sm" placeholder={$_('common.search')} type="text" />
 		<CreateOrgInviteDialog />
 	</div>
-	<div class="rounded-md border">
+	<QueryDataTable {columns} {totalCount} data={$data} />
+	<!--<div class="rounded-md border">
 		<Table.Root {...$tableAttrs} class="w-full whitespace-no-wrap">
 			<Table.Header>
 				{#each $headerRows as headerRow}
@@ -253,5 +207,5 @@
 			on:click={nextPage}
 		>{$_("common.next")}
 		</Button>
-	</div>
+	</div>-->
 </div>

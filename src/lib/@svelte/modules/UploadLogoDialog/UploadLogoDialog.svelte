@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { Button, buttonVariants } from '@/components/ui/button';
 	import * as Dialog from '@/components/ui/dialog';
-	import SuperDebug, { type Infer, superForm, type SuperValidated } from 'sveltekit-superforms';
+	import { type Infer, superForm, type SuperValidated } from 'sveltekit-superforms';
 	import {
 		type UploadLogoRequest
 	} from '@schema';
@@ -47,7 +47,7 @@
 			</Dialog.Header>
 			<Field class="flex-col flex justify-start" form={superform} name="title">
 				<Control let:attrs>
-					<Label>{$_("modules.upload-logo.title")}</Label>
+					<Label>{$_("modules.upload-logo.name")}</Label>
 					<Input {...attrs} bind:value={$formData.title} />
 				</Control>
 				<Description />
@@ -69,9 +69,8 @@
 			</Field>
 			<Dialog.Footer>
 				<Button disabled={!isTainted($tainted) || $submitting}
-								type="submit">{$_("modules.upload-logo.upload")}</Button>
+								type="submit">{$_("common.upload")}</Button>
 			</Dialog.Footer>
 		</form>
-		<SuperDebug data={$formData} />
 	</Dialog.Content>
 </Dialog.Root>

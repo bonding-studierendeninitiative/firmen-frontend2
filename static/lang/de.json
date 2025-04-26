@@ -113,7 +113,7 @@
     "logo": "Logo",
     "portrait": "Portrait",
     "advert": "Image-Anzeige",
-    "loading": "Loading\u2026",
+    "loading": "Loading…",
     "publish": "Veröffentlichen",
     "org-types": {
       "nonprofit": "Gemeinnützig",
@@ -122,7 +122,7 @@
     },
     "next": "Weiter",
     "previous": "Zurück",
-    "open-menu": "Menü öffnen\u2026",
+    "open-menu": "Menü öffnen…",
     "event-registration-status": {
       "created": "Neu",
       "confirmed": "Bestätigt",
@@ -143,7 +143,7 @@
     "reject": "Ablehnen",
     "create": "Erstellen",
     "view-details": "Details anzeigen",
-    "export": "Export\u2026"
+    "export": "Export…"
   },
   "components": {
     "addonPackage": {
@@ -234,8 +234,8 @@
     "buy-option-selector": {
       "no-buy-options": "Es wurden keine Kaufoptionen gefunden.",
       "active": "aktiv",
-      "search-placeholder": "Nach einer Kaufoption suchen\u2026",
-      "create-new": "Erstelle eine neue Kaufoption\u2026"
+      "search-placeholder": "Nach einer Kaufoption suchen…",
+      "create-new": "Erstelle eine neue Kaufoption…"
     },
     "contact-person": {
       "full-name": "Ansprechperson:"
@@ -265,7 +265,7 @@
       "title": "Katalogdaten überprüfen",
       "description": "Wenn du Ausstellern Feddback schickst, bekommen sie die Möglichkeit eine neue Version hochzuladen.",
       "proceed": "Feedback senden",
-      "document-type": "Feedback festhalten für\u2026",
+      "document-type": "Feedback festhalten für…",
       "feedback-type": "Art des Feedbacks"
     },
     "add-billing-address-template": {
@@ -281,7 +281,8 @@
       "city": "Stadt",
       "state": "Bundesland",
       "country": "Land",
-      "billingReference": "Interne Referenz (optional)"
+      "billingReference": "Interne Referenz (optional)",
+      "billingAddressAddedSuccessfully": "Die Rechnungsadresse wurde erfolgreich erstellt!"
     },
     "manage-org-members": {
       "owner": "Besitzer",
@@ -349,6 +350,18 @@
       "no-data-heading": "Keine Logos gefunden",
       "no-data-sub-heading": "Ihre Organization hat noch keine Logos hinterlegt",
       "no-data-action": "Jetzt Logo hochladen"
+    },
+    "upload-logo": {
+      "title": "Laden sie ein neues Logo hoch",
+      "description": "Hochgeladene Logos können als Katalogdaten für Veranstaltungen und Projekte verwendet werden.",
+      "file": "Datei",
+      "name": "Name des Logos"
+    },
+    "upload-advertisement": {
+      "title": "Laden sie eine neue Imageanzeige hoch",
+      "description": "Hochgeladene Imageanzeigen können als Katalogdaten für Veranstaltungen und Projekte verwendet werden.",
+      "file": "Datei",
+      "name": "Name der Imageanzeige"
     },
     "pick-advertisement-dialog": {
       "title": "Wählen Sie eine Imageanzeige aus",
@@ -447,7 +460,8 @@
     "created": "Erstellt",
     "missing": "Fehlt",
     "uploaded": "Hochgeladen",
-    "changes-requested": "Änderungen angefragt"
+    "changes-requested": "Änderungen angefragt",
+    "withdrawn": "Zurückgezogen"
   },
   "user-pages": {
     "settings": {
@@ -510,7 +524,9 @@
       "newAddress": "Neue Adresse",
       "addAddress": "Adresse hinzufügen",
       "archivedEvents": "Archivierte Veranstaltungen",
-      "billingAddressAddedSuccessfully": "Rechnungsadresse erfolgreich hinzugefügt"
+      "billingAddressAddedSuccessfully": "Rechnungsadresse erfolgreich hinzugefügt",
+      "deleteAddress": "Addresse löschen",
+      "deleteAddressDescription": "Möchten Sie diese Adresse löschen?"
     },
     "notifications": {
       "notifications": "Benachrichtigungen",
@@ -590,7 +606,9 @@
       "deletePortrait": "Portrait löschen",
       "deletePortraitDescription": "Sind Sie sicher, dass das Portrait gelöscht werden soll?",
       "portraitDeletedSuccessMessage": "Portrait erfolgreich gelöscht",
-      "portraitDeletedErrorMessage": "Ein Fehler ist aufgetreten. Portrait konnte nicht gelöscht werden."
+      "portraitDeletedErrorMessage": "Ein Fehler ist aufgetreten. Portrait konnte nicht gelöscht werden.",
+      "employees": "Mitarbeiter",
+      "portraitUpdatedSuccessfully": "Das Porträt wurde erfolgreich aktualisiert"
     },
     "events": {
       "event-registration": {
@@ -659,7 +677,8 @@
         "header": "Anzahl der Teilnahmetage",
         "description": "Wählen Sie aus, an wie vielen Tagen Sie teilnehmen möchten",
         "days": "{days, plural, one {{days, number} Tag} other {{days, number} Tage} }"
-      }
+      },
+      "eventUpdatedSuccessfully": "Die Kaufoption wurde erfolgreich aktualisiert!"
     },
     "dashboard": {
       "dashboard": "Dashboard",
@@ -677,7 +696,7 @@
         "actions": {
           "actions": "Aktionen",
           "copy-id": "ID kopieren",
-          "upload-catalogue-data": "Katalogdaten hochladen\u2026"
+          "upload-catalogue-data": "Katalogdaten hochladen…"
         }
       }
     },
@@ -738,13 +757,15 @@
           "phoneNumber": "123 456789",
           "email": "sabrina.mueller@work.de",
           "responsibility": "z. B. Head of HR, Outreach Champion, etc.",
-          "title": "Frau, Herr, Divers, etc."
+          "title": "Frau, Herr, Divers, etc.",
+          "phoneCountryCodeSearch": "Suchen Sie Ihr Land"
         },
         "hints": {
           "email": "Bitte geben Sie hier Ihre Arbeits-E-Mail-Adresse an, auf der Sie Benachrichtigungen und Bestätigungen empfangen werden.",
           "phone": "",
           "fullName": ""
-        }
+        },
+        "successCreated": "Benutzer erfolgreich erstellt!"
       }
     }
   },
@@ -772,13 +793,12 @@
         "guest": "Gast"
       },
       "eventRegistrations": {
-        "none-found": "Es wurden keine Anmeldungen für diese Organisation gefunden",
-        "": ""
+        "none-found": "Es wurden keine Anmeldungen für diese Organisation gefunden"
       },
       "openMenu": "Menü öffnen&hellip;",
       "data-table": {
         "actions": {
-          "view-details": "Details anzeigen\u2026",
+          "view-details": "Details anzeigen…",
           "title": "Aktionen",
           "copy-id": "Organisations-ID kopieren"
         },
@@ -895,11 +915,12 @@
           },
           "actions": {
             "review-catalogue-data": "Katalogdaten überprüfen",
-            "confirm": "Bestätigen\u2026",
-            "reject": "Ablehnen\u2026",
-            "open-menu": "Menü öffnen\u2026",
+            "confirm": "Bestätigen…",
+            "reject": "Ablehnen…",
+            "open-menu": "Menü öffnen…",
             "actions": "Aktionen",
-            "copy-id": "Anmelde-ID kopieren"
+            "copy-id": "Anmelde-ID kopieren",
+            "delete-event-registration": "Diese Anmeldung löschen"
           },
           "packages": {
             "all-packages": "Alle Pakete",
@@ -914,13 +935,14 @@
         "confirm-event-registration": {
           "title": "Veranstaltungsanmeldung bestätigen",
           "description": "Möchtest du diese Veranstaltungsanmeldung bestätigen",
-          "proceed": "Anmeldung bestätigen"
+          "proceed": "Anmeldung bestätigen",
+          "success": "Die Veranstaltungsanmledung wurde erfolgreich bestätigt!"
         },
         "review-catalogue-data": {
           "title": "Katalogdaten überprüfen",
           "description": "Wenn du Ausstellern Feddback schickst, bekommen sie die Möglichkeit eine neue Version hochzuladen.",
           "proceed": "Feedback senden",
-          "document-type": "Feedback festhalten für\u2026"
+          "document-type": "Feedback festhalten für…"
         },
         "purchased-package": "Gebuchtes Paket",
         "purchased-addons": "Gebuchte Zusatzleistungen",
