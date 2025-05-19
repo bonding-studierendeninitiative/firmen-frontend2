@@ -1,6 +1,5 @@
 import { authorizedOrgMemberProcedure, router } from '@/trpc/server';
-import { object, parse, string, nullish, safeParse } from 'valibot';
-import { AllEventsOutput, GetEventBuyOptionOutput, GetEventRegistrationForOrganizationOutput } from '@api/client';
+import { object, parse, string, nullish } from 'valibot';
 
 export const eventRouter = router({
 	unregisteredEvents: authorizedOrgMemberProcedure
@@ -13,7 +12,6 @@ export const eventRouter = router({
 				input
 			)
 		)
-		.output(output => parse(AllEventsOutput, output))
 		.query(async ({ ctx, input }) => {
 			const response = await ctx.api.get("/api/v2/event/unregistered", {
 				query: {
@@ -65,7 +63,6 @@ export const eventRouter = router({
 		}),
 	getActiveBuyOption: authorizedOrgMemberProcedure
 		.input((input) => parse(string(), input))
-		.output((output) => parse(GetEventBuyOptionOutput, output))
 		.query(async ({ ctx, input: eventId }) => {
 			const response = await ctx.api.request("get", "/api/v2/event/{eventId}/active-buy-option", {
 				path: { eventId }
@@ -79,14 +76,6 @@ export const eventRouter = router({
 		}),
 	isOrgRegistered: authorizedOrgMemberProcedure
 		.input((input) => parse(string(), input))
-		.output((output) => {
-			const result = safeParse(GetEventRegistrationForOrganizationOutput, output);
-			if (!result.success) {
-				console.error(result.issues)
-				return null;
-			}
-			return result.output;
-		})
 		.query(async ({ ctx, input: eventId }) => {
 			const response = await ctx.api.get("/api/v2/event/{eventId}/is-registered", {
 				path: { eventId },
