@@ -8,6 +8,7 @@ import {
 	object,
 	pipe,
 	string,
+	toLowerCase,
 	union
 } from 'valibot';
 import { DocumentFeedbackSchema } from '@schema/catalogueData';
@@ -19,6 +20,7 @@ export const LogoSchema = object({
 	size: nullish(number()),
 	status: pipe(
 		string(),
+		toLowerCase(),
 		union([
 			literal('missing'),
 			literal('confirmed'),

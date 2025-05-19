@@ -24,12 +24,12 @@ export const actions = {
 
 		await api.admin.advertisements.review({
 			advertisementId: form.data.advertisementId,
-			data: { ...form.data }
+			data: form.data
 		});
 	},
 	reviewLogo: async (event) => {
-
 		const form = await superValidate(event.request, valibot(ReviewLogoRequest));
+
 		if (!form.valid) {
 			return fail(400, { form });
 		}
@@ -38,7 +38,7 @@ export const actions = {
 
 		await api.admin.logos.review({
 			logoId: form.data.logoId,
-			data: { ...form.data }
+			data: form.data
 		});
 	}
 };

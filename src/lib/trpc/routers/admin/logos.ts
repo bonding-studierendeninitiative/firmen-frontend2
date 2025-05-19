@@ -1,14 +1,14 @@
 import { adminProcedure, router } from '@/trpc/server';
 import { object, parse, string } from 'valibot';
 import { TRPCError } from '@trpc/server';
-import type { ReviewLogoRequest } from '@schema';
+import { ReviewCatalogueDataInput } from '@api/admin-client';
 
 export const adminLogosRouter = router({
     review: adminProcedure
         .input((input) => parse(
             object({
                 logoId: string(),
-                data: object({}) as ReviewLogoRequest
+                data: ReviewCatalogueDataInput
             }),
             input
         ))

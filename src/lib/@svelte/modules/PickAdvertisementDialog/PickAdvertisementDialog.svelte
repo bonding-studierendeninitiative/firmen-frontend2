@@ -10,6 +10,7 @@
 	import { _ } from '@services';
 	import { trpc } from '@/trpc/client';
 	import { goto } from '$app/navigation';
+	import toast from 'svelte-french-toast';
 
 	export let open = false;
 	export let id: string;
@@ -18,33 +19,43 @@
 	let selectedAdvertisement = '';
 
 	const api = trpc($page);
+
+	const utils = api.createUtils();
 	let advertisements = api.catalogueData.advertisements.getAll.createQuery({});
 	let pickAdvertisement = api.catalogueData.advertisements.pick.createMutation();
-
 </script>
 
 <Dialog.Root bind:open>
 	<Dialog.Content class="max-w-[80dvw] max-h-[80dvh] @container/pickAdvertisement">
 		<Dialog.Header>
-			<Dialog.Title>{$_("modules.pick-advertisement-dialog.title")}</Dialog.Title>
-			<Dialog.Description>{$_("modules.pick-advertisement-dialog.description")}</Dialog.Description>
+			<Dialog.Title>{$_('modules.pick-advertisement-dialog.title')}</Dialog.Title>
+			<Dialog.Description>{$_('modules.pick-advertisement-dialog.description')}</Dialog.Description>
 		</Dialog.Header>
 		<ScrollArea class="max-h-[70dvh]">
 			{#if $advertisements.isLoading}
 				<LoaderCircle class="w-10 h-10 mx-auto animate-spin" />
 			{:else if $advertisements.data?.advertisements.length === 0}
-				<NoDataFound heading={$_("modules.pick-advertisement-dialog.no-data")}
-										 subHeading={$_("modules.pick-advertisement-dialog.no-data-sub-heading")}
-										 buttonText={$_("modules.pick-advertisement-dialog.no-data-action")}
-										 onButtonClick={() => goto(`/${orgId}/catalogue-data/adverts`)} />
+				<NoDataFound
+					heading={$_('modules.pick-advertisement-dialog.no-data')}
+					subHeading={$_('modules.pick-advertisement-dialog.no-data-sub-heading')}
+					buttonText={$_('modules.pick-advertisement-dialog.no-data-action')}
+					onButtonClick={() => goto(`/${orgId}/catalogue-data/adverts`)}
+				/>
 			{:else}
 				<RadioGroup.Root bind:value={selectedAdvertisement}>
-					<div class="grid grid-cols-1 gap-4 @sm/pickAdvertisement:grid-cols-2 @xl/pickAdvertisement:grid-cols-4">
+					<div
+						class="grid grid-cols-1 gap-4 @sm/pickAdvertisement:grid-cols-2 @xl/pickAdvertisement:grid-cols-4"
+					>
 						{#each $advertisements.data?.advertisements ?? [] as advertisement}
 							<Label
 								class="p-4 rounded-xl hover:bg-muted cursor-pointer [&:has([data-state=checked])]:bg-muted [&:has([data-state=checked])]:border [&:has([data-state=checked])]:border-dashed flex flex-col items-end gap-2"
-								for={"advertisement-"+advertisement.id}>
-								<RadioGroup.Item id={"advertisement-"+advertisement.id} value={advertisement.id} class="sr-only" />
+								for={'advertisement-' + advertisement.id}
+							>
+								<RadioGroup.Item
+									id={'advertisement-' + advertisement.id}
+									value={advertisement.id}
+									class="sr-only"
+								/>
 								{#if advertisement.id === selectedAdvertisement}
 									<CheckCircle class="w-5 h-5 text-green-500" />
 								{:else}
@@ -58,14 +69,28 @@
 			{/if}
 		</ScrollArea>
 		<Dialog.Footer>
-			<Button disabled={!selectedAdvertisement || $pickAdvertisement.isPending}
-							on:click={() => {
-								$pickAdvertisement.mutate({
-								advertisementId: selectedAdvertisement,
-								eventRegistrationId: id,
-								organizationId: orgId
-								})
-							}}>{$_("common.select")}</Button>
+			<Button
+				disabled={!selectedAdvertisement || $pickAdvertisement.isPending}
+				on:click={() => {
+					$pickAdvertisement.mutate(
+						{
+							advertisementId: selectedAdvertisement,
+							eventRegistrationId: id,
+							organizationId: orgId
+						},
+						{
+							onError(error, variables, context) {
+								toast.error(error.message);
+							},
+							async onSuccess(data, variables, context) {
+								open = false;
+								toast.success('Imageanzeige ausgewählt!');
+								await utils.eventRegistrations.forOrganization.invalidate();
+							}
+						}
+					);
+				}}>{$_('common.select')}</Button
+			>
 		</Dialog.Footer>
 	</Dialog.Content>
 </Dialog.Root>
