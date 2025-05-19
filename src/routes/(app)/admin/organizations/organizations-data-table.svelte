@@ -156,7 +156,7 @@
 	name: string;
 	imageUrl: string;
 })}
-	<a href="/admin/organizations/{slug}" class="hover:underline inline-flex gap-2 items-center">
+	<a href="/admin/organizations/{slug}" class="hover:underline inline-flex gap-2 items-center align-middle">
 		<Avatar.Root class="w-6 h-6">
 			<Avatar.Image src={imageUrl} alt={name} />
 			<Avatar.Fallback>{name}</Avatar.Fallback>
