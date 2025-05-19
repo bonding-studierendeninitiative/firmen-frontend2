@@ -19,6 +19,7 @@
 
 	const eventRegistrationQuery = api.eventRegistrations.forOrganization.createQuery(
 		{
+			orgId: data.orgId,
 			cursor: 0,
 			limit: 10
 		},

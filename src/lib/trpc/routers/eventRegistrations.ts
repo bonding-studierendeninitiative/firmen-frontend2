@@ -36,16 +36,17 @@ export const eventRegistrationsRouter = router({
 		.input((input) =>
 			parse(
 				object({
+					orgId: string(),
 					cursor: nullish(number(), 0),
 					limit: nullish(number(), 10)
 				}),
 				input
 			)
 		)
-		.query(async ({ ctx, input: { cursor: page, limit } }) => {
+		.query(async ({ ctx, input: { cursor: page, limit, orgId } }) => {
 			const response = await ctx.api.get("/api/v2/event-registration",{
 				query:{
-					organizationId: ctx.session.orgId,
+					organizationId: orgId,
 					limit,
 					page
 				}
