@@ -278,8 +278,8 @@ export const adminEventsRouter = router({
 		.input((input) => parse(object({
 			sortDirection: optional(string()),
 			sortBy: optional(string()),
-			page: optional(number()),
-			size: optional(number()),
+			page: optional(number(), 0),
+			size: optional(number(), 10),
 			event_status: optional(
 				array(union([literal("UNPUBLISHED"), literal("PUBLISHED"), literal("ARCHIVED")])),
 			),
@@ -288,8 +288,8 @@ export const adminEventsRouter = router({
 			const response = await ctx.adminApi.get("/api/v2/admin/event", {
 				query: {
 					event_status: input.event_status,
-					size: Number(input.size),
-					page: Number(input.page)
+					size: input.size,
+					page: input.page
 				}
 			});
 			return response
