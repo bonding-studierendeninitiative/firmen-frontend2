@@ -13,6 +13,7 @@
 	import { QueryClient, QueryClientProvider } from '@tanstack/svelte-query';
 	import { SvelteQueryDevtools } from '@tanstack/svelte-query-devtools';
 	import { RenderScan } from 'svelte-render-scan';
+	import {PUBLIC_APP_ENVIRONMENT} from "$env/static/public";
 
 	const queryClient = new QueryClient({
 		defaultOptions: {
@@ -32,7 +33,7 @@
 
 </script>
 
-<RenderScan />
+<RenderScan initialEnabled={PUBLIC_APP_ENVIRONMENT === "developement"} />
 
 {#if $isLocaleLoading}
 	<div class="flex justify-center items-center h-screen">
