@@ -2,50 +2,34 @@
 	import { _ } from '@services/i18n.js';
 	import * as Dialog from '@/components/ui/dialog';
 	import { Button } from '@/components/ui/form';
-
 	import { page } from '$app/stores';
-	import { enhance } from '$app/forms';
 	import { TrashIcon } from '@/@svelte/icons';
 	import { LoaderCircle } from 'lucide-svelte';
+	import { buttonVariants } from '@/components/ui/button';
+	import { trpc } from '@/trpc/client';
+	import { goto } from '$app/navigation';
 
 	let isOpen = false;
 
-	let sending = false;
+	const api = trpc($page);
 
-	const updateSending = () => {
-		sending = true;
-		return ({ update }) => {
-			// Set invalidateAll to false if you don't want to reload page data when submitting
-			update({ invalidateAll: true }).finally(async () => {
-				sending = false;
-			});
-		};
-	};
+	const deleteBuyOption = api.admin.events.buyOptions.delete.createMutation();
 </script>
 
 <Dialog.Root bind:open={isOpen}>
 	<Dialog.Overlay />
-	<Dialog.Trigger asChild>
-		<Button
-			class="aspect-square w-10 h-10 p-2 flex-shrink-0 justify-center text-red-500 hover:text-red-700"
-			variant="ghost"
-			disabled={$page.params.buyOptionId == null}
-			on:click={() => (isOpen = true)}
-		>
-			<TrashIcon classes="w-6 h-6" />
-		</Button>
+	<Dialog.Trigger
+		disabled={$page.params.buyOptionId === null}
+		class={[buttonVariants({ variant: 'ghost', size: 'icon' }), 'text-red-500 hover:text-red-700']}
+	>
+		<TrashIcon classes="w-6 h-6" />
 	</Dialog.Trigger>
 	<Dialog.Content>
 		<Dialog.Header>
-			<Dialog.Title>{$_("modules.delete-buy-option.title")}</Dialog.Title>
-			<Dialog.Description>{$_("modules.delete-buy-option.description")}</Dialog.Description>
+			<Dialog.Title>{$_('modules.delete-buy-option.title')}</Dialog.Title>
+			<Dialog.Description>{$_('modules.delete-buy-option.description')}</Dialog.Description>
 		</Dialog.Header>
-		<form
-			class="flex flex-col gap-y-4"
-			method="post"
-			action="?/deleteBuyOption"
-			use:enhance={updateSending}
-		>
+		<form class="flex flex-col gap-y-4">
 			<!--<Field form={superform} name="description">
 				<Control let:attrs>
 					<Label>Buy option description</Label>
@@ -56,15 +40,25 @@
 			</Field> -->
 
 			<Dialog.Footer>
-				<Button
-					variant="secondary"
-					on:click={(e) => {
-						e.preventDefault();
-						return (isOpen = false);
-					}}>{$_('common.cancel')}</Button
+				<Dialog.Close class={buttonVariants({ variant: 'secondary' })}
+					>{$_('common.cancel')}</Dialog.Close
 				>
-				<Button variant="destructive" type="submit">
-					{#if sending}
+				<Button
+					disabled={$deleteBuyOption.isPending}
+					variant="destructive"
+					on:click={() => {
+						$deleteBuyOption.mutate({
+							buyOptionId: $page.params.buyOptionId,
+							eventId: $page.params.id
+						}, {
+							onSuccess(data, variables, context) {
+								goto(`/admin/events/${$page.params.id}/buy-options`)
+								isOpen = false
+							},
+						});
+					}}
+				>
+					{#if $deleteBuyOption.isPending}
 						<LoaderCircle class="h-4 w-4 animate-spin" />
 					{:else}
 						{$_('common.delete')}

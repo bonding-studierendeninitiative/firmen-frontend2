@@ -22,12 +22,18 @@
 	let orgFilters = writable({
 		query: '',
 		limit: 10,
-		cursor: 0
+		page: 0,
+		includeMembersCount: false,
+		orderBy: "-created_at" as const
 	});
 	let selectedOrg = writable({
-		organizationId: ''
+		organizationId: '',
+		limit: 10,
+		page: 0,
+		sort: "+created_at" as const
 	});
 	const api = trpc($page);
+	const utils = api.createUtils();
 	let organizationMembers = api.admin.orgs.members.getAll.createQuery(selectedOrg);
 	let organizations = api.admin.orgs.list.createQuery(debouncer(orgFilters));
 	const createEventRegistration = api.admin.eventRegistrations.create.createMutation();
@@ -215,9 +221,12 @@
 									onError: () => {
 				toast.error('Anmeldung konnte nicht erstellt werden');
 									},
-									onSuccess: () => {
+									onSuccess: async () => {
 										open = false;
 				toast.success('Anmeldung erfolgreich erstellt');
+										await utils.admin.events.getEventRegistrations.invalidate({
+											eventId: $page.params.id
+										})
 									}
 								})
 							}}>{$_("common.submit")}

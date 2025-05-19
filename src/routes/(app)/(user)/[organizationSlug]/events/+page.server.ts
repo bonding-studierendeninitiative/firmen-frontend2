@@ -1,17 +1,13 @@
-import type { PageServerLoad } from './$types';
-import { getPublishedEvents } from '@/services';
-import { clerkClient } from 'svelte-clerk/server';
+import { createCaller } from '@/trpc/router';
 
-export const load: PageServerLoad = async ({ parent, isDataRequest }) => {
+export const load = async (event) => {
+
+	const api = await createCaller(event)
+
 	async function loadEvents() {
-		const { initialState } = await parent();
 
-		if (!initialState.sessionId) return;
-
-		const token = await clerkClient.sessions.getToken(initialState.sessionId, 'access_token');
-
-		return await getPublishedEvents({ accessToken: token.jwt });
+		return await api.events.getPublished({ page: "0", limit: "10" });
 	}
 
-	return { events: isDataRequest ? loadEvents() : await loadEvents() };
+	return { events: event.isDataRequest ? loadEvents() : await loadEvents() };
 };

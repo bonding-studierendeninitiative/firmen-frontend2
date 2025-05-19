@@ -9,8 +9,8 @@ export const load = async (event) => {
 			limit: '10'
 		}),
 		eventRegistrations: api.eventRegistrations.forOrganization({
-			cursor: '0',
-			limit: '10'
+			cursor: 0,
+			limit: 10
 		})
 	};
 };

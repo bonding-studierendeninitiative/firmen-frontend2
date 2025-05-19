@@ -4,11 +4,13 @@
 	import { _ } from '@services';
 	import { trpc } from '@/trpc/client';
 	import { page } from '$app/stores';
+	import toast from 'svelte-french-toast';
 
 	export let isOpen: boolean;
 	export let id: string;
 
 	const api = trpc($page);
+	const utils = api.createUtils();
 
 	const rejectEventRegistration = api.admin.eventRegistrations.reject.createMutation();
 </script>
@@ -23,7 +25,18 @@
 			<Button on:click={() => {
 				$rejectEventRegistration.mutate({
 				eventRegistrationId: id
-				});
+				}, {
+							onSuccess: async () => {
+								toast.success(
+									$_('admin-pages.events.event-registrations.reject-event-registration.success')
+								);
+								isOpen = false;
+								await utils.admin.events.getEventRegistrations.invalidate();
+							},
+							onError: (err) => {
+								toast.error(err.message);
+							}
+						});
 			}}>{$_("admin-pages.events.event-registrations.reject-event-registration.proceed")}</Button>
 		</Dialog.Footer>
 	</Dialog.Content>

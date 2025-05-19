@@ -1,23 +1,6 @@
 import * as v from 'valibot';
 import { hasMaxFiveLines } from '@/utils/string';
 
-export const GetPortraitTemplatesResponse = v.object({
-	portraitTemplates: v.array(
-		v.object({
-			id: v.string(),
-			title: v.string(),
-			displayName: v.string(),
-			lastModifiedAt: v.nullish(v.pipe(v.string(), v.isoTimestamp()))
-		})
-	),
-	totalElements: v.number(),
-	totalPages: v.number(),
-	pageNumber: v.number(),
-	pageSize: v.number()
-});
-
-export type GetPortraitTemplatesResponse = typeof GetPortraitTemplatesResponse;
-
 export const PortraitTemplateSchema = v.object({
 	title: v.pipe(v.string('Title is required'), v.minLength(1, 'Title is required')),
 	comment: v.optional(v.string(), ''),
@@ -48,6 +31,21 @@ export const PortraitTemplateSchema = v.object({
 	additionalInformation: v.string(),
 	displayName: v.pipe(v.string('Display name is required'), v.minLength(1, 'Display name is required')),
 });
+
+export const GetPortraitTemplatesResponse = v.object({
+	portraitTemplates: v.array(
+		v.object({
+			...PortraitTemplateSchema.entries,
+			id: v.string(),
+		})
+	),
+	totalElements: v.number(),
+	totalPages: v.number(),
+	pageNumber: v.number(),
+	pageSize: v.number()
+});
+
+export type GetPortraitTemplatesResponse = typeof GetPortraitTemplatesResponse;
 
 export const GetPortraitTemplateResponse = v.object({
 	id: v.string(),

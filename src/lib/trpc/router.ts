@@ -6,13 +6,23 @@ import { catalogueDataRouter } from '@/trpc/routers/catalogueData';
 import { orgMembersRouter } from '@/trpc/routers/orgMembers';
 import { eventRegistrationsRouter } from '@/trpc/routers/eventRegistrations';
 import { eventRouter } from '@/trpc/routers/events';
+import { billingAddressTemplateRouter } from './routers/billingAddressTemplates';
+import { userRouter } from './routers/user';
+import { portraitTemplatesRouter } from './routers/portraitTemplates';
+import { advertisementsRouter } from './routers/advertisements';
+import { organizationsRouter } from './routers/organizations';
 
 export const mainRouter = router({
 	admin: adminRouter,
 	catalogueData: catalogueDataRouter,
 	orgMembers: orgMembersRouter,
 	eventRegistrations: eventRegistrationsRouter,
-	events: eventRouter
+	events: eventRouter,
+	billingAddressTemplates: billingAddressTemplateRouter,
+	user: userRouter,
+	portraitTemplates: portraitTemplatesRouter,
+	advertisements: advertisementsRouter,
+	organizations: organizationsRouter
 });
 
 const factory = createCallerFactory(mainRouter);

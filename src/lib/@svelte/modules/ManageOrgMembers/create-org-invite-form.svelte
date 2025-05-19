@@ -31,7 +31,7 @@
 	let { form: formData, enhance, submitting } = superform;
 </script>
 
-<form action="?/createInvite" method="POST" id="create-invite-form" use:enhance>
+<form action="?/createInvite" method="POST" use:enhance>
 	<div class=" flex flex-col gap-1">
 		<Field form={superform} name="userMail">
 			<Control let:attrs>
@@ -54,13 +54,13 @@
 				>{$_('common.cancel')}</Button
 			>
 			{#if $submitting}
-				<Button form="create-invite-form" disabled>
+				<Button disabled>
 					<LoaderCircle class="mr-2 h-4 w-4 animate-spin" />{$_(
 						'modules.manage-org-members.invite'
 					)}
 				</Button>
 			{:else}
-				<Button form="create-invite-form" type="submit"
+				<Button type="submit"
 					>{$_('modules.manage-org-members.invite')}</Button
 				>
 			{/if}

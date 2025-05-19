@@ -11,10 +11,13 @@
 	import { fade } from 'svelte/transition';
 	import { writable } from 'svelte/store';
 	import { setContext } from 'svelte';
+	import { trpc } from '@/trpc/client.js';
 
 	export let data;
 
-	function mapBuyOptionToValue(buyOption: InferOutput<GetBuyOptionsResponse>['buyOptions'][number]) {
+	function mapBuyOptionToValue(
+		buyOption: InferOutput<GetBuyOptionsResponse>['buyOptions'][number]
+	) {
 		return {
 			value: buyOption.id,
 			name: buyOption.name,
@@ -26,6 +29,9 @@
 	let isDialogOpen = writable(false);
 	setContext('isCreateBuyOptionDialogOpen', isDialogOpen);
 
+	const api = trpc($page);
+
+	const activateBuyOption = api.admin.events.buyOptions.activate.createMutation();
 </script>
 
 {#await data.buyOptionData}
@@ -36,21 +42,25 @@
 			{@const activeBuyOption = buyOptions?.buyOptions?.find((buyOption) => buyOption.active)}
 			<nav class="flex justify-between gap-x-2">
 				<BuyOptionSelector
-					buyOptions={buyOptions?.buyOptions.map(mapBuyOptionToValue) ?? []}
+					buyOptions={buyOptions?.buyOptions?.map(mapBuyOptionToValue) ?? []}
 					value={$page.params.buyOptionId}
-					onSelect={async (value) =>{
-						await goto(`/admin/events/${$page.params.id}/buy-options/${value}`)
-						await invalidate("buyOption"); }}
+					onSelect={async (value) => {
+						await goto(`/admin/events/${$page.params.id}/buy-options/${value}`);
+						await invalidate('buyOption');
+					}}
 				/>
 				<DeleteBuyOption />
 				<div class="flex-grow"></div>
-				<form action="?/activateBuyOption" method="post">
-					<Button
-						type="submit"
-						disabled={!$page.params.buyOptionId || $page.params.buyOptionId === activeBuyOption?.id}
-					>{$_("admin-pages.events.buy-options.publish")}</Button
-					>
-				</form>
+				<Button
+					on:click={() => {
+						$activateBuyOption.mutate({
+							buyOptionId: $page.params.buyOptionId,
+							eventId: $page.params.eventId
+						});
+					}}
+					disabled={!$page.params.buyOptionId || $page.params.buyOptionId === activeBuyOption?.id}
+					>{$_('admin-pages.events.buy-options.publish')}</Button
+				>
 			</nav>
 			<slot />
 		{:else}

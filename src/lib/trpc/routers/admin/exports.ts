@@ -1,9 +1,20 @@
 import { adminProcedure, router } from '@/trpc/server';
-import { object, parse, string } from 'valibot';
-import { API } from '@api';
+import { TRPCError } from '@trpc/server';
+import { nullable, object, parse, string, type InferInput } from 'valibot';
 
 export const adminExportsRouter = router({
-	getAll: adminProcedure.query(() => {}),
+	getAll: adminProcedure
+		.input((input) => parse(object({
+			eventId: string()
+		}), input))
+		.query(async ({ ctx, input }) => {
+			const response = await ctx.adminApi.get("/api/v2/admin/events/{eventId}/exports", {
+				path: {
+					eventId: input.eventId
+				}
+			});
+			return response
+		}),
 	generateDownloadLink: adminProcedure
 		.input((input) =>
 			parse(
@@ -14,12 +25,19 @@ export const adminExportsRouter = router({
 				input
 			)
 		)
-		.output((output) => parse(string(), output))
+		.output((output) => parse(nullable(string()), output))
 		.mutation(async ({ ctx, input }) => {
-			const response = await API.get<string>({
-				route: `/admin/events/${input.eventId}/exports/${input.exportId}/download`,
-				token: ctx.token.jwt
+			const response = await ctx.adminApi.request("get", "/api/v2/admin/events/{eventId}/exports/{exportId}/download", {
+				path: {
+					eventId: input.eventId,
+					exportId: input.exportId
+				},
 			});
-			return await response.text();
+
+			if (response.status !== 204) {
+				throw new TRPCError({ message: "Export could not be downloaded", code: "INTERNAL_SERVER_ERROR" })
+			}
+
+			return response.headers.get("location");
 		})
 });

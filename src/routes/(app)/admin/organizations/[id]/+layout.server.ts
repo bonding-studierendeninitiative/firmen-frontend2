@@ -1,18 +1,22 @@
-import { getOrganizationDetails } from '@/services';
+import { PUBLIC_BONDING_ORG_ID } from '$env/static/public';
+import { createCaller } from '@/trpc/router.js';
 
-export const load = async ({ parent, params, isDataRequest }) => {
+export const load = async (event) => {
+
+	const api = await createCaller(event);
+
 	async function loadOrganizationDetails(id: string) {
-		const { initialState } = await parent();
-		if (!initialState.sessionId) return;
+		const organization = await api.organizations.getDetails({ slug: id });
 
-		const organization = await getOrganizationDetails({ slug: id});
+		const is_bondingOrg = organization.id === PUBLIC_BONDING_ORG_ID
 		return {
-			organization
+			organization,
+			is_bonding: is_bondingOrg
 		}
 	}
 
 	return {
-		organizationDetails: isDataRequest ? loadOrganizationDetails(params.id) : await loadOrganizationDetails(params.id)
+		organizationDetails: event.isDataRequest ? loadOrganizationDetails(event.params.id) : await loadOrganizationDetails(event.params.id)
 	}
 
 };

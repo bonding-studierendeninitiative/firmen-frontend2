@@ -62,7 +62,7 @@ isUploadOpen = true;
 						<div class="space-y-4 py-2 @container/logos">
 							<h2 class="text-xl font-bold border-b">{year}</h2>
 							<div class="grid grid-cols-1 @lg/logos:grid-cols-2 @3xl/logos:grid-cols-3 @5xl/logos:grid-cols-4 gap-6">
-								{#each logos as logo}
+								{#each logos as logo (logo.id)}
 									<LogoItem {logo} />
 								{/each}
 							</div>

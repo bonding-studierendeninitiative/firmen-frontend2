@@ -1,13 +1,12 @@
-import { getOrganizationDetails } from '@/services/organizations';
-import type { LayoutServerLoad } from './$types';
 import { redirect } from '@sveltejs/kit';
 import { createLogger } from 'vite';
 import { PUBLIC_BONDING_ORG_ID } from '$env/static/public';
+import { createCaller } from '@/trpc/router';
 
 const logger = createLogger();
 
-export const load: LayoutServerLoad = async ({ parent, params, depends }) => {
-	const { initialState } = await parent();
+export const load = async (event) => {
+	const { initialState } = await event.parent();
 	if (!initialState?.orgId) {
 		redirect(302, '/create-org');
 	} else if (initialState?.orgId === PUBLIC_BONDING_ORG_ID) {
@@ -15,12 +14,14 @@ export const load: LayoutServerLoad = async ({ parent, params, depends }) => {
 		redirect(302, '/admin');
 	}
 
-	console.log('Organization slug:', params.organizationSlug);
+	console.log('Organization slug:', event.params.organizationSlug);
 
-	depends('organization');
+	event.depends('organization');
 
-	const organization = getOrganizationDetails({
-		slug: params.organizationSlug
+	const api = await createCaller(event);
+
+	const organization = api.organizations.getDetails({
+		slug: event.params.organizationSlug
 	});
 	return {
 		organization

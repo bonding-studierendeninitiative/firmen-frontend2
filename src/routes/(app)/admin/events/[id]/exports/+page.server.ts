@@ -1,16 +1,10 @@
-import { clerkClient } from 'svelte-clerk/server';
-import { getExports } from '@/services';
+import { createCaller } from '@/trpc/router.js';
 
-export async function load({ parent, params }) {
-	const { initialState } = await parent();
+export const load = async (event) => {
+	const api = await createCaller(event)
 
-	if (!initialState || !initialState.sessionId) return;
-
-	const token = await clerkClient.sessions.getToken(initialState.sessionId, 'access_token');
-
-	const exports = await getExports({
-		accessToken: token.jwt,
-		eventId: params.id
+	const exports = await api.admin.export.getAll({
+		eventId: event.params.id
 	});
 
 	return {

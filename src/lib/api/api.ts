@@ -6,68 +6,10 @@ interface ApiParams {
 	fetch?: typeof fetch;
 }
 
-import { PUBLIC_BACKEND_HOST } from '$env/static/public';
-
-type GetParams = Omit<ApiParams, 'data'>;
-
 declare function fetch<ResponseType = any>(
 	input: RequestInfo | URL,
 	init?: TypedRequestInit
 ): Promise<TypedResponse<ResponseType>>;
-
-export const API = {
-	baseUrl: PUBLIC_BACKEND_HOST,
-	get: <T>(params: GetParams): Promise<TypedResponse<T>> => {
-		const fetchFunction = params.fetch ?? fetch;
-		try {
-			return fetchFunction(API.baseUrl + params.route, {
-				headers: params.token ? { Authorization: `Bearer ${params.token}` } : undefined,
-				method: 'GET'
-			});
-		} catch (error: any) {
-			return Promise.reject(error);
-		}
-	},
-	post: <T>(params: ApiParams): Promise<TypedResponse<T>> => {
-		try {
-			return fetch(API.baseUrl + params.route, {
-				headers: {
-					'Content-Type': 'application/json',
-					...(params.token && { Authorization: `Bearer ${params.token}` })
-				},
-				body: JSON.stringify(params.data),
-				method: 'POST'
-			});
-		} catch (error: any) {
-			return Promise.reject(error);
-		}
-	},
-	put: <T>(params: ApiParams): Promise<TypedResponse<T>> => {
-		try {
-			return fetch(API.baseUrl + params.route, {
-				headers: {
-					'Content-Type': 'application/json',
-					...(params.token && { Authorization: `Bearer ${params.token}` })
-				},
-				body: JSON.stringify(params.data),
-				method: 'PUT'
-			});
-		} catch (error: any) {
-			throw new Error(error.response.data || 'An error occurred');
-		}
-	},
-
-	delete: <T>(params: ApiParams): Promise<TypedResponse<T>> => {
-		try {
-			return fetch(API.baseUrl + params.route, {
-				headers: params.token ? { Authorization: `Bearer ${params.token}` } : undefined,
-				method: 'DELETE'
-			});
-		} catch (error: any) {
-			throw new Error(error.response.data || 'An error occurred');
-		}
-	}
-};
 
 type TypedHeaders = RequestInit['headers'] & PreparedHeaders;
 

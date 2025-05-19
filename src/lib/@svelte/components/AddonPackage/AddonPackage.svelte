@@ -4,9 +4,10 @@
 	import * as Card from '@/components/ui/card';
 	import { Button } from '@/components/ui/button';
 	import { TrashIcon } from '@/@svelte/icons';
-	import { enhance } from '$app/forms';
 	import { LoaderCircle } from 'lucide-svelte';
 	import { _ } from '@services';
+	import { trpc } from '@/trpc/client';
+	import { page } from '$app/stores';
 
 	export let addonPackage: {
 		id: string;
@@ -24,17 +25,9 @@
 		];
 	};
 
-	let sending = false;
+	const api = trpc($page);
 
-	const updateSending = () => {
-		sending = true;
-		return ({ update }) => {
-			// Set invalidateAll to false if you don't want to reload page data when submitting
-			update({ invalidateAll: true }).finally(async () => {
-				sending = false;
-			});
-		};
-	};
+	const deleteAddonPackage = api.admin.events.addonPackages.delete.createMutation();
 </script>
 
 <Card.Root>
@@ -85,20 +78,23 @@
 		{/each}
 	</Card.Content>
 	<Card.Footer>
-		<form action="?/deleteAddonPackage" method="post" use:enhance={updateSending}>
-			<input name="addonPackageId" type="hidden" value={addonPackage.id} />
-			<Button
-				class="text-red-500 hover:text-red-700"
-				disabled={sending}
-				variant="ghost"
-				type="submit"
-			>
-				{#if sending}
-					<LoaderCircle class="h-4 w-4 animate-spin" />
-				{:else}
-					<TrashIcon />
-				{/if}
-			</Button>
-		</form>
+		<Button
+			class="text-red-500 hover:text-red-700"
+			disabled={$deleteAddonPackage.isPending}
+			variant="ghost"
+			on:click={() => {
+				$deleteAddonPackage.mutate({
+					addonPackageId: addonPackage.id,
+					buyOptionId: $page.params.buyOptionId,
+					eventId: $page.params.id
+				});
+			}}
+		>
+			{#if $deleteAddonPackage.isPending}
+				<LoaderCircle class="h-4 w-4 animate-spin" />
+			{:else}
+				<TrashIcon />
+			{/if}
+		</Button>
 	</Card.Footer>
 </Card.Root>

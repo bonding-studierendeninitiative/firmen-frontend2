@@ -10,8 +10,6 @@
 		Package,
 		Users
 	} from 'lucide-svelte';
-	import type { InferOutput } from 'valibot';
-	import type { OrgEventRegistration } from '@schema';
 
 	// Status mapping for visual indicators
 	const catalogueDataStatusConfig = {
@@ -24,7 +22,7 @@
 	};
 
 	// Calculate the completion percentage for catalogue data
-	const calculateCatalogueCompletion = (data: InferOutput<OrgEventRegistration>): number => {
+	const calculateCatalogueCompletion = (data: GetEventRegistrationForOrganizationOutput): number => {
 
 		function getSingleCompletion(status: string): number {
 			switch (status) {
@@ -79,7 +77,6 @@
 	} from '@/@svelte/components';
 	import { buttonVariants, Button } from '@/components/ui/button';
 	import { cn } from '@/utils';
-	import { type getEventRegistrationsForOrganization } from '@/services';
 	import { _ } from '@services';
 	import {
 		EditContactPersons,
@@ -89,9 +86,10 @@
 	} from '@/@svelte/modules';
 	import { PickAdvertisementDialog } from '@/@svelte/modules/PickAdvertisementDialog';
 	import { PenLine, Plus } from 'lucide-svelte';
+	import type {GetEventRegistrationForOrganizationOutput } from '@api/client';
 
 	let isAddonsOpen = false;
-	export let registration: Awaited<ReturnType<typeof getEventRegistrationsForOrganization>>['eventRegistrations'][number];
+	export let registration: GetEventRegistrationForOrganizationOutput;
 
 	const statusConfig = {
 		created: { color: 'bg-blue-500', label: $_('status-text.created') },
@@ -111,7 +109,7 @@
 
 	<PickAdvertisementDialog bind:open={pickAdvertisementOpen} id={registration.id} orgId={registration.organizationId} />
 	<ViewAdvertisementDialog bind:open={viewAdvertisementOpen} advertisement={registration.advertisement} />
-	<EditContactPersons bind:open={editContactPersonsOpen} contactPeople={registration.contactPeople.map(({id})=> id)}
+	<EditContactPersons bind:open={editContactPersonsOpen} contactPeople={registration.contactPeople?.map(({id})=> id)}
 											eventRegistrationId={registration.id} />
 	<PickLogoDialog bind:open={pickLogoOpen} id={registration.id} orgId={registration.organizationId} />
 	<ViewLogoDialog bind:open={viewLogoOpen} logo={registration.logo} />
@@ -260,7 +258,7 @@
 				<Button variant="outline" class="rounded-full px-2 py-1 text-sm font-semibold h-auto" on:click={() => {
 					editContactPersonsOpen = true;
 				}}>
-					{#if registration.contactPeople.length < 1}
+					{#if registration.contactPeople?.length < 1}
 						<Plus class="h-4 w-4 mr-1" />
 						{$_("common.select")}
 					{:else}
@@ -268,7 +266,7 @@
 					{/if}
 				</Button>
 			</div>
-			{#if registration.contactPeople.length > 0}
+			{#if registration.contactPeople?.length > 0}
 				<div class="grid grid-cols-1 @lg/contact-people:grid-cols-2 gap-2">
 					{#each registration.contactPeople ?? [] as contact (contact.name)}
 						<div class="text-sm flex items-center gap-3 rounded-full border border-muted py-1 px-1.5">
@@ -286,7 +284,7 @@
 			{/if}
 		</div>
 
-		{#if registration.addonPackages.length > 0}
+		{#if registration.addonPackages?.length > 0}
 			<Collapsible bind:open={isAddonsOpen} class="w-full">
 				<div class="flex items-center justify-between">
 					<h4 class="text-sm font-medium flex items-center">

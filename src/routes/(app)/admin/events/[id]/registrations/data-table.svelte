@@ -7,9 +7,8 @@
 		addSelectedRows,
 		addTableFilter
 	} from 'svelte-headless-table/plugins';
-	import type { InferOutput } from 'valibot';
 	import * as Table from '@/components/ui/table';
-	import { derived, get, readable } from 'svelte/store';
+	import { derived, get, type Readable } from 'svelte/store';
 	import {
 		Chip,
 		DataTableFacetedFilter,
@@ -20,19 +19,39 @@
 	import DataTableCheckbox from './data-table-checkbox.svelte';
 	import ExportCatalogueDataDialog from './export-catalogue-data-form.svelte';
 	import SimpleEventRegistrationOrganization from './simple-event-registration-organization.svelte';
-	import type {
-		AdminEventRegistrationsResponse
-	} from '@schema';
 	import CreateEventRegistrationForm from './create-event-registration-form.svelte';
 	import { AdminViewAdvertisementDialog, AdminViewLogoDialog } from '@/@svelte/modules';
+	import type { EventRegistrationsForEventOutput } from '@/trpc/client';
 
-	export let data: InferOutput<AdminEventRegistrationsResponse>['eventRegistrations'];
-	export let packages: string[] = [];
-	export let status: string[] = [];
-	export let addonPackages: string[] = [];
-	export let addons: string[] = [];
+	export let data: Readable<EventRegistrationsForEventOutput['eventRegistrations']>;
+	let packages = derived(data, (eventRegistrations) => [
+		...new Set(
+			eventRegistrations
+				.filter((value) => Boolean(value.purchasedPackage))
+				.map((eventRegistration) => eventRegistration.purchasedPackage?.name)
+		)
+	]);
+	let status = derived(data, (eventRegistrations) => [
+		...new Set(eventRegistrations.map((eventRegistration) => eventRegistration.status))
+	]);
+	let addonPackages = derived(data, (eventRegistrations) => [
+		...new Set(
+			eventRegistrations.flatMap((eventRegistration) =>
+				eventRegistration.addonPackages?.map((addonPackages) => addonPackages.title ?? "") ?? []
+			)
+		)
+	]);
+	let addons = derived(data, (eventRegistrations) => [
+		...new Set(
+			eventRegistrations?.flatMap((eventRegistration) =>
+				eventRegistration.addonPackages?.flatMap((addonPackages) =>
+					addonPackages.addons?.map((addon) => addon.title ?? '') ?? []
+				) ?? []
+			)
+		)
+	]);
 
-	let table = createTable(readable(data), {
+	let table = createTable(data, {
 		filter: addTableFilter({
 			fn: ({ value, filterValue }) => value.toLowerCase().includes(filterValue.toLowerCase())
 		}),
@@ -48,36 +67,41 @@
 
 	let open = false;
 
-	$: counts = data.reduce<{
-		package: { [index: string]: number };
-		status: { [index: string]: number };
-		addonPackages: { [index: string]: number };
-		addons: { [index: string]: number };
-	}>(
-		(acc, { purchasedPackage, status, addonPackages }) => {
-			if (purchasedPackage?.name) {
-				acc.package[purchasedPackage?.name] = (acc.package[purchasedPackage?.name] || 0) + 1;
-			}
-			if (status) {
-				acc.status[status] = (acc.status[status] || 0) + 1;
-			}
-			if (addonPackages) {
-				addonPackages.forEach((addonPackage) => {
-					acc.addonPackages[addonPackage.title] = (acc.addonPackages[addonPackage.title] || 0) + 1;
-					addonPackage.addons.forEach((addon) => {
-						acc.addons[addon.title] = (acc.addons[addon.title] || 0) + 1;
+	const counts = derived(data, (eventRegistrations) => {
+		return eventRegistrations.reduce<{
+			package: { [index: string]: number };
+			status: { [index: string]: number };
+			addonPackages: { [index: string]: number };
+			addons: { [index: string]: number };
+		}>(
+			(acc, { purchasedPackage, status, addonPackages }) => {
+				if (purchasedPackage?.name) {
+					acc.package[purchasedPackage?.name] = (acc.package[purchasedPackage?.name] || 0) + 1;
+				}
+				if (status) {
+					acc.status[status] = (acc.status[status] || 0) + 1;
+				}
+				if (addonPackages) {
+					addonPackages
+					.filter((addonPackage) => addonPackage.title)
+					.forEach((addonPackage) => {
+						acc.addonPackages[addonPackage.title] =
+							(acc.addonPackages[addonPackage.title] || 0) + 1;
+						addonPackage.addons.forEach((addon) => {
+							acc.addons[addon.title] = (acc.addons[addon.title] || 0) + 1;
+						});
 					});
-				});
+				}
+				return acc;
+			},
+			{
+				package: {},
+				status: {},
+				addonPackages: {},
+				addons: {}
 			}
-			return acc;
-		},
-		{
-			package: {},
-			status: {},
-			addonPackages: {},
-			addons: {}
-		}
-	);
+		);
+	});
 
 	const columns = table.createColumns([
 		table.column({
@@ -121,7 +145,9 @@
 			}
 		}),
 		table.column({
-			accessor: ({ purchasedPackage }) => purchasedPackage?.name ?? $_('admin-pages.events.event-registrations.data-table.packages.no-package'),
+			accessor: ({ purchasedPackage }) =>
+				purchasedPackage?.name ??
+				$_('admin-pages.events.event-registrations.data-table.packages.no-package'),
 			header: $_('admin-pages.events.event-registrations.data-table.headers.package'),
 			id: 'package',
 			plugins: {
@@ -157,7 +183,10 @@
 			header: $_('admin-pages.events.event-registrations.data-table.headers.status'),
 			id: 'status',
 			cell: ({ value }) => {
-				return createRender(Chip, { status: $_(`common.event-registration-status.${value}`), variant: value });
+				return createRender(Chip, {
+					status: $_(`common.event-registration-status.${value}`),
+					variant: value
+				});
 			},
 			plugins: {
 				filter: {
@@ -242,7 +271,7 @@
 		}),
 		table.column({
 			accessor: ({ addonPackages }) =>
-				addonPackages.flatMap((addonPackage) => addonPackage.addons.map((addon) => addon.title)),
+				addonPackages?.flatMap((addonPackage) => addonPackage.addons?.map((addon) => addon.title)),
 			header: 'Addons',
 			id: 'addons',
 			plugins: {
@@ -273,14 +302,16 @@
 	export let { filterValues: addonPackageFilterValues } = pluginStates.addonPackageFilter;
 	export let { filterValues: addonFilterValues } = pluginStates.addonFilter;
 
-	const selectedEventRegistrationIds = derived([pluginStates.select.selectedDataIds, pageRows], ([selectedDataIds, rows]) => Object.entries(selectedDataIds).map(([id, selected]) => {
+	const selectedEventRegistrationIds = derived(
+		[pluginStates.select.selectedDataIds, pageRows],
+		([selectedDataIds, rows]) =>
+			Object.entries(selectedDataIds).map(([id, selected]) => {
+				const row = rows.find((row) => row.isData() && row.dataId === id);
 
-
-		const row = rows.find((row) => row.isData() && row.dataId === id);
-
-		console.log(row);
-		return row?.original.id;
-	}));
+				console.log(row);
+				return row?.original.id;
+			})
+	);
 	// export let { hiddenColumnIds } = pluginStates.hide;
 </script>
 
@@ -288,45 +319,47 @@
 	<SearchInput placeholder={$_('common.search')} bind:value={$filterValue} />
 	<div class="flex-grow"></div>
 	<DataTableFacetedFilter
-		title={$_("admin-pages.events.event-registrations.data-table.filters.status")}
-		options={status.map((_package) => ({
-			label: _package,
-			value: _package,
+		title={$_('admin-pages.events.event-registrations.data-table.filters.status')}
+		options={$status.map((status) => ({
+			label: $_("common.event-registration-status."+status),
+			value: status,
 			checked: false
 		}))}
 		bind:filterValues={$statusFilterValues.status}
-		counts={counts?.status}
+		counts={$counts?.status}
 	/>
 	<DataTableFacetedFilter
-		title={$_("admin-pages.events.event-registrations.data-table.filters.package")}
-		options={packages.map((_package) => ({
+		title={$_('admin-pages.events.event-registrations.data-table.filters.package')}
+		options={$packages.map((_package) => ({
 			label: _package,
 			value: _package,
 			checked: false
 		}))}
 		bind:filterValues={$packageFilterValues.package}
-		counts={counts?.package}
+		counts={$counts?.package}
 	/>
 	<DataTableFacetedFilter
-		counts={counts?.addonPackages}
-		options={addonPackages.map((addonPackage) => ({
+		counts={$counts?.addonPackages}
+		options={$addonPackages.map((addonPackage) => ({
 			label: addonPackage,
 			value: addonPackage
 		}))}
-		bind:filterValues={$addonPackageFilterValues["addon-packages"]}
-		title={$_("admin-pages.events.event-registrations.data-table.filters.addon-packages")}
+		bind:filterValues={$addonPackageFilterValues['addon-packages']}
+		title={$_('admin-pages.events.event-registrations.data-table.filters.addon-packages')}
 	/>
 	<DataTableFacetedFilter
-		options={addons.map((addon) => ({
+		options={$addons.map((addon) => ({
 			label: addon,
 			value: addon
 		}))}
 		bind:filterValues={$addonFilterValues.addons}
-		title={$_("admin-pages.events.event-registrations.data-table.filters.addons")}
-		counts={counts?.addons}
+		title={$_('admin-pages.events.event-registrations.data-table.filters.addons')}
+		counts={$counts?.addons}
 	/>
-	<ExportCatalogueDataDialog disabled={!$enableExport}
-														 selectedEventRegistrations={selectedEventRegistrationIds} />
+	<ExportCatalogueDataDialog
+		disabled={!$enableExport}
+		selectedEventRegistrations={selectedEventRegistrationIds}
+	/>
 	<CreateEventRegistrationForm bind:open />
 </section>
 <section class="mt-10">

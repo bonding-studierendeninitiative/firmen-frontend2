@@ -1,17 +1,13 @@
 import type { PageServerLoad } from './$types';
-import { clerkClient } from 'svelte-clerk/server';
-import { getPortraitTemplates } from '@/services';
+import { createCaller } from '@/trpc/router';
 
-export const load: PageServerLoad = async ({ parent, params, isDataRequest }) => {
-	async function loadPortraitData(slug: string) {
-		const { initialState } = await parent();
-		if (!initialState.sessionId) return;
+export const load: PageServerLoad = async (event) => {
+	const api = await createCaller(event)
 
-		const token = await clerkClient.sessions.getToken(initialState.sessionId, 'access_token');
-
-		const { portraitTemplates } = await getPortraitTemplates({
-			accessToken: token.jwt,
-			org: slug
+	async function loadPortraitData() {
+		const { portraitTemplates } = await api.portraitTemplates.getAll({
+			page: 0,
+			query: ""
 		});
 
 		return {
@@ -20,6 +16,6 @@ export const load: PageServerLoad = async ({ parent, params, isDataRequest }) =>
 	}
 
 	return {
-		portraitData: isDataRequest ? loadPortraitData(params.id) : await loadPortraitData(params.id)
+		portraitData: event.isDataRequest ? loadPortraitData() : await loadPortraitData()
 	};
 };

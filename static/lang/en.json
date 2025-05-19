@@ -335,7 +335,8 @@
       "description": "If the selected logo is not yet confirmed, the event team will take care of it.",
       "no-data-heading": "No logos found",
       "no-data-sub-heading": "Your organization hasn't uploaded any logos yet",
-      "no-data-action": "Upload a logo now"
+      "no-data-action": "Upload a logo now",
+      "no-data": "No logos found"
     },
     "upload-logo": {
       "title": "Upload a logo here",
@@ -363,6 +364,16 @@
     "delete-advertisement-dialog": {
       "title": "Delete advert \"{advertisementName}\"",
       "description": "Do you really want to delete this advert?"
+    },
+    "admin-import-legacy-org": {
+      "trigger": "Import legacy organization",
+      "title": "Import an organization",
+      "description": "You can import an organization from Notes",
+      "org-card-header": "Choose an org",
+      "select-org-placeholder": "Select an org",
+      "no-orgs-found": "No orgs found!",
+      "contact-people": "Contact People",
+      "address": "Address"
     }
   },
   "sidebar": {

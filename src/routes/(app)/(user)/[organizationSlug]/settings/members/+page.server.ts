@@ -1,5 +1,3 @@
-import { generateOrgInvite, getOrganizationDetails, getOrganizationMembers } from '@/services';
-import type { Actions, PageServerLoad } from './$types';
 import { superValidate } from 'sveltekit-superforms';
 import { valibot } from 'sveltekit-superforms/adapters';
 import { CreateOrgInviteRequestSchema } from '@schema';
@@ -7,43 +5,39 @@ import { CreateOrgInviteRequestSchema } from '@schema';
 import { PUBLIC_APP_URL } from '$env/static/public';
 
 import { fail } from '@sveltejs/kit';
+import { createCaller } from '@/trpc/router';
 
-export const load: PageServerLoad = async ({ parent, params }) => {
-	const { initialState } = await parent();
+export const load = async (event) => {
+	const { initialState, organization } = await event.parent();
 	if (!initialState.sessionId) return;
 
-	const organizationData = await getOrganizationDetails({
-		slug: params.organizationSlug
-	});
+	const organizationData = await organization;
+
+	const api = await createCaller(event)
 
 	const createInviteForm = await superValidate(valibot(CreateOrgInviteRequestSchema));
-	createInviteForm.data.organizationSlug = params.organizationSlug;
+	createInviteForm.data.organizationSlug = event.params.organizationSlug;
 	createInviteForm.data.redirectURL = PUBLIC_APP_URL;
 
 	return {
 		createInviteForm,
 		organization: organizationData,
-		organizationMembers: await getOrganizationMembers({
+		organizationMembers: await api.organizations.getMembers({
 			slug: organizationData.id
 		})
 	};
 };
 
-export const actions: Actions = {
-	createInvite: async ({ locals, request }) => {
-		const session = await locals.auth();
-		// @ts-expect-error we define accessToken in parent
-		if (!session || !session.accessToken) {
-			fail(403);
-			return;
-		}
-
-		const form = await superValidate(request, valibot(CreateOrgInviteRequestSchema));
+export const actions = {
+	createInvite: async (event) => {
+		const form = await superValidate(event.request, valibot(CreateOrgInviteRequestSchema));
 		if (!form.valid) {
 			return fail(400, { form });
 		}
-		// @ts-expect-error  we define accessToken in parent
-		await generateOrgInvite({
+
+		const api = await createCaller(event)
+
+		await api.organizations.generateInvite({
 			organizationID: form.data.organizationID,
 			role: "org:member",
 			email: form.data.userMail

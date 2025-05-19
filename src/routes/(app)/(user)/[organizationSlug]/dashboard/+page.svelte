@@ -13,9 +13,9 @@
 	const api = trpc($page);
 
 	const [eventRegistrationsQuery, resolveEventRegistrationsQuery] = api.eventRegistrations.forOrganization.createInfiniteQuery(
-		{ limit: '10' },
+		{ limit: 10 },
 		{
-			getNextPageParam: (lastPage) => Math.max(lastPage.pageNumber + 1, lastPage.totalPages - 1).toString(),
+			getNextPageParam: (lastPage) => Math.max(lastPage.pageNumber + 1, lastPage.totalPages - 1),
 			lazy: true
 		}
 	);

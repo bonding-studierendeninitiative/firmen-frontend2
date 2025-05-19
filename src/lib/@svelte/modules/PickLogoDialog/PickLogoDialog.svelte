@@ -11,9 +11,13 @@
 	import { page } from '$app/stores';
 	import { trpc } from '@/trpc/client';
 
-	export let open = false;
-	export let id: string;
-	export let orgId: string;
+	interface Props {
+		open?: boolean;
+		id: string;
+		orgId: string;
+	}
+
+	let { open = $bindable(false), id, orgId }: Props = $props();
 
 	const api = trpc($page)
 
@@ -23,7 +27,7 @@
 	})
 	let pickLogo = api.catalogueData.logos.pick.createMutation()
 
-	let selectedLogo = ""
+	let selectedLogo = $state("")
 
 </script>
 
@@ -36,7 +40,7 @@
 		<ScrollArea class="max-h-[65dvh]">
 			{#if $logos.isLoading}
 				<LoaderCircle class="w-10 h-10 mx-auto animate-spin" />
-			{:else if $logos.data?.logos.length === 0}
+			{:else if $logos.data?.logos?.length === 0}
 				<NoDataFound heading={$_("modules.pick-logo-dialog.no-data")}
 										 subHeading={$_("modules.pick-logo-dialog.no-data-sub-heading")}
 										 buttonText={$_("modules.pick-logo-dialog.no-data-action")}

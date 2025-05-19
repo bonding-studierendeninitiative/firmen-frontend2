@@ -1,13 +1,8 @@
-import { getUser } from '@/services';
+import { createCaller } from '@/trpc/router.js';
 
-export const load = async ({ parent }) => {
-	const {
-		initialState: { userId }
-	} = await parent();
+export const load = async (event) => {
 
-	if (!userId) return;
+	const api = await createCaller(event)
 
-	const user = await getUser({ userId });
-
-	return { user };
+	return { user: await api.user.get() };
 };

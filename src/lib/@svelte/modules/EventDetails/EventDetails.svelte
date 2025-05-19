@@ -13,7 +13,6 @@
 
 	export let event;
 	export let buyOption;
-	export let addons: InferOutput<GetAddonPackageTemplateResponse>[];
 	let selectedAddons: string[] = [];
 	let selectedAddonPackages: string[] = [];
 	let selectedPackageId: string = '';
@@ -91,7 +90,7 @@
 	<BuyOptionPreview {buyOption} bind:selectedPackageId bind:selectedAmountOfParticipationDays bind:selectedEventDays />
 
 
-	{#if addons.length > 0}
+	{#if buyOption.addonPackages.length > 0}
 		<section>
 			<h4 class=" font-extrabold text-sm text-stone-900">
 				{$_('user-pages.events.additionalMarketingServices')}
@@ -99,7 +98,7 @@
 			<p class=" mt-2 text-stone-500 font-normal text-sm">
 				{$_('user-pages.events.additionalMarketingServicesDescription')}
 			</p>
-			<AddonList {addons} bind:selectedAddonPackages bind:selectedAddons />
+			<AddonList addons={buyOption.addonPackages} bind:selectedAddonPackages bind:selectedAddons />
 		</section>
 	{/if}
 	<footer class=" flex mt-6 justify-end items-center">

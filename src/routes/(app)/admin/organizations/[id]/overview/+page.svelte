@@ -90,6 +90,6 @@
 		<LoaderCircle class="w-12 h-12 animate-spin mx-auto" />
 	{/if}
 	{#if $orgMembersQuery.data}
-		<ManageOrgMembers memberResponse={orgMembersData} />
+		<ManageOrgMembers organizationId={data.organizationId} memberResponse={orgMembersData} />
 	{/if}
 </section>

@@ -1,19 +1,18 @@
-import { getBuyOptions } from '@/services';
 import { valibot } from 'sveltekit-superforms/adapters';
 import { CreateBuyOptionRequestSchema } from '@schema';
 import { superValidate } from 'sveltekit-superforms';
-import { clerkClient } from 'svelte-clerk/server';
+import { createCaller } from '@/trpc/router.js';
 
-export const load = async ({ parent, params, isDataRequest }) => {
+export const load = async (event) => {
+
+	const api = await createCaller(event);
+
 	async function loadBuyOptions(eventId: string) {
-		const { initialState } = await parent();
-		if (!initialState.sessionId) return;
 
-		const token = await clerkClient.sessions.getToken(initialState.sessionId, 'access_token');
-
-		const response = await getBuyOptions({
-			accessToken: token.jwt,
-			eventId
+		const response = await api.admin.events.buyOptions.getAll({
+			eventId,
+			page: "0",
+			limit: "10"
 		});
 
 		return {
@@ -25,7 +24,7 @@ export const load = async ({ parent, params, isDataRequest }) => {
 	const createForm = superValidate(valibot(CreateBuyOptionRequestSchema));
 
 	return {
-		buyOptionData: isDataRequest ? loadBuyOptions(params.id) : await loadBuyOptions(params.id),
-		createForm: isDataRequest ? createForm : await createForm
+		buyOptionData: event.isDataRequest ? loadBuyOptions(event.params.id) : await loadBuyOptions(event.params.id),
+		createForm: event.isDataRequest ? createForm : await createForm
 	};
 };

@@ -1,27 +1,18 @@
-import { activateBuyOption, deleteBuyOption, getBuyOption, updateBuyOption } from '@/services';
 import { superValidate } from 'sveltekit-superforms';
 import { valibot } from 'sveltekit-superforms/adapters';
 import { UpdateBuyOptionRequestSchema } from '@schema';
-import { fail, redirect } from '@sveltejs/kit';
-import {
-	createEventAddonPackage,
-	deleteEventAddonPackage,
-	getEventAddonPackages
-} from '@/services/eventAddonPackages';
+import { fail } from '@sveltejs/kit';
 import { CreateEventAddonPackageSchema } from '@schema/eventAddonPackages';
-import { type AuthObject, clerkClient } from 'svelte-clerk/server';
+import { createCaller } from '@/trpc/router.js';
+import { AddAddonPackageInput, UpdateEventBuyOptionInput } from '@api/admin-client.js';
 
-export const load = async ({ parent, params, isDataRequest, depends }) => {
-	depends('buyOption');
+export const load = async (event) => {
+	event.depends('buyOption');
+
+	const api = await createCaller(event)
 
 	async function loadUpdateForm(eventId: string, buyOptionId: string) {
-		const { initialState } = await parent();
-		if (!initialState.sessionId) return;
-
-		const token = await clerkClient.sessions.getToken(initialState.sessionId, 'access_token');
-
-		const buyOption = await getBuyOption({
-			accessToken: token.jwt,
+		const buyOption = await api.admin.events.buyOptions.getOne({
 			buyOptionId: buyOptionId,
 			eventId
 		});
@@ -30,15 +21,11 @@ export const load = async ({ parent, params, isDataRequest, depends }) => {
 	}
 
 	async function loadAddonPackages(eventId: string, buyOptionId: string) {
-		const { initialState } = await parent();
-		if (!initialState.sessionId) return;
-
-		const token = await clerkClient.sessions.getToken(initialState.sessionId, 'access_token');
-
-		const { addonPackages } = await getEventAddonPackages({
-			accessToken: token.jwt,
+		const { addonPackages } = await api.admin.events.addonPackages.getAll({
 			buyOptionId: buyOptionId,
-			eventId
+			eventId,
+			page: "0",
+			limit: "10"
 		});
 
 		return addonPackages;
@@ -47,119 +34,49 @@ export const load = async ({ parent, params, isDataRequest, depends }) => {
 	const createAddonPackageForm = superValidate(valibot(CreateEventAddonPackageSchema));
 
 	return {
-		addonPackages: isDataRequest
-			? loadAddonPackages(params.id, params.buyOptionId)
-			: await loadAddonPackages(params.id, params.buyOptionId),
-		updateForm: isDataRequest
-			? loadUpdateForm(params.id, params.buyOptionId)
-			: await loadUpdateForm(params.id, params.buyOptionId),
-		createAddonPackageForm: isDataRequest ? createAddonPackageForm : await createAddonPackageForm
+		addonPackages: event.isDataRequest
+			? loadAddonPackages(event.params.id, event.params.buyOptionId)
+			: await loadAddonPackages(event.params.id, event.params.buyOptionId),
+		updateForm: event.isDataRequest
+			? loadUpdateForm(event.params.id, event.params.buyOptionId)
+			: await loadUpdateForm(event.params.id, event.params.buyOptionId),
+		createAddonPackageForm: event.isDataRequest ? createAddonPackageForm : await createAddonPackageForm
 	};
 };
 
 export const actions = {
-	updateBuyOption: async ({ locals, request, params }) => {
-		const session = locals.auth as unknown as AuthObject;
-		if (!session || !session.sessionId) {
-			fail(403);
-			return;
-		}
-
-		const form = await superValidate(request, valibot(UpdateBuyOptionRequestSchema));
+	updateBuyOption: async (event) => {
+		const form = await superValidate(event.request, valibot(UpdateEventBuyOptionInput));
 		if (!form.valid) {
 			return fail(400, { form });
 		}
 
-		const token = await clerkClient.sessions.getToken(session.sessionId, 'access_token');
+		const api = await createCaller(event)
 
-		await updateBuyOption({
-			accessToken: token.jwt,
+		await api.admin.events.buyOptions.update({
 			data: form.data,
-			eventId: params.id,
-			buyOptionId: params.buyOptionId
+			eventId: event.params.id,
+			buyOptionId: event.params.buyOptionId
 		});
 		return {
 			form
 		};
 	},
-	deleteBuyOption: async ({ locals, params }) => {
-		const session = locals.auth as unknown as AuthObject;
-		if (!session || !session.sessionId) {
-			fail(403);
-			return;
-		}
-
-		const token = await clerkClient.sessions.getToken(session.sessionId, 'access_token');
-
-		await deleteBuyOption({
-			accessToken: token.jwt,
-			eventId: params.id,
-			buyOptionId: params.buyOptionId
-		});
-
-		redirect(302, `/admin/events/${params.id}/buy-options`);
-	},
-	activateBuyOption: async ({ locals, params }) => {
-		const session = locals.auth as unknown as AuthObject;
-		if (!session || !session.sessionId) {
-			fail(403);
-			return;
-		}
-
-		const token = await clerkClient.sessions.getToken(session.sessionId, 'access_token');
-
-		await activateBuyOption({
-			buyOptionId: params.buyOptionId,
-			eventId: params.id,
-			accessToken: token.jwt
-		});
-	},
-	createAddonPackage: async ({ locals, params, request }) => {
-		const session = locals.auth as unknown as AuthObject;
-		if (!session || !session.sessionId) {
-			fail(403);
-			return;
-		}
-
-		const form = await superValidate(request, valibot(CreateEventAddonPackageSchema));
+	createAddonPackage: async (event) => {
+		const form = await superValidate(event.request, valibot(AddAddonPackageInput));
 		if (!form.valid) {
 			return fail(400, { form });
 		}
 
-		const token = await clerkClient.sessions.getToken(session.sessionId, 'access_token');
+		const api = await createCaller(event)
 
-		await createEventAddonPackage({
-			accessToken: token.jwt,
+		await api.admin.events.addonPackages.create({
 			data: form.data,
-			buyOptionId: params.buyOptionId,
-			eventId: params.id
+			buyOptionId: event.params.buyOptionId,
+			eventId: event.params.id
 		});
 		return {
 			form
 		};
-	},
-	deleteAddonPackage: async ({ locals, params: { buyOptionId, id }, request }) => {
-		const session = locals.auth as unknown as AuthObject;
-		if (!session || !session.sessionId) {
-			fail(403);
-			return;
-		}
-
-		const form = await request.formData();
-
-		const addonPackageId = form.get('addonPackageId') ?? null;
-		if (!addonPackageId || typeof addonPackageId !== 'string') {
-			fail(400, { form });
-			return;
-		}
-
-		const token = await clerkClient.sessions.getToken(session.sessionId, 'access_token');
-
-		await deleteEventAddonPackage({
-			accessToken: token.jwt,
-			addonPackageId,
-			buyOptionId,
-			eventId: id
-		});
 	}
 };

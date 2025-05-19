@@ -3,8 +3,6 @@
 	import type { CreateOrgInviteRequest, GetOrgMembersResponse } from '@schema';
 	import SuperDebug, { type SuperValidated } from 'sveltekit-superforms';
 	import type { InferOutput } from 'valibot';
-	import { getContext } from 'svelte';
-	import type { ReadOrWritable } from 'svelte-headless-table';
 	import { ManageOrgMembers } from '@/@svelte/modules';
 	import type { OrganizationMembership } from 'svelte-clerk/server';
 	import { LoaderCircle } from 'lucide-svelte';
@@ -40,7 +38,7 @@
 	<section>
 		<h3 class=" text-xl font-semibold text-stone-800">{$_(`admin-pages.organizations.contactPeople`)}</h3>
 		{#if createInviteForm}
-			<ManageOrgMembers organizationMembers={orgMembers} createInviteForm={createInviteForm} />
+			<ManageOrgMembers organizatimonMembers={orgMembers} createInviteForm={createInviteForm} />
 		{/if}
 	</section>
 </section>

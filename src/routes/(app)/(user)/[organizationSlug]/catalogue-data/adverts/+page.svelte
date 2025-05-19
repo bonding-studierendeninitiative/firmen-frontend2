@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { AdvertisementItem, NoDataFound } from '@/@svelte/components';
-	import type { PageServerData } from './$types';
 	import { dayjs } from '@services/i18n';
 	import { LoaderCircle, Plus } from 'lucide-svelte';
 	import { fade } from 'svelte/transition';
@@ -10,8 +9,8 @@
 	import { page } from '$app/stores';
 	import { _ } from '@services';
 
-	export let data: PageServerData;
-	let isUploadOpen = false;
+	let { data } = $props();
+	let isUploadOpen = $state(false);
 
 	const api = trpc($page);
 	const utils = api.createUtils();
@@ -20,7 +19,8 @@
 		api.catalogueData.advertisements.getAll.createInfiniteQuery(
 			{ limit: '10' },
 			{
-				getNextPageParam: (lastPage) => Math.max(lastPage.pageNumber + 1, lastPage.totalPages - 1).toString(),
+				getNextPageParam: (lastPage) =>
+					Math.max(lastPage.pageNumber + 1, lastPage.totalPages - 1).toString(),
 				lazy: true
 			}
 		);
@@ -28,6 +28,7 @@
 		staleTime: Infinity
 	});
 </script>
+
 <div in:fade class="space-y-4">
 	<div class="flex justify-end">
 		{#if $uploadFormQuery.isLoading}
@@ -35,7 +36,10 @@
 				<LoaderCircle class="w-5 h-5 mx-auto animate-spin" />
 			</Button>
 		{:else if $uploadFormQuery.data}
-			<UploadAdvertisementDialog bind:open={isUploadOpen} advertisementUploadForm={$uploadFormQuery.data} />
+			<UploadAdvertisementDialog
+				bind:open={isUploadOpen}
+				advertisementUploadForm={$uploadFormQuery.data}
+			/>
 		{/if}
 	</div>
 	{#await resolveAdverts(data.advertisementData)}
@@ -44,12 +48,18 @@
 		{#if $advertsQuery?.data}
 			{@const allAdverts = $advertsQuery.data.pages.flatMap((page) => page.advertisements)}
 			{#if allAdverts.length === 0}
-				<NoDataFound heading="No advertisements found" subHeading="You can create one from the advertisements page"
-										 buttonText="Upload an advertisement" onButtonClick={() => {
-isUploadOpen = true;
-		}} />
+				<NoDataFound
+					heading="No advertisements found"
+					subHeading="You can create one from the advertisements page"
+					buttonText="Upload an advertisement"
+					onButtonClick={() => {
+						isUploadOpen = true;
+					}}
+				/>
 			{:else}
-				{@const groupedAdvertisements = allAdverts.reduce((acc, advertisement) => {
+				{@const groupedAdvertisements = allAdverts
+				.filter((advert) => advert != undefined)
+				.reduce((acc, advertisement) => {
 					const year = dayjs(advertisement.createdAt).year();
 
 					if (!acc[year]) {
@@ -58,11 +68,13 @@ isUploadOpen = true;
 					acc[year].push(advertisement);
 					return acc;
 				}, {})}
-				{#each Object.entries(groupedAdvertisements).sort(([ayear, aadverts], [byear, badverts]) => byear.localeCompare(ayear)) as [year, advertisements]}
+				{#each Object.entries(groupedAdvertisements).sort( ([ayear, aadverts], [byear, badverts]) => byear.localeCompare(ayear) ) as [year, advertisements]}
 					<div class="space-y-4 @container/adverts">
 						<h2 class="text-xl font-bold border-b">{year}</h2>
-						<div class="grid grid-cols-1 @lg:grid-cols-2 @3xl/adverts:grid-cols-3 @5xl/adverts:grid-cols-4 gap-4">
-							{#each advertisements as advertisement}
+						<div
+							class="grid grid-cols-1 @lg:grid-cols-2 @3xl/adverts:grid-cols-3 @5xl/adverts:grid-cols-4 gap-4"
+						>
+							{#each advertisements as advertisement (advertisement.id)}
 								<AdvertisementItem {advertisement} />
 							{/each}
 						</div>

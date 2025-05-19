@@ -1,8 +1,9 @@
 import { authorizedOrgMemberProcedure, router } from '@/trpc/server';
-import { array, nullish, object, parse, string } from 'valibot';
+import { array, nullish, number, object, parse, string } from 'valibot';
 import { TRPCError } from '@trpc/server';
-import { API } from '@api';
-import { getEventRegistrationsForOrganization } from '@/services';
+import { RegisterOrganizationToEventInput, SubmitPortraitInput } from '@api/client';
+import { CreateEventRegistrationResponse, GetEventRegistrationsForOrganizationResponse } from '@schema';
+import { clerkClient } from 'svelte-clerk/server';
 
 export const eventRegistrationsRouter = router({
 	changeContactPeople: authorizedOrgMemberProcedure
@@ -16,10 +17,11 @@ export const eventRegistrationsRouter = router({
 			)
 		)
 		.mutation(async ({ ctx, input }) => {
-			const result = await API.post({
-				route: `/event-registration/${input.eventRegistrationId}/change-contact-people`,
-				token: ctx.token.jwt,
-				data: {
+			const result = await ctx.api.request("post", "/api/v2/event-registration/{eventRegistrationId}/change-contact-people", {
+				path: {
+					eventRegistrationId: input.eventRegistrationId
+				},
+				body: {
 					contactPeople: input.contactPeople
 				}
 			});
@@ -28,24 +30,87 @@ export const eventRegistrationsRouter = router({
 				throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Something went wrong' });
 			}
 
-			return result;
+			return await result.json();
 		}),
 	forOrganization: authorizedOrgMemberProcedure
 		.input((input) =>
 			parse(
 				object({
-					cursor: nullish(string(), '0'),
-					limit: nullish(string(), '10')
+					cursor: nullish(number(), 0),
+					limit: nullish(number(), 10)
 				}),
 				input
 			)
 		)
 		.query(async ({ ctx, input: { cursor: page, limit } }) => {
-			return await getEventRegistrationsForOrganization({
-				accessToken: ctx.token.jwt,
-				organizationId: ctx.session.orgId,
-				limit,
-				page
+			const response = await ctx.api.get("/api/v2/event-registration",{
+				query:{
+					organizationId: ctx.session.orgId,
+					limit,
+					page
+				}
 			});
+			const result = parse(GetEventRegistrationsForOrganizationResponse, response);
+			return {
+				...result,
+				eventRegistrations: await Promise.all(
+					result.eventRegistrations.map(async (eventRegistration) => {
+						return {
+							...eventRegistration,
+							contactPeople: await Promise.all(
+								eventRegistration.contactPeople?.map(async (contactPersonId) => {
+									const user = await clerkClient.users.getUser(contactPersonId);
+	
+									return {
+										id: user.id,
+										name: user.fullName,
+										image: user.imageUrl,
+										email: user.primaryEmailAddress?.emailAddress
+									};
+								}) ?? []
+							)
+						};
+					})
+				)
+			};
+		}),
+	submitPortrait: authorizedOrgMemberProcedure
+		.input((input) => parse(
+			object({
+				eventRegistrationId: string(),
+				data: SubmitPortraitInput
+			}),
+			input
+		))
+		.mutation(async ({ ctx, input }) => {
+			const response = await ctx.api.request("post", "/api/v2/event-registration/{eventRegistrationId}/portrait/submit", {
+				path: { eventRegistrationId: input.eventRegistrationId },
+				body: input.data
+			});
+
+			if (response.status !== 204) {
+				throw new TRPCError({ code: "BAD_REQUEST", message: 'The portrait could not be submitted!' });
+			}
+		}),
+	registerContactPersonToEvent: authorizedOrgMemberProcedure
+		.input((input) => parse(RegisterOrganizationToEventInput, input))
+		.mutation(async ({
+			ctx,
+			input
+		}) => {
+			const response = await ctx.api.request("post", "/api/v2/event-registration", {
+				body: input
+			});
+
+			if (response.status === 409) {
+				throw new TRPCError({ message: 'A registration to this event already exists for your organization!', code: "CONFLICT" });
+			}
+			if (response.status != 201) {
+				throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: 'The registration could not be completed' });
+			}
+
+			const data = await response.json();
+
+			return parse(CreateEventRegistrationResponse, data);
 		})
 });

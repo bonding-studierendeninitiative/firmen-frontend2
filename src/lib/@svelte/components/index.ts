@@ -49,3 +49,4 @@ export * from './LocalizedDate';
 export * from './LocalizedDateRange';
 export * from './StatusBadge';
 export * from './QueryDataTable';
+export * from './PortraitItem';

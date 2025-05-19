@@ -70,7 +70,6 @@ export const adminOrgsRouter = router({
 			)
 		)
 		.query(async ({ input }) => {
-			console.log('Getting admin orgs:', input);
 			const data = await clerkClient.organizations.getOrganizationList({
 				query: input.query.length > 0 ? input.query : undefined,
 				offset: input.page * input.limit,
@@ -79,7 +78,6 @@ export const adminOrgsRouter = router({
 				orderBy: input.orderBy
 			});
 			const serializedData = makeSerializable(data.data);
-			console.log('Got serialized data:', serializedData);
 			return {
 				data: serializedData,
 				totalCount: data.totalCount,
@@ -90,13 +88,13 @@ export const adminOrgsRouter = router({
 	getDetails: adminProcedure.input((input) => parse(object({
 		organizationId: string()
 	}), input))
-	.query(async ({input}) => {
-		const org = await clerkClient.organizations.getOrganization({
-			slug: input.organizationId,
-			includeMembersCount: true
-		});
-		return makeSerializable(org);
-	}),
+		.query(async ({ input }) => {
+			const org = await clerkClient.organizations.getOrganization({
+				slug: input.organizationId,
+				includeMembersCount: true
+			});
+			return makeSerializable(org);
+		}),
 	createForm: adminProcedure.query(async () => {
 		return await superValidate(valibot(CreateOrgRequestSchema));
 	})

@@ -349,7 +349,8 @@
       "description": "Sollte das ausgewählte Logo noch nicht überprüft sein, kümmert sich das Veranstaltungsteam darum.",
       "no-data-heading": "Keine Logos gefunden",
       "no-data-sub-heading": "Ihre Organization hat noch keine Logos hinterlegt",
-      "no-data-action": "Jetzt Logo hochladen"
+      "no-data-action": "Jetzt Logo hochladen",
+      "no-data": "Keine Logos gefunden"
     },
     "upload-logo": {
       "title": "Laden sie ein neues Logo hoch",
@@ -377,6 +378,16 @@
     "delete-advertisement-dialog": {
       "title": "Imageanzeige \"{advertisementName}\" löschen",
       "description": "Möchten Sie diese Imageanzeige wirklich löschen?"
+    },
+    "admin-import-legacy-org": {
+      "trigger": "Organisation importieren",
+      "title": "Eine Organisation importieren",
+      "description": "Du kannst Organisationen aus Notes importieren",
+      "org-card-header": "Wähle eine Organisation aus",
+      "select-org-placeholder": "Wähle eine Organisation aus",
+      "no-orgs-found": "Keine Organisationen gefunden!",
+      "contact-people": "Kontaktpersonen",
+      "address": "Adresse"
     }
   },
   "sidebar": {

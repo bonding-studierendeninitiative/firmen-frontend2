@@ -9,6 +9,8 @@
 	import { debouncer } from '@/stores/debouncer.js';
 	import { queryParameters } from 'sveltekit-search-params';
 	import OrganizationsDataTable from './organizations-data-table.svelte';
+	import SuperDebug from 'sveltekit-superforms';
+	import ImportLegacyOrgDialog from './import-legacy-org-dialog.svelte';
 
 	let params = queryParameters({
 		sort: false,
@@ -65,6 +67,7 @@
 		/>
 		<div class="flex-grow"></div>
 		<CreateOrgDialog />
+		<ImportLegacyOrgDialog />
 	</section>
 	{#if $orgsQuery.isLoading}
 		<LoaderCircle class="w-10 h-10 mx-auto animate-spin" />

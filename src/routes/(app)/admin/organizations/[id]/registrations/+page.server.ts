@@ -1,21 +1,14 @@
-import type {
-	PageServerLoad
-} from './$types';
-import { clerkClient } from 'svelte-clerk/server';
-import { getEventRegistrationsForOrganization } from '@/services';
+import { createCaller } from '@/trpc/router';
 
-export const load: PageServerLoad = async ({ parent, params, isDataRequest }) => {
+
+export const load = async (event) => {
+
+	const api = await createCaller(event)
 
 
 	async function loadEventRegistrationData(slug: string) {
-		const { initialState } = await parent();
-		if (!initialState.sessionId) return;
 
-		const token = await clerkClient.sessions.getToken(initialState.sessionId, 'access_token');
-		const { eventRegistrations } = await getEventRegistrationsForOrganization({
-			accessToken: token.jwt,
-			organizationSlug: slug
-		});
+		const { eventRegistrations } = await api.eventRegistrations.forOrganization();
 
 		return {
 			eventRegistrations
@@ -23,6 +16,6 @@ export const load: PageServerLoad = async ({ parent, params, isDataRequest }) =>
 	}
 
 	return {
-		eventRegistrationData: isDataRequest ? loadEventRegistrationData(params.id) : await loadEventRegistrationData(params.id)
+		eventRegistrationData: event.isDataRequest ? loadEventRegistrationData(event.params.id) : await loadEventRegistrationData(event.params.id)
 	}
 }

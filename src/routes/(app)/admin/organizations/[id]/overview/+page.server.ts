@@ -1,14 +1,11 @@
-import type { PageServerLoad, Actions } from './$types';
-import { generateOrgInvite } from '@/services';
 import { superValidate } from 'sveltekit-superforms';
 import { valibot } from 'sveltekit-superforms/adapters';
 import { CreateOrgInviteRequestSchema } from '@schema';
-import { type AuthObject } from 'svelte-clerk/server';
 import { fail } from '@sveltejs/kit';
 import { createCaller } from '@/trpc/router';
 import { makeSerializable } from '@/utils';
 
-export const load: PageServerLoad = async (event) => {
+export const load = async (event) => {
 
 	const membershipQueryData = {
 		limit: Number(event.url.searchParams.get('limit') || '25'),
@@ -18,15 +15,15 @@ export const load: PageServerLoad = async (event) => {
 			: undefined
 	};
 
-		const { initialState, organizationDetails } = await event.parent();
-		if (!initialState.sessionId) return;
+	const { initialState, organizationDetails } = await event.parent();
+	if (!initialState.sessionId) return;
 
-		const details = await organizationDetails;
-		const organization = details.organization;
+	const details = await organizationDetails;
+	const organization = details.organization;
 
-		const api = await createCaller(event)
+	const api = await createCaller(event)
 
-	
+
 	return {
 		organizationId: organization.id,
 		orgMembers: makeSerializable(await api.admin.orgs.members.getAll({
@@ -36,23 +33,20 @@ export const load: PageServerLoad = async (event) => {
 			sort: membershipQueryData.orderBy
 		}))
 	}
-	
+
 };
 
-export const actions: Actions = {
-	createInvite: async ({ locals, request }) => {
-		const session = locals.auth as unknown as AuthObject;
-		if (!session || !session.sessionId) {
-			fail(403);
-			return;
-		}
+export const actions = {
+	createInvite: async (event) => {
 
-		const form = await superValidate(request, valibot(CreateOrgInviteRequestSchema));
+		const form = await superValidate(event.request, valibot(CreateOrgInviteRequestSchema));
 		if (!form.valid) {
 			return fail(400, { form });
 		}
 
-		await generateOrgInvite({
+		const api = await createCaller(event);
+
+		await api.organizations.generateInvite({
 			role: 'org:member',
 			email: form.data.userMail,
 			organizationID: form.data.organizationID

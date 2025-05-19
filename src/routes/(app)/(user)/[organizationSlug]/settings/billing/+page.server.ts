@@ -1,10 +1,3 @@
-import {
-	createBillingAddressTemplate,
-	deleteBillingAddressTemplate,
-	getBillingAddressTemplatesForOrganization,
-	makeBillingAddressTemplateDefault
-} from '@/services';
-import type { Actions, PageServerLoad } from './$types';
 import { superValidate } from 'sveltekit-superforms';
 import { valibot } from 'sveltekit-superforms/adapters';
 import {
@@ -14,20 +7,20 @@ import {
 } from '@schema';
 
 import { fail } from '@sveltejs/kit';
-import { type AuthObject, clerkClient } from 'svelte-clerk/server';
+import { createCaller } from '@/trpc/router';
 
-export const load: PageServerLoad = async ({ parent, isDataRequest }) => {
-	const { initialState, organization } = await parent();
+export const load = async (event) => {
+	const { initialState, organization } = await event.parent();
 	if (!initialState.sessionId || !initialState.orgId) return;
+
+	const api = await createCaller(event)
 
 	async function loadPageData() {
 		if (!initialState.sessionId) return;
 		const org = await organization;
-		const token = await clerkClient.sessions.getToken(initialState.sessionId, 'access_token');
-		const response = await getBillingAddressTemplatesForOrganization({
-			accessToken: token.jwt,
+		const response = await api.billingAddressTemplates.getAll({
 			organizationId: org.id
-		});
+		})
 
 		const createBillingAddressTemplateForm = await superValidate(
 			valibot(CreateBillingAddressTemplateForm)
@@ -51,68 +44,47 @@ export const load: PageServerLoad = async ({ parent, isDataRequest }) => {
 	}
 
 	return {
-		pageData: isDataRequest ? loadPageData() : await loadPageData()
+		pageData: event.isDataRequest ? loadPageData() : await loadPageData()
 	};
 };
 
-export const actions: Actions = {
-	createBillingAddressTemplate: async ({ locals, request, fetch }) => {
-		const session = locals.auth as unknown as AuthObject;
-		if (!session || !session.sessionId || !session.orgId) {
-			fail(403);
-			return;
-		}
-
-		const form = await superValidate(request, valibot(CreateBillingAddressTemplateForm));
+export const actions = {
+	createBillingAddressTemplate: async (event) => {
+		const form = await superValidate(event.request, valibot(CreateBillingAddressTemplateForm));
 		if (!form.valid) {
 			console.log('Billing address template form invalid:', form);
 			return fail(400, { form });
 		}
 
-		const token = await clerkClient.sessions.getToken(session.sessionId, 'access_token');
-		await createBillingAddressTemplate({
-			accessToken: token.jwt,
-			organizationId: session.orgId,
-			data: form.data,
-			fetch
+		const api = await createCaller(event)
+		
+		await api.billingAddressTemplates.create({
+			...form.data
 		});
+		
 		return { form };
 	},
-	deleteBillingAddressTemplate: async ({ locals, request, fetch }) => {
-		const session = locals.auth as unknown as AuthObject;
-		if (!session || !session.sessionId || !session.orgId) {
-			fail(403);
-			return;
-		}
-		const form = await superValidate(request, valibot(DeleteBillingAddressTemplateForm));
+	deleteBillingAddressTemplate: async (event) => {
+		const form = await superValidate(event.request, valibot(DeleteBillingAddressTemplateForm));
 		if (!form.valid) {
 			return fail(400, { form });
 		}
 
-		const token = await clerkClient.sessions.getToken(session.sessionId, 'access_token');
-		await deleteBillingAddressTemplate({
-			accessToken: token.jwt,
-			organizationId: session.orgId,
-			billingAddressTemplateId: form.data.billingAddressTemplateId,
-			fetch
-		});
+		const api = await createCaller(event)
+		
+		await api.billingAddressTemplates.delete(form.data.billingAddressTemplateId);
+		
 		return { form };
 	},
-	makeBillingAddressTemplateDefault: async ({ locals, request }) => {
-		const session = locals.auth as unknown as AuthObject;
-		if (!session || !session.orgId) {
-			fail(403);
-			return;
-		}
-		const form = await superValidate(request, valibot(MakeBillingAddressTemplateDefaultForm));
+	makeBillingAddressTemplateDefault: async (event) => {
+		const form = await superValidate(event.request, valibot(MakeBillingAddressTemplateDefaultForm));
 		if (!form.valid) {
 			return fail(400, { form });
 		}
+		
+		const api = await createCaller(event)
 
-		await makeBillingAddressTemplateDefault({
-			organizationId: session.orgId,
-			billingAddressTemplateId: form.data.billingAddressTemplateId
-		});
+		await api.billingAddressTemplates.makeDefault(form.data.billingAddressTemplateId);
 
 		return { form };
 	}

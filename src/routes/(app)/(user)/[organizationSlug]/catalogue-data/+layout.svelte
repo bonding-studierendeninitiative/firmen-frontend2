@@ -2,11 +2,10 @@
 	import { _ } from '@services';
 	import { LinkTabs } from '@/@svelte/components';
 	import { fade } from 'svelte/transition';
-	import type { LayoutData } from './$types';
 
-	export let data: LayoutData;
+	let { data, children } = $props();
 
-	$: tabs = [
+	let tabs = $derived([
 		{
 			name: 'catalogue-data-portraits',
 			href: `/${data.orgSlug}/catalogue-data/portraits`
@@ -19,7 +18,7 @@
 			name: 'catalogue-data-adverts',
 			href: `/${data.orgSlug}/catalogue-data/adverts`
 		}
-	];
+	]);
 </script>
 
 <div class="w-full h-full flex flex-col justify-start items-stretch min-h-max">
@@ -30,7 +29,7 @@
 	</div>
 	<section class="flex-grow mt-6">
 		<div in:fade>
-			<slot />
+			{@render children?.()}
 		</div>
 	</section>
 </div>

@@ -8,12 +8,13 @@
 	import { getContext, tick } from 'svelte';
 	import { Badge } from '@/components/ui/badge';
 	import { _ } from '@services';
+	import type { Writable } from 'svelte/store';
 
 	export let open: boolean = false;
 	export let buyOptions: { label: string; value: string; active: boolean }[];
 	export let onSelect: (value: string) => void;
 	export let value = '';
-	export let isDialogOpen = getContext('isCreateBuyOptionDialogOpen');
+	export let isDialogOpen = getContext<Writable<boolean>>('isCreateBuyOptionDialogOpen');
 
 	$: selectedValue = buyOptions.find((f) => f.value === value)?.label ?? 'Select a framework...';
 
@@ -72,7 +73,7 @@
 					<Command.Item
 						onSelect={() => {
 							open = false;
-							isDialogOpen = true;
+							$isDialogOpen = true;
 						}}
 					>
 						<PlusCircle class="mr-2 h-4 w-4" />

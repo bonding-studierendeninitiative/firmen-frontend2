@@ -2,8 +2,7 @@ import { superValidate } from 'sveltekit-superforms';
 import { valibot } from 'sveltekit-superforms/adapters';
 import { UpdateUserDetailsRequest } from '@schema';
 import { fail, redirect } from '@sveltejs/kit';
-import { updateUserMetadata } from '@/services/user';
-import type { AuthObject } from 'svelte-clerk/server';
+import { createCaller } from '@/trpc/router.js';
 
 export const load = async ({ parent }) => {
 	const { initialState } = await parent();
@@ -17,21 +16,17 @@ export const load = async ({ parent }) => {
 };
 
 export const actions = {
-	registerUser: async ({ locals, request }) => {
-		const session = locals.auth as unknown as AuthObject;
-		if (!session || !session.sessionId) {
-			fail(403);
-			return;
-		}
-		const form = await superValidate(request, valibot(UpdateUserDetailsRequest));
+	registerUser: async (event) => {
+		const form = await superValidate(event.request, valibot(UpdateUserDetailsRequest));
 
 		if (!form.valid) {
 			return fail(400, { form });
 		}
 
-		await updateUserMetadata({
-			userId: session.userId,
-			data: form.data
+		const api = await createCaller(event)
+
+		await api.user.updateMetadata({
+			...form.data
 		});
 
 		redirect(302, '/');

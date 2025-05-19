@@ -8,11 +8,12 @@
 	import { buttonVariants } from '@/components/ui/button';
 
 	let inviteMemberDialogOpen = false;
+	export let organizationId: string;
 
 	const api = trpc($page);
 
 	const createInviteFormQuery = api.admin.orgs.members.createInviteForm.createQuery({
-		organizationId: $page.params.id
+		organizationId: organizationId
 	});
 </script>
 

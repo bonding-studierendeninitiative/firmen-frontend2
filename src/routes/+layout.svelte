@@ -12,6 +12,7 @@
 	import { browser } from '$app/environment';
 	import { QueryClient, QueryClientProvider } from '@tanstack/svelte-query';
 	import { SvelteQueryDevtools } from '@tanstack/svelte-query-devtools';
+	import { RenderScan } from 'svelte-render-scan';
 
 	const queryClient = new QueryClient({
 		defaultOptions: {
@@ -30,6 +31,9 @@
 	};
 
 </script>
+
+<RenderScan />
+
 {#if $isLocaleLoading}
 	<div class="flex justify-center items-center h-screen">
 		<div class="w-12 h-12 rounded-full border-stone-500 border-4 border-t-transparent animate-spin">
