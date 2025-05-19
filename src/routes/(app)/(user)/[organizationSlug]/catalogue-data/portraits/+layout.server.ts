@@ -1,7 +1,6 @@
 import { superValidate } from 'sveltekit-superforms';
 import { valibot } from 'sveltekit-superforms/adapters';
 import { PortraitTemplateSchema } from '@schema';
-import { clerkClient } from 'svelte-clerk/server';
 import { createCaller } from '@/trpc/router.js';
 
 export const load = async (event) => {
@@ -23,9 +22,9 @@ export const load = async (event) => {
 	}
 
 	return {
-		portraitTemplateData: isDataRequest
+		portraitTemplateData: event.isDataRequest
 			? loadPortraitTemplateData()
 			: await loadPortraitTemplateData(),
-		createForm: isDataRequest ? loadPortraitDetails() : await loadPortraitDetails()
+		createForm: event.isDataRequest ? loadPortraitDetails() : await loadPortraitDetails()
 	};
 };
