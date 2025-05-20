@@ -41,7 +41,36 @@ export const adminOrgsRouter = router({
 				},
 					valibot(CreateOrgInviteRequestSchema),
 					{ errors: false })
-			})
+			}),
+		updateRole: adminProcedure
+			.input((input) => parse(object({
+				organizationId: string(),
+				userId: string(),
+				role: union([literal("org:member"), literal("org:admin")])
+			}), input))
+			.mutation(async ({ input }) => {
+				await clerkClient.organizations.updateOrganizationMembership(input)
+			}),
+		remove: adminProcedure
+			.input((input) => parse(object({
+				organizationId: string(),
+				userId: string()
+			}), input))
+			.mutation(
+				async ({ input }) => {
+					await clerkClient.organizations.deleteOrganizationMembership(input)
+				}
+			),
+		addMember: adminProcedure
+			.input((input) => parse(object({
+				organizationId: string(),
+				userId: string()
+			}), input))
+			.mutation(
+				async ({ input }) => {
+					await clerkClient.organizations.createOrganizationMembership({ ...input, role: "org:member" })
+				}
+			)
 	}),
 	list: adminProcedure
 		.input((input) =>

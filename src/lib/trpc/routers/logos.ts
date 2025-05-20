@@ -1,7 +1,6 @@
 import { authorizedOrgMemberProcedure, router } from '@/trpc/server';
 import { object, parse, string } from 'valibot';
 import { TRPCError } from '@trpc/server';
-import type { UploadLogoRequest } from '@schema';
 
 export const logosRouter = router({
     upload: authorizedOrgMemberProcedure

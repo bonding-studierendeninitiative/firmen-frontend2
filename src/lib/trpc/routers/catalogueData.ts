@@ -1,7 +1,6 @@
 import { authorizedOrgMemberProcedure, router } from '@/trpc/server';
-import { file, nonEmpty, nullish, number, object, parse, pipe, string } from 'valibot';
+import { file, nonEmpty, nullish, object, parse, pipe, string } from 'valibot';
 import {
-	DeletePortraitTemplateRequestSchema,
 	PickAdvertisementRequest,
 	PickLogoRequest,
 	UploadAdvertisementRequest,
@@ -11,7 +10,6 @@ import {
 import { superValidate } from 'sveltekit-superforms';
 import { valibot } from 'sveltekit-superforms/adapters';
 import { TRPCError } from '@trpc/server';
-import { GetAllAdvertisementsForOrganizationOutput, GetAllLogosForOrganizationOutput } from '@api/client';
 
 const GetCatalogDataSchema = object({
 	limit: nullish(string(), '10'),
@@ -79,20 +77,6 @@ export const catalogueDataRouter = router({
 					}
 				});
 				return response;
-			}),
-		deleteLogo: authorizedOrgMemberProcedure
-			.input((input) => parse(pipe(string(), nonEmpty()), input))
-			.mutation(async ({ ctx, input }) => {
-				const response = await ctx.api.request("delete", "/api/v2/organization/{organizationId}/logo/{logoId}", {
-					path: {
-						logoId: input,
-						organizationId: ctx.session.orgId
-					}
-				});
-
-				if (response.status !== 204) {
-					throw new TRPCError({ message: 'The logo could not be deleted', code: "INTERNAL_SERVER_ERROR" });
-				}
 			}),
 		pick: authorizedOrgMemberProcedure
 			.input((input) => parse(PickLogoRequest, input))

@@ -79,8 +79,8 @@ export const UpdateEventBuyOptionInput = v.object({
 
 export type StatusType = v.InferOutput<typeof StatusType>;
 export const StatusType = v.object({
-  reasonPhrase: v.optional(v.string()),
   statusCode: v.optional(v.number()),
+  reasonPhrase: v.optional(v.string()),
 });
 
 export type Problem = v.InferOutput<typeof Problem>;
@@ -88,9 +88,9 @@ export const Problem = v.object({
   parameters: v.optional(v.record(v.string(), v.unknown())),
   instance: v.optional(v.string()),
   type: v.optional(v.string()),
+  detail: v.optional(v.string()),
   title: v.optional(v.string()),
   status: v.optional(StatusType),
-  detail: v.optional(v.string()),
 });
 
 export type AddonOutput = v.InferOutput<typeof AddonOutput>;
@@ -276,6 +276,7 @@ export const AdminRegisterOrganizationToEventInput = v.object({
   organizationId: v.string(),
   contactPeople: v.array(v.string()),
   canUploadAdvertisement: v.boolean(),
+  confirmedRegistration: v.boolean(),
 });
 
 export type AdvertisementOutput = v.InferOutput<typeof AdvertisementOutput>;

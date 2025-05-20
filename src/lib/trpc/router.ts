@@ -11,6 +11,8 @@ import { userRouter } from './routers/user';
 import { portraitTemplatesRouter } from './routers/portraitTemplates';
 import { advertisementsRouter } from './routers/advertisements';
 import { organizationsRouter } from './routers/organizations';
+import { logosRouter } from './routers/logos';
+
 
 export const mainRouter = router({
 	admin: adminRouter,
@@ -22,6 +24,7 @@ export const mainRouter = router({
 	user: userRouter,
 	portraitTemplates: portraitTemplatesRouter,
 	advertisements: advertisementsRouter,
+	logos: logosRouter,
 	organizations: organizationsRouter
 });
 

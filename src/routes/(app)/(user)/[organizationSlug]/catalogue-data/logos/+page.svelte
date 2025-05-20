@@ -17,7 +17,7 @@
 		api.catalogueData.logos.getAll.createInfiniteQuery(
 			{ limit: '10' },
 			{
-				getNextPageParam: (lastPage) => Math.max(lastPage.pageNumber + 1, lastPage.totalPages - 1).toString(),
+				getNextPageParam: (lastPage) => Math.max(Number(lastPage.pageNumber) + 1, Number(lastPage.totalPages) - 1).toString(),
 				lazy: true
 			}
 		);

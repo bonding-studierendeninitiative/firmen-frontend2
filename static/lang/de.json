@@ -143,7 +143,8 @@
     "reject": "Ablehnen",
     "create": "Erstellen",
     "view-details": "Details anzeigen",
-    "export": "Export…"
+    "export": "Export…",
+    "add": "Hinzufügen"
   },
   "components": {
     "addonPackage": {
@@ -303,7 +304,10 @@
       "members-selected": "{members, plural, =0 {Keine Ansprechpersonen ausgewählt} one {Eine Ansprechperson ausgewählt} other {{members, number} Ansprechpersonen ausgewählt} }",
       "options": "Optionen",
       "can-upload-advertisements": "Darf Imageanzeigen hochladen",
-      "can-upload-advertisements-description": "Darf diese Organisation eine Imageanzeige für diese Veranstaltungsanmeldung hochladen?"
+      "can-upload-advertisements-description": "Darf diese Organisation eine Imageanzeige für diese Veranstaltungsanmeldung hochladen?",
+      "confirmed-registration": "Anmeldung bereits bestätigt",
+      "confirmed-registration-description": "Soll diese Anmeldung als bestätigt angelegt werden?",
+      "choose-org": "Wähle eine Organisation aus"
     },
     "edit-contact-persons": {
       "title": "Kontaktpersonen bearbeiten",
@@ -388,6 +392,16 @@
       "no-orgs-found": "Keine Organisationen gefunden!",
       "contact-people": "Kontaktpersonen",
       "address": "Adresse"
+    },
+    "add-member-dialog": {
+      "trigger": "Mitglied hinzufügen",
+      "title": "Ein Mitglied hinzufügen",
+      "description": "Füge eine:n bestehende:n Nutzer:in als Mitglied dieser Organisation hinzu",
+      "user-card-header": "Nutzer:in",
+      "select-trigger": "Wähle eine:n Nutzer:in aus",
+      "search-users-placeholder": "Nach Nutzer:innen suchen...",
+      "no-users-found": "Keine Nutzer:innen gefunden",
+      "success": "Mitglied wurde erfolgreich hinzugefügt"
     }
   },
   "sidebar": {

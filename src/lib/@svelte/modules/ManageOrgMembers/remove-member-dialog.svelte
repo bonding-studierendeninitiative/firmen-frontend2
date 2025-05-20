@@ -2,45 +2,37 @@
 	import * as Dialog from '@/components/ui/dialog';
 	import { Trash2 } from 'lucide-svelte';
 	import { Button, buttonVariants } from '@/components/ui/button';
-	import type { LogoSchema } from '@schema';
-	import type { InferOutput } from 'valibot';
 	import { toast } from 'svelte-french-toast';
 	import { _ } from '@services';
 	import { trpc } from '@/trpc/client';
 	import { page } from '$app/stores';
 
-	export let logo: InferOutput<LogoSchema>;
+	export let id: string;
+	export let orgId: string;
 
 	const api = trpc($page);
 	const utils = api.createUtils()
-	const deleteLogo = api.logos.delete.createMutation();
+	const removeMember = api.admin.orgs.members.remove.createMutation();
 
-	let open = false;
+	export let open = false;
 </script>
 
 <Dialog.Root bind:open>
-	<Dialog.Trigger class={buttonVariants({ variant: 'destructive', size: 'icon' })}>
-		<Trash2 class="w-5 h-5" />
-	</Dialog.Trigger>
 	<Dialog.Content>
 		<Dialog.Header>
-			<Dialog.Title>{$_("modules.delete-logo-dialog.title", {
-				values: {
-					logoName: logo.title
-				}
-			})}</Dialog.Title>
+			<Dialog.Title>{$_("modules.remove-member-dialog.title")}</Dialog.Title>
 			<Dialog.Description>{$_("modules.delete-logo-dialog.description")}</Dialog.Description>
 		</Dialog.Header>
 		<Dialog.Footer class="pt-6">
 			<Dialog.Close class={buttonVariants({variant: "outline"})}>{$_("common.cancel")}</Dialog.Close>
 			<Button on:click={() => {
-					$deleteLogo.mutate({logoId: logo.id, organizationId: "doesn't matter"}, {
+					$removeMember.mutate({userId: id, organizationId: orgId}, {
 						onError: (error) => {
 							toast.error(error.message);
 						},
 						onSuccess: () => {
-							toast.success('Logo deleted');
-							utils.catalogueData.logos.getAll.invalidate()
+							toast.success('Member removed');
+							utils.admin.orgs.members.getAll.invalidate()
 							open = false;
 						}
 					})

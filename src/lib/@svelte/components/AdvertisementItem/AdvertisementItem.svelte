@@ -1,15 +1,14 @@
 <script lang="ts">
 	import * as Card from '@/components/ui/card';
-	import type { InferOutput } from 'valibot';
-	import type { AdvertisementSchema } from '@schema/advertisements';
 	import { PdfFilePreview, StatusBadge } from '@/@svelte/components';
 	import { _ } from '@services';
 	import { cn } from '@/utils';
 	import { ViewAdvertisementDialog } from '@/@svelte/modules';
 	import { Button } from '@/components/ui/button';
+	import type { AdvertisementOutput } from '@api/client';
 
 
-	export let advertisement: InferOutput<AdvertisementSchema>;
+	export let advertisement: AdvertisementOutput;
 	let className = '';
 	export { className as class };
 

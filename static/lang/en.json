@@ -143,7 +143,8 @@
     "reject": "Reject",
     "create": "Create",
     "view-details": "View details",
-    "export": "Export…"
+    "export": "Export…",
+    "add": "Add"
   },
   "components": {
     "addonPackage": {
@@ -289,7 +290,10 @@
       "members-selected": "{members, plural, =0 {No contact persons selected} one {One contact person selected} other {{members, number} contact people selected} }",
       "options": "Options",
       "can-upload-advertisements": "Can upload advertisements",
-      "can-upload-advertisements-description": "Can this organization upload an advertisement for this event registration"
+      "can-upload-advertisements-description": "Can this organization upload an advertisement for this event registration",
+      "confirmed-registration": "Registration already confirmed",
+      "confirmed-registration-description": "Should this registration be marked as confirmed?",
+      "choose-org": "Choose an organization"
     },
     "edit-contact-persons": {
       "title": "Edit contact persons",
@@ -374,6 +378,16 @@
       "no-orgs-found": "No orgs found!",
       "contact-people": "Contact People",
       "address": "Address"
+    },
+    "add-member-dialog": {
+      "trigger": "Add member",
+      "title": "Add a member",
+      "description": "Add an existing user to this organization as a member",
+      "user-card-header": "User",
+      "select-trigger": "Choose a user",
+      "search-users-placeholder": "Search users...",
+      "no-users-found": "No users were found",
+      "success": "Member added successfully"
     }
   },
   "sidebar": {

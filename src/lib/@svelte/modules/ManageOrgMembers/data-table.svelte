@@ -10,6 +10,8 @@
 	export let organizationId: string;
 	import { LocalizedDate, SearchInput, QueryDataTable } from '@/@svelte/components';
 	import CreateOrgInviteDialog from './create-org-invite-dialog.svelte';
+	import AddMemberDialog from './add-member-dialog.svelte';
+	import DataTableRoleSwitcher from './data-table-role-switcher.svelte';
 
 	let data = derived([memberResponse], ([memberResponse]) => memberResponse.data);
 	let totalCount = derived([memberResponse], ([memberResponse]) => memberResponse.totalCount);
@@ -49,7 +51,8 @@
 			cell: (row) => ({
 				snippet: userRole,
 				props: {
-					value: row.role
+					value: row.role,
+					userId: row.publicUserData.userId
 				}
 			})
 		},
@@ -65,9 +68,12 @@
 		},
 		{
 			header: '',
-			cell: () => ({
+			cell: ({ publicUserData }) => ({
 				snippet: actions,
-				props: {}
+				props: {
+					id: publicUserData.userId,
+					orgId: organizationId
+				}
 			})
 		}
 	];
@@ -77,20 +83,12 @@
 	<DataTableUserIcon {src} {userName} />
 {/snippet}
 
-{#snippet userRole({ value }: { value: string })}
-	{#if value == 'org:owner'}
-		{$_('modules.manage-org-members.owner')}
-	{:else if value == 'org:member'}
-		{$_('modules.manage-org-members.member')}
-	{:else if value == 'org:admin'}
-		{$_('modules.manage-org-members.admin')}
-	{:else}
-		{value}
-	{/if}
+{#snippet userRole({ value, userId }: { value: string; userId: string; orgId: string })}
+	<DataTableRoleSwitcher {value} {organizationId} {userId} />
 {/snippet}
 
-{#snippet actions()}
-	<DataTableActions />
+{#snippet actions({ id, orgId }: { id: string; orgId: string })}
+	<DataTableActions {orgId} {id} />
 {/snippet}
 
 {#snippet localizedDate({ date }: { date: any })}
@@ -100,7 +98,10 @@
 <div class={cn(`space-y-4`, $$props.class)} {...$$restProps}>
 	<div class={cn(`flex items-center justify-between gap-4`)}>
 		<SearchInput class="max-w-sm" placeholder={$_('common.search')} type="text" />
-		<CreateOrgInviteDialog {organizationId} />
+		<div class="flex items-center gap-4">
+			<CreateOrgInviteDialog {organizationId} />
+			<AddMemberDialog orgId={organizationId} />
+		</div>
 	</div>
 	<QueryDataTable {columns} {totalCount} data={$data} />
 </div>

@@ -1,12 +1,12 @@
 import { adminProcedure, router } from '@/trpc/server';
 import { parse } from 'valibot';
 import {
-	AdminRegisterOrganizationToEventSchema,
 	ConfirmEventRegistrationSchema,
 	DeleteEventRegistrationSchema,
 	RejectEventRegistrationSchema
 } from '@schema';
 import { TRPCError } from '@trpc/server';
+import { AdminRegisterOrganizationToEventInput } from '@api/admin-client';
 
 export const adminEventRegistrationsRouter = router({
 	confirm: adminProcedure
@@ -43,7 +43,7 @@ export const adminEventRegistrationsRouter = router({
 			}
 		}),
 	create: adminProcedure
-		.input((input) => parse(AdminRegisterOrganizationToEventSchema, input))
+		.input((input) => parse(AdminRegisterOrganizationToEventInput, input))
 		.mutation(async ({ ctx, input }) => {
 			const response = await ctx.adminApi.request("post", "/api/v2/admin/event-registration",{
 				body: input,

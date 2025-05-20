@@ -9,6 +9,7 @@ import { adminLegacyOrganizationsRouter } from './legacyOrganizations';
 import { PagedJobOutput } from '@api/admin-client';
 import { adminAdvertisementsRouter } from './advertisements';
 import { adminLogosRouter } from './logos';
+import { adminUsersRouter } from './users';
 
 export const adminRouter = router({
 	events: adminEventsRouter,
@@ -19,6 +20,7 @@ export const adminRouter = router({
 	legacyOrgs: adminLegacyOrganizationsRouter,
 	advertisements: adminAdvertisementsRouter,
 	logos: adminLogosRouter,
+	users: adminUsersRouter,
 	jobs: adminProcedure
 		.input((input) => {
 			return parse(

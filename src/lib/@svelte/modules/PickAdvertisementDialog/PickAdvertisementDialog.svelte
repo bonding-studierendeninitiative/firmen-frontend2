@@ -21,7 +21,10 @@
 	const api = trpc($page);
 
 	const utils = api.createUtils();
-	let advertisements = api.catalogueData.advertisements.getAll.createQuery({});
+	let advertisements = api.catalogueData.advertisements.getAll.createQuery({
+		cursor: "0",
+		limit: "10"
+	});
 	let pickAdvertisement = api.catalogueData.advertisements.pick.createMutation();
 </script>
 
@@ -34,7 +37,7 @@
 		<ScrollArea class="max-h-[70dvh]">
 			{#if $advertisements.isLoading}
 				<LoaderCircle class="w-10 h-10 mx-auto animate-spin" />
-			{:else if $advertisements.data?.advertisements.length === 0}
+			{:else if $advertisements.data?.advertisements?.length === 0}
 				<NoDataFound
 					heading={$_('modules.pick-advertisement-dialog.no-data')}
 					subHeading={$_('modules.pick-advertisement-dialog.no-data-sub-heading')}
