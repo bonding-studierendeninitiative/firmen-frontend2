@@ -7,10 +7,13 @@ import { createCaller } from '@/trpc/router';
 export const load: PageServerLoad = async (event) => {
 	const api = await createCaller(event);
 
+	event.depends("orgLogos")
+
 	return {
-		data: api.catalogueData.logos.getAll({
+		data: api.catalogueData.getAll({
 			cursor: '0',
-			limit: '10'
+			limit: '10',
+			documentType: "logo"
 		})
 	};
 };
@@ -27,8 +30,9 @@ export const actions = {
 
 		const api = await createCaller(event)
 
-		await api.catalogueData.logos.upload({
-			...form.data
+		await api.catalogueData.upload({
+			...form.data,
+			documentType: "logo"
 		});
 
 		return withFiles({ form });

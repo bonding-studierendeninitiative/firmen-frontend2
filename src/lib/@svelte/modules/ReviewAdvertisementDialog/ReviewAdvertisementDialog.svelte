@@ -14,7 +14,7 @@
 
 	export let advertisement: InferOutput<AdvertisementSchema>;
 	const api = trpc($page)
-	const reviewFormQuery = api.admin.catalogueData.advertisements.reviewForm.createQuery()
+	const reviewFormQuery = api.admin.documents.reviewForm.createQuery()
 </script>
 
 <Dialog.Root bind:open>

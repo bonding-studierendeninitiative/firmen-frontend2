@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { AdvertisementItem, NoDataFound } from '@/@svelte/components';
 	import { dayjs } from '@services/i18n';
-	import { LoaderCircle, Plus } from 'lucide-svelte';
+	import { LoaderCircle } from 'lucide-svelte';
 	import { fade } from 'svelte/transition';
 	import { UploadAdvertisementDialog } from '@/@svelte/modules/UploadAdvertisementDialog';
 	import { Button } from '@/components/ui/button';
@@ -16,17 +16,19 @@
 	const utils = api.createUtils();
 
 	const [advertsQuery, resolveAdverts] =
-		api.catalogueData.advertisements.getAll.createInfiniteQuery(
-			{ limit: '10' },
+		api.catalogueData.getAll.createInfiniteQuery(
+			{ limit: '10', documentType: "advert" },
 			{
 				getNextPageParam: (lastPage) =>
-					Math.max(lastPage.pageNumber + 1, lastPage.totalPages - 1).toString(),
+					Math.max(Number(lastPage.pageNumber) + 1, Number(lastPage.totalPages) - 1).toString(),
 				lazy: true
 			}
 		);
-	const uploadFormQuery = api.catalogueData.advertisements.uploadForm.createQuery(undefined, {
+	const uploadFormQuery = api.catalogueData.uploadForm.createQuery(undefined, {
 		staleTime: Infinity
 	});
+
+	const uploadForm = $uploadFormQuery.data;
 </script>
 
 <div in:fade class="space-y-4">
@@ -46,7 +48,7 @@
 		<LoaderCircle class="w-10 h-10 mx-auto animate-spin" />
 	{:then _ignored}
 		{#if $advertsQuery?.data}
-			{@const allAdverts = $advertsQuery.data.pages.flatMap((page) => page.advertisements)}
+			{@const allAdverts = $advertsQuery.data.pages.flatMap((page) => page.documents)}
 			{#if allAdverts.length === 0}
 				<NoDataFound
 					heading="No advertisements found"
@@ -74,7 +76,7 @@
 						<div
 							class="grid grid-cols-1 @lg:grid-cols-2 @3xl/adverts:grid-cols-3 @5xl/adverts:grid-cols-4 gap-4"
 						>
-							{#each advertisements as advertisement (advertisement.id)}
+							{#each advertisements as advertisement}
 								<AdvertisementItem {advertisement} />
 							{/each}
 						</div>

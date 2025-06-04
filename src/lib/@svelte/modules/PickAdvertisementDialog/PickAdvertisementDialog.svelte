@@ -21,11 +21,12 @@
 	const api = trpc($page);
 
 	const utils = api.createUtils();
-	let advertisements = api.catalogueData.advertisements.getAll.createQuery({
+	let advertisements = api.catalogueData.getAll.createQuery({
 		cursor: "0",
-		limit: "10"
+		limit: "10",
+		documentType: "advert"
 	});
-	let pickAdvertisement = api.catalogueData.advertisements.pick.createMutation();
+	let pickAdvertisement = api.catalogueData.pickAdvertisement.createMutation();
 </script>
 
 <Dialog.Root bind:open>
@@ -37,7 +38,7 @@
 		<ScrollArea class="max-h-[70dvh]">
 			{#if $advertisements.isLoading}
 				<LoaderCircle class="w-10 h-10 mx-auto animate-spin" />
-			{:else if $advertisements.data?.advertisements?.length === 0}
+			{:else if $advertisements.data?.documents?.length === 0}
 				<NoDataFound
 					heading={$_('modules.pick-advertisement-dialog.no-data')}
 					subHeading={$_('modules.pick-advertisement-dialog.no-data-sub-heading')}
@@ -49,7 +50,7 @@
 					<div
 						class="grid grid-cols-1 gap-4 @sm/pickAdvertisement:grid-cols-2 @xl/pickAdvertisement:grid-cols-4"
 					>
-						{#each $advertisements.data?.advertisements ?? [] as advertisement}
+						{#each $advertisements.data?.documents ?? [] as advertisement}
 							<Label
 								class="p-4 rounded-xl hover:bg-muted cursor-pointer [&:has([data-state=checked])]:bg-muted [&:has([data-state=checked])]:border [&:has([data-state=checked])]:border-dashed flex flex-col items-end gap-2"
 								for={'advertisement-' + advertisement.id}
@@ -78,8 +79,7 @@
 					$pickAdvertisement.mutate(
 						{
 							advertisementId: selectedAdvertisement,
-							eventRegistrationId: id,
-							organizationId: orgId
+							eventRegistrationId: id
 						},
 						{
 							onError(error, variables, context) {

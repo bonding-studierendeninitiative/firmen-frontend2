@@ -1,8 +1,6 @@
-import { ExportCatalogueDataRequest, ReviewAdvertisementRequest, ReviewLogoRequest } from '@schema';
+import { ExportCatalogueDataRequest } from '@schema';
 import { adminProcedure, router } from '@/trpc/server';
 import { parse } from 'valibot';
-import { superValidate } from 'sveltekit-superforms';
-import { valibot } from 'sveltekit-superforms/adapters';
 import { TRPCError } from '@trpc/server';
 import type { ExportAdvertisementsEnqueuedResponse, ExportLogosEnqueuedResponse } from '@api/admin-client';
 
@@ -35,19 +33,5 @@ export const adminCatalogueDataRouter = router({
 
 				return data.jobId;
 			}
-		}),
-	advertisements: router({
-		reviewForm: adminProcedure.query(async () => {
-			return await superValidate(valibot(ReviewAdvertisementRequest), {
-				id: 'reviewAdvertisementForm'
-			});
 		})
-	}),
-	logos: router({
-		reviewForm: adminProcedure.query(async () => {
-			return await superValidate(valibot(ReviewLogoRequest), {
-				id: 'reviewLogoForm'
-			});
-		})
-	})
 });

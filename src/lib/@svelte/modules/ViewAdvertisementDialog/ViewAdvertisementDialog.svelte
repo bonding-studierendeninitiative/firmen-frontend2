@@ -8,34 +8,30 @@
 	import { Button } from '@/components/ui/button';
 	import { trpc } from '@/trpc/client';
 	import { page } from '$app/stores';
-	import type { AdvertisementOutput } from '@api/client';
+	import type { DetailedDocumentOutput } from '@api/client';
 
 	export let open = false;
-	export let advertisement: AdvertisementOutput;
+	export let advertisement: DetailedDocumentOutput;
 
-	const download = trpc($page).catalogueData.advertisements.generateDownloadLink.createMutation();
+	console.log({advertisement})
+
+	const download = trpc($page).catalogueData.generateDownloadLink.createQuery({
+		documentId: advertisement.id,
+		organizationId: advertisement.organizationId
+	}, {
+		enabled: advertisement.activeVersion?.uploadStatus === "UPLOADED"
+	});
 
 	function handleDownload() {
-		if (advertisement.id) {
-			$download.mutate(
-				{
-					organizationId: advertisement.id,
-					advertisementId: advertisement.id
-				},
-				{
-					onSuccess: (url) => {
-						if (url) {
-							const a = document.createElement('a');
-							a.href = url;
-							a.target = '_blank';
-							a.download = url.split('/').pop();
-							document.body.appendChild(a);
-							a.click();
-							document.body.removeChild(a);
-						}
-					}
-				}
-			);
+		const downloadUrl = $download.data
+		if (downloadUrl && Number(downloadUrl?.length) > 0) {
+			const a = document.createElement('a');
+			a.href = downloadUrl;
+			a.target = '_blank';
+			a.download = downloadUrl.split('/').pop();
+			document.body.appendChild(a);
+			a.click();
+			document.body.removeChild(a);
 		}
 	}
 </script>
@@ -44,19 +40,21 @@
 	<Dialog.Content class="sm:max-w-4xl max-h-[80vh] overflow-y-auto">
 		{#if advertisement}
 			<div class="grid grid-cols-2 gap-6">
-				<div
-					class="[aspect-ratio:1/_1.41] bg-gray-100 dark:bg-gray-700 rounded-md flex items-center justify-center overflow-hidden"
-				>
-					<PdfFilePreview url={`${advertisement.url}#toolbar=0&navpanes=0&scrollbar=0`} />
-				</div>
+				{#if $download.data}
+					<div
+						class="[aspect-ratio:1/_1.41] bg-gray-100 dark:bg-gray-700 rounded-md flex items-center justify-center overflow-hidden"
+					>
+						<PdfFilePreview url={`${$download.data}#toolbar=0&navpanes=0&scrollbar=0`} />
+					</div>
+				{/if}
 
 				<div class="flex flex-col gap-4 text-sm">
 					<Dialog.Header class="space-y-4">
 						<Dialog.Title>{advertisement.title}</Dialog.Title>
 						<Dialog.Description class="@container">
 							<StatusBadge
-								variant={advertisement.status}
-								label={$_('status-text.' + advertisement.status)}
+								variant={advertisement.activeVersion?.reviewStatus}
+								label={$_('status-text.' + advertisement.activeVersion?.reviewStatus)}
 							/>
 						</Dialog.Description>
 					</Dialog.Header>
@@ -69,25 +67,25 @@
 								<span class="text-gray-600 dark:text-gray-400"
 									>{$_('modules.view-advertisement-dialog.file-type')}</span
 								>
-								<span>{$_('file-types.' + (advertisement.mimeType ?? 'unknown'))}</span>
+								<span>{$_('file-types.' + (advertisement.activeVersion?.contentType ?? 'unknown'))}</span>
 							</div>
 							<div class="flex justify-between">
 								<span class="text-gray-600 dark:text-gray-400"
 									>{$_('modules.view-advertisement-dialog.file-size')}</span
 								>
-								<span>{getHumanReadableFileSize(advertisement.size ?? 0)}</span>
+								<span>{getHumanReadableFileSize(advertisement.activeVersion?.size ?? 0)}</span>
 							</div>
 							<div class="flex justify-between">
 								<span class="text-gray-600 dark:text-gray-400"
 									>{$_('modules.view-advertisement-dialog.file-created')}</span
 								>
-								<LocalizedDate date={advertisement.createdAt} />
+								<LocalizedDate date={advertisement.activeVersion?.createdAt} />
 							</div>
 							<div class="flex justify-between">
 								<span class="text-gray-600 dark:text-gray-400"
 									>{$_('modules.view-advertisement-dialog.file-modified')}</span
 								>
-								<LocalizedDate date={advertisement.modifiedAt} />
+								<LocalizedDate date={advertisement.activeVersion?.modifiedAt} />
 							</div>
 						</div>
 					</div>

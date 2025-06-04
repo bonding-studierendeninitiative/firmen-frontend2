@@ -24,11 +24,12 @@
 
 	const utils = api.createUtils();
 
-	let logos = api.catalogueData.logos.getAll.createQuery({
+	let logos = api.catalogueData.getAll.createQuery({
 		limit: '10',
-		cursor: '0'
+		cursor: '0',
+		documentType: "logo"
 	});
-	let pickLogo = api.catalogueData.logos.pick.createMutation();
+	let pickLogo = api.catalogueData.pickLogo.createMutation();
 
 	let selectedLogo = $state('');
 </script>
@@ -42,7 +43,7 @@
 		<ScrollArea class="max-h-[65dvh]">
 			{#if $logos.isLoading}
 				<LoaderCircle class="w-10 h-10 mx-auto animate-spin" />
-			{:else if $logos.data?.logos?.length === 0}
+			{:else if $logos.data?.documents?.length === 0}
 				<NoDataFound
 					heading={$_('modules.pick-logo-dialog.no-data')}
 					subHeading={$_('modules.pick-logo-dialog.no-data-sub-heading')}
@@ -54,7 +55,7 @@
 					<div
 						class="grid grid-cols-1 gap-4 @sm/pickLogo:grid-cols-2 @lg/pickLogo:grid-cols-3 @4xl/pickLogo:grid-cols-4"
 					>
-						{#each $logos.data?.logos ?? [] as logo}
+						{#each $logos.data?.documents ?? [] as logo}
 							<Label
 								class="p-4 rounded-xl hover:bg-muted cursor-pointer [&:has([data-state=checked])]:bg-muted [&:has([data-state=checked])]:border [&:has([data-state=checked])]:border-dashed flex flex-col items-end gap-2"
 								for={'logo-' + logo.id}
@@ -77,7 +78,7 @@
 				disabled={!selectedLogo || $pickLogo.isPending}
 				on:click={() => {
 					$pickLogo.mutate(
-						{ logoId: selectedLogo, eventRegistrationId: id, organizationId: orgId },
+						{ documentId: selectedLogo, eventRegistrationId: id, versionId: $logos.data?.documents?.find(document => document.id === selectedLogo)?.activeVersion?.versionId },
 						{
 							onError(error, variables, context) {
 								toast.error(error.message);

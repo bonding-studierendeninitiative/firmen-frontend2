@@ -1,8 +1,8 @@
 import { authorizedOrgMemberProcedure, router } from '@/trpc/server';
-import { array, nullish, number, object, parse, string } from 'valibot';
+import { array, nullish, number, object, parse, safeParse, string } from 'valibot';
 import { TRPCError } from '@trpc/server';
-import { RegisterOrganizationToEventInput, SubmitPortraitInput } from '@api/client';
-import { CreateEventRegistrationResponse, GetEventRegistrationsForOrganizationResponse } from '@schema';
+import { GetEventRegistrationsForOrganizationOutput, RegisterOrganizationToEventInput, SubmitPortraitInput } from '@api/client';
+import { CreateEventRegistrationResponse } from '@schema';
 import { clerkClient } from 'svelte-clerk/server';
 
 export const eventRegistrationsRouter = router({
@@ -51,11 +51,19 @@ export const eventRegistrationsRouter = router({
 					page
 				}
 			});
-			const result = parse(GetEventRegistrationsForOrganizationResponse, response);
+			const result = safeParse(GetEventRegistrationsForOrganizationOutput, response);
+			if (!result.success) {
+				console.error(result.issues)
+				return {
+					eventRegistrations: [],
+					totalElements: 0,
+					totalPagea: 0
+				}
+			}
 			return {
 				...result,
 				eventRegistrations: await Promise.all(
-					result.eventRegistrations.map(async (eventRegistration) => {
+					result.output.eventRegistrations?.map(async (eventRegistration) => {
 						return {
 							...eventRegistration,
 							contactPeople: await Promise.all(
@@ -71,7 +79,7 @@ export const eventRegistrationsRouter = router({
 								}) ?? []
 							)
 						};
-					})
+					}) ?? []
 				)
 			};
 		}),

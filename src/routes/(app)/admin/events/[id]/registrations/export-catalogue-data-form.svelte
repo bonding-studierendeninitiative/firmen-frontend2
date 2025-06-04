@@ -15,7 +15,7 @@
 
 	const api = trpc($page);
 
-	let documentType: 'advert' | 'logo' = 'advert';
+	let documentType: 'advert' | 'logo' = 'logo';
 
 	const exportCatalogueData = api.admin.catalogueData.export.createMutation();
 </script>
@@ -24,14 +24,14 @@
 	<Dialog.Trigger class={cn(buttonVariants({variant: "default"}))} {disabled}>{$_("common.export")}</Dialog.Trigger>
 	<Dialog.Content>
 		<Dialog.Header>
-			<Dialog.Title>Export catalogue data</Dialog.Title>
-			<Dialog.Description>Du kannst vergangene Export hier finden...</Dialog.Description>
+			<Dialog.Title>$_('admin-pages.events.event-registrations.export-catalogue-data.title')</Dialog.Title>
+			<Dialog.Description>$_('admin-pages.events.event-registrations.export-catalogue-data.description')</Dialog.Description>
 		</Dialog.Header>
 		<section class="space-y-4">
 			<Tabs.Root bind:value={documentType}>
 				<Tabs.List>
-					<Tabs.Trigger value="advert">Advertisements</Tabs.Trigger>
-					<Tabs.Trigger value="logo">Logos</Tabs.Trigger>
+					<Tabs.Trigger value="advert">$_('admin-pages.events.event-registrations.export-catalogue-data.advertisements')</Tabs.Trigger>
+					<Tabs.Trigger value="logo">$_('admin-pages.events.event-registrations.export-catalogue-data.logos')</Tabs.Trigger>
 				</Tabs.List>
 			</Tabs.Root>
 			<Button on:click={()=> {

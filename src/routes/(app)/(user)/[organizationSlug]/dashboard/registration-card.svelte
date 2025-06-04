@@ -87,6 +87,8 @@
 	import { PickAdvertisementDialog } from '@/@svelte/modules/PickAdvertisementDialog';
 	import { PenLine, Plus } from 'lucide-svelte';
 	import type {GetEventRegistrationForOrganizationOutput } from '@api/client';
+	import SuperDebug from 'sveltekit-superforms';
+	import QueryWrappedViewLogoDialog from '@/@svelte/modules/ViewLogoDialog/QueryWrappedViewLogoDialog.svelte';
 
 	let isAddonsOpen = false;
 	export let registration: GetEventRegistrationForOrganizationOutput;
@@ -108,16 +110,20 @@
 <Card class="w-full max-w-2xl shadow-md hover:shadow-lg transition-shadow">
 
 	<PickAdvertisementDialog bind:open={pickAdvertisementOpen} id={registration.id} orgId={registration.organizationId} />
+	{#if registration.advertisement}
 	<ViewAdvertisementDialog bind:open={viewAdvertisementOpen} advertisement={registration.advertisement} />
+	{/if}
 	<EditContactPersons bind:open={editContactPersonsOpen} contactPeople={registration.contactPeople?.map(({id})=> id)}
 											eventRegistrationId={registration.id} />
 	<PickLogoDialog bind:open={pickLogoOpen} id={registration.id} orgId={registration.organizationId} />
-	<ViewLogoDialog bind:open={viewLogoOpen} logo={registration.logo} />
+	{#if registration.logo?.documentId}
+	<QueryWrappedViewLogoDialog bind:open={viewLogoOpen} documentId={registration.logo.documentId} />
+	{/if}
 	<CardHeader class="pb-2">
 		<div class="flex justify-between items-start">
 			<div>
-				<CardTitle class="text-xl font-bold">{registration.event.name}</CardTitle>
-				<CardDescription class="mt-1">{registration.event.location}</CardDescription>
+				<CardTitle class="text-xl font-bold">{registration.event?.name}</CardTitle>
+				<CardDescription class="mt-1">{registration.event?.location}</CardDescription>
 			</div>
 			<Badge class={`${statusConfig[registration.status].color} text-white`}>
 				{statusConfig[registration.status].label}
@@ -141,12 +147,12 @@
 					})}</span>
 				</div>
 			{/if}
-			{#if registration.desiredEventRegistrationDays?.length > 0}
+			{#if registration.desiredEventRegistrationDayDates?.length > 0}
 				<div class="flex items-center">
 					<Clock class="h-4 w-4 mr-2 text-muted-foreground" />
 					<span class="text-sm">{$_("components.registration-card.desired-participation-days", {
 						values: {
-							days: registration.desiredEventRegistrationDays?.length
+							days: registration.desiredEventRegistrationDayDates?.length
 						}
 					})}</span>
 				</div>
@@ -172,7 +178,7 @@
 						<Button
 							class={cn("flex items-center gap-1 text-xs", catalogueDataStatusConfig[registration.logoStatus]?.color)}
 							variant="ghost" size="sm" on:click={() => {
-								if (registration.logo !== null) {
+								if (registration.logo !== null && registration.logoStatus !== "missing") {
 									viewLogoOpen = true;
 								} else {
 
@@ -203,7 +209,7 @@
 							<Button
 								class={cn("flex items-center gap-1 text-xs", catalogueDataStatusConfig[registration.advertisementStatus]?.color)}
 								variant="ghost" size="sm" on:click={() =>{
-									if (registration.advertisement !== null) {
+									if (registration.advertisement !== null && registration.advertisementStatus !== "missing") {
 										viewAdvertisementOpen = true;
 									} else {
 										pickAdvertisementOpen = true;

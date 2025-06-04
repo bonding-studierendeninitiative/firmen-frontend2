@@ -112,7 +112,7 @@
     "exportFiles": "Export Files",
     "logo": "Logo",
     "portrait": "Portrait",
-    "advert": "Image-Advert",
+    "advert": "Advertisements",
     "loading": "Loading…",
     "publish": "Veröffentlichen",
     "org-types": {
@@ -471,7 +471,8 @@
     "missing": "Missing",
     "uploaded": "Uploaded",
     "changes-requested": "Changes requested",
-    "withdrawn": "Withdrawn"
+    "withdrawn": "Withdrawn",
+    "unreviewed": "Unreviewed"
   },
   "user-pages": {
     "settings": {
@@ -917,7 +918,8 @@
             "logo-status": "Logo",
             "advert-status": "Image-Ad",
             "status": "Status",
-            "last-modified": "Last modified"
+            "last-modified": "Last modified",
+            "addon-packages": "Addon Packages"
           },
           "actions": {
             "review-catalogue-data": "Katalogdaten überprüfen",
@@ -952,7 +954,18 @@
         },
         "purchased-package": "Purchased package",
         "purchased-addons": "Purchased addons",
-        "feedback-type": "Type of feedback"
+        "feedback-type": "Type of feedback",
+        "delete-dialog": {
+          "title": "Delete Event Registration",
+          "description": "Are you sure you want to delete this event registration?",
+          "success": "Event registration deleted"
+        },
+        "export-catalogue-data": {
+          "title": "Export catalogue data",
+          "description": "Exports are processed in the background and can be found in the events details",
+          "advertisements": "Advertisements",
+          "logos": "Logos"
+        }
       },
       "feedback": {
         "placeholders": {

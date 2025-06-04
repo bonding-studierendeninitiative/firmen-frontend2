@@ -7,8 +7,7 @@ import { adminExportsRouter } from '@/trpc/routers/admin/exports';
 import { adminOrgsRouter } from '@/trpc/routers/admin/orgs';
 import { adminLegacyOrganizationsRouter } from './legacyOrganizations';
 import { PagedJobOutput } from '@api/admin-client';
-import { adminAdvertisementsRouter } from './advertisements';
-import { adminLogosRouter } from './logos';
+import { adminDocumentsRouter } from './documents';
 import { adminUsersRouter } from './users';
 
 export const adminRouter = router({
@@ -18,8 +17,7 @@ export const adminRouter = router({
 	catalogueData: adminCatalogueDataRouter,
 	orgs: adminOrgsRouter,
 	legacyOrgs: adminLegacyOrganizationsRouter,
-	advertisements: adminAdvertisementsRouter,
-	logos: adminLogosRouter,
+	documents: adminDocumentsRouter,
 	users: adminUsersRouter,
 	jobs: adminProcedure
 		.input((input) => {

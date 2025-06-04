@@ -43,7 +43,6 @@ export const adminProcedure = authorizedOrgMemberProcedure.use(({ ctx, next }) =
 	if (ctx.session?.orgId !== PUBLIC_BONDING_ORG_ID) {
 		throw new TRPCError({ code: 'UNAUTHORIZED', message: 'You are not an admin!' });
 	}
-	ctx
 	const adminApi = createAdminApiClient(apiFetcher(ctx), PUBLIC_BACKEND_HOST);
 	return next({
 		ctx: {

@@ -53,9 +53,9 @@ export const DeleteAdvertisementRequest = object({
 
 export type DeleteAdvertisementRequest = typeof DeleteAdvertisementRequest;
 
-export const ReviewAdvertisementRequest = pipe(
+export const ReviewDocumentRequest = pipe(
 	object({
-		advertisementId: pipe(string(), nonEmpty()),
+		documentId: pipe(string(), nonEmpty()),
 		documentChangeType: union([
 			literal('confirmation'),
 			literal('change-request'),
@@ -72,7 +72,7 @@ export const ReviewAdvertisementRequest = pipe(
 	}, 'Message cannot be empty')
 );
 
-export type ReviewAdvertisementRequest = typeof ReviewAdvertisementRequest;
+export type ReviewDocumentRequest = typeof ReviewDocumentRequest;
 
 export const ExportAdvertisementsRequest = object({
 	eventRegistrationIds: array(string())

@@ -1,207 +1,207 @@
 import { authorizedOrgMemberProcedure, router } from '@/trpc/server';
-import { file, nonEmpty, nullish, object, parse, pipe, string } from 'valibot';
+import { file, literal, nonEmpty, nullish, object, parse, pipe, string, union } from 'valibot';
 import {
-	PickAdvertisementRequest,
 	PickLogoRequest,
-	UploadAdvertisementRequest,
 	UploadCatalogueDataForm,
-	UploadLogoRequest
 } from '@schema';
 import { superValidate } from 'sveltekit-superforms';
 import { valibot } from 'sveltekit-superforms/adapters';
 import { TRPCError } from '@trpc/server';
 
 const GetCatalogDataSchema = object({
+	documentType: union([literal("logo"), literal("advert")]),
 	limit: nullish(string(), '10'),
 	cursor: nullish(string(), '0')
 });
 
 export const catalogueDataRouter = router({
-	logos: router({
-		upload: authorizedOrgMemberProcedure
-			.input((input) => parse(
-				object({
-					title: string(),
-					file: file(), // Base64 encoded file
-					orgId: string()
-				}),
-				input
-			))
-			.mutation(async ({ ctx, input }) => {
-				try {
-					const response = await ctx.api.request("post", "/api/v2/organization/{organizationId}/logo/request-upload-url", {
-						path: { organizationId: input.orgId },
-						body: {
-							title: input.title
-						}
-					});
-	
-					if (!response.ok) {
-						throw new TRPCError({
-							code: 'INTERNAL_SERVER_ERROR',
-							message: 'The upload could not be completed'
-						});
+	upload: authorizedOrgMemberProcedure
+		.input((input) => parse(
+			object({
+				title: string(),
+				file: file(), // Base64 encoded file
+				orgId: string(),
+				documentType: union([literal("logo"), literal("advert")])
+			}),
+			input
+		))
+		.mutation(async ({ ctx, input }) => {
+			try {
+
+				const buf = Buffer.from(input.file.name, "utf-8")
+
+				const base64Enc = buf.toString("base64")
+
+				const response = await ctx.api.request("post", "/api/v2/organization/{organizationId}/catalogue-data/request-upload-url", {
+					path: { organizationId: input.orgId },
+					body: {
+						title: input.title,
+						mimeType: input.file.type,
+						originalFilename: base64Enc,
+						type: input.documentType
 					}
-	
-					const { url } = await response.json();
-	
-					const uploadResponse = await fetch(url, {
-						method: 'PUT',
-						body: input.file,
-						headers: {
-							'x-amz-meta-title': btoa(input.title)
-						}
-					});
-	
-					if (!uploadResponse.ok) {
-						throw new TRPCError({
-							code: 'INTERNAL_SERVER_ERROR',
-							message: 'The upload could not be completed'
-						});
-					}
-				} catch (e) {
+				});
+
+				if (!response.ok) {
 					throw new TRPCError({
 						code: 'INTERNAL_SERVER_ERROR',
-						message: e instanceof Error ? e.message : 'Failed to upload logo'
+						message: 'The upload could not be completed'
 					});
 				}
-			}),
-		getAll: authorizedOrgMemberProcedure
-			.input((input) => parse(GetCatalogDataSchema, input))
-			.query(async ({ ctx, input: { cursor: start, limit } }) => {
-				const response = await ctx.api.get("/api/v2/organization/{organizationId}/logo", {
-					path: {organizationId: ctx.session.orgId},
-					query: {
-						limit: Number(limit),
-						page: Number(start)
+
+				const { url } = await response.json();
+
+				console.log({filename: input.file.name, base64Enc, buf})
+
+				const uploadResponse = await fetch(url, {
+					method: 'PUT',
+					body: input.file,
+					headers: {
+						'x-amz-meta-original-filename': base64Enc
 					}
 				});
-				return response;
-			}),
-		pick: authorizedOrgMemberProcedure
-			.input((input) => parse(PickLogoRequest, input))
-			.mutation(async ({ ctx, input }) => {
-				const response = await ctx.api.request("post", "/api/v2/event-registration/{eventRegistrationId}/pick-logo/{logoId}",{
-					path: {
-						eventRegistrationId: input.eventRegistrationId,
-						logoId: input.logoId
-					}
-				});
-			
-				if (response.status !== 204) {
-					throw new TRPCError({ message: 'The logo could not be picked', code: "INTERNAL_SERVER_ERROR" });
-				}
-			}),
-		uploadForm: authorizedOrgMemberProcedure.query(async ({ ctx }) => {
-			return await superValidate(
-				{
-					orgId: ctx.session.orgId
-				},
-				valibot(UploadLogoRequest),
-				{
-					errors: false
-				}
-			);
-		}),
-		generateDownloadLink: authorizedOrgMemberProcedure
-			.input((input) =>
-				parse(
-					object({
-						organizationId: string(),
-						logoId: string()
-					}),
-					input
-				)
-			)
-			.output((output) => parse(nullish(string()), output))
-			.mutation(async ({ ctx, input }) => {
-				const response = await ctx.api.request("get", "/api/v2/organization/{organizationId}/logo/{logoId}/download", {
-					path: {
-						logoId: input.logoId,
-						organizationId: input.organizationId
-					}
-				});
-				if (response.status !== 204) {
+
+				if (!uploadResponse.ok) {
+					const error = await uploadResponse.text();
+					console.error(error);
 					throw new TRPCError({
-						code: "INTERNAL_SERVER_ERROR",
-						message: "Download link could not be generated"
-					})
+						code: 'INTERNAL_SERVER_ERROR',
+						message: 'The upload could not be completed'
+					});
 				}
-				return response.headers.get("location");
-			})
-	}),
-	advertisements: router({
-		getAll: authorizedOrgMemberProcedure
-			.input((input) => parse(GetCatalogDataSchema, input))
-			.query(async ({ ctx, input }) => {
-				const response = await ctx.api.get("/api/v2/organization/{organizationId}/advertisement",{
-					path: {organizationId: ctx.session.orgId},
-					query: {
-						limit: Number(input.limit),
-						page: Number(input.cursor)
-					}
+			} catch (e) {
+				throw new TRPCError({
+					code: 'INTERNAL_SERVER_ERROR',
+					message: e instanceof Error ? e.message : 'Failed to upload logo'
 				});
-				return response;
-			}),
-		deleteAdvertisement: authorizedOrgMemberProcedure
-			.input((input) => parse(pipe(string(), nonEmpty()), input))
-			.mutation(async ({ ctx, input }) => {
-				await ctx.api.delete("/api/v2/organization/{organizationId}/advertisement/{advertisementId}", {
-					path: {
-						advertisementId: input,
-						organizationId: ctx.session.orgId
-					}
+			}
+		}),
+	getAll: authorizedOrgMemberProcedure
+		.input((input) => parse(GetCatalogDataSchema, input))
+		.query(async ({ ctx, input: { cursor: start, limit, documentType } }) => {
+			const response = await ctx.api.get("/api/v2/organization/{organizationId}/catalogue-data/by-document-type/{documentType}", {
+				path: {
+					organizationId: ctx.session.orgId,
+					documentType
+				},
+				query: {
+					limit: Number(limit),
+					page: Number(start)
+				}
+			});
+			return response;
+		}),
+	getDocument: authorizedOrgMemberProcedure
+		.input((input) => parse(object({
+			documentId: string()
+		}), input))
+		.query(async ({ ctx, input: { documentId } }) => {
+			const response = await ctx.api.get("/api/v2/organization/{organizationId}/catalogue-data/{documentId}", {
+				path: {
+					organizationId: ctx.session.orgId,
+					documentId
+				}
+			});
+			return response;
+		}),
+	pickLogo: authorizedOrgMemberProcedure
+		.input((input) => parse(object({
+			eventRegistrationId: string(),
+			documentId: string(),
+			versionId: string()
+		}), input))
+		.mutation(async ({ ctx, input }) => {
+			const response = await ctx.api.request("post", "/api/v2/event-registration/{eventRegistrationId}/pick-logo/{documentId}/{versionId}", {
+				path: input
+			});
+
+			if (response.status !== 204) {
+				throw new TRPCError({ message: 'The logo could not be picked', code: "INTERNAL_SERVER_ERROR" });
+			}
+		}),
+	pickAdvertisement: authorizedOrgMemberProcedure
+		.input((input) => parse(object({
+			eventRegistrationId: string(),
+			advertisementId: string()
+		}), input))
+		.mutation(async ({ ctx, input }) => {
+			const response = await ctx.api.request("post", "/api/v2/event-registration/{eventRegistrationId}/pick-advertisement/{advertisementId}", {
+				path: input
+			});
+
+			if (response.status !== 204) {
+				throw new TRPCError({ message: 'The logo could not be picked', code: "INTERNAL_SERVER_ERROR" });
+			}
+		}),
+	generateDownloadLink: authorizedOrgMemberProcedure
+		.input((input) =>
+			parse(
+				object({
+					organizationId: string(),
+					documentId: string()
+				}),
+				input
+			)
+		)
+		.output((output) => parse(nullish(string()), output))
+		.query(async ({ ctx, input }) => {
+			const response = await ctx.api.request("get", "/api/v2/organization/{organizationId}/catalogue-data/{assetId}/download", {
+				path: {
+					assetId: input.documentId,
+					organizationId: input.organizationId
+				}
+			});
+			if (response.status !== 204) {
+				throw new TRPCError({
+					code: "INTERNAL_SERVER_ERROR",
+					message: "Download link could not be generated"
 				})
-			}),
-		pick: authorizedOrgMemberProcedure
-			.input((input) => parse(PickAdvertisementRequest, input))
-			.mutation(async ({ ctx, input }) => {
-				await ctx.api.post("/api/v2/event-registration/{eventRegistrationId}/pick-advertisement/{advertisementId}",{
-					path: {
-						advertisementId: input.advertisementId,
-						eventRegistrationId: input.eventRegistrationId,
-					}
-				});
-			}),
-		uploadForm: authorizedOrgMemberProcedure.query(async ({ ctx }) => {
-			return await superValidate(
-				{
-					orgId: ctx.session.orgId
-				},
-				valibot(UploadAdvertisementRequest),
-				{
-					errors: false
-				}
-			);
+			}
+			return response.headers.get("location");
 		}),
-		generateDownloadLink: authorizedOrgMemberProcedure
-			.input((input) =>
-				parse(
-					object({
-						organizationId: string(),
-						advertisementId: string()
-					}),
-					input
-				)
+	generateThumbnailLink: authorizedOrgMemberProcedure
+		.input((input) =>
+			parse(
+				object({
+					documentId: string(),
+					resolution: union([literal("small"), literal("medium"), literal("large")])
+				}),
+				input
 			)
-			.output((output) => parse(nullish(string()), output))
-			.mutation(async ({ ctx, input }) => {
-				const response = await ctx.api.request("get", "/api/v2/organization/{organizationId}/advertisement/{advertisementId}/download", {
-					path: {...input}
-				});
-				if (response.status !== 204) {
-					throw new TRPCError({
-						code: "INTERNAL_SERVER_ERROR",
-						message: "Download link could not be generated"
-					})
+		)
+		.output((output) => parse(nullish(string()), output))
+		.query(async ({ ctx, input }) => {
+			const response = await ctx.api.request("get", "/api/v2/organization/{organizationId}/catalogue-data/{assetId}/thumbnail", {
+				path: {
+					assetId: input.documentId,
+					organizationId: ctx.session.orgId
+				},
+				query: {
+					resolution: input.resolution
 				}
-				return response.headers.get("location");
+			});
+			if (response.status !== 204) {
+				throw new TRPCError({
+					code: "INTERNAL_SERVER_ERROR",
+					message: "Download link could not be generated"
+				})
+			}
+			return response.headers.get("location");
+		}),
+	deleteDocument: authorizedOrgMemberProcedure
+		.input((input) => parse(pipe(string(), nonEmpty()), input))
+		.mutation(async ({ ctx, input }) => {
+			await ctx.api.delete("/api/v2/organization/{organizationId}/catalogue-data/{assetId}", {
+				path: {
+					assetId: input,
+					organizationId: ctx.session.orgId
+				}
 			})
-	}),
+		}),
 	uploadForm: authorizedOrgMemberProcedure.query(async ({ ctx }) => {
 		return await superValidate(
 			{
-				orgSlug: ctx.session.orgId
+				orgId: ctx.session.orgId
 			},
 			valibot(UploadCatalogueDataForm),
 			{

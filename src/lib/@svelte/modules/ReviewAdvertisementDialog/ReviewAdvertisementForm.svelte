@@ -4,7 +4,8 @@
 	import * as Tabs from '@/components/ui/tabs';
 	import SuperDebug, { type Infer, superForm, type SuperValidated } from 'sveltekit-superforms';
 	import {
-		type AdvertisementSchema, type ReviewAdvertisementRequest
+		type AdvertisementSchema,
+		type ReviewDocumentRequest
 	} from '@schema';
 	import { toast } from 'svelte-french-toast';
 	import { getContext } from 'svelte';
@@ -17,7 +18,7 @@
 	import type { InferOutput } from 'valibot';
 
 	export let advertisement: InferOutput<AdvertisementSchema>;
-	export let catalogueDataReviewForm: SuperValidated<Infer<ReviewAdvertisementRequest>>;
+	export let catalogueDataReviewForm: SuperValidated<Infer<ReviewDocumentRequest>>;
 	export let open: boolean;
 
 	const superCatalogueDataReviewForm = superForm(catalogueDataReviewForm, {
@@ -25,7 +26,7 @@
 		onSubmit({ jsonData }) {
 			jsonData({
 				...$formData,
-				advertisementId: advertisement.id
+				documentId: advertisement.id
 			});
 		},
 		onResult({ result }) {

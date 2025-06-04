@@ -2,18 +2,17 @@
 	import * as Dialog from '@/components/ui/dialog';
 	import { Trash2 } from 'lucide-svelte';
 	import { Button, buttonVariants } from '@/components/ui/button';
-	import type { LogoSchema } from '@schema';
-	import type { InferOutput } from 'valibot';
 	import { toast } from 'svelte-french-toast';
 	import { _ } from '@services';
 	import { trpc } from '@/trpc/client';
 	import { page } from '$app/stores';
+	import type { DetailedDocumentOutput } from '@api/client';
 
-	export let logo: InferOutput<LogoSchema>;
+	export let logo: DetailedDocumentOutput;
 
 	const api = trpc($page);
 	const utils = api.createUtils()
-	const deleteLogo = api.logos.delete.createMutation();
+	const deleteLogo = api.catalogueData.deleteDocument.createMutation();
 
 	let open = false;
 </script>
@@ -34,13 +33,13 @@
 		<Dialog.Footer class="pt-6">
 			<Dialog.Close class={buttonVariants({variant: "outline"})}>{$_("common.cancel")}</Dialog.Close>
 			<Button on:click={() => {
-					$deleteLogo.mutate({logoId: logo.id, organizationId: "doesn't matter"}, {
+					$deleteLogo.mutate(logo.id, {
 						onError: (error) => {
 							toast.error(error.message);
 						},
 						onSuccess: () => {
 							toast.success('Logo deleted');
-							utils.catalogueData.logos.getAll.invalidate()
+							utils.catalogueData.getAll.invalidate()
 							open = false;
 						}
 					})

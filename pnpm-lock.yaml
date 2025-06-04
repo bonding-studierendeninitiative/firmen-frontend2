@@ -201,6 +201,9 @@ importers:
       svelte-render-scan:
         specifier: ^1.1.0
         version: 1.1.0(svelte@5.19.9)
+      sveltekit-sse:
+        specifier: ^0.13.19
+        version: 0.13.19(@microsoft/fetch-event-source@2.0.1)(@sveltejs/kit@2.8.5(@sveltejs/vite-plugin-svelte@4.0.4(svelte@5.19.9)(vite@5.4.14(@types/node@22.12.0)))(svelte@5.19.9)(vite@5.4.14(@types/node@22.12.0)))(svelte@5.19.9)
       tailwindcss:
         specifier: ^3.4.17
         version: 3.4.17
@@ -930,6 +933,9 @@ packages:
     resolution: {integrity: sha512-7SbOa11tXUS95T3fReL+dwDs5FyJtCEqrqG3inRziDws346SYLsxOQ6HmX+4BkIsQh1R8U3XNa+EMmdMt38lMA==}
     peerDependencies:
       svelte: '>=3 <5'
+
+  '@microsoft/fetch-event-source@2.0.1':
+    resolution: {integrity: sha512-W6CLUJ2eBMw3Rec70qrsEW0jOm/3twwJv21mrmj2yORiaVmVYGS4sSS5yUwvQc1ZlDLYGPnClVWmUUMagKNsfA==}
 
   '@nodelib/fs.scandir@2.1.5':
     resolution: {integrity: sha512-vq24Bq3ym5HEQm2NKCr3yXDwjc7vTsEThRDnkp2DK9p1uqLR+DHurm/NOTo0KG7HYHU7eppKZj3MyqYuMBf62g==}
@@ -3060,6 +3066,13 @@ packages:
       '@sveltejs/kit': ^1.0.0 || ^2.0.0
       svelte: ^3.55.0 || ^4.0.0 || ^5.0.0
 
+  sveltekit-sse@0.13.19:
+    resolution: {integrity: sha512-0uOiMqRdpjoM2dM/2fyLPUfGdhhOeW9KX4LR03b4K/cYFoZt4RYyOQJrX5RPijPf9sGX2mXkc0GEA2d0l3zifg==}
+    peerDependencies:
+      '@microsoft/fetch-event-source': ^2.0.1
+      '@sveltejs/kit': ^2.0.0
+      svelte: ^4.0.0 || ^5.0.0-next.0
+
   sveltekit-superforms@2.23.1:
     resolution: {integrity: sha512-SPj5ac4SMg8SPyP0Zi3ynwXJa7r9U1CTyn+YSyck67zLsjt367Sro4SZnl3yASrLd5kJ6Y57cgIdYJ2aWNArXw==}
     peerDependencies:
@@ -3988,6 +4001,8 @@ snapshots:
       focus-trap: 7.6.4
       nanoid: 5.0.9
       svelte: 5.19.9
+
+  '@microsoft/fetch-event-source@2.0.1': {}
 
   '@nodelib/fs.scandir@2.1.5':
     dependencies:
@@ -6319,6 +6334,12 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
       - vite
+
+  sveltekit-sse@0.13.19(@microsoft/fetch-event-source@2.0.1)(@sveltejs/kit@2.8.5(@sveltejs/vite-plugin-svelte@4.0.4(svelte@5.19.9)(vite@5.4.14(@types/node@22.12.0)))(svelte@5.19.9)(vite@5.4.14(@types/node@22.12.0)))(svelte@5.19.9):
+    dependencies:
+      '@microsoft/fetch-event-source': 2.0.1
+      '@sveltejs/kit': 2.8.5(@sveltejs/vite-plugin-svelte@4.0.4(svelte@5.19.9)(vite@5.4.14(@types/node@22.12.0)))(svelte@5.19.9)(vite@5.4.14(@types/node@22.12.0))
+      svelte: 5.19.9
 
   sveltekit-superforms@2.23.1(@sveltejs/kit@2.8.5(@sveltejs/vite-plugin-svelte@4.0.4(svelte@5.19.9)(vite@5.4.14(@types/node@22.12.0)))(svelte@5.19.9)(vite@5.4.14(@types/node@22.12.0)))(@types/json-schema@7.0.15)(svelte@5.19.9)(typescript@5.7.3):
     dependencies:

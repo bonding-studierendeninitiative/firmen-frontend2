@@ -28,5 +28,5 @@
  statusBadgeVariants({variant})
  )}>
 	<span class="w-3 h-3 rounded-full bg-current shrink-0"></span>
-	<span class="font-semibold shrink-0 text-xs tracking-wider uppercase max-w-0 opacity-0 transition-all duration-300 @[16rem]:max-w-32 @[16rem]:opacity-100 @[16rem]:ml-1.5 ease-in-out group-hover:max-w-32 group-hover:opacity-100 group-hover:ml-1.5">{label}</span>
+	<span class="font-semibold shrink-0 text-xs tracking-wider uppercase max-w-0 opacity-0 transition-all duration-300 @[10rem]:max-w-32 @[10rem]:opacity-100 @[10rem]:ml-1.5 ease-in-out group-hover:max-w-32 group-hover:opacity-100 group-hover:ml-1.5">{label}</span>
 </div>

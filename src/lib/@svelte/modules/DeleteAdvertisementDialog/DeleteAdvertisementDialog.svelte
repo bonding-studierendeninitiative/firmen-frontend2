@@ -13,7 +13,7 @@
 	const api = trpc($page);
 	const utils = api.createUtils();
 
-	const deleteAdvertisement = api.catalogueData.advertisements.deleteAdvertisement.createMutation();
+	const deleteAdvertisement = api.catalogueData.deleteDocument.createMutation();
 </script>
 
 <Dialog.Root bind:open>
@@ -46,7 +46,7 @@
 							},
 							onSuccess: () => {
 								toast.success('Advertisement deleted');
-								utils.catalogueData.advertisements.getAll.invalidate();
+								utils.catalogueData.getAll.invalidate();
 								open = false;
 							}
 						});

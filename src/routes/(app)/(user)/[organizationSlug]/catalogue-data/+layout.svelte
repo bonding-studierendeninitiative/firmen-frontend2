@@ -2,6 +2,10 @@
 	import { _ } from '@services';
 	import { LinkTabs } from '@/@svelte/components';
 	import { fade } from 'svelte/transition';
+	import { source } from 'sveltekit-sse';
+	import { trpc } from '@/trpc/client';
+	import { page } from '$app/stores';
+	import { invalidate } from '$app/navigation';
 
 	let { data, children } = $props();
 
@@ -19,6 +23,30 @@
 			href: `/${data.orgSlug}/catalogue-data/adverts`
 		}
 	]);
+
+	const api = trpc($page);
+	const utils = api.createUtils();
+
+	source('_api/events')
+		.select('catalogue-data-event')
+		.json()
+		.subscribe(async (catalogueDataEvent) => {
+			if (!catalogueDataEvent) {
+				console.log("catalogueDataEvent is null")
+				return;
+			}
+			if (!catalogueDataEvent.documentId || typeof catalogueDataEvent.documentId !== 'string') {
+				console.log("catalogueDataEvent is missing documentId")
+				return;
+			}
+			if (catalogueDataEvent.documentType === 'logo') {
+				await utils.catalogueData.getAll.invalidate({documentType: "logo"})
+				await invalidate("orgLogos")
+			} else if (catalogueDataEvent.documentType === 'advert') {
+				await utils.catalogueData.getAll.invalidate({documentType: "advert"})
+				await invalidate("orgAdverts")
+			}
+		});
 </script>
 
 <div class="w-full h-full flex flex-col justify-start items-stretch min-h-max">

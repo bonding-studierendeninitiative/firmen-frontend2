@@ -1,20 +1,22 @@
 import { adminProcedure, router } from '@/trpc/server';
 import { object, parse, string } from 'valibot';
 import { TRPCError } from '@trpc/server';
-import type { ReviewAdvertisementRequest } from '@schema';
+import { ReviewDocumentRequest } from '@schema';
+import { superValidate } from 'sveltekit-superforms';
+import { valibot } from 'sveltekit-superforms/adapters';
 
-export const adminAdvertisementsRouter = router({
+export const adminDocumentsRouter = router({
     review: adminProcedure
         .input((input) => parse(
             object({
-                advertisementId: string(),
-                data: object({}) as ReviewAdvertisementRequest
+                documentId: string(),
+                data: ReviewDocumentRequest
             }),
             input
         ))
         .mutation(async ({ ctx, input }) => {
-            const response = await ctx.adminApi.request("post", "/api/v2/admin/advertisement/{advertisementId}/review", {
-                path: { advertisementId: input.advertisementId },
+            const response = await ctx.adminApi.request("post", "/api/v2/admin/document/{documentId}/review", {
+                path: { documentId: input.documentId },
                 body: input.data
             });
 
@@ -26,5 +28,10 @@ export const adminAdvertisementsRouter = router({
             }
 
             return response;
-        })
+        }),
+        reviewForm: adminProcedure.query(async () => {
+			return await superValidate(valibot(ReviewDocumentRequest), {
+				id: 'reviewDocumentForm'
+			});
+		})
 }); 

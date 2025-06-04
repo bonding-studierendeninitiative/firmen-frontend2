@@ -17,7 +17,10 @@
 
 	const utils = api.createUtils();
 
-	let organizationMembers = api.orgMembers.get.createQuery();
+	let organizationMembers = api.orgMembers.getMembers.createQuery({
+		limit: "10",
+		offset: "0"
+	});
 	let changeContactPeople = api.eventRegistrations.changeContactPeople.createMutation();
 
 	export let open: boolean = false;
@@ -46,7 +49,7 @@
 					{#if $organizationMembers.isLoading}
 						<LoaderCircle class="h-5 w-5 text-primary animate-spin mx-auto" />
 					{/if}
-					{#if ($organizationMembers.data?.length ?? 0) < 1 && !$organizationMembers.isLoading}
+					{#if ($organizationMembers.data?.data.length ?? 0) < 1 && !$organizationMembers.isLoading}
 						<p>{$_("modules.edit-contact-persons.no-members")}</p>
 					{:else}
 						<ToggleGroup.Root
@@ -55,7 +58,7 @@
 							class="flex flex-wrap gap-2"
 							bind:value={contactPeople}
 						>
-							{#each $organizationMembers.data ?? [] as member}
+							{#each $organizationMembers.data?.data ?? [] as member}
 								<ToggleGroup.Item
 									value={member.publicUserData?.userId}
 									class={cn(

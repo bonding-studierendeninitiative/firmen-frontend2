@@ -1,5 +1,5 @@
 import { authorizedOrgMemberProcedure, router } from '@/trpc/server';
-import { object, parse, string, union } from 'valibot';
+import { object, optional, parse, string, union } from 'valibot';
 import { TRPCError } from '@trpc/server';
 import { clerkClient } from 'svelte-clerk/server';
 import { makeSerializable } from '@/utils/serializable';
@@ -56,18 +56,17 @@ export const orgMembersRouter = router({
 	getMembers: authorizedOrgMemberProcedure
 		.input((input) => parse(
 			object({
-				id: string(),
 				limit: string(),
 				offset: string(),
-				query: string(),
-				orderBy: string()
+				query: optional(string(), ""),
+				orderBy: optional(string(), "+first_name")
 			}),
 			input
 		))
-		.query(async ({ input }) => {
+		.query(async ({ input, ctx }) => {
 			try {
 				const orgMemberships = await clerkClient.organizations.getOrganizationMembershipList({
-					organizationId: input.id,
+					organizationId: ctx.session.orgId,
 					limit: Number(input.limit) || 10,
 					offset: Number(input.offset) || 0,
 					orderBy: input.orderBy as MemberOrderBy || undefined

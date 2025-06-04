@@ -15,7 +15,7 @@
 	export let logo: InferOutput<LogoSchema>;
 
 	const api = trpc($page);
-	const reviewFormQuery = api.admin.catalogueData.logos.reviewForm.createQuery();
+	const reviewFormQuery = api.admin.documents.reviewForm.createQuery();
 </script>
 
 <Dialog.Root bind:open>

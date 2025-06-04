@@ -1,26 +1,40 @@
 <script lang="ts">
-	import type { InferOutput } from 'valibot';
-	import { PdfFilePreview, StatusBadge } from '@/@svelte/components';
-	import type { LogoSchema } from '@schema';
+	import { StatusBadge } from '@/@svelte/components';
 	import { _ } from '@services';
 	import { cn } from '@/utils';
+	import type { LogoOutput } from '@api/client';
+	import { page } from '$app/stores';
+	import { trpc } from '@/trpc/client';
 
-	export let logo: InferOutput<LogoSchema>;
+	export let logo: LogoOutput;
 	let className = '';
+
+	const thumbnail = trpc($page).catalogueData.generateThumbnailLink.createQuery(
+		{
+			documentId: logo.documentId,
+			resolution: 'small'
+		},
+		{
+			enabled: logo.status !== 'missing'
+		}
+	);
 	export { className as class };
 </script>
 
-<section class={cn("py-2 space-y-2", className)}>
-	<div
-		class="aspect-video bg-gray-100 dark:bg-gray-700 rounded-md flex items-center justify-center overflow-hidden">
-		{#if logo.mimeType.startsWith("image/")}
-			<img src={logo.url || "/placeholder.svg"} alt={logo.title} class="object-contain w-full h-full" />
-		{:else}
-			<PdfFilePreview url={`${logo.url}#toolbar=0&navpanes=0&scrollbar=0`} />
-		{/if}
-	</div>
-	<h3 title={logo.title} class="font-semibold text-lg truncate">{logo.title}</h3>
-	<div class="@container">
-		<StatusBadge variant={logo.status} label={$_("status-text."+logo.status)} />
+<section class={cn('py-2 space-y-2', className)}>
+	{#if Number($thumbnail.data?.length) > 0}
+		<div
+			class="aspect-video bg-gray-100 dark:bg-gray-700 rounded-md flex items-center justify-center overflow-hidden"
+		>
+			<img
+				src={$thumbnail.data || '/placeholder.svg'}
+				alt={logo.status}
+				class="object-contain w-full h-full"
+			/>
+		</div>
+	{/if}
+
+	<div class="w-full @container">
+		<StatusBadge variant={logo.status} label={$_('status-text.' + logo.status)} />
 	</div>
 </section>

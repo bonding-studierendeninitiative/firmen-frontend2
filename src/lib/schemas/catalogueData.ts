@@ -21,7 +21,7 @@ export type ExportCatalogueDataRequest = typeof ExportCatalogueDataRequest;
 
 export const UploadCatalogueDataRequest = object({
 	documentType: union([literal('advert'), literal('logo')]),
-	orgSlug: pipe(string(), nonEmpty()),
+	orgId: pipe(string(), nonEmpty()),
 	file: file()
 });
 

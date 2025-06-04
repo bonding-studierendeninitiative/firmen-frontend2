@@ -18,8 +18,8 @@
 
 <Dialog.Root bind:open>
 	<Dialog.Content>
-		<Dialog.Title>Delete Event Registration</Dialog.Title>
-		<p>Are you sure you want to delete this event registration?</p>
+		<Dialog.Title>$_('admin-pages.events.event-registrations.delete-dialog.title')</Dialog.Title>
+		<p>$_('admin-pages.events.event-registrations.delete-dialog.description')</p>
 		<Dialog.Footer>
 			<Button
 				on:click={() => {
@@ -31,7 +31,7 @@
 							onError: (error) => toast.error(error.message),
 							onSuccess: async () => {
 								open = false;
-								toast.success('Event registration deleted');
+								toast.success($_('admin-pages.events.event-registrations.delete-dialog.success'));
 								await utils.admin.events.getEventRegistrations.invalidate({
 									eventId: $page.params.id
 								});

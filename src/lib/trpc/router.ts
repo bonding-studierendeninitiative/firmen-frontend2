@@ -9,9 +9,7 @@ import { eventRouter } from '@/trpc/routers/events';
 import { billingAddressTemplateRouter } from './routers/billingAddressTemplates';
 import { userRouter } from './routers/user';
 import { portraitTemplatesRouter } from './routers/portraitTemplates';
-import { advertisementsRouter } from './routers/advertisements';
 import { organizationsRouter } from './routers/organizations';
-import { logosRouter } from './routers/logos';
 
 
 export const mainRouter = router({
@@ -23,8 +21,6 @@ export const mainRouter = router({
 	billingAddressTemplates: billingAddressTemplateRouter,
 	user: userRouter,
 	portraitTemplates: portraitTemplatesRouter,
-	advertisements: advertisementsRouter,
-	logos: logosRouter,
 	organizations: organizationsRouter
 });
 

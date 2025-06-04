@@ -251,7 +251,7 @@
 		}),
 		table.column({
 			accessor: ({ addonPackages }) => addonPackages.map((addonPackage) => addonPackage.title),
-			header: 'Addon Packages',
+			header: $_('admin-pages.events.event-registrations.data-table.headers.addon-packages'),
 			id: 'addon-packages',
 			plugins: {
 				filter: {
@@ -272,7 +272,7 @@
 		table.column({
 			accessor: ({ addonPackages }) =>
 				addonPackages?.flatMap((addonPackage) => addonPackage.addons?.map((addon) => addon.title)),
-			header: 'Addons',
+			header: $_('admin-pages.events.event-registrations.data-table.headers.addons'),
 			id: 'addons',
 			plugins: {
 				filter: {

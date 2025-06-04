@@ -63,18 +63,18 @@ export const PortraitTemplateInput = v.object({
 
 export type StatusType = v.InferOutput<typeof StatusType>;
 export const StatusType = v.object({
-  reasonPhrase: v.optional(v.string()),
   statusCode: v.optional(v.number()),
+  reasonPhrase: v.optional(v.string()),
 });
 
 export type Problem = v.InferOutput<typeof Problem>;
 export const Problem = v.object({
-  parameters: v.optional(v.record(v.string(), v.unknown())),
   instance: v.optional(v.string()),
   type: v.optional(v.string()),
+  parameters: v.optional(v.record(v.string(), v.unknown())),
+  detail: v.optional(v.string()),
   title: v.optional(v.string()),
   status: v.optional(StatusType),
-  detail: v.optional(v.string()),
 });
 
 export type BillingAddressTemplateResponse = v.InferOutput<typeof BillingAddressTemplateResponse>;
@@ -101,8 +101,12 @@ export const EditBillingAddressTemplateInput = v.object({
   organizationName: v.optional(v.string()),
 });
 
-export type UploadUrlRequest = v.InferOutput<typeof UploadUrlRequest>;
-export const UploadUrlRequest = v.object({
+export type CreateDocumentRequest = v.InferOutput<typeof CreateDocumentRequest>;
+export const CreateDocumentRequest = v.object({
+  organizationId: v.optional(v.string()),
+  originalFilename: v.optional(v.string()),
+  mimeType: v.optional(v.string()),
+  type: v.optional(v.union([v.literal("portrait"), v.literal("logo"), v.literal("advert")])),
   title: v.optional(v.string()),
 });
 
@@ -198,38 +202,89 @@ export const GetPortraitTemplatesByOrganizationOutput = v.object({
   pageSize: v.optional(v.number()),
 });
 
-export type DocumentFeedbackOutput = v.InferOutput<typeof DocumentFeedbackOutput>;
-export const DocumentFeedbackOutput = v.object({
-  feedbackType: v.optional(v.string()),
-  message: v.optional(v.string()),
-});
-
-export type LogoOutput = v.InferOutput<typeof LogoOutput>;
-export const LogoOutput = v.object({
-  id: v.optional(v.string()),
-  title: v.optional(v.string()),
-  status: v.optional(
+export type SimpleDocumentVersionOutput = v.InferOutput<typeof SimpleDocumentVersionOutput>;
+export const SimpleDocumentVersionOutput = v.object({
+  versionId: v.optional(v.string()),
+  size: v.optional(v.number()),
+  contentType: v.optional(v.string()),
+  isLatest: v.optional(v.boolean()),
+  uploadStatus: v.optional(
     v.union([
-      v.literal("missing"),
-      v.literal("uploaded"),
-      v.literal("changes-requested"),
-      v.literal("REJECTED"),
-      v.literal("confirmed"),
+      v.literal("PENDING_METADATA"),
+      v.literal("PENDING_UPLOAD"),
+      v.literal("UPLOADED"),
+      v.literal("PROCESSING_DERIVATIVES"),
+      v.literal("COMPLETED"),
+      v.literal("ERROR_UPLOAD"),
+      v.literal("ERROR_PROCESSING"),
+      v.literal("ARCHIVED"),
+      v.literal("DELETED"),
     ]),
   ),
-  mimeType: v.optional(v.string()),
-  url: v.optional(v.string()),
+  reviewStatus: v.optional(
+    v.union([v.literal("unreviewed"), v.literal("changes-requested"), v.literal("rejected"), v.literal("confirmed")]),
+  ),
   createdAt: v.optional(v.string()),
   modifiedAt: v.optional(v.string()),
-  createdBy: v.optional(v.string()),
-  modifiedBy: v.optional(v.string()),
-  size: v.optional(v.number()),
-  history: v.optional(v.array(DocumentFeedbackOutput)),
 });
 
-export type GetAllLogosForOrganizationOutput = v.InferOutput<typeof GetAllLogosForOrganizationOutput>;
-export const GetAllLogosForOrganizationOutput = v.object({
-  logos: v.optional(v.array(LogoOutput)),
+export type DetailedDocumentOutput = v.InferOutput<typeof DetailedDocumentOutput>;
+export const DetailedDocumentOutput = v.object({
+  id: v.optional(v.string()),
+  title: v.optional(v.string()),
+  documentType: v.optional(v.union([v.literal("portrait"), v.literal("logo"), v.literal("advert")])),
+  activeVersion: v.optional(SimpleDocumentVersionOutput),
+  versions: v.optional(v.array(SimpleDocumentVersionOutput)),
+  organizationId: v.optional(v.string()),
+});
+
+export type SimpleDocumentOutput = v.InferOutput<typeof SimpleDocumentOutput>;
+export const SimpleDocumentOutput = v.object({
+  id: v.optional(v.string()),
+  title: v.optional(v.string()),
+  documentType: v.optional(v.union([v.literal("portrait"), v.literal("logo"), v.literal("advert")])),
+  activeVersion: v.optional(SimpleDocumentVersionOutput),
+  organizationId: v.optional(v.string()),
+});
+
+export type DetailedDocumentVersionOutput = v.InferOutput<typeof DetailedDocumentVersionOutput>;
+export const DetailedDocumentVersionOutput = v.object({
+  versionId: v.optional(v.string()),
+  size: v.optional(v.number()),
+  contentType: v.optional(v.string()),
+  isLatest: v.optional(v.boolean()),
+  uploadStatus: v.optional(
+    v.union([
+      v.literal("PENDING_METADATA"),
+      v.literal("PENDING_UPLOAD"),
+      v.literal("UPLOADED"),
+      v.literal("PROCESSING_DERIVATIVES"),
+      v.literal("COMPLETED"),
+      v.literal("ERROR_UPLOAD"),
+      v.literal("ERROR_PROCESSING"),
+      v.literal("ARCHIVED"),
+      v.literal("DELETED"),
+    ]),
+  ),
+  reviewStatus: v.optional(
+    v.union([v.literal("unreviewed"), v.literal("changes-requested"), v.literal("rejected"), v.literal("confirmed")]),
+  ),
+  document: v.optional(SimpleDocumentOutput),
+  createdAt: v.optional(v.string()),
+  modifiedAt: v.optional(v.string()),
+});
+
+export type UnknownContentTypeDocumentVersionOutput = v.InferOutput<typeof UnknownContentTypeDocumentVersionOutput>;
+export const UnknownContentTypeDocumentVersionOutput = v.object({
+  versionId: v.optional(v.string()),
+  lastModified: v.optional(v.string()),
+  size: v.optional(v.number()),
+  isLatest: v.optional(v.boolean()),
+});
+
+export type GetAllDocumentsForOrganizationOutput = v.InferOutput<typeof GetAllDocumentsForOrganizationOutput>;
+export const GetAllDocumentsForOrganizationOutput = v.object({
+  documents: v.optional(v.array(DetailedDocumentOutput)),
   pageNumber: v.optional(v.number()),
   pageSize: v.optional(v.number()),
   totalPages: v.optional(v.number()),
@@ -239,39 +294,6 @@ export const GetAllLogosForOrganizationOutput = v.object({
 export type GetBillingAddressTemplatesOutput = v.InferOutput<typeof GetBillingAddressTemplatesOutput>;
 export const GetBillingAddressTemplatesOutput = v.object({
   billingAddressTemplates: v.optional(v.array(BillingAddressTemplateResponse)),
-  totalPages: v.optional(v.number()),
-  totalElements: v.optional(v.number()),
-});
-
-export type AdvertisementOutput = v.InferOutput<typeof AdvertisementOutput>;
-export const AdvertisementOutput = v.object({
-  id: v.optional(v.string()),
-  organizationId: v.optional(v.string()),
-  title: v.optional(v.string()),
-  status: v.optional(
-    v.union([
-      v.literal("missing"),
-      v.literal("uploaded"),
-      v.literal("changes-requested"),
-      v.literal("rejected"),
-      v.literal("confirmed"),
-    ]),
-  ),
-  url: v.optional(v.string()),
-  createdAt: v.optional(v.string()),
-  modifiedAt: v.optional(v.string()),
-  createdBy: v.optional(v.string()),
-  modifiedBy: v.optional(v.string()),
-  mimeType: v.optional(v.string()),
-  size: v.optional(v.number()),
-  history: v.optional(v.array(DocumentFeedbackOutput)),
-});
-
-export type GetAllAdvertisementsForOrganizationOutput = v.InferOutput<typeof GetAllAdvertisementsForOrganizationOutput>;
-export const GetAllAdvertisementsForOrganizationOutput = v.object({
-  advertisements: v.optional(v.array(AdvertisementOutput)),
-  pageNumber: v.optional(v.number()),
-  pageSize: v.optional(v.number()),
   totalPages: v.optional(v.number()),
   totalElements: v.optional(v.number()),
 });
@@ -305,6 +327,23 @@ export const DetailedEventResponse = v.object({
   additionalLink: v.optional(v.string()),
   createdAt: v.optional(v.string()),
   modifiedAt: v.optional(v.string()),
+});
+
+export type AdvertisementOutput = v.InferOutput<typeof AdvertisementOutput>;
+export const AdvertisementOutput = v.object({
+  documentId: v.optional(v.string()),
+  versionId: v.optional(v.string()),
+  status: v.optional(
+    v.union([
+      v.literal("missing"),
+      v.literal("uploaded"),
+      v.literal("generating-thumbnails"),
+      v.literal("thumbnails-ready"),
+      v.literal("changes-requested"),
+      v.literal("rejected"),
+      v.literal("confirmed"),
+    ]),
+  ),
 });
 
 export type EventRegistrationAddonOutput = v.InferOutput<typeof EventRegistrationAddonOutput>;
@@ -345,6 +384,23 @@ export const SimpleEventResponse = v.object({
   dateTo: v.optional(v.string()),
 });
 
+export type LogoOutput = v.InferOutput<typeof LogoOutput>;
+export const LogoOutput = v.object({
+  documentId: v.optional(v.string()),
+  versionId: v.optional(v.string()),
+  status: v.optional(
+    v.union([
+      v.literal("missing"),
+      v.literal("uploaded"),
+      v.literal("generating-thumbnails"),
+      v.literal("thumbnails-ready"),
+      v.literal("changes-requested"),
+      v.literal("rejected"),
+      v.literal("confirmed"),
+    ]),
+  ),
+});
+
 export type GetEventRegistrationForOrganizationOutput = v.InferOutput<typeof GetEventRegistrationForOrganizationOutput>;
 export const GetEventRegistrationForOrganizationOutput = v.object({
   id: v.optional(v.string()),
@@ -357,6 +413,8 @@ export const GetEventRegistrationForOrganizationOutput = v.object({
     v.union([
       v.literal("missing"),
       v.literal("uploaded"),
+      v.literal("generating-thumbnails"),
+      v.literal("thumbnails-ready"),
       v.literal("changes-requested"),
       v.literal("rejected"),
       v.literal("confirmed"),
@@ -376,8 +434,10 @@ export const GetEventRegistrationForOrganizationOutput = v.object({
     v.union([
       v.literal("missing"),
       v.literal("uploaded"),
+      v.literal("generating-thumbnails"),
+      v.literal("thumbnails-ready"),
       v.literal("changes-requested"),
-      v.literal("REJECTED"),
+      v.literal("rejected"),
       v.literal("confirmed"),
     ]),
   ),
@@ -484,34 +544,6 @@ export const GetEventRegistrationForEventOutput = v.object({
   status: v.optional(
     v.union([v.literal("created"), v.literal("rejected"), v.literal("confirmed"), v.literal("withdrawn")]),
   ),
-  advertisementStatus: v.optional(
-    v.union([
-      v.literal("missing"),
-      v.literal("uploaded"),
-      v.literal("changes-requested"),
-      v.literal("rejected"),
-      v.literal("confirmed"),
-    ]),
-  ),
-  portraitStatus: v.optional(
-    v.union([
-      v.literal("missing"),
-      v.literal("draft"),
-      v.literal("submitted"),
-      v.literal("changes-requested"),
-      v.literal("rejected"),
-      v.literal("confirmed"),
-    ]),
-  ),
-  logoStatus: v.optional(
-    v.union([
-      v.literal("missing"),
-      v.literal("uploaded"),
-      v.literal("changes-requested"),
-      v.literal("REJECTED"),
-      v.literal("confirmed"),
-    ]),
-  ),
   organizationComment: v.optional(v.string()),
   participationNote: v.optional(v.string()),
   purchasedPackage: v.optional(PurchasedPackageOutput),
@@ -535,6 +567,8 @@ export const GetEventRegistrationForUserOutput = v.object({
     v.union([
       v.literal("missing"),
       v.literal("uploaded"),
+      v.literal("generating-thumbnails"),
+      v.literal("thumbnails-ready"),
       v.literal("changes-requested"),
       v.literal("rejected"),
       v.literal("confirmed"),
@@ -554,8 +588,10 @@ export const GetEventRegistrationForUserOutput = v.object({
     v.union([
       v.literal("missing"),
       v.literal("uploaded"),
+      v.literal("generating-thumbnails"),
+      v.literal("thumbnails-ready"),
       v.literal("changes-requested"),
-      v.literal("REJECTED"),
+      v.literal("rejected"),
       v.literal("confirmed"),
     ]),
   ),
@@ -696,16 +732,31 @@ export const post_SaveOrUpdatePortrait_1 = v.object({
   response: DetailedPortraitTemplateResponse,
 });
 
+export type post_RestoreVersion = v.InferOutput<typeof post_RestoreVersion>;
+export const post_RestoreVersion = v.object({
+  method: v.literal("POST"),
+  path: v.literal("/api/v2/organization/{organizationId}/catalogue-data/{assetId}/versions/{versionId}/restore"),
+  requestFormat: v.literal("json"),
+  parameters: v.object({
+    path: v.object({
+      assetId: v.string(),
+      organizationId: v.string(),
+      versionId: v.string(),
+    }),
+  }),
+  response: v.unknown(),
+});
+
 export type post_RequestUploadUrl = v.InferOutput<typeof post_RequestUploadUrl>;
 export const post_RequestUploadUrl = v.object({
   method: v.literal("POST"),
-  path: v.literal("/api/v2/organization/{organizationId}/logo/request-upload-url"),
+  path: v.literal("/api/v2/organization/{organizationId}/catalogue-data/request-upload-url"),
   requestFormat: v.literal("json"),
   parameters: v.object({
     path: v.object({
       organizationId: v.string(),
     }),
-    body: UploadUrlRequest,
+    body: CreateDocumentRequest,
   }),
   response: UploadUrlResponse,
 });
@@ -743,20 +794,6 @@ export const post_AddBillingAddressTemplate = v.object({
     body: AddBillingAddressTemplateInput,
   }),
   response: BillingAddressTemplateResponse,
-});
-
-export type post_RequestUploadUrl_1 = v.InferOutput<typeof post_RequestUploadUrl_1>;
-export const post_RequestUploadUrl_1 = v.object({
-  method: v.literal("POST"),
-  path: v.literal("/api/v2/organization/{organizationId}/advertisement/request-upload-url"),
-  requestFormat: v.literal("json"),
-  parameters: v.object({
-    path: v.object({
-      organizationId: v.string(),
-    }),
-    body: UploadUrlRequest,
-  }),
-  response: UploadUrlResponse,
 });
 
 export type get_GetEventRegistrationsForOrganization = v.InferOutput<typeof get_GetEventRegistrationsForOrganization>;
@@ -817,12 +854,13 @@ export const post_SubmitPortrait = v.object({
 export type post_PickLogoForEventRegistration = v.InferOutput<typeof post_PickLogoForEventRegistration>;
 export const post_PickLogoForEventRegistration = v.object({
   method: v.literal("POST"),
-  path: v.literal("/api/v2/event-registration/{eventRegistrationId}/pick-logo/{logoId}"),
+  path: v.literal("/api/v2/event-registration/{eventRegistrationId}/pick-logo/{documentId}/{versionId}"),
   requestFormat: v.literal("json"),
   parameters: v.object({
     path: v.object({
       eventRegistrationId: v.string(),
-      logoId: v.string(),
+      documentId: v.string(),
+      versionId: v.string(),
     }),
   }),
   response: v.unknown(),
@@ -858,43 +896,99 @@ export const post_ChangeContactPeople = v.object({
   response: v.unknown(),
 });
 
-export type get_GetAllLogosForOrganization = v.InferOutput<typeof get_GetAllLogosForOrganization>;
-export const get_GetAllLogosForOrganization = v.object({
+export type get_GetDocument = v.InferOutput<typeof get_GetDocument>;
+export const get_GetDocument = v.object({
   method: v.literal("GET"),
-  path: v.literal("/api/v2/organization/{organizationId}/logo"),
+  path: v.literal("/api/v2/organization/{organizationId}/catalogue-data/{documentId}"),
   requestFormat: v.literal("json"),
   parameters: v.object({
-    query: v.object({
-      page: v.optional(v.number()),
-      limit: v.optional(v.number()),
-      sortBy: v.optional(v.string()),
-      sortDirection: v.optional(v.string()),
-    }),
     path: v.object({
+      documentId: v.string(),
       organizationId: v.string(),
     }),
   }),
-  response: GetAllLogosForOrganizationOutput,
+  response: DetailedDocumentOutput,
+});
+
+export type get_GetDocumentVersion = v.InferOutput<typeof get_GetDocumentVersion>;
+export const get_GetDocumentVersion = v.object({
+  method: v.literal("GET"),
+  path: v.literal("/api/v2/organization/{organizationId}/catalogue-data/{documentId}/versions/{versionId}"),
+  requestFormat: v.literal("json"),
+  parameters: v.object({
+    path: v.object({
+      documentId: v.string(),
+      versionId: v.string(),
+      organizationId: v.string(),
+    }),
+  }),
+  response: DetailedDocumentVersionOutput,
+});
+
+export type get_GetAdvertisementVersions = v.InferOutput<typeof get_GetAdvertisementVersions>;
+export const get_GetAdvertisementVersions = v.object({
+  method: v.literal("GET"),
+  path: v.literal("/api/v2/organization/{organizationId}/catalogue-data/{assetId}/versions"),
+  requestFormat: v.literal("json"),
+  parameters: v.object({
+    path: v.object({
+      assetId: v.string(),
+      organizationId: v.string(),
+    }),
+  }),
+  response: v.array(UnknownContentTypeDocumentVersionOutput),
+});
+
+export type get_GetVersionDownloadUrl = v.InferOutput<typeof get_GetVersionDownloadUrl>;
+export const get_GetVersionDownloadUrl = v.object({
+  method: v.literal("GET"),
+  path: v.literal("/api/v2/organization/{organizationId}/catalogue-data/{assetId}/versions/{versionId}/download"),
+  requestFormat: v.literal("json"),
+  parameters: v.object({
+    path: v.object({
+      assetId: v.string(),
+      organizationId: v.string(),
+      versionId: v.string(),
+    }),
+  }),
+  response: v.unknown(),
+});
+
+export type get_GetThumbnailUrl = v.InferOutput<typeof get_GetThumbnailUrl>;
+export const get_GetThumbnailUrl = v.object({
+  method: v.literal("GET"),
+  path: v.literal("/api/v2/organization/{organizationId}/catalogue-data/{assetId}/thumbnail"),
+  requestFormat: v.literal("json"),
+  parameters: v.object({
+    query: v.object({
+      resolution: v.optional(v.string()),
+    }),
+    path: v.object({
+      assetId: v.string(),
+      organizationId: v.string(),
+    }),
+  }),
+  response: v.unknown(),
 });
 
 export type get_GetDownloadUrl = v.InferOutput<typeof get_GetDownloadUrl>;
 export const get_GetDownloadUrl = v.object({
   method: v.literal("GET"),
-  path: v.literal("/api/v2/organization/{organizationId}/logo/{logoId}/download"),
+  path: v.literal("/api/v2/organization/{organizationId}/catalogue-data/{assetId}/download"),
   requestFormat: v.literal("json"),
   parameters: v.object({
     path: v.object({
-      logoId: v.string(),
+      assetId: v.string(),
       organizationId: v.string(),
     }),
   }),
   response: v.unknown(),
 });
 
-export type get_GetAllAdvertisementsForOrganization = v.InferOutput<typeof get_GetAllAdvertisementsForOrganization>;
-export const get_GetAllAdvertisementsForOrganization = v.object({
+export type get_GetAllDocumentsForOrganization = v.InferOutput<typeof get_GetAllDocumentsForOrganization>;
+export const get_GetAllDocumentsForOrganization = v.object({
   method: v.literal("GET"),
-  path: v.literal("/api/v2/organization/{organizationId}/advertisement"),
+  path: v.literal("/api/v2/organization/{organizationId}/catalogue-data/by-document-type/{documentType}"),
   requestFormat: v.literal("json"),
   parameters: v.object({
     query: v.object({
@@ -905,23 +999,10 @@ export const get_GetAllAdvertisementsForOrganization = v.object({
     }),
     path: v.object({
       organizationId: v.string(),
+      documentType: v.string(),
     }),
   }),
-  response: GetAllAdvertisementsForOrganizationOutput,
-});
-
-export type get_GetDownloadUrl_1 = v.InferOutput<typeof get_GetDownloadUrl_1>;
-export const get_GetDownloadUrl_1 = v.object({
-  method: v.literal("GET"),
-  path: v.literal("/api/v2/organization/{organizationId}/advertisement/{advertisementId}/download"),
-  requestFormat: v.literal("json"),
-  parameters: v.object({
-    path: v.object({
-      advertisementId: v.string(),
-      organizationId: v.string(),
-    }),
-  }),
-  response: v.unknown(),
+  response: GetAllDocumentsForOrganizationOutput,
 });
 
 export type get_LoadEventById = v.InferOutput<typeof get_LoadEventById>;
@@ -1031,26 +1112,12 @@ export const get_GetEventRegistrationsForContactPerson = v.object({
 export type delete_DeleteAdvertisement = v.InferOutput<typeof delete_DeleteAdvertisement>;
 export const delete_DeleteAdvertisement = v.object({
   method: v.literal("DELETE"),
-  path: v.literal("/api/v2/organization/{organizationId}/logo/{logoId}"),
+  path: v.literal("/api/v2/organization/{organizationId}/catalogue-data/{assetId}"),
   requestFormat: v.literal("json"),
   parameters: v.object({
     path: v.object({
       organizationId: v.string(),
-      logoId: v.string(),
-    }),
-  }),
-  response: v.unknown(),
-});
-
-export type delete_DeleteAdvertisement_1 = v.InferOutput<typeof delete_DeleteAdvertisement_1>;
-export const delete_DeleteAdvertisement_1 = v.object({
-  method: v.literal("DELETE"),
-  path: v.literal("/api/v2/organization/{organizationId}/advertisement/{advertisementId}"),
-  requestFormat: v.literal("json"),
-  parameters: v.object({
-    path: v.object({
-      organizationId: v.string(),
-      advertisementId: v.string(),
+      assetId: v.string(),
     }),
   }),
   response: v.unknown(),
@@ -1068,10 +1135,15 @@ export const EndpointByMethod = {
     "/api/v2/portrait-template": get_GetPortraitTemplatesForOrganization,
     "/api/v2/organization/{organizationId}/billing-address-template": get_GetBillingAddressTemplatesByOrganization,
     "/api/v2/event-registration": get_GetEventRegistrationsForOrganization,
-    "/api/v2/organization/{organizationId}/logo": get_GetAllLogosForOrganization,
-    "/api/v2/organization/{organizationId}/logo/{logoId}/download": get_GetDownloadUrl,
-    "/api/v2/organization/{organizationId}/advertisement": get_GetAllAdvertisementsForOrganization,
-    "/api/v2/organization/{organizationId}/advertisement/{advertisementId}/download": get_GetDownloadUrl_1,
+    "/api/v2/organization/{organizationId}/catalogue-data/{documentId}": get_GetDocument,
+    "/api/v2/organization/{organizationId}/catalogue-data/{documentId}/versions/{versionId}": get_GetDocumentVersion,
+    "/api/v2/organization/{organizationId}/catalogue-data/{assetId}/versions": get_GetAdvertisementVersions,
+    "/api/v2/organization/{organizationId}/catalogue-data/{assetId}/versions/{versionId}/download":
+      get_GetVersionDownloadUrl,
+    "/api/v2/organization/{organizationId}/catalogue-data/{assetId}/thumbnail": get_GetThumbnailUrl,
+    "/api/v2/organization/{organizationId}/catalogue-data/{assetId}/download": get_GetDownloadUrl,
+    "/api/v2/organization/{organizationId}/catalogue-data/by-document-type/{documentType}":
+      get_GetAllDocumentsForOrganization,
     "/api/v2/event/{eventId}": get_LoadEventById,
     "/api/v2/event/{eventId}/is-registered": get_LoadUnregisteredEvents,
     "/api/v2/event/{eventId}/active-buy-option": get_ActiveEventBuyOption,
@@ -1089,18 +1161,18 @@ export const EndpointByMethod = {
     "/api/v2/portrait-template/{portraitTemplateId}": delete_DeletePortraitTemplate,
     "/api/v2/organization/{organizationId}/billing-address-template/{billingAddressTemplateId}":
       delete_DeleteBillingAddressTemplate,
-    "/api/v2/organization/{organizationId}/logo/{logoId}": delete_DeleteAdvertisement,
-    "/api/v2/organization/{organizationId}/advertisement/{advertisementId}": delete_DeleteAdvertisement_1,
+    "/api/v2/organization/{organizationId}/catalogue-data/{assetId}": delete_DeleteAdvertisement,
   },
   post: {
     "/api/v2/portrait-template": post_SaveOrUpdatePortrait_1,
-    "/api/v2/organization/{organizationId}/logo/request-upload-url": post_RequestUploadUrl,
+    "/api/v2/organization/{organizationId}/catalogue-data/{assetId}/versions/{versionId}/restore": post_RestoreVersion,
+    "/api/v2/organization/{organizationId}/catalogue-data/request-upload-url": post_RequestUploadUrl,
     "/api/v2/organization/{organizationId}/billing-address-template": post_AddBillingAddressTemplate,
-    "/api/v2/organization/{organizationId}/advertisement/request-upload-url": post_RequestUploadUrl_1,
     "/api/v2/event-registration": post_RegisterOrganizationToEvent,
     "/api/v2/event-registration/{eventRegistrationId}/withdraw": post_Withdraw,
     "/api/v2/event-registration/{eventRegistrationId}/portrait/submit": post_SubmitPortrait,
-    "/api/v2/event-registration/{eventRegistrationId}/pick-logo/{logoId}": post_PickLogoForEventRegistration,
+    "/api/v2/event-registration/{eventRegistrationId}/pick-logo/{documentId}/{versionId}":
+      post_PickLogoForEventRegistration,
     "/api/v2/event-registration/{eventRegistrationId}/pick-advertisement/{advertisementId}":
       post_PickAdvertisementForEventRegistration,
     "/api/v2/event-registration/{eventRegistrationId}/change-contact-people": post_ChangeContactPeople,

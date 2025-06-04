@@ -486,7 +486,8 @@
     "missing": "Fehlt",
     "uploaded": "Hochgeladen",
     "changes-requested": "Änderungen angefragt",
-    "withdrawn": "Zurückgezogen"
+    "withdrawn": "Zurückgezogen",
+    "unreviewed": "Ungeprüft"
   },
   "user-pages": {
     "settings": {
@@ -936,7 +937,8 @@
             "logo-status": "Logo",
             "advert-status": "Image-Anzeige",
             "status": "Status",
-            "last-modified": "Zuletzt bearbeitet"
+            "last-modified": "Zuletzt bearbeitet",
+            "addon-packages": "Zusatzleistungs-Pakete"
           },
           "actions": {
             "review-catalogue-data": "Katalogdaten überprüfen",
@@ -971,7 +973,18 @@
         },
         "purchased-package": "Gebuchtes Paket",
         "purchased-addons": "Gebuchte Zusatzleistungen",
-        "feedback-type": "Art des Feedbacks"
+        "feedback-type": "Art des Feedbacks",
+        "delete-dialog": {
+          "title": "Veranstaltungsanmeldung löschen",
+          "description": "Bist du sicher, dass du diese Veranstaltungsanmeldung löschen möchtest?",
+          "success": "Veranstaltungsanmeldung gelöscht"
+        },
+        "export-catalogue-data": {
+          "title": "Katalogdaten exportieren",
+          "description": "Exporte werden im Hintergrund erstellt und können in den Details der Veranstaltung gefunden werden",
+          "advertisements": "Image-Anzeigen",
+          "logos": "Logos"
+        }
       },
       "feedback": {
         "placeholders": {

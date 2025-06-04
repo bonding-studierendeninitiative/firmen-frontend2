@@ -7,9 +7,12 @@ import { createCaller } from '@/trpc/router';
 export const load: PageServerLoad = async (event) => {
 	const api = await createCaller(event);
 
+	event.depends("orgAdverts")
+
 	return {
-		advertisementData: api.catalogueData.advertisements.getAll({
+		advertisementData: api.catalogueData.getAll({
 			limit: '10',
+			documentType: "advert",
 			cursor: '0'
 		})
 	};
@@ -26,8 +29,9 @@ export const actions = {
 
 		const api = await createCaller(event)
 
-		await api.advertisements.upload({
-			...form.data
+		await api.catalogueData.upload({
+			...form.data,
+			documentType: "advert"
 		});
 
 		return withFiles({ form });

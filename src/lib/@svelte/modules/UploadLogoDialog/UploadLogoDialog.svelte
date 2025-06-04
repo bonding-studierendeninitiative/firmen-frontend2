@@ -24,7 +24,7 @@
 			if (result.type === 'success') {
 				open = false;
 				toast.success('Logo uploaded successfully');
-				await utils.catalogueData.logos.uploadForm.invalidate()
+				await utils.catalogueData.uploadForm.invalidate()
 			} else {
 				toast.error(`Error: ${result.status}`);
 			}
