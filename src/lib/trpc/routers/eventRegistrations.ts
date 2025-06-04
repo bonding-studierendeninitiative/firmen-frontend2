@@ -53,7 +53,7 @@ export const eventRegistrationsRouter = router({
 			});
 			const result = safeParse(GetEventRegistrationsForOrganizationOutput, response);
 			if (!result.success) {
-				console.error(result.issues)
+				console.error(JSON.stringify(result.issues))
 				return {
 					eventRegistrations: [],
 					totalElements: 0,
