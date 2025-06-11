@@ -3,7 +3,7 @@
 	import type { Readable } from 'svelte/store';
 	import * as Dialog from '@/components/ui/dialog';
 	import * as Tabs from '@/components/ui/tabs';
-	import toast from 'svelte-french-toast';
+	import {toast} from 'svelte-sonner';
 	import { cn } from '@/utils';
 	import { trpc } from '@/trpc/client';
 	import { page } from '$app/stores';

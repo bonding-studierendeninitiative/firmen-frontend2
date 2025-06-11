@@ -1,4 +1,5 @@
 import { authorizedOrgMemberProcedure, router } from '@/trpc/server';
+import { AllEventsOutput } from '@api/client';
 import { object, parse, string, nullish } from 'valibot';
 
 export const eventRouter = router({

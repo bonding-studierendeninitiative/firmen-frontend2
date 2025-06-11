@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import { _ } from '@services';
 	import { PublishedEventsTab } from '@/@svelte/pages';
 	import { LoaderCircle } from 'lucide-svelte';
@@ -34,7 +34,7 @@
 	let isListView = true;
 
 	function resetFiltering() {
-		const params = new URLSearchParams($page.url.searchParams);
+		const params = new URLSearchParams(page.url.searchParams);
 		params.delete('status');
 		params.delete('page');
 		params.delete('sort');
@@ -42,14 +42,14 @@
 	}
 
 	$: {
-		const params = new URLSearchParams($page.url.searchParams);
+		const params = new URLSearchParams(page.url.searchParams);
 		params.delete('status');
 		$eventStatusFilters.forEach(status => params.append('status', status));
 		goto(`?${params}`);
 	}
 
 	onMount(() => {
-		$eventStatusFilters = $page.url.searchParams.getAll('status');
+		$eventStatusFilters = page.url.searchParams.getAll('status');
 	})
 
 </script>
@@ -89,7 +89,7 @@
 					handleBuyOptions={id => goto(`/admin/events/${id}/buy-options/`)}
 				/>
 				<Pagination.Root class="mt-6" onPageChange={async (pageNumber) =>{
-			const params = new URLSearchParams($page.url.searchParams);
+			const params = new URLSearchParams(page.url.searchParams);
 			params.set('page', (pageNumber - 1).toString());
 			await goto(`?${params}`); }
 			} page={events?.page + 1} count={events?.totalElements} perPage={events?.size}

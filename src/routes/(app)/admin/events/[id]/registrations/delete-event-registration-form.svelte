@@ -1,7 +1,7 @@
 <script lang="ts">
 	import * as Dialog from '@/components/ui/dialog';
 	import { Button } from '@/components/ui/button';
-	import { toast } from 'svelte-french-toast';
+	import { toast } from 'svelte-sonner';
 	import { trpc } from '@/trpc/client';
 	import { page } from '$app/stores';
 	import { _ } from '@services';

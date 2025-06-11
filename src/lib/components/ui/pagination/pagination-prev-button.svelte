@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Pagination as PaginationPrimitive } from "bits-ui";
+	import { Pagination as PaginationPrimitive } from "bits-ui-old";
 	import ChevronLeft from "lucide-svelte/icons/chevron-left";
 	import { Button } from "$lib/components/ui/button/index.js";
 	import { cn } from "@/utils";

@@ -6,7 +6,7 @@
 	import { Helper } from 'flowbite-svelte';
 	import { disciplines } from '@constant';
 	import { type Infer, superForm, type SuperValidated } from 'sveltekit-superforms';
-	import { toast } from 'svelte-french-toast';
+	import { toast } from 'svelte-sonner';
 	import { Button } from '@/components/ui/button';
 
 	export let data: SuperValidated<Infer<typeof PortraitCompanyDetailsSchema>>;

@@ -10,7 +10,7 @@
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import { trpc } from '@/trpc/client';
-	import toast from 'svelte-french-toast';
+	import {toast} from 'svelte-sonner';
 
 	interface Props {
 		open?: boolean;

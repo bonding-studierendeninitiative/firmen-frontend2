@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Calendar as CalendarPrimitive } from "bits-ui";
+	import { Calendar as CalendarPrimitive } from "bits-ui-old";
 	import { cn } from "@/utils";
 
 	type $$Props = CalendarPrimitive.HeadCellProps;

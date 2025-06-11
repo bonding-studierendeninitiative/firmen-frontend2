@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Collapsible as CollapsiblePrimitive } from "bits-ui";
+	import { Collapsible as CollapsiblePrimitive } from "bits-ui-old";
 	import { slide } from "svelte/transition";
 
 	type $$Props = CollapsiblePrimitive.ContentProps;

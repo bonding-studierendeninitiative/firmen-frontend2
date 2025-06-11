@@ -1,17 +1,10 @@
 <script lang="ts">
-	import { createTable, Subscribe, Render, createRender } from 'svelte-headless-table';
-	import { _, dayjs, locale } from '@services';
-	import {
-		addColumnFilters,
-		addHiddenColumns,
-		addSelectedRows,
-		addTableFilter
-	} from 'svelte-headless-table/plugins';
+	import { _ } from '@services';
 	import * as Table from '@/components/ui/table';
-	import { derived, get, type Readable } from 'svelte/store';
 	import {
 		Chip,
 		DataTableFacetedFilter,
+		LocalizedDate,
 		PortraitStatusIcon,
 		SearchInput
 	} from '@/@svelte/components';
@@ -22,378 +15,360 @@
 	import CreateEventRegistrationForm from './create-event-registration-form.svelte';
 	import { AdminViewAdvertisementDialog, AdminViewLogoDialog } from '@/@svelte/modules';
 	import type { EventRegistrationsForEventOutput } from '@/trpc/client';
+	import {
+		createColumnHelper,
+		createSvelteTable,
+		getCoreRowModel,
+		getFilteredRowModel,
+		type TableOptions,
+		type ColumnDef
+	} from '@tanstack/svelte-table';
+	import { renderComponent } from '@/@svelte/components/QueryDataTable/render-helpers';
+	import { queryParameters } from 'sveltekit-search-params';
+	import FlexRender from '@/@svelte/components/QueryDataTable/flex-render.svelte';
+	import { Skeleton } from '@/components/ui/skeleton';
 
-	export let data: Readable<EventRegistrationsForEventOutput['eventRegistrations']>;
-	let packages = derived(data, (eventRegistrations) => [
+	let {
+		data,
+		isLoading
+	}: { data: EventRegistrationsForEventOutput['eventRegistrations']; isLoading: boolean } =
+		$props();
+
+	let packages = $derived([
 		...new Set(
-			eventRegistrations
+			data
 				.filter((value) => Boolean(value.purchasedPackage))
 				.map((eventRegistration) => eventRegistration.purchasedPackage?.name)
 		)
 	]);
-	let status = derived(data, (eventRegistrations) => [
-		...new Set(eventRegistrations.map((eventRegistration) => eventRegistration.status))
-	]);
-	let addonPackages = derived(data, (eventRegistrations) => [
+	let status = $derived([...new Set(data.map((eventRegistration) => eventRegistration.status))]);
+	let addonPackages = $derived([
 		...new Set(
-			eventRegistrations.flatMap((eventRegistration) =>
-				eventRegistration.addonPackages?.map((addonPackages) => addonPackages.title ?? "") ?? []
+			data.flatMap(
+				(eventRegistration) =>
+					eventRegistration.addonPackages?.map((addonPackages) => addonPackages.title ?? '') ?? []
 			)
 		)
 	]);
-	let addons = derived(data, (eventRegistrations) => [
+	let addons = $derived([
 		...new Set(
-			eventRegistrations?.flatMap((eventRegistration) =>
-				eventRegistration.addonPackages?.flatMap((addonPackages) =>
-					addonPackages.addons?.map((addon) => addon.title ?? '') ?? []
-				) ?? []
+			data?.flatMap(
+				(eventRegistration) =>
+					eventRegistration.addonPackages?.flatMap(
+						(addonPackages) => addonPackages.addons?.map((addon) => addon.title ?? '') ?? []
+					) ?? []
 			)
 		)
 	]);
 
-	let table = createTable(data, {
-		filter: addTableFilter({
-			fn: ({ value, filterValue }) => value.toLowerCase().includes(filterValue.toLowerCase())
-		}),
-		packageFilter: addColumnFilters(),
-		statusFilter: addColumnFilters(),
-		addonPackageFilter: addColumnFilters(),
-		addonFilter: addColumnFilters(),
-		select: addSelectedRows(),
-		hide: addHiddenColumns({
-			initialHiddenColumnIds: ['addon-packages', 'addons']
-		})
+	let params = queryParameters({
+		sort: false,
+		page: false,
+		limit: false
 	});
 
-	let open = false;
+	type Data = EventRegistrationsForEventOutput['eventRegistrations'][number];
 
-	const counts = derived(data, (eventRegistrations) => {
-		return eventRegistrations.reduce<{
-			package: { [index: string]: number };
-			status: { [index: string]: number };
-			addonPackages: { [index: string]: number };
-			addons: { [index: string]: number };
-		}>(
-			(acc, { purchasedPackage, status, addonPackages }) => {
-				if (purchasedPackage?.name) {
-					acc.package[purchasedPackage?.name] = (acc.package[purchasedPackage?.name] || 0) + 1;
-				}
-				if (status) {
-					acc.status[status] = (acc.status[status] || 0) + 1;
-				}
-				if (addonPackages) {
-					addonPackages
-					.filter((addonPackage) => addonPackage.title)
-					.forEach((addonPackage) => {
-						acc.addonPackages[addonPackage.title] =
-							(acc.addonPackages[addonPackage.title] || 0) + 1;
-						addonPackage.addons.forEach((addon) => {
-							acc.addons[addon.title] = (acc.addons[addon.title] || 0) + 1;
-						});
-					});
-				}
-				return acc;
-			},
-			{
-				package: {},
-				status: {},
-				addonPackages: {},
-				addons: {}
-			}
-		);
-	});
+	let columnHelper = createColumnHelper<Data>();
 
-	const columns = table.createColumns([
-		table.column({
-			accessor: 'id',
-			header: (_, { pluginStates }) => {
-				const { allPageRowsSelected, somePageRowsSelected } = pluginStates.select;
-				const checked = derived([allPageRowsSelected, somePageRowsSelected], ([a, b]) => {
-					return a ? true : b ? 'indeterminate' : false;
-				});
-				return createRender(DataTableCheckbox, {
-					checked
+	let columns: ColumnDef<Data>[] = $derived([
+		columnHelper.accessor('id', {
+			header({ table }) {
+				return renderComponent(DataTableCheckbox, {
+					checked: table.getIsAllPageRowsSelected()
+						? true
+						: table.getIsSomePageRowsSelected()
+							? 'indeterminate'
+							: false,
+					onCheckedChange: () => table.toggleAllPageRowsSelected()
 				});
 			},
-			cell: ({ row }, { pluginStates }) => {
-				const { getRowState } = pluginStates.select;
-				const { isSelected } = getRowState(row);
-
-				return createRender(DataTableCheckbox, {
-					checked: isSelected
+			cell({ row }) {
+				return renderComponent(DataTableCheckbox, {
+					checked: row.getIsSelected(),
+					onCheckedChange: () => row.toggleSelected()
 				});
 			},
-			plugins: {
-				filter: {
-					exclude: true
-				}
+			enableColumnFilter: false,
+			enableGlobalFilter: false
+		}),
+		columnHelper.accessor('organization', {
+			header() {
+				return $_('admin-pages.events.event-registrations.data-table.headers.org');
+			},
+			cell({ getValue }) {
+				return renderComponent(SimpleEventRegistrationOrganization, {
+					organization: getValue()
+				});
 			}
 		}),
-		table.column({
-			accessor: 'organization',
-			header: $_('admin-pages.events.event-registrations.data-table.headers.org'),
-			id: 'organization',
-			cell: ({ value }) => {
-				return createRender(SimpleEventRegistrationOrganization, {
-					organization: value
-				});
-			},
-			plugins: {
-				filter: {
-					getFilterValue: ({ name }) => name
-				}
-			}
-		}),
-		table.column({
-			accessor: ({ purchasedPackage }) =>
+		columnHelper.accessor(
+			({ purchasedPackage }) =>
 				purchasedPackage?.name ??
 				$_('admin-pages.events.event-registrations.data-table.packages.no-package'),
-			header: $_('admin-pages.events.event-registrations.data-table.headers.package'),
-			id: 'package',
-			plugins: {
-				packageFilter: {
-					fn: ({ filterValue, value }) => {
-						if (filterValue.length === 0) return true;
-						if (!Array.isArray(filterValue) || typeof value !== 'string') return true;
-						return filterValue.some((filter) => {
-							return value.includes(filter);
-						});
-					},
-					initialFilterValue: [],
-					render: ({ filterValue }) => {
-						return get(filterValue);
-					}
+			{
+				id: 'package',
+				header: $_('admin-pages.events.event-registrations.data-table.headers.package'),
+				filterFn: (row, id, filterValue: string[]) => {
+					if (filterValue.length === 0) return true;
+					const value = row.getValue(id);
+					return filterValue.includes(value);
 				}
 			}
-		}),
-		table.column({
-			accessor: ({ createdAt, modifiedAt }) => modifiedAt ?? createdAt,
+		),
+		columnHelper.accessor(({ createdAt, modifiedAt }) => modifiedAt ?? createdAt, {
 			header: $_('admin-pages.events.event-registrations.data-table.headers.last-modified'),
-			plugins: {
-				filter: {
-					exclude: true
-				}
-			},
-			cell({ value }) {
-				return dayjs(value, {}, $locale ?? 'de').fromNow();
+			cell({ getValue }) {
+				return renderComponent(LocalizedDate, {
+					date: getValue()
+				});
 			}
 		}),
-		table.column({
-			accessor: ({ status }) => status,
-			header: $_('admin-pages.events.event-registrations.data-table.headers.status'),
+		columnHelper.accessor('status', {
 			id: 'status',
-			cell: ({ value }) => {
-				return createRender(Chip, {
-					status: $_(`common.event-registration-status.${value}`),
-					variant: value
+			header: $_('admin-pages.events.event-registrations.data-table.headers.status'),
+			cell({ getValue }) {
+				return renderComponent(Chip, {
+					status: $_(`common.event-registration-status.${getValue()}`),
+					variant: getValue()
 				});
 			},
-			plugins: {
-				filter: {
-					exclude: true
-				},
-				statusFilter: {
-					fn: ({ filterValue, value }) => {
-						if (filterValue.length === 0) return true;
-						if (!Array.isArray(filterValue) || typeof value !== 'string') return true;
-						return filterValue.some((filter) => {
-							return value.includes(filter);
-						});
-					},
-					initialFilterValue: []
-				}
+			filterFn: (row, id, filterValue: string[]) => {
+				if (filterValue.length === 0) return true;
+				const value = row.getValue(id);
+				return filterValue.includes(value);
 			}
 		}),
-		table.column({
-			accessor: ({ portraitStatus }) => portraitStatus ?? '',
-			cell: ({ value }) => createRender(PortraitStatusIcon, { variant: value }),
+		columnHelper.accessor('portraitStatus', {
 			header: $_('admin-pages.events.event-registrations.data-table.headers.portrait-status'),
-			plugins: {
-				filter: {
-					exclude: true
-				}
+			cell({ getValue }) {
+				return renderComponent(PortraitStatusIcon, { variant: getValue() ?? '' });
 			}
 		}),
-		table.column({
-			accessor: ({ logo }) => logo,
-			cell: ({ value }) => createRender(AdminViewLogoDialog, { logo: value }),
+		columnHelper.accessor('logo', {
 			header: $_('admin-pages.events.event-registrations.data-table.headers.logo-status'),
-			plugins: {
-				filter: {
-					exclude: true
-				}
+			cell({ getValue }) {
+				return renderComponent(AdminViewLogoDialog, { logo: getValue() });
 			}
 		}),
-		table.column({
-			accessor: ({ advertisement }) => advertisement,
-			cell: ({ value }) => createRender(AdminViewAdvertisementDialog, { advertisement: value }),
+		columnHelper.accessor('advertisement', {
 			header: $_('admin-pages.events.event-registrations.data-table.headers.advert-status'),
-			plugins: {
-				filter: {
-					exclude: true
-				}
+			cell({ getValue }) {
+				return renderComponent(AdminViewAdvertisementDialog, { advertisement: getValue() });
 			}
 		}),
-		table.column({
-			accessor: (item) => item,
+		columnHelper.accessor('id', {
+			id: 'actions',
 			header: '',
-			cell: ({ value }) => {
-				return createRender(DataTableActions, {
-					id: value.id,
-					eventRegistration: value
+			cell({ row }) {
+				return renderComponent(DataTableActions, {
+					id: row.original.id,
+					eventRegistration: row.original
 				});
-			},
-			plugins: {
-				filter: {
-					exclude: true
-				}
 			}
 		}),
-		table.column({
-			accessor: ({ addonPackages }) => addonPackages.map((addonPackage) => addonPackage.title),
-			header: $_('admin-pages.events.event-registrations.data-table.headers.addon-packages'),
-			id: 'addon-packages',
-			plugins: {
-				filter: {
-					exclude: true
-				},
-				addonPackageFilter: {
-					fn: ({ filterValue, value }) => {
-						if (filterValue.length === 0) return true;
-						if (!Array.isArray(filterValue) || !Array.isArray(value)) return true;
-						return filterValue.some((filter) => {
-							return value.includes(filter);
-						});
-					},
-					initialFilterValue: []
+		columnHelper.accessor(
+			({ addonPackages }) => addonPackages?.map((addonPackage) => addonPackage.title) ?? [],
+			{
+				id: 'addon-packages',
+				header: $_('admin-pages.events.event-registrations.data-table.headers.addon-packages'),
+				filterFn: (row, id, filterValue: string[]) => {
+					if (filterValue.length === 0) return true;
+					const value = row.getValue(id);
+					return filterValue.some((filter) => value.includes(filter));
 				}
 			}
-		}),
-		table.column({
-			accessor: ({ addonPackages }) =>
-				addonPackages?.flatMap((addonPackage) => addonPackage.addons?.map((addon) => addon.title)),
-			header: $_('admin-pages.events.event-registrations.data-table.headers.addons'),
-			id: 'addons',
-			plugins: {
-				filter: {
-					exclude: true
-				},
-				addonFilter: {
-					fn: ({ filterValue, value }) => {
-						if (filterValue.length === 0) return true;
-						if (!Array.isArray(filterValue) || !Array.isArray(value)) return true;
-						return filterValue.some((filter) => {
-							return value.includes(filter);
-						});
-					},
-					initialFilterValue: []
+		),
+		columnHelper.accessor(
+			({ addonPackages }) =>
+				addonPackages?.flatMap((addonPackage) => addonPackage.addons?.map((addon) => addon.title) ?? []) ?? [],
+			{
+				id: 'addons',
+				header: $_('admin-pages.events.event-registrations.data-table.headers.addons'),
+				filterFn: (row, id, filterValue: string[]) => {
+					if (filterValue.length === 0) return true;
+					const value = row.getValue(id);
+					return filterValue.some((filter) => value.includes(filter));
 				}
 			}
-		})
+		)
 	]);
 
-	const { headerRows, pageRows, tableAttrs, tableBodyAttrs, pluginStates } =
-		table.createViewModel(columns);
+	let rowSelection = $state({})
 
-	let enableExport = pluginStates.select.someRowsSelected;
-	export let { filterValue } = pluginStates.filter;
-	export let { filterValues: packageFilterValues } = pluginStates.packageFilter;
-	export let { filterValues: statusFilterValues } = pluginStates.statusFilter;
-	export let { filterValues: addonPackageFilterValues } = pluginStates.addonPackageFilter;
-	export let { filterValues: addonFilterValues } = pluginStates.addonFilter;
+	let options: TableOptions<Data> = $derived({
+		data,
+		getCoreRowModel: getCoreRowModel(),
+		getFilteredRowModel: getFilteredRowModel(),
+		columns,
+		getRowId: (original) => original.id,
+		state: {
+			columnFilters: [],
+			rowSelection
+		},
+		onRowSelectionChange: (updater) => {
+			if (updater instanceof Function) {
+				rowSelection = updater(rowSelection)
+			} else {
+				rowSelection = updater
+			}
+		},
+		initialState: {
+			columnVisibility: {
+				addons: false,
+				"addon-packages": false
+			}
+		}
+	});
 
-	const selectedEventRegistrationIds = derived(
-		[pluginStates.select.selectedDataIds, pageRows],
-		([selectedDataIds, rows]) =>
-			Object.entries(selectedDataIds).map(([id, selected]) => {
-				const row = rows.find((row) => row.isData() && row.dataId === id);
+	let table = $derived(createSvelteTable(options));
 
-				console.log(row);
-				return row?.original.id;
-			})
+	let open = $state(false);
+
+	const counts = $derived({
+		package: data.reduce((acc, { purchasedPackage }) => {
+			if (purchasedPackage?.name) {
+				acc[purchasedPackage.name] = (acc[purchasedPackage.name] || 0) + 1;
+			}
+			return acc;
+		}, {} as Record<string, number>),
+		status: data.reduce((acc, { status }) => {
+			if (status) {
+				acc[status] = (acc[status] || 0) + 1;
+			}
+			return acc;
+		}, {} as Record<string, number>),
+		addonPackages: data.reduce((acc, { addonPackages }) => {
+			if (addonPackages) {
+				addonPackages
+					.filter((addonPackage) => addonPackage.title)
+					.forEach((addonPackage) => {
+						acc[addonPackage.title] = (acc[addonPackage.title] || 0) + 1;
+					});
+			}
+			return acc;
+		}, {} as Record<string, number>),
+		addons: data.reduce((acc, { addonPackages }) => {
+			if (addonPackages) {
+				addonPackages.forEach((addonPackage) => {
+					addonPackage.addons?.forEach((addon) => {
+						if (addon.title) {
+							acc[addon.title] = (acc[addon.title] || 0) + 1;
+						}
+					});
+				});
+			}
+			return acc;
+		}, {} as Record<string, number>)
+	});
+
+	let enableExport = $derived($table.getIsAllRowsSelected() || $table.getIsSomeRowsSelected());
+	let selectedEventRegistrationIds = $derived(
+		$table.getSelectedRowModel().rows.map((row) => row.original.id)
 	);
-	// export let { hiddenColumnIds } = pluginStates.hide;
 </script>
 
 <section class="flex gap-4 flex-wrap justify-end">
-	<SearchInput placeholder={$_('common.search')} bind:value={$filterValue} />
+	<SearchInput 
+		placeholder={$_('common.search')} 
+		on:input={(e) => $table.setGlobalFilter(e.currentTarget.value)} 
+	/>
 	<div class="flex-grow"></div>
 	<DataTableFacetedFilter
 		title={$_('admin-pages.events.event-registrations.data-table.filters.status')}
-		options={$status.map((status) => ({
-			label: $_("common.event-registration-status."+status),
-			value: status,
-			checked: false
+		options={status.map((status) => ({
+			label: $_('common.event-registration-status.' + status),
+			value: status
 		}))}
-		bind:filterValues={$statusFilterValues.status}
-		counts={$counts?.status}
+		on:filterChange={(e) => {
+			$table.getColumn('status')?.setFilterValue(e.detail);
+		}}
+		counts={counts.status}
 	/>
 	<DataTableFacetedFilter
 		title={$_('admin-pages.events.event-registrations.data-table.filters.package')}
-		options={$packages.map((_package) => ({
+		options={packages.map((_package) => ({
 			label: _package,
-			value: _package,
-			checked: false
+			value: _package
 		}))}
-		bind:filterValues={$packageFilterValues.package}
-		counts={$counts?.package}
+		on:filterChange={(e) => {
+			$table.getColumn('package')?.setFilterValue(e.detail);
+		}}
+		counts={counts.package}
 	/>
 	<DataTableFacetedFilter
-		counts={$counts?.addonPackages}
-		options={$addonPackages.map((addonPackage) => ({
+		counts={counts.addonPackages}
+		options={addonPackages.map((addonPackage) => ({
 			label: addonPackage,
 			value: addonPackage
 		}))}
-		bind:filterValues={$addonPackageFilterValues['addon-packages']}
+		on:filterChange={(e) => {
+			$table.getColumn('addon-packages')?.setFilterValue(e.detail);
+		}}
 		title={$_('admin-pages.events.event-registrations.data-table.filters.addon-packages')}
 	/>
 	<DataTableFacetedFilter
-		options={$addons.map((addon) => ({
+		options={addons.map((addon) => ({
 			label: addon,
 			value: addon
 		}))}
-		bind:filterValues={$addonFilterValues.addons}
+		on:filterChange={(e) => {
+			$table.getColumn('addons')?.setFilterValue(e.detail);
+		}}
 		title={$_('admin-pages.events.event-registrations.data-table.filters.addons')}
-		counts={$counts?.addons}
+		counts={counts.addons}
 	/>
 	<ExportCatalogueDataDialog
-		disabled={!$enableExport}
+		disabled={!enableExport}
 		selectedEventRegistrations={selectedEventRegistrationIds}
 	/>
 	<CreateEventRegistrationForm bind:open />
 </section>
 <section class="mt-10">
 	<div class="rounded-md border">
-		<Table.Root {...$tableAttrs}>
+		<Table.Root>
 			<Table.Header>
-				{#each $headerRows as headerRow}
-					<Subscribe rowAttrs={headerRow.attrs()} let:rowAttrs>
-						<Table.Row {...rowAttrs}>
-							{#each headerRow.cells as cell (cell.id)}
-								<Subscribe attrs={cell.attrs()} let:attrs props={cell.props()}>
-									<Table.Head {...attrs}>
-										<Render of={cell.render()} />
-									</Table.Head>
-								</Subscribe>
-							{/each}
-						</Table.Row>
-					</Subscribe>
+				{#each $table.getHeaderGroups() as headerGroup (headerGroup.id)}
+					<Table.Row>
+						{#each headerGroup.headers as header (header.id)}
+							<Table.Head>
+								{#if !header.isPlaceholder}
+									<FlexRender
+										content={header.column.columnDef.header}
+										context={header.getContext()}
+									/>
+								{/if}
+							</Table.Head>
+						{/each}
+					</Table.Row>
 				{/each}
 			</Table.Header>
-			<Table.Body {...$tableBodyAttrs}>
-				{#each $pageRows as row (row.id)}
-					<Subscribe rowAttrs={row.attrs()} let:rowAttrs>
-						<Table.Row {...rowAttrs}>
-							{#each row.cells as cell (cell.id)}
-								<Subscribe attrs={cell.attrs()} let:attrs>
-									<Table.Cell {...attrs}>
-										<Render of={cell.render()} />
-									</Table.Cell>
-								</Subscribe>
+			<Table.Body>
+				{#if !isLoading}
+					{#each $table.getRowModel().rows as row (row.id)}
+						<Table.Row data-state={row.getIsSelected() && 'selected'}>
+							{#each row.getVisibleCells() as cell (cell.id)}
+								<Table.Cell>
+									<FlexRender content={cell.column.columnDef.cell} context={cell.getContext()} />
+								</Table.Cell>
 							{/each}
 						</Table.Row>
-					</Subscribe>
-				{/each}
+					{:else}
+						<Table.Row>
+							<Table.Cell colspan={columns.length} class="h-24 text-center">No results.</Table.Cell>
+						</Table.Row>
+					{/each}
+				{:else}
+					{#each { length: Number($params.limit) || 10 } as _, i}
+						<Table.Row>
+							{#each columns as column}
+								<Table.Cell>
+									<Skeleton class="w-full min-w-6 h-6" />
+								</Table.Cell>
+							{/each}
+						</Table.Row>
+					{/each}
+				{/if}
 			</Table.Body>
 		</Table.Root>
 	</div>

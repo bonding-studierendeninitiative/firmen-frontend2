@@ -7,7 +7,7 @@
 	import { superForm, type SuperValidated } from 'sveltekit-superforms';
 	import { type CreateOrgInviteRequest, CreateOrgInviteRequestSchema } from '@schema';
 	import { valibot } from 'sveltekit-superforms/adapters';
-	import { toast } from 'svelte-french-toast';
+	import { toast } from 'svelte-sonner';
 	import type { InferOutput } from 'valibot';
 
 	export let inviteMemberDialogOpen = false;

@@ -7,7 +7,7 @@
 	import { Button } from '@/components/ui/button';
 	import { _ } from '@services';
 	import { LoaderCircle } from 'lucide-svelte';
-	import { toast } from 'svelte-french-toast';
+	import { toast } from 'svelte-sonner';
 	import { trpc } from '@/trpc/client';
 	import { cn } from '@/utils';
 

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { RadioGroup as RadioGroupPrimitive } from "bits-ui";
+	import { RadioGroup as RadioGroupPrimitive } from "bits-ui-old";
 	import Circle from "lucide-svelte/icons/circle";
 	import { cn } from "@/utils";
 

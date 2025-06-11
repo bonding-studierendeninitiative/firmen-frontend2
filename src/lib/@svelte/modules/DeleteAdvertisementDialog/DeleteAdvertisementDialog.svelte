@@ -2,7 +2,7 @@
 	import * as Dialog from '@/components/ui/dialog';
 	import { Trash2 } from 'lucide-svelte';
 	import { Button, buttonVariants } from '@/components/ui/button';
-	import { toast } from 'svelte-french-toast';
+	import { toast } from 'svelte-sonner';
 	import { _ } from '@services';
 	import { trpc } from '@/trpc/client';
 	import { page } from '$app/stores';

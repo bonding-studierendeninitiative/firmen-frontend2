@@ -3,7 +3,7 @@
 	import { Control, Description, Field, FieldErrors, Label } from '@/components/ui/form';
 	import { Input } from '@/components/ui/input';
 	import { valibot } from 'sveltekit-superforms/adapters';
-	import { toast } from 'svelte-french-toast';
+	import { toast } from 'svelte-sonner';
 	import { superForm, type SuperValidated } from 'sveltekit-superforms';
 	import type { InferOutput } from 'valibot';
 	import { type CreateOrgRequest, CreateOrgRequestSchema } from '@schema';

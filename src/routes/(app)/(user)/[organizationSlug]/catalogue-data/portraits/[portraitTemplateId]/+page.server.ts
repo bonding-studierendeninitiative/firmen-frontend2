@@ -5,19 +5,10 @@ import { UpdatePortraitTemplateRequestSchema } from '@schema';
 import { createCaller } from '@/trpc/router.js';
 
 export const load = async (event) => {
-
 	const api = await createCaller(event)
 
-	async function loadPortraitDetails(portraitId: string) {
-
-		const result = await api.portraitTemplates.get(portraitId);
-		return await superValidate(result, valibot(UpdatePortraitTemplateRequestSchema));
-	}
-
 	return {
-		editForm: event.isDataRequest
-			? loadPortraitDetails(event.params.portraitTemplateId)
-			: await loadPortraitDetails(event.params.portraitTemplateId)
+		editForm: api.portraitTemplates.editForm(event.params.portraitTemplateId)
 	};
 };
 

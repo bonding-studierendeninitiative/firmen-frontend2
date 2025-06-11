@@ -2,6 +2,9 @@ import { authorizedOrgMemberProcedure, router } from '@/trpc/server';
 import { object, parse, string, number, partial } from 'valibot';
 import { TRPCError } from '@trpc/server';
 import { PortraitTemplateInput } from '@api/client';
+import { superValidate } from 'sveltekit-superforms';
+import { valibot } from 'sveltekit-superforms/adapters';
+import { UpdatePortraitTemplateRequestSchema } from '@schema';
 
 export const portraitTemplatesRouter = router({
     getAll: authorizedOrgMemberProcedure
@@ -42,7 +45,14 @@ export const portraitTemplatesRouter = router({
             });
             return response;
         }),
-
+    editForm: authorizedOrgMemberProcedure
+        .input((input) => parse(string(), input))
+        .query(async ({ ctx, input: portraitTemplateId }) => {
+            const response = await ctx.api.get("/api/v2/portrait-template/{portraitTemplateId}", {
+                path: { portraitTemplateId }
+            });
+            return await superValidate(response, valibot(UpdatePortraitTemplateRequestSchema));
+        }),
     create: authorizedOrgMemberProcedure
         .input((input) => parse(PortraitTemplateInput, input))
         .mutation(async ({ ctx, input }) => {
@@ -59,7 +69,7 @@ export const portraitTemplatesRouter = router({
             const response = await ctx.api.request("delete", "/api/v2/portrait-template/{portraitTemplateId}", {
                 path: { portraitTemplateId: id }
             });
-            
+
             if (response.status !== 204) {
                 throw new TRPCError({
                     code: 'NOT_FOUND',

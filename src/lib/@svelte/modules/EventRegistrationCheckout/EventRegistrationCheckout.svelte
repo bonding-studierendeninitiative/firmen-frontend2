@@ -15,7 +15,7 @@
 	import { goto } from '$app/navigation';
 	import SuperDebug, { type Infer, intProxy, superForm } from 'sveltekit-superforms';
 	import { valibot } from 'sveltekit-superforms/adapters';
-	import { toast } from 'svelte-french-toast';
+	import { toast } from 'svelte-sonner';
 	import { type CreateEventRegistration, CreateEventRegistrationSchema, type GetBuyOptionResponse } from '@schema';
 	import { CalendarDays, Check } from 'lucide-svelte';
 	import type { InferOutput } from 'valibot';

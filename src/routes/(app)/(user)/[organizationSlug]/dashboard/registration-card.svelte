@@ -22,18 +22,19 @@
 	};
 
 	// Calculate the completion percentage for catalogue data
-	const calculateCatalogueCompletion = (data: GetEventRegistrationForOrganizationOutput): number => {
-
+	const calculateCatalogueCompletion = (
+		data: GetEventRegistrationForOrganizationOutput
+	): number => {
 		function getSingleCompletion(status: string): number {
 			switch (status) {
 				case 'confirmed':
-					return 1.00;
+					return 1.0;
 				case 'missing':
 					return 0;
 				case 'changes-requested':
-					return .25;
+					return 0.25;
 				case 'uploaded':
-					return .50;
+					return 0.5;
 				case 'rejected':
 					return 0;
 			}
@@ -55,15 +56,22 @@
 			.map(getSingleCompletion)
 			.filter(Boolean)
 			.reduce((sum, current) => sum + current, 0);
-		return (completed / total);
+		return completed / total;
 	};
 </script>
 
 <script lang="ts">
-
 	import { Badge } from '@/components/ui/badge';
 	import * as Avatar from '@/components/ui/avatar';
-	import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+	import * as Tabs from '@/components/ui/tabs';
+	import {
+		Card,
+		CardContent,
+		CardDescription,
+		CardFooter,
+		CardHeader,
+		CardTitle
+	} from '@/components/ui/card';
 	import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 	import RegistrationAddonTree from './registration-addon-tree.svelte';
 	import { Progress } from '@/components/ui/progress';
@@ -81,14 +89,18 @@
 	import {
 		EditContactPersons,
 		PickLogoDialog,
+		SubmitPortraitDialog,
 		ViewAdvertisementDialog,
 		ViewLogoDialog
 	} from '@/@svelte/modules';
 	import { PickAdvertisementDialog } from '@/@svelte/modules/PickAdvertisementDialog';
 	import { PenLine, Plus } from 'lucide-svelte';
-	import type {GetEventRegistrationForOrganizationOutput } from '@api/client';
+	import type { GetEventRegistrationForOrganizationOutput } from '@api/client';
 	import SuperDebug from 'sveltekit-superforms';
 	import QueryWrappedViewLogoDialog from '@/@svelte/modules/ViewLogoDialog/QueryWrappedViewLogoDialog.svelte';
+	import LogoMissing from './logo-missing.svelte';
+	import AdvertMissing from './advert-missing.svelte';
+	import PortraitMissing from './portrait-missing.svelte';
 
 	let isAddonsOpen = false;
 	export let registration: GetEventRegistrationForOrganizationOutput;
@@ -105,20 +117,34 @@
 	let editContactPersonsOpen = false;
 	let viewLogoOpen = false;
 	let pickLogoOpen = false;
+	let submitPortraitOpen = false;
 </script>
 
 <Card class="w-full max-w-2xl shadow-md hover:shadow-lg transition-shadow">
-
-	<PickAdvertisementDialog bind:open={pickAdvertisementOpen} id={registration.id} orgId={registration.organizationId} />
-	{#if registration.advertisement}
-	<ViewAdvertisementDialog bind:open={viewAdvertisementOpen} advertisement={registration.advertisement} />
-	{/if}
-	<EditContactPersons bind:open={editContactPersonsOpen} contactPeople={registration.contactPeople?.map(({id})=> id)}
-											eventRegistrationId={registration.id} />
+	<PickAdvertisementDialog
+		bind:open={pickAdvertisementOpen}
+		id={registration.id}
+		orgId={registration.organizationId}
+	/>
 	<PickLogoDialog bind:open={pickLogoOpen} id={registration.id} orgId={registration.organizationId} />
-	{#if registration.logo?.documentId}
-	<QueryWrappedViewLogoDialog bind:open={viewLogoOpen} documentId={registration.logo.documentId} />
+	{#if registration.advertisement}
+		<ViewAdvertisementDialog
+			bind:open={viewAdvertisementOpen}
+			advertisement={registration.advertisement}
+		/>
 	{/if}
+	<EditContactPersons
+		bind:open={editContactPersonsOpen}
+		contactPeople={registration.contactPeople?.map(({ id }) => id)}
+		eventRegistrationId={registration.id}
+	/>
+	{#if registration.logo?.documentId}
+		<QueryWrappedViewLogoDialog
+			bind:open={viewLogoOpen}
+			documentId={registration.logo.documentId}
+		/>
+	{/if}
+	<SubmitPortraitDialog id={registration.id} orgId={registration.organizationId} bind:open={submitPortraitOpen} />
 	<CardHeader class="pb-2">
 		<div class="flex justify-between items-start">
 			<div>
@@ -134,27 +160,36 @@
 		<div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-6">
 			<div class="flex items-center">
 				<Calendar class="h-4 w-4 mr-2 text-muted-foreground" />
-				<LocalizedDateRange format="ll" hoverFormat="none" class="text-sm" dateFrom={registration.event.dateFrom}
-														dateTo={registration.event.dateTo} />
+				<LocalizedDateRange
+					format="ll"
+					hoverFormat="none"
+					class="text-sm"
+					dateFrom={registration.event.dateFrom}
+					dateTo={registration.event.dateTo}
+				/>
 			</div>
 			{#if registration.purchasedPackage}
 				<div class="flex items-center">
 					<Package class="h-4 w-4 mr-2 text-muted-foreground" />
-					<span class="text-sm font-medium">{$_("components.registration-card.package", {
-						values: {
-							package: registration.purchasedPackage.name,
-						}
-					})}</span>
+					<span class="text-sm font-medium"
+						>{$_('components.registration-card.package', {
+							values: {
+								package: registration.purchasedPackage.name
+							}
+						})}</span
+					>
 				</div>
 			{/if}
 			{#if registration.desiredEventRegistrationDayDates?.length > 0}
 				<div class="flex items-center">
 					<Clock class="h-4 w-4 mr-2 text-muted-foreground" />
-					<span class="text-sm">{$_("components.registration-card.desired-participation-days", {
-						values: {
-							days: registration.desiredEventRegistrationDayDates?.length
-						}
-					})}</span>
+					<span class="text-sm"
+						>{$_('components.registration-card.desired-participation-days', {
+							values: {
+								days: registration.desiredEventRegistrationDayDates?.length
+							}
+						})}</span
+					>
 				</div>
 			{/if}
 		</div>
@@ -163,92 +198,94 @@
 
 		<div class="space-y-2">
 			<div class="flex justify-between items-center">
-				<h4 class="text-sm font-medium">{$_("components.registration-card.catalogue-data")}</h4>
-				<span class="text-xs text-muted-foreground">{$_("components.registration-card.catalogue-data-completion", {
-					values: {
-						completion: calculateCatalogueCompletion(registration),
-					}
-				})}</span>
+				<h4 class="text-sm font-medium">{$_('components.registration-card.catalogue-data')}</h4>
+				<span class="text-xs text-muted-foreground"
+					>{$_('components.registration-card.catalogue-data-completion', {
+						values: {
+							completion: calculateCatalogueCompletion(registration)
+						}
+					})}</span
+				>
 			</div>
-			<Progress value={calculateCatalogueCompletion(registration)*100} class="h-2" />
+			<Progress value={calculateCatalogueCompletion(registration) * 100} class="h-2" />
 
-			<div class="flex flex-wrap gap-3 mt-2">
-				<Tooltip.Root group="registration-card">
-					<Tooltip.Trigger>
-						<Button
-							class={cn("flex items-center gap-1 text-xs", catalogueDataStatusConfig[registration.logoStatus]?.color)}
-							variant="ghost" size="sm" on:click={() => {
-								if (registration.logo !== null && registration.logoStatus !== "missing") {
-									viewLogoOpen = true;
-								} else {
-
-								pickLogoOpen = true
-								}
-								}}>
-							{#if registration.logoStatus === "confirmed"}
+			<div class=" mt-2">
+				<Tabs.Root value="logo">
+					<Tabs.List>
+						<Tabs.Trigger
+							class={cn(
+								'flex items-center gap-1 text-xs',
+								catalogueDataStatusConfig[registration.logoStatus]?.color
+							)}
+							value="logo"
+						>
+							{#if registration.logoStatus === 'confirmed'}
 								<CheckCircle2 class="h-3.5 w-3.5" />
 							{:else}
 								<Info class="h-3.5 w-3.5" />
 							{/if}
-							{$_("common.logo")}
-						</Button>
-					</Tooltip.Trigger>
-					<Tooltip.Content>
-						{#if registration.logoStatus !== "missing"}
+							{$_('common.logo')}
+						</Tabs.Trigger>
+
+						{#if registration.canUploadAdvertisement}
+							<Tabs.Trigger
+								class={cn(
+									'flex items-center gap-1 text-xs',
+									catalogueDataStatusConfig[registration.advertisementStatus]?.color
+								)}
+								value="advertisement"
+							>
+								{#if registration.advertisementStatus === 'confirmed'}
+									<CheckCircle2 class="h-3.5 w-3.5" />
+								{:else}
+									<Info class="h-3.5 w-3.5" />
+								{/if}
+								{$_('common.advert')}
+							</Tabs.Trigger>
+						{/if}
+						<Tabs.Trigger
+							class={cn(
+								'flex items-center gap-1 text-xs',
+								catalogueDataStatusConfig[registration.portraitStatus]?.color
+							)}
+							value="portrait"
+						>
+							{#if registration.portraitStatus === 'confirmed'}
+								<CheckCircle2 class="h-3.5 w-3.5" />
+							{:else}
+								<Info class="h-3.5 w-3.5" />
+							{/if}
+							{$_('common.portrait')}
+						</Tabs.Trigger>
+					</Tabs.List>
+
+					<Tabs.Content value="logo">
+						{#if registration.logoStatus !== 'missing'}
+							<LogoPreview pickNewLogo={() => {
+								pickLogoOpen = true
+							}} logo={registration.logo} />
+						{:else}
+						<LogoMissing {pickLogoOpen} />
+						{/if}
+					</Tabs.Content>
+
+					{#if registration.canUploadAdvertisement}
+						<Tabs.Content value="advertisement">
+							{#if registration.advertisementStatus !== 'missing'}
+								<AdvertisementPreview pickNewAdvertisement={() => pickAdvertisementOpen = true} advert={registration.advertisement} />
+							{:else}
+								<AdvertMissing {registration} />
+							{/if}
+						</Tabs.Content>
+					{/if}
+					<Tabs.Content value="portrait">
+						{#if registration.portraitStatus !== 'missing'}
 							<LogoPreview class="max-w-64" logo={registration.logo} />
 						{:else}
-							{$_("components.registration-card.logo-tooltip-content." + registration.logoStatus)}
+							<PortraitMissing bind:submitPortraitOpen />
 						{/if}
-					</Tooltip.Content>
-				</Tooltip.Root>
-
-				{#if registration.canUploadAdvertisement}
-					<Tooltip.Root group="registration-card">
-						<Tooltip.Trigger
-							class={`flex items-center text-xs ${catalogueDataStatusConfig[registration.advertisementStatus]?.color}`}>
-							<Button
-								class={cn("flex items-center gap-1 text-xs", catalogueDataStatusConfig[registration.advertisementStatus]?.color)}
-								variant="ghost" size="sm" on:click={() =>{
-									if (registration.advertisement !== null && registration.advertisementStatus !== "missing") {
-										viewAdvertisementOpen = true;
-									} else {
-										pickAdvertisementOpen = true;
-									}
-								}}>
-								{#if registration.advertisementStatus === "confirmed"}
-									<CheckCircle2 class="h-3.5 w-3.5 mr-1" />
-								{:else}
-									<Info class="h-3.5 w-3.5 mr-1" />
-								{/if}
-								{$_("common.advert")}
-							</Button>
-						</Tooltip.Trigger>
-						<Tooltip.Content>
-							{#if registration.advertisementStatus !== "missing"}
-								<AdvertisementPreview class="max-w-64" advertisement={registration.advertisement} />
-							{:else}
-								{$_("components.registration-card.advertisement-tooltip-content." + registration.advertisementStatus)}
-							{/if}
-						</Tooltip.Content>
-					</Tooltip.Root>
-				{/if}
-
-				<Tooltip.Root group="registration-card">
-					<Tooltip.Trigger
-						class={`flex items-center text-xs ${catalogueDataStatusConfig[registration.portraitStatus]?.color}`}>
-						{#if registration.portraitStatus === "confirmed"}
-							<CheckCircle2 class="h-3.5 w-3.5 mr-1" />
-						{:else}
-							<Info class="h-3.5 w-3.5 mr-1" />
-						{/if}
-						{$_("common.portrait")}
-					</Tooltip.Trigger>
-					<Tooltip.Content>
-						{registration.portraitStatus === "confirmed"
-							? "Company portrait completed"
-							: "Company portrait needs to be completed"}
-					</Tooltip.Content>
-				</Tooltip.Root>
+					</Tabs.Content>
+				</Tabs.Root>
 			</div>
 		</div>
 
@@ -258,27 +295,39 @@
 			<div class="flex items-center justify-between">
 				<h4 class="text-sm font-medium flex items-center">
 					<Users class="h-4 w-4 mr-2" />
-					{$_("components.registration-card.contact-people")}
+					{$_('components.registration-card.contact-people')}
 				</h4>
 
-				<Button variant="outline" class="rounded-full px-2 py-1 text-sm font-semibold h-auto" on:click={() => {
-					editContactPersonsOpen = true;
-				}}>
-					{#if registration.contactPeople?.length < 1}
+				<Button
+					variant="outline"
+					class="rounded-full px-2 py-1 text-sm font-semibold h-auto"
+					on:click={() => {
+						editContactPersonsOpen = true;
+					}}
+				>
+					{#if Number(registration.contactPeople?.length) < 1}
 						<Plus class="h-4 w-4 mr-1" />
-						{$_("common.select")}
+						{$_('common.select')}
 					{:else}
-						<PenLine class="w-4 h-4 mr-1" />{$_("common.edit")}
+						<PenLine class="w-4 h-4 mr-1" />{$_('common.edit')}
 					{/if}
 				</Button>
 			</div>
-			{#if registration.contactPeople?.length > 0}
+			{#if Number(registration.contactPeople?.length) > 0}
 				<div class="grid grid-cols-1 @lg/contact-people:grid-cols-2 gap-2">
 					{#each registration.contactPeople ?? [] as contact (contact.name)}
-						<div class="text-sm flex items-center gap-3 rounded-full border border-muted py-1 px-1.5">
+						<div
+							class="text-sm flex items-center gap-3 rounded-full border border-neutral-300 bg-muted py-1 px-1.5"
+						>
 							<Avatar.Root class="w-8 h-8">
 								<Avatar.Image src={contact.image} />
-								<Avatar.Fallback>{contact.name?.split(" ").map(part => part[0]).join("").toUpperCase()}</Avatar.Fallback>
+								<Avatar.Fallback
+									>{contact.name
+										?.split(' ')
+										.map((part) => part[0])
+										.join('')
+										.toUpperCase()}</Avatar.Fallback
+								>
 							</Avatar.Root>
 							<div class="flex flex-col">
 								<div class="font-medium">{contact.name}</div>
@@ -295,9 +344,11 @@
 				<div class="flex items-center justify-between">
 					<h4 class="text-sm font-medium flex items-center">
 						<Package class="h-4 w-4 mr-2" />
-						{$_("components.registration-card.addons")}
+						{$_('components.registration-card.addons')}
 					</h4>
-					<CollapsibleTrigger class={cn(buttonVariants({size: "sm", variant: "ghost"}), "p-0 h-8 w-8")}>
+					<CollapsibleTrigger
+						class={cn(buttonVariants({ size: 'sm', variant: 'ghost' }), 'p-0 h-8 w-8')}
+					>
 						{#if isAddonsOpen}
 							<ChevronDown class="h-4 w-4" />
 						{:else}
@@ -314,11 +365,16 @@
 	<CardFooter class="flex justify-between border-t pt-4">
 		<div class="flex items-center text-xs text-muted-foreground">
 			<FileText class="h-3.5 w-3.5 mr-1" />
-			{$_("components.registration-card.id")} {registration.id}
+			{$_('components.registration-card.id')}
+			{registration.id}
 		</div>
 		<div class="text-xs text-muted-foreground">
-			{$_("components.registration-card.last-updated")}
-			<LocalizedDate class="ml-1" date={registration.createdAt ?? registration.modifiedAt} format="relative" />
+			{$_('components.registration-card.last-updated')}
+			<LocalizedDate
+				class="ml-1"
+				date={registration.createdAt ?? registration.modifiedAt}
+				format="relative"
+			/>
 		</div>
 	</CardFooter>
 </Card>

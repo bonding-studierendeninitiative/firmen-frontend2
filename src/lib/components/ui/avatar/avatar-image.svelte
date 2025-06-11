@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Avatar as AvatarPrimitive } from "bits-ui";
+	import { Avatar as AvatarPrimitive } from "bits-ui-old";
 	import { cn } from "@/utils";
 
 	type $$Props = AvatarPrimitive.ImageProps;

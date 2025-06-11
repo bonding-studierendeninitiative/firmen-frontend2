@@ -6,7 +6,7 @@
 	import { type Infer, type SuperValidated } from 'sveltekit-superforms';
 	import { superForm } from 'sveltekit-superforms';
 	import { valibot } from 'sveltekit-superforms/adapters';
-	import { toast } from 'svelte-french-toast';
+	import { toast } from 'svelte-sonner';
 	import { Button } from '@/components/ui/button';
 	import { signOut } from '@auth/sveltekit/client';
 	import { type UpdateUserDetails, UpdateUserDetailsRequest } from '@schema';

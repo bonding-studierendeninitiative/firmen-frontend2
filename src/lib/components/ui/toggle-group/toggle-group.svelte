@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { VariantProps } from "tailwind-variants";
-	import { ToggleGroup as ToggleGroupPrimitive } from "bits-ui";
+	import { ToggleGroup as ToggleGroupPrimitive } from "bits-ui-old";
 	import { setToggleGroupCtx } from "./index.js";
 	import type { toggleVariants } from "$lib/components/ui/toggle/index.js";
 	import { cn } from "@/utils";

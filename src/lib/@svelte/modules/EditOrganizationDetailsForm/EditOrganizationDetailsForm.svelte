@@ -6,7 +6,7 @@
 	import { type Infer, superForm, type SuperValidated } from 'sveltekit-superforms';
 	import { type SetOrgDetailsRequest, SetOrgDetailsRequestSchema } from '@schema';
 	import { valibot } from 'sveltekit-superforms/adapters';
-	import { toast } from 'svelte-french-toast';
+	import { toast } from 'svelte-sonner';
 	import { _ } from '@services';
 	import * as Card from '@/components/ui/card';
 

@@ -3,6 +3,7 @@ import { APIEvent } from '@schema/events';
 import { LogoSchema } from '@schema/logos';
 import { AdvertisementSchema } from '@schema/advertisements';
 import { hasMaxFiveLines } from '@/utils';
+import { SubmitPortraitInput } from '@api/client';
 
 export const CreateEventRegistrationSchema = v.object({
 	eventId: v.pipe(v.string(), v.nonEmpty()),
@@ -187,37 +188,7 @@ export const AdminRegisterOrganizationToEventSchema = v.object({
 
 export type AdminRegisterOrganizationToEvent = typeof AdminRegisterOrganizationToEventSchema;
 
-const PortraitSchema = v.object({
-	title: v.pipe(v.string('Title is required'), v.minLength(1, 'Title is required')),
-	comment: v.optional(v.string(), ''),
-	industry: v.string(),
-	products: v.optional(v.string(), ''),
-	locationsWorldwide: v.string(),
-	locationsEurope: v.string(),
-	locationsGermany: v.string(),
-	revenueWorldwide: v.string(),
-	revenueEurope: v.string(),
-	revenueGermany: v.string(),
-	employeesWorldwide: v.string(),
-	employeesEurope: v.string(),
-	employeesGermany: v.string(),
-	graduates: v.optional(v.string(), ''),
-	desiredDisciplines: v.optional(v.string(), ''),
-	entryOptions: v.optional(v.string(), ''),
-	offersThesis: v.optional(v.boolean(), false),
-	offersOutOfCountryWork: v.optional(v.boolean(), false),
-	offersInternships: v.optional(v.boolean(), false),
-	contactAddress: v.optional(v.string(), ''),
-	contactPersonStudents: v.optional(
-		v.pipe(v.string(), v.check(hasMaxFiveLines, 'This field can only have 5 lines.')),
-		''
-	),
-	contactPersonGraduates: v.optional(v.string(), ''),
-	website: v.string(),
-	additionalInformation: v.string(),
-	organization: v.string(),
-	displayName: v.pipe(v.string('Display name is required'), v.minLength(1, 'Display name is required')),
-});
+const PortraitSchema = SubmitPortraitInput;
 
 export const SubmitPortraitRequest = v.object({...PortraitSchema.entries, eventRegistrationId: v.string()})
 

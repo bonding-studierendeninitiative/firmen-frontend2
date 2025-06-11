@@ -5,7 +5,7 @@
 	} from '$lib/@svelte/components';
 	import { superForm, type SuperValidated, type Infer } from 'sveltekit-superforms';
 	import { page } from '$app/stores';
-	import { toast } from 'svelte-french-toast';
+	import { toast } from 'svelte-sonner';
 	import { goto } from '$app/navigation';
 	import { disciplines } from '@constant';
 	import { Button } from '@/components/ui/button';

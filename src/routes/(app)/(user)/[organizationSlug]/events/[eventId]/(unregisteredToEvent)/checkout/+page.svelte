@@ -1,9 +1,8 @@
 <script lang="ts">
-	import type { PageData } from './$types';
-
-	export let data: PageData;
 	import { EventRegistrationCheckout } from '@/@svelte/modules';
 	import { LoaderCircle } from 'lucide-svelte';
+
+	let { data } = $props();
 </script>
 
 {#await data.eventRegistrationData}

@@ -9,7 +9,7 @@
 	import { Button } from '@/components/ui/button';
 	import { _ } from '@services';
 	import { trpc } from '@/trpc/client';
-	import toast from 'svelte-french-toast';
+	import {toast} from 'svelte-sonner';
 
 	export let eventRegistrationId;
 

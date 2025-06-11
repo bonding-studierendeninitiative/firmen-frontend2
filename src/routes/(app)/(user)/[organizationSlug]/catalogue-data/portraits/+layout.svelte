@@ -31,10 +31,7 @@
 		}
 	});
 
-	let isDrawerOpen = $state();
-	$effect(() => {
-		isDrawerOpen = $params.create !== null;
-	});
+	let isDrawerOpen = $derived($params.create !== null);
 
 	const createNewDialog = () => {
 		$params.create = 'true'
@@ -62,7 +59,7 @@
 				heading={$_('user-pages.portraits.noPortraitsFound')}
 				subHeading={$_('user-pages.portraits.noPortraitsFoundDescription')}
 				buttonText={$_('user-pages.portraits.newPortrait')}
-				onButtonClick={() => (isDrawerOpen = true)}
+				onButtonClick={() => ($params.create = 'true')}
 			/>
 		{:else}
 			<div class="grid grid-cols-3 gap-6">
@@ -117,7 +114,7 @@
 {#await data.createForm then createForm}
 	<PortraitForm
 		validated={createForm}
-		bind:isOpen={isDrawerOpen}
+		isOpen={isDrawerOpen}
 		onDialogChange={handleDialogChange}
 	/>
 {:catch error}

@@ -2,7 +2,7 @@
 	import { Button } from '@/components/ui/button';
 	import * as Dialog from '@/components/ui/dialog';
 	import type { AdminEventRegistrationsResponse } from '@schema';
-	import { toast } from 'svelte-french-toast';
+	import { toast } from 'svelte-sonner';
 	import type { InferOutput } from 'valibot';
 	import { EventRegistration } from '@/@svelte/modules';
 	import { _ } from '@services';

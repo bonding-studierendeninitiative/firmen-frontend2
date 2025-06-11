@@ -34,7 +34,7 @@
 	import { Label } from '@/components/ui/label';
 	import { trpc } from '@/trpc/client.js';
 	import { page } from '$app/stores';
-	import toast from 'svelte-french-toast';
+	import { toast } from 'svelte-sonner';
 
 	const firstStepSchema = v.pick(SubmitPortraitRequest, [
 		'title',
@@ -200,14 +200,14 @@
 						class={`flex flex-col items-center ${index <= currentStep ? 'text-primary' : 'text-muted-foreground'}`}
 					>
 						<div
-							class={`flex items-center justify-center w-12 h-12 rounded-full mb-2 
-                ${
-									index < currentStep
-										? 'bg-primary text-primary-foreground'
-										: index === currentStep
-											? 'border-2 border-primary'
-											: 'border-2 border-muted'
-								}`}
+							class={[
+								`flex items-center justify-center w-12 h-12 rounded-full mb-2 `,
+								index < currentStep
+									? 'bg-primary text-primary-foreground'
+									: index === currentStep
+										? 'border-2 border-primary'
+										: 'border-2 border-muted'
+							]}
 						>
 							<step.icon class="h-5 w-5" />
 						</div>

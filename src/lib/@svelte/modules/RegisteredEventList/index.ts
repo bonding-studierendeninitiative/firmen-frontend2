@@ -1,1 +1,0 @@
-export {default as RegisteredEventList} from './RegisteredEventList.svelte';

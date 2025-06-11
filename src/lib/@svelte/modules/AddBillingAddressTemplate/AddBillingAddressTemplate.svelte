@@ -7,7 +7,7 @@
 	import * as Dialog from '@/components/ui/dialog';
 	import { CreateBillingAddressTemplateForm as formSchema, type CreateBillingAddressTemplateForm } from '@schema';
 	import { valibotClient } from 'sveltekit-superforms/adapters';
-	import toast from 'svelte-french-toast';
+	import {toast} from 'svelte-sonner';
 	import { buttonVariants } from '@/components/ui/button';
 
 	export let createBillingAddressTemplateForm: SuperValidated<Infer<CreateBillingAddressTemplateForm>>;

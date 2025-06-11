@@ -10,7 +10,7 @@
 	import * as Dialog from '@/components/ui/dialog';
 	import { _ } from '@services';
 	import { page } from '$app/stores';
-	import { toast } from 'svelte-french-toast';
+	import { toast } from 'svelte-sonner';
 	import { trpc } from '@/trpc/client';
 
 	export let portrait: InferOutput<GetPortraitTemplatesResponse>['portraitTemplates'][number];

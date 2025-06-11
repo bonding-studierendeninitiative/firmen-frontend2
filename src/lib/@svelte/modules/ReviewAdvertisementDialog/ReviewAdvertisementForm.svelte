@@ -7,9 +7,7 @@
 		type AdvertisementSchema,
 		type ReviewDocumentRequest
 	} from '@schema';
-	import { toast } from 'svelte-french-toast';
-	import { getContext } from 'svelte';
-	import type { Writable } from 'svelte/store';
+	import { toast } from 'svelte-sonner';
 	import { Control, Description, Field, FieldErrors, Label } from '@/components/ui/form';
 	import { _ } from '@services';
 	import { Textarea } from '@/components/ui/textarea';

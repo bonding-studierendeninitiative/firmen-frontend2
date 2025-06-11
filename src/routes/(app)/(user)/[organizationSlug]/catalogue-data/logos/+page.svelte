@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { LogoItem, NoDataFound } from '@/@svelte/components';
+	import { NoDataFound } from '@/@svelte/components';
 	import { LoaderCircle, Plus } from 'lucide-svelte';
 	import { fade } from 'svelte/transition';
 	import { UploadLogoDialog } from '@/@svelte/modules';
@@ -8,6 +8,7 @@
 	import { page } from '$app/stores';
 	import { _, dayjs } from '@services/i18n';
 	import { derived } from 'svelte/store';
+	import LogoItem from './logo-item.svelte';
 	export let data;
 	let isUploadOpen = false;
 

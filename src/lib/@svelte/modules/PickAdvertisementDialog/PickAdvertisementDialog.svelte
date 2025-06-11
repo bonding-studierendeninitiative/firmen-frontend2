@@ -10,7 +10,7 @@
 	import { _ } from '@services';
 	import { trpc } from '@/trpc/client';
 	import { goto } from '$app/navigation';
-	import toast from 'svelte-french-toast';
+	import {toast} from 'svelte-sonner';
 
 	export let open = false;
 	export let id: string;

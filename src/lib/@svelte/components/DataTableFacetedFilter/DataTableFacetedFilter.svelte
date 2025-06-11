@@ -1,5 +1,5 @@
 <script lang="ts">
- 	import Check from 'svelte-radix/Check.svelte';
+	import Check from 'svelte-radix/Check.svelte';
 	import { Button } from '@/components/ui/button';
 	import * as Popover from '@/components/ui/popover';
 	import * as Command from '@/components/ui/command';
@@ -9,25 +9,31 @@
 	import { _ } from '@services';
 	import type { Component } from 'svelte-eslint-parser/lib/parser/svelte-ast-types-for-v5';
 	import { Filter } from 'lucide-svelte';
+	import { createEventDispatcher } from 'svelte';
 
 	type Options = {
 		label: string;
 		value: string;
 		icon?: Component;
 	};
-	export let filterValues: string[] | undefined = [];
+
 	export let title: string;
 	export let options = [] as Options[];
 	export let counts: { [index: string]: number } = {};
 
 	let open = false;
+	let selectedValues: string[] = [];
+	const dispatch = createEventDispatcher<{
+		filterChange: string[];
+	}>();
 
 	function handleSelect(currentValue: string) {
-		if (Array.isArray(filterValues) && filterValues.includes(currentValue)) {
-			filterValues = filterValues.filter((v) => v !== currentValue);
+		if (selectedValues.includes(currentValue)) {
+			selectedValues = selectedValues.filter((v) => v !== currentValue);
 		} else {
-			filterValues = [...(Array.isArray(filterValues) ? filterValues : []), currentValue];
+			selectedValues = [...selectedValues, currentValue];
 		}
+		dispatch('filterChange', selectedValues);
 	}
 </script>
 
@@ -37,20 +43,20 @@
 			<Filter class="mr-2 h-4 w-4" />
 			{title}
 
-			{#if filterValues?.length > 0}
+			{#if selectedValues?.length > 0}
 				<Separator orientation="vertical" class="mx-2 h-4" />
 				<Badge variant="secondary" class="rounded-sm px-1 font-normal lg:hidden">
-					{filterValues.length}
+					{selectedValues.length}
 				</Badge>
 				<div class="hidden space-x-1 lg:flex">
-					{#if filterValues.length > 2}
+					{#if selectedValues.length > 2}
 						<Badge variant="secondary" class="rounded-sm px-1 font-normal">
 							{$_("components.dataTableFacetedFilter.filterLabelTemplate", {
-								values: { count: filterValues.length }
+								values: { count: selectedValues.length }
 							})}
 						</Badge>
 					{:else}
-						{#each filterValues as option}
+						{#each selectedValues as option}
 							<Badge variant="secondary" class="rounded-sm px-1 font-normal">
 								{option}
 							</Badge>
@@ -77,7 +83,7 @@
 							<div
 								class={cn(
 									'border-primary mr-2 flex h-4 w-4 items-center justify-center rounded-sm border',
-									filterValues?.includes(option.value)
+									selectedValues?.includes(option.value)
 										? 'bg-primary text-primary-foreground'
 										: 'opacity-50 [&_svg]:invisible'
 								)}
@@ -98,12 +104,13 @@
 						</Command.Item>
 					{/each}
 				</Command.Group>
-				{#if filterValues?.length > 0}
+				{#if selectedValues?.length > 0}
 					<Command.Separator />
 					<Command.Item
 						class="justify-center text-center"
 						onSelect={() => {
-							filterValues = [];
+							selectedValues = [];
+							dispatch('filterChange', selectedValues);
 						}}
 					>
 						{$_("components.dataTableFacetedFilter.clearFilters")}

@@ -12,70 +12,57 @@
 	import CreateOrgInviteDialog from './create-org-invite-dialog.svelte';
 	import AddMemberDialog from './add-member-dialog.svelte';
 	import DataTableRoleSwitcher from './data-table-role-switcher.svelte';
+	import { createColumnHelper } from '@tanstack/svelte-table';
+	import { renderSnippet } from '@/@svelte/components/QueryDataTable/render-helpers';
 
 	let data = derived([memberResponse], ([memberResponse]) => memberResponse.data);
 	let totalCount = derived([memberResponse], ([memberResponse]) => memberResponse.totalCount);
 
+	let columnHelper = createColumnHelper<OrganizationMembership>();
+
 	let columns = [
-		{
+		columnHelper.accessor('publicUserData', {
 			id: 'user-profile',
 			header: '',
-			cell: (row) => ({
-				snippet: userIcon,
-				props: {
-					userName: `${row.publicUserData?.firstName} ${row.publicUserData?.lastName}`,
-					src: row.publicUserData?.imageUrl
-				}
-			})
-		},
-		{
-			accessor: ({ publicUserData }) => publicUserData?.firstName ?? '',
-			id: 'first_name',
+			cell: ({ getValue }) =>
+				renderSnippet(userIcon, {
+					userName: `${getValue()?.firstName} ${getValue()?.lastName}`,
+					src: getValue()?.imageUrl
+				})
+		}),
+		columnHelper.accessor('publicUserData.firstName', {
 			header: $_('table-headings.firstName')
-		},
-
-		{
-			accessor: ({ publicUserData }) => publicUserData?.lastName ?? '',
-			id: 'last_name',
+		}),
+		columnHelper.accessor('publicUserData.lastName', {
 			header: $_('table-headings.lastName')
-		},
-
-		{
-			accessor: ({ publicUserData }) => publicUserData?.identifier,
-			id: 'email_address',
+		}),
+		columnHelper.accessor('publicUserData.identifier', {
 			header: $_('table-headings.emailAddress')
-		},
-		{
-			id: 'role',
+		}),
+		columnHelper.accessor('role', {
 			header: $_('table-headings.role'),
-			cell: (row) => ({
-				snippet: userRole,
-				props: {
-					value: row.role,
-					userId: row.publicUserData.userId
-				}
-			})
-		},
-		{
+			cell: ({ row, getValue }) =>
+				renderSnippet(userRole, {
+					value: getValue(),
+					userId: row.original.publicUserData?.userId
+				})
+		}),
+		columnHelper.accessor('createdAt', {
 			id: 'createdAt',
 			header: $_('table-headings.joined'),
-			cell: (row) => ({
-				snippet: localizedDate,
-				props: {
-					date: row.createdAt
-				}
-			})
-		},
-		{
+			cell: ({ getValue }) =>
+				renderSnippet(localizedDate, {
+					date: getValue()
+				})
+		}),
+		columnHelper.accessor('publicUserData.userId', {
 			header: '',
-			cell: ({ publicUserData }) => ({
-				snippet: actions,
-				props: {
-					id: publicUserData.userId,
+			cell: ({ getValue }) =>
+				renderSnippet(actions, {
+					id: getValue(),
 					orgId: organizationId
-				}
-			})
-		}
+				})
+		})
 	];
 </script>
 

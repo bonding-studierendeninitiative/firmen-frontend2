@@ -85,12 +85,12 @@ export const StatusType = v.object({
 
 export type Problem = v.InferOutput<typeof Problem>;
 export const Problem = v.object({
+  parameters: v.optional(v.record(v.string(), v.unknown())),
   instance: v.optional(v.string()),
   type: v.optional(v.string()),
-  parameters: v.optional(v.record(v.string(), v.unknown())),
-  detail: v.optional(v.string()),
   title: v.optional(v.string()),
   status: v.optional(StatusType),
+  detail: v.optional(v.string()),
 });
 
 export type AddonOutput = v.InferOutput<typeof AddonOutput>;
@@ -162,8 +162,8 @@ export const TimeoutHandler = v.unknown();
 
 export type AsyncResponse = v.InferOutput<typeof AsyncResponse>;
 export const AsyncResponse = v.object({
-  done: v.optional(v.boolean()),
   suspended: v.optional(v.boolean()),
+  done: v.optional(v.boolean()),
   cancelled: v.optional(v.boolean()),
   timeoutHandler: v.optional(TimeoutHandler),
 });
@@ -241,8 +241,16 @@ export const ReviewCatalogueDataInput = v.object({
     v.literal("confirmation"),
     v.literal("rejection"),
     v.literal("change-request"),
+    v.literal("thumbs-done"),
   ]),
   feedback: v.string(),
+});
+
+export type DocumentFeedbackOutput = v.InferOutput<typeof DocumentFeedbackOutput>;
+export const DocumentFeedbackOutput = v.object({
+  feedbackType: v.optional(v.string()),
+  message: v.optional(v.string()),
+  timestamp: v.optional(v.string()),
 });
 
 export type SimpleDocumentVersionOutput = v.InferOutput<typeof SimpleDocumentVersionOutput>;
@@ -269,6 +277,7 @@ export const SimpleDocumentVersionOutput = v.object({
   ),
   createdAt: v.optional(v.string()),
   modifiedAt: v.optional(v.string()),
+  history: v.optional(v.array(DocumentFeedbackOutput)),
 });
 
 export type DetailedDocumentOutput = v.InferOutput<typeof DetailedDocumentOutput>;
@@ -277,7 +286,6 @@ export const DetailedDocumentOutput = v.object({
   title: v.optional(v.string()),
   documentType: v.optional(v.union([v.literal("portrait"), v.literal("logo"), v.literal("advert")])),
   activeVersion: v.optional(SimpleDocumentVersionOutput),
-  versions: v.optional(v.array(SimpleDocumentVersionOutput)),
   organizationId: v.optional(v.string()),
 });
 
@@ -645,8 +653,8 @@ export const post_RestartJob = v.object({
   parameters: v.object({
     query: v.object({
       asyncResponse: v.object({
-        done: v.optional(v.boolean()),
         suspended: v.optional(v.boolean()),
+        done: v.optional(v.boolean()),
         cancelled: v.optional(v.boolean()),
         timeoutHandler: v.optional(TimeoutHandler),
       }),
@@ -666,8 +674,8 @@ export const post_ImportEvents = v.object({
   parameters: v.object({
     query: v.object({
       asyncResponse: v.object({
-        done: v.optional(v.boolean()),
         suspended: v.optional(v.boolean()),
+        done: v.optional(v.boolean()),
         cancelled: v.optional(v.boolean()),
         timeoutHandler: v.optional(TimeoutHandler),
       }),

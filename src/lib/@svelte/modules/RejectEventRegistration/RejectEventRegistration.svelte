@@ -4,7 +4,7 @@
 	import { _ } from '@services';
 	import { trpc } from '@/trpc/client';
 	import { page } from '$app/stores';
-	import toast from 'svelte-french-toast';
+	import { toast } from 'svelte-sonner';
 
 	export let isOpen: boolean;
 	export let id: string;
@@ -18,14 +18,25 @@
 <Dialog.Root bind:open={isOpen}>
 	<Dialog.Content>
 		<Dialog.Header>
-			<Dialog.Title>{$_("admin-pages.events.event-registrations.reject-event-registration.title")}</Dialog.Title>
-			<Dialog.Description>{$_("admin-pages.events.event-registrations.reject-event-registration.description")}</Dialog.Description>
+			<Dialog.Title
+				>{$_(
+					'admin-pages.events.event-registrations.reject-event-registration.title'
+				)}</Dialog.Title
+			>
+			<Dialog.Description
+				>{$_(
+					'admin-pages.events.event-registrations.reject-event-registration.description'
+				)}</Dialog.Description
+			>
 		</Dialog.Header>
 		<Dialog.Footer>
-			<Button on:click={() => {
-				$rejectEventRegistration.mutate({
-				eventRegistrationId: id
-				}, {
+			<Button
+				on:click={() => {
+					$rejectEventRegistration.mutate(
+						{
+							eventRegistrationId: id
+						},
+						{
 							onSuccess: async () => {
 								toast.success(
 									$_('admin-pages.events.event-registrations.reject-event-registration.success')
@@ -36,8 +47,10 @@
 							onError: (err) => {
 								toast.error(err.message);
 							}
-						});
-			}}>{$_("admin-pages.events.event-registrations.reject-event-registration.proceed")}</Button>
+						}
+					);
+				}}>{$_('admin-pages.events.event-registrations.reject-event-registration.proceed')}</Button
+			>
 		</Dialog.Footer>
 	</Dialog.Content>
 </Dialog.Root>

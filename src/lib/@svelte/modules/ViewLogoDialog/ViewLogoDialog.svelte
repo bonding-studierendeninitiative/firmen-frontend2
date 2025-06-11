@@ -13,11 +13,10 @@
 
 	export let open = false;
 	export let logo: DetailedDocumentOutput;
-	export let organizationId: string;
 
 	const download = trpc($page).catalogueData.generateDownloadLink.createQuery({
 		documentId: logo.id,
-		organizationId: organizationId
+		organizationId: logo.organizationId
 	}, {
 		staleTime: 15 * 60 * 1000
 	});
@@ -25,7 +24,7 @@
 	const thumbnail = trpc($page).catalogueData.generateThumbnailLink.createQuery(
 		{
 			documentId: logo.id,
-			organizationId: organizationId,
+			organizationId: logo.organizationId,
 			resolution: 'large'
 		},
 		{
@@ -85,7 +84,7 @@
 					{/if}
 				</div>
 
-				<div class="grid grid-cols-2 gap-4 text-sm">
+				<div class="grid grid-cols-2 gap-8 text-sm">
 					<div>
 						<h4 class="font-semibold mb-2">
 							{$_('modules.view-advertisement-dialog.file-information')}
@@ -123,19 +122,21 @@
 							{$_('modules.view-advertisement-dialog.status-history')}
 						</h4>
 						<div class="space-y-3">
-							{#each logo.history ?? [] as history}
+							{#each logo.activeVersion?.history ?? [] as history}
 								<div
 									class="border-l-2 pl-3"
 									class:border-yellow-500={history.feedbackType === 'change-request'}
 									class:border-green-500={history.feedbackType === 'confirmation'}
 									class:border-red-500={history.feedbackType === 'rejection'}
+									class:border-blue-500={history.feedbackType === 'UPLOAD'}
 								>
-									<div class="flex items-center">
-										<Badge>{history.feedbackType}</Badge>
+									<div class="flex items-center gap-x-2">
+										<Badge>{$_("modules.view-logo-dialog.status."+history.feedbackType)}</Badge>
 									</div>
 									{#if history.message}
 										<p class="text-xs mt-1 text-gray-600 dark:text-gray-400">{history.message}</p>
 									{/if}
+									<LocalizedDate date={history.timestamp} />
 								</div>
 							{/each}
 						</div>

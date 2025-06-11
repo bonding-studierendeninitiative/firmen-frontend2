@@ -69,12 +69,12 @@ export const StatusType = v.object({
 
 export type Problem = v.InferOutput<typeof Problem>;
 export const Problem = v.object({
+  parameters: v.optional(v.record(v.string(), v.unknown())),
   instance: v.optional(v.string()),
   type: v.optional(v.string()),
-  parameters: v.optional(v.record(v.string(), v.unknown())),
-  detail: v.optional(v.string()),
   title: v.optional(v.string()),
   status: v.optional(StatusType),
+  detail: v.optional(v.string()),
 });
 
 export type BillingAddressTemplateResponse = v.InferOutput<typeof BillingAddressTemplateResponse>;
@@ -202,6 +202,13 @@ export const GetPortraitTemplatesByOrganizationOutput = v.object({
   pageSize: v.optional(v.number()),
 });
 
+export type DocumentFeedbackOutput = v.InferOutput<typeof DocumentFeedbackOutput>;
+export const DocumentFeedbackOutput = v.object({
+  feedbackType: v.optional(v.string()),
+  message: v.optional(v.string()),
+  timestamp: v.optional(v.string()),
+});
+
 export type SimpleDocumentVersionOutput = v.InferOutput<typeof SimpleDocumentVersionOutput>;
 export const SimpleDocumentVersionOutput = v.object({
   versionId: v.optional(v.string()),
@@ -226,6 +233,7 @@ export const SimpleDocumentVersionOutput = v.object({
   ),
   createdAt: v.optional(v.string()),
   modifiedAt: v.optional(v.string()),
+  history: v.optional(v.array(DocumentFeedbackOutput)),
 });
 
 export type DetailedDocumentOutput = v.InferOutput<typeof DetailedDocumentOutput>;
@@ -234,8 +242,15 @@ export const DetailedDocumentOutput = v.object({
   title: v.optional(v.string()),
   documentType: v.optional(v.union([v.literal("portrait"), v.literal("logo"), v.literal("advert")])),
   activeVersion: v.optional(SimpleDocumentVersionOutput),
-  versions: v.optional(v.array(SimpleDocumentVersionOutput)),
   organizationId: v.optional(v.string()),
+});
+
+export type UnknownContentTypeDocumentVersionOutput = v.InferOutput<typeof UnknownContentTypeDocumentVersionOutput>;
+export const UnknownContentTypeDocumentVersionOutput = v.object({
+  versionId: v.optional(v.string()),
+  lastModified: v.optional(v.string()),
+  size: v.optional(v.number()),
+  isLatest: v.optional(v.boolean()),
 });
 
 export type SimpleDocumentOutput = v.InferOutput<typeof SimpleDocumentOutput>;
@@ -272,19 +287,21 @@ export const DetailedDocumentVersionOutput = v.object({
   document: v.optional(SimpleDocumentOutput),
   createdAt: v.optional(v.string()),
   modifiedAt: v.optional(v.string()),
+  history: v.optional(v.array(DocumentFeedbackOutput)),
 });
 
-export type UnknownContentTypeDocumentVersionOutput = v.InferOutput<typeof UnknownContentTypeDocumentVersionOutput>;
-export const UnknownContentTypeDocumentVersionOutput = v.object({
-  versionId: v.optional(v.string()),
-  lastModified: v.optional(v.string()),
-  size: v.optional(v.number()),
-  isLatest: v.optional(v.boolean()),
+export type DocumentVersionDescription = v.InferOutput<typeof DocumentVersionDescription>;
+export const DocumentVersionDescription = v.object({
+  id: v.optional(v.string()),
+  title: v.optional(v.string()),
+  documentType: v.optional(v.union([v.literal("portrait"), v.literal("logo"), v.literal("advert")])),
+  version: v.optional(SimpleDocumentVersionOutput),
+  organizationId: v.optional(v.string()),
 });
 
 export type GetAllDocumentsForOrganizationOutput = v.InferOutput<typeof GetAllDocumentsForOrganizationOutput>;
 export const GetAllDocumentsForOrganizationOutput = v.object({
-  documents: v.optional(v.array(DetailedDocumentOutput)),
+  documents: v.optional(v.array(SimpleDocumentOutput)),
   pageNumber: v.optional(v.number()),
   pageSize: v.optional(v.number()),
   totalPages: v.optional(v.number()),
@@ -735,11 +752,11 @@ export const post_SaveOrUpdatePortrait_1 = v.object({
 export type post_RestoreVersion = v.InferOutput<typeof post_RestoreVersion>;
 export const post_RestoreVersion = v.object({
   method: v.literal("POST"),
-  path: v.literal("/api/v2/organization/{organizationId}/catalogue-data/{assetId}/versions/{versionId}/restore"),
+  path: v.literal("/api/v2/organization/{organizationId}/catalogue-data/{documentId}/versions/{versionId}/restore"),
   requestFormat: v.literal("json"),
   parameters: v.object({
     path: v.object({
-      assetId: v.string(),
+      documentId: v.string(),
       organizationId: v.string(),
       versionId: v.string(),
     }),
@@ -910,6 +927,37 @@ export const get_GetDocument = v.object({
   response: DetailedDocumentOutput,
 });
 
+export type delete_DeleteDocument = v.InferOutput<typeof delete_DeleteDocument>;
+export const delete_DeleteDocument = v.object({
+  method: v.literal("DELETE"),
+  path: v.literal("/api/v2/organization/{organizationId}/catalogue-data/{documentId}"),
+  requestFormat: v.literal("json"),
+  parameters: v.object({
+    query: v.object({
+      "ignore-conflict": v.optional(v.boolean()),
+    }),
+    path: v.object({
+      organizationId: v.string(),
+      documentId: v.string(),
+    }),
+  }),
+  response: v.unknown(),
+});
+
+export type get_GetDocumentVersions = v.InferOutput<typeof get_GetDocumentVersions>;
+export const get_GetDocumentVersions = v.object({
+  method: v.literal("GET"),
+  path: v.literal("/api/v2/organization/{organizationId}/catalogue-data/{documentId}/versions"),
+  requestFormat: v.literal("json"),
+  parameters: v.object({
+    path: v.object({
+      documentId: v.string(),
+      organizationId: v.string(),
+    }),
+  }),
+  response: v.array(UnknownContentTypeDocumentVersionOutput),
+});
+
 export type get_GetDocumentVersion = v.InferOutput<typeof get_GetDocumentVersion>;
 export const get_GetDocumentVersion = v.object({
   method: v.literal("GET"),
@@ -925,28 +973,14 @@ export const get_GetDocumentVersion = v.object({
   response: DetailedDocumentVersionOutput,
 });
 
-export type get_GetAdvertisementVersions = v.InferOutput<typeof get_GetAdvertisementVersions>;
-export const get_GetAdvertisementVersions = v.object({
-  method: v.literal("GET"),
-  path: v.literal("/api/v2/organization/{organizationId}/catalogue-data/{assetId}/versions"),
-  requestFormat: v.literal("json"),
-  parameters: v.object({
-    path: v.object({
-      assetId: v.string(),
-      organizationId: v.string(),
-    }),
-  }),
-  response: v.array(UnknownContentTypeDocumentVersionOutput),
-});
-
 export type get_GetVersionDownloadUrl = v.InferOutput<typeof get_GetVersionDownloadUrl>;
 export const get_GetVersionDownloadUrl = v.object({
   method: v.literal("GET"),
-  path: v.literal("/api/v2/organization/{organizationId}/catalogue-data/{assetId}/versions/{versionId}/download"),
+  path: v.literal("/api/v2/organization/{organizationId}/catalogue-data/{documentId}/versions/{versionId}/download"),
   requestFormat: v.literal("json"),
   parameters: v.object({
     path: v.object({
-      assetId: v.string(),
+      documentId: v.string(),
       organizationId: v.string(),
       versionId: v.string(),
     }),
@@ -954,17 +988,32 @@ export const get_GetVersionDownloadUrl = v.object({
   response: v.unknown(),
 });
 
+export type get_GetDocumentVersionDescription = v.InferOutput<typeof get_GetDocumentVersionDescription>;
+export const get_GetDocumentVersionDescription = v.object({
+  method: v.literal("GET"),
+  path: v.literal("/api/v2/organization/{organizationId}/catalogue-data/{documentId}/versions/{versionId}/description"),
+  requestFormat: v.literal("json"),
+  parameters: v.object({
+    path: v.object({
+      documentId: v.string(),
+      versionId: v.string(),
+      organizationId: v.string(),
+    }),
+  }),
+  response: DocumentVersionDescription,
+});
+
 export type get_GetThumbnailUrl = v.InferOutput<typeof get_GetThumbnailUrl>;
 export const get_GetThumbnailUrl = v.object({
   method: v.literal("GET"),
-  path: v.literal("/api/v2/organization/{organizationId}/catalogue-data/{assetId}/thumbnail"),
+  path: v.literal("/api/v2/organization/{organizationId}/catalogue-data/{documentId}/thumbnail"),
   requestFormat: v.literal("json"),
   parameters: v.object({
     query: v.object({
       resolution: v.optional(v.string()),
     }),
     path: v.object({
-      assetId: v.string(),
+      documentId: v.string(),
       organizationId: v.string(),
     }),
   }),
@@ -974,11 +1023,11 @@ export const get_GetThumbnailUrl = v.object({
 export type get_GetDownloadUrl = v.InferOutput<typeof get_GetDownloadUrl>;
 export const get_GetDownloadUrl = v.object({
   method: v.literal("GET"),
-  path: v.literal("/api/v2/organization/{organizationId}/catalogue-data/{assetId}/download"),
+  path: v.literal("/api/v2/organization/{organizationId}/catalogue-data/{documentId}/download"),
   requestFormat: v.literal("json"),
   parameters: v.object({
     path: v.object({
-      assetId: v.string(),
+      documentId: v.string(),
       organizationId: v.string(),
     }),
   }),
@@ -1109,20 +1158,6 @@ export const get_GetEventRegistrationsForContactPerson = v.object({
   response: GetEventRegistrationsForContactPersonOutput,
 });
 
-export type delete_DeleteAdvertisement = v.InferOutput<typeof delete_DeleteAdvertisement>;
-export const delete_DeleteAdvertisement = v.object({
-  method: v.literal("DELETE"),
-  path: v.literal("/api/v2/organization/{organizationId}/catalogue-data/{assetId}"),
-  requestFormat: v.literal("json"),
-  parameters: v.object({
-    path: v.object({
-      organizationId: v.string(),
-      assetId: v.string(),
-    }),
-  }),
-  response: v.unknown(),
-});
-
 export type __ENDPOINTS_END__ = v.InferOutput<typeof __ENDPOINTS_END__>;
 export const __ENDPOINTS_END__ = v.object({});
 
@@ -1136,12 +1171,14 @@ export const EndpointByMethod = {
     "/api/v2/organization/{organizationId}/billing-address-template": get_GetBillingAddressTemplatesByOrganization,
     "/api/v2/event-registration": get_GetEventRegistrationsForOrganization,
     "/api/v2/organization/{organizationId}/catalogue-data/{documentId}": get_GetDocument,
+    "/api/v2/organization/{organizationId}/catalogue-data/{documentId}/versions": get_GetDocumentVersions,
     "/api/v2/organization/{organizationId}/catalogue-data/{documentId}/versions/{versionId}": get_GetDocumentVersion,
-    "/api/v2/organization/{organizationId}/catalogue-data/{assetId}/versions": get_GetAdvertisementVersions,
-    "/api/v2/organization/{organizationId}/catalogue-data/{assetId}/versions/{versionId}/download":
+    "/api/v2/organization/{organizationId}/catalogue-data/{documentId}/versions/{versionId}/download":
       get_GetVersionDownloadUrl,
-    "/api/v2/organization/{organizationId}/catalogue-data/{assetId}/thumbnail": get_GetThumbnailUrl,
-    "/api/v2/organization/{organizationId}/catalogue-data/{assetId}/download": get_GetDownloadUrl,
+    "/api/v2/organization/{organizationId}/catalogue-data/{documentId}/versions/{versionId}/description":
+      get_GetDocumentVersionDescription,
+    "/api/v2/organization/{organizationId}/catalogue-data/{documentId}/thumbnail": get_GetThumbnailUrl,
+    "/api/v2/organization/{organizationId}/catalogue-data/{documentId}/download": get_GetDownloadUrl,
     "/api/v2/organization/{organizationId}/catalogue-data/by-document-type/{documentType}":
       get_GetAllDocumentsForOrganization,
     "/api/v2/event/{eventId}": get_LoadEventById,
@@ -1161,11 +1198,12 @@ export const EndpointByMethod = {
     "/api/v2/portrait-template/{portraitTemplateId}": delete_DeletePortraitTemplate,
     "/api/v2/organization/{organizationId}/billing-address-template/{billingAddressTemplateId}":
       delete_DeleteBillingAddressTemplate,
-    "/api/v2/organization/{organizationId}/catalogue-data/{assetId}": delete_DeleteAdvertisement,
+    "/api/v2/organization/{organizationId}/catalogue-data/{documentId}": delete_DeleteDocument,
   },
   post: {
     "/api/v2/portrait-template": post_SaveOrUpdatePortrait_1,
-    "/api/v2/organization/{organizationId}/catalogue-data/{assetId}/versions/{versionId}/restore": post_RestoreVersion,
+    "/api/v2/organization/{organizationId}/catalogue-data/{documentId}/versions/{versionId}/restore":
+      post_RestoreVersion,
     "/api/v2/organization/{organizationId}/catalogue-data/request-upload-url": post_RequestUploadUrl,
     "/api/v2/organization/{organizationId}/billing-address-template": post_AddBillingAddressTemplate,
     "/api/v2/event-registration": post_RegisterOrganizationToEvent,

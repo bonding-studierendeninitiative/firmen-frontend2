@@ -1,4 +1,4 @@
-import { Dialog as SheetPrimitive } from "bits-ui";
+import { Dialog as SheetPrimitive } from "bits-ui-old";
 import { type VariantProps, tv } from "tailwind-variants";
 
 import Portal from "./sheet-portal.svelte";

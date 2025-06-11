@@ -12,7 +12,7 @@
 	import { Button } from '@/components/ui/button';
 	import { writable } from 'svelte/store';
 	import Search from 'lucide-svelte/icons/search';
-	import { toast } from 'svelte-french-toast';
+	import { toast } from 'svelte-sonner';
 	import { _ } from '@services';
 	import { Switch } from '@/components/ui/switch';
 	import { trpc } from '@/trpc/client';

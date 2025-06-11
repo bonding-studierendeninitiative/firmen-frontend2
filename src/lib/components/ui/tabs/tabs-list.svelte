@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Tabs as TabsPrimitive } from "bits-ui";
+	import { Tabs as TabsPrimitive } from "bits-ui-old";
 	import { cn } from "@/utils/tailwind.js";
 
 	type $$Props = TabsPrimitive.ListProps;

@@ -2,8 +2,10 @@ import { authorizedOrgMemberProcedure, router } from '@/trpc/server';
 import { array, nullish, number, object, parse, safeParse, string } from 'valibot';
 import { TRPCError } from '@trpc/server';
 import { GetEventRegistrationsForOrganizationOutput, RegisterOrganizationToEventInput, SubmitPortraitInput } from '@api/client';
-import { CreateEventRegistrationResponse } from '@schema';
+import { CreateEventRegistrationResponse, SubmitPortraitRequest } from '@schema';
 import { clerkClient } from 'svelte-clerk/server';
+import { superValidate, type Infer } from 'sveltekit-superforms';
+import { valibot } from "sveltekit-superforms/adapters";
 
 export const eventRegistrationsRouter = router({
 	changeContactPeople: authorizedOrgMemberProcedure
@@ -44,8 +46,8 @@ export const eventRegistrationsRouter = router({
 			)
 		)
 		.query(async ({ ctx, input: { cursor: page, limit, orgId } }) => {
-			const response = await ctx.api.get("/api/v2/event-registration",{
-				query:{
+			const response = await ctx.api.get("/api/v2/event-registration", {
+				query: {
 					organizationId: orgId,
 					limit,
 					page
@@ -69,7 +71,7 @@ export const eventRegistrationsRouter = router({
 							contactPeople: await Promise.all(
 								eventRegistration.contactPeople?.map(async (contactPersonId) => {
 									const user = await clerkClient.users.getUser(contactPersonId);
-	
+
 									return {
 										id: user.id,
 										name: user.fullName,
@@ -100,6 +102,21 @@ export const eventRegistrationsRouter = router({
 			if (response.status !== 204) {
 				throw new TRPCError({ code: "BAD_REQUEST", message: 'The portrait could not be submitted!' });
 			}
+		}),
+	submitPortraitForm: authorizedOrgMemberProcedure
+		.input((input) => parse(
+			object({
+				eventRegistrationId: string()
+			}), input)
+		)
+		.query(async ({ input }) => {
+			const submitPortraitForm = await superValidate<Infer<SubmitPortraitRequest>>({
+				eventRegistrationId: input.eventRegistrationId
+			}, valibot(SubmitPortraitRequest), {
+				errors: false
+			});
+
+			return submitPortraitForm;
 		}),
 	registerContactPersonToEvent: authorizedOrgMemberProcedure
 		.input((input) => parse(RegisterOrganizationToEventInput, input))

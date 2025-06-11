@@ -13,7 +13,7 @@
 	import { Input } from '@/components/ui/input';
 	import { Textarea } from '@/components/ui/textarea';
 	import NumericInput from '@/@svelte/components/NumericInput/NumericInput.svelte';
-	import { toast } from 'svelte-french-toast';
+	import { toast } from 'svelte-sonner';
 	import * as Table from '@/components/ui/table';
 	import { Separator } from '@/components/ui/separator';
 	import { cn } from '@/utils/tailwind';

@@ -5,12 +5,12 @@
 	import { cn } from '@/utils';
 	import { Button } from '@/components/ui/button';
 	import { ViewLogoDialog } from '@/@svelte/modules';
-	import { DetailedDocumentOutput } from '@api/client';
+	import { DetailedDocumentOutput, SimpleDocumentOutput } from '@api/client';
 	import { page } from '$app/stores';
 	import { trpc } from '@/trpc/client';
 	import { LoaderCircle } from 'lucide-svelte';
 
-	export let logo: DetailedDocumentOutput;
+	export let logo: SimpleDocumentOutput;
 	let className = '';
 	export { className as class };
 
@@ -25,7 +25,7 @@
 	let showDialog = false;
 </script>
 
-<section>
+<section class="w-full">
 	<Card.Root
 		class={cn(
 			'bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300',
@@ -46,15 +46,11 @@
 				{#if logo.activeVersion?.uploadStatus==="UPLOADED" || $thumbnail.isLoading}
 				<LoaderCircle class="mx-auto animate-spin w-5" />
 				{:else if $thumbnail.data}
-					{#if logo.activeVersion?.contentType?.startsWith('image/')}
-						<img
+					<img
 							src={$thumbnail.data || '/placeholder.svg'}
 							alt={logo.title}
 							class="object-contain w-full h-full"
 						/>
-					{:else}
-						<PdfFilePreview url={`${$thumbnail.data}#toolbar=0&navpanes=0&scrollbar=0`} />
-					{/if}
 				{/if}
 			</div>
 		</Card.Header>

@@ -1,5 +1,4 @@
 import { createCaller } from '@/trpc/router';
-import { clerkClient } from 'svelte-clerk/server';
 
 export const load = async (event) => {
 	const status = event.url.searchParams.getAll('status').map((status) => status.toUpperCase()) ?? [
@@ -19,10 +18,6 @@ export const load = async (event) => {
 		size: number;
 		page: number;
 	}) {
-		const { initialState } = await event.parent();
-		if (!initialState.sessionId) return;
-
-		const token = await clerkClient.sessions.getToken(initialState.sessionId, 'access_token');
 		return await api.admin.events.getAll({ event_status: status, size, page });
 	}
 

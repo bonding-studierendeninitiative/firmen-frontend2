@@ -2,8 +2,8 @@
 	import * as Icons from '$lib/@svelte/icons';
 	import { page } from '$app/stores';
 	import { cn } from '@/utils/tailwind';
-	import { UserButton } from 'svelte-clerk/components';
 	import { _ } from '@services';
+	import { UserButton } from 'svelte-clerk';
 
 	const handleMenuToggler = () => {
 		const sidebar = document.getElementById('sidebar');

@@ -225,6 +225,14 @@
         "uploaded": "Logo hochgeladen",
         "rejected": "Logo abgelehnt. Bitte ein neues Logo hochladen",
         "changes-requested": "Änderungen wurden angefragt, bitte eine neue Version hochladen"
+      },
+      "logo-missing": {
+        "description": "Es wurde kein Logo ausgewählt",
+        "action": "Jetzt Logo auswählen"
+      },
+      "advertisement-missing": {
+        "description": "Es wurde noch keine Imageanzeige ausgewählt",
+        "action": "Jetzt Imageanzeige auswählen"
       }
     }
   },
@@ -330,7 +338,11 @@
       "file-size": "Dateigröße:",
       "file-created": "Erstellt:",
       "file-modified": "Bearbeitet:",
-      "status-history": "Statusänderungen"
+      "status-history": "Statusänderungen",
+      "status": {
+        "UPLOAD": "Hochgeladen",
+        "THUMBS_DONE": "Vorschaubilder erstellt"
+      }
     },
     "admin-view-advertisement-dialog": {
       "file-information": "Dateiinformationen",
@@ -793,6 +805,9 @@
         },
         "successCreated": "Benutzer erfolgreich erstellt!"
       }
+    },
+    "catalogue-data": {
+      "logos": "Logos"
     }
   },
   "admin-pages": {

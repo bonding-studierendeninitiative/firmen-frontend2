@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Sidebar, SidebarItem } from '@/@svelte/modules';
-	import { OrganizationSwitcher } from 'svelte-clerk/components';
+	import { OrganizationSwitcher } from 'svelte-clerk';
 	import { USER_SIDEBAR_LINKS } from '@constant';
 	import { page } from '$app/stores';
 	import { LoaderCircle } from 'lucide-svelte';

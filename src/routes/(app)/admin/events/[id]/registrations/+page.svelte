@@ -45,7 +45,7 @@
 			</section>
 		{:else}
 			<section class=" mt-10">
-				<DataTable data={allEventRegistrations} />
+				<DataTable isLoading={$eventRegistrationsQuery.isLoading} data={$allEventRegistrations} />
 			</section>
 		{/if}
 	</section>

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import * as Dialog from '@/components/ui/dialog';
-	import { LocalizedDate, PdfFilePreview, StatusBadge } from '@/@svelte/components';
+	import { LocalizedDate, StatusBadge } from '@/@svelte/components';
 	import { _ } from '@services';
 	import { Badge } from '@/components/ui/badge';
 	import { getHumanReadableFileSize } from '@/utils';
@@ -9,21 +9,33 @@
 	import { trpc } from '@/trpc/client';
 	import { page } from '$app/stores';
 	import type { DetailedDocumentOutput } from '@api/client';
-
+	import { LoaderCircle } from 'lucide-svelte';
 	export let open = false;
 	export let advertisement: DetailedDocumentOutput;
 
-	console.log({advertisement})
+	const download = trpc($page).catalogueData.generateDownloadLink.createQuery(
+		{
+			documentId: advertisement.id,
+			organizationId: advertisement.organizationId
+		},
+		{
+			enabled: advertisement.activeVersion?.uploadStatus !== 'PENDING_UPLOAD' && advertisement.activeVersion?.uploadStatus !== 'PENDING_METADATA'
+		}
+	);
 
-	const download = trpc($page).catalogueData.generateDownloadLink.createQuery({
-		documentId: advertisement.id,
-		organizationId: advertisement.organizationId
-	}, {
-		enabled: advertisement.activeVersion?.uploadStatus === "UPLOADED"
-	});
+	const thumbnail = trpc($page).catalogueData.generateThumbnailLink.createQuery(
+		{
+			documentId: advertisement.id,
+			organizationId: advertisement.organizationId,
+			resolution: 'large'
+		},
+		{
+			enabled: advertisement.activeVersion?.uploadStatus === 'COMPLETED'
+		}
+	);
 
 	function handleDownload() {
-		const downloadUrl = $download.data
+		const downloadUrl = $download.data;
 		if (downloadUrl && Number(downloadUrl?.length) > 0) {
 			const a = document.createElement('a');
 			a.href = downloadUrl;
@@ -40,11 +52,17 @@
 	<Dialog.Content class="sm:max-w-4xl max-h-[80vh] overflow-y-auto">
 		{#if advertisement}
 			<div class="grid grid-cols-2 gap-6">
-				{#if $download.data}
+				{#if $thumbnail.isLoading}
+					<LoaderCircle class="mx-auto animate-spin w-8 h-8" />
+				{:else if $thumbnail.data}
 					<div
 						class="[aspect-ratio:1/_1.41] bg-gray-100 dark:bg-gray-700 rounded-md flex items-center justify-center overflow-hidden"
 					>
-						<PdfFilePreview url={`${$download.data}#toolbar=0&navpanes=0&scrollbar=0`} />
+						<img
+							src={$thumbnail.data || '/placeholder.svg'}
+							alt={advertisement.title}
+							class="object-contain w-full h-full"
+						/>
 					</div>
 				{/if}
 
@@ -55,6 +73,10 @@
 							<StatusBadge
 								variant={advertisement.activeVersion?.reviewStatus}
 								label={$_('status-text.' + advertisement.activeVersion?.reviewStatus)}
+							/>
+							<StatusBadge
+								variant={advertisement.activeVersion?.uploadStatus}
+								label={$_('status-text.' + advertisement.activeVersion?.uploadStatus)}
 							/>
 						</Dialog.Description>
 					</Dialog.Header>
@@ -67,7 +89,11 @@
 								<span class="text-gray-600 dark:text-gray-400"
 									>{$_('modules.view-advertisement-dialog.file-type')}</span
 								>
-								<span>{$_('file-types.' + (advertisement.activeVersion?.contentType ?? 'unknown'))}</span>
+								<span
+									>{$_(
+										'file-types.' + (advertisement.activeVersion?.contentType ?? 'unknown')
+									)}</span
+								>
 							</div>
 							<div class="flex justify-between">
 								<span class="text-gray-600 dark:text-gray-400"
@@ -94,7 +120,7 @@
 							{$_('modules.view-advertisement-dialog.status-history')}
 						</h4>
 						<div class="space-y-3">
-							{#each advertisement.history ?? [] as history}
+							{#each advertisement.activeVersion?.history ?? [] as history}
 								<div
 									class="border-l-2 pl-3"
 									class:border-yellow-500={history.feedbackType === 'change-request'}

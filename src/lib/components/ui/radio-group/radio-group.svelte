@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { RadioGroup as RadioGroupPrimitive } from "bits-ui";
+	import { RadioGroup as RadioGroupPrimitive } from "bits-ui-old";
 	import { cn } from "@/utils";
 
 	type $$Props = RadioGroupPrimitive.Props;

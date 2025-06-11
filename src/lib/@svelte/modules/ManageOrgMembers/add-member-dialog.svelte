@@ -6,7 +6,7 @@
 	import * as Avatar from '@/components/ui/avatar';
 	import { Check, ChevronsUpDown, LoaderCircle, Plus, Search, User } from 'lucide-svelte';
 	import { Button, buttonVariants } from '@/components/ui/button';
-	import { toast } from 'svelte-french-toast';
+	import { toast } from 'svelte-sonner';
 	import { _ } from '@services';
 	import { trpc } from '@/trpc/client';
 	import { page } from '$app/stores';

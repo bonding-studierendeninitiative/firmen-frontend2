@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Pagination as PaginationPrimitive } from "bits-ui";
+	import { Pagination as PaginationPrimitive } from "bits-ui-old";
 
 	import { cn } from "@/utils";
 

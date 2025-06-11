@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
-	import { Toaster } from 'svelte-french-toast';
+	import { onMount, type Snippet } from 'svelte';
+	import { Toaster } from 'svelte-sonner';
 	import '../app.css';
 	import { setupI18n, isLocaleLoading, dir, locale } from '@services';
 	import { page } from '$app/stores';
@@ -14,6 +14,11 @@
 	import { SvelteQueryDevtools } from '@tanstack/svelte-query-devtools';
 	import { RenderScan } from 'svelte-render-scan';
 	import {PUBLIC_APP_ENVIRONMENT} from "$env/static/public";
+	interface Props {
+		children: Snippet;
+	}
+
+	let { children }: Props = $props();
 
 	const queryClient = new QueryClient({
 		defaultOptions: {
@@ -45,7 +50,7 @@
 		<QueryClientProvider client={queryClient}>
 			<SvelteQueryDevtools />
 			<ClerkProvider publishableKey={PUBLIC_CLERK_PUBLISHABLE_KEY} localization={$locale === 'de' ? deDE : enUS}>
-				<slot />
+				{@render children()}
 			</ClerkProvider>
 		</QueryClientProvider>
 		<SuperDebug data={page} />

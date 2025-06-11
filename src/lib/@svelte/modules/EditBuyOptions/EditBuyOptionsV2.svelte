@@ -24,7 +24,7 @@
 	} from '@/components/ui/dialog';
 	import { type Infer, intProxy, superForm, type SuperValidated } from 'sveltekit-superforms';
 	import { type UpdateBuyOptionRequest, ValueType } from '@schema';
-	import { toast } from 'svelte-french-toast';
+	import { toast } from 'svelte-sonner';
 	import type { InferOutput } from 'valibot';
 	import { BuyOptionPreview } from '@/@svelte/modules';
 	import { cn } from '@/utils';

@@ -5,7 +5,7 @@
 	import { Button } from '@/components/ui/button';
 	import { type PortraitContactInfoSchema } from '$lib/services/portraitTemplates';
 	import { type Infer, superForm, type SuperValidated } from 'sveltekit-superforms';
-	import { toast } from 'svelte-french-toast';
+	import { toast } from 'svelte-sonner';
 
 	export let data: SuperValidated<Infer<typeof PortraitContactInfoSchema>>;
 

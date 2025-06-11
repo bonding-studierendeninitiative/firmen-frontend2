@@ -6,7 +6,7 @@
 	import {
 		type UploadCatalogueDataForm
 	} from '@schema';
-	import { toast } from 'svelte-french-toast';
+	import { toast } from 'svelte-sonner';
 	import { getContext, onMount } from 'svelte';
 	import { Control, Description, Field, FieldErrors, Label } from '@/components/ui/form';
 	import { _ } from '@services';

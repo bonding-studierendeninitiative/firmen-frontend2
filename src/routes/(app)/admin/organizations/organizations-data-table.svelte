@@ -5,120 +5,102 @@
 	import type { Readable } from 'svelte/store';
 	import DataTableActions from './data-table-actions.svelte';
 	import { Checkbox } from '@/components/ui/checkbox';
-	import type { ColumnDef } from '@/@svelte/components/QueryDataTable/QueryDataTable.svelte';
+	import { createColumnHelper, type Column, type ColumnDef } from '@tanstack/svelte-table';
 	import DataTableSortToggle from './data-table-sort-toggle.svelte';
-	import { type TableState } from '@/@svelte/components/QueryDataTable/table-state.svelte';
 	import * as Avatar from '@/components/ui/avatar';
+	import { renderSnippet } from '@/@svelte/components/QueryDataTable/render-helpers';
 
-	export let organizations: AdminOrgsOutput['data'];
-	export let totalCount: Readable<number>;
-	export let isLoading: boolean;
+	let { organizations, totalCount, isLoading }: { organizations: AdminOrgsOutput['data']; totalCount: Readable<number>; isLoading: boolean } = $props();
 
-	const columns: ColumnDef<AdminOrgsOutput['data'][0]>[] = [
-		{
+	const columnHelper = createColumnHelper<AdminOrgsOutput['data'][0]>();
+
+	const columns: ColumnDef<AdminOrgsOutput['data'][0]>[] = $derived([
+		columnHelper.accessor('id', {
 			id: 'checkboxes',
-			header: (state) => ({
-				snippet: checkBoxSnippet,
-				props: {
-					checked: state.areAllRowsSelected
+			header: ({ table }) =>
+				renderSnippet(checkBoxSnippet, {
+					checked: table.getIsAllRowsSelected()
 						? true
-						: state.areSomeRowsSelected
+						: table.getIsSomeRowsSelected()
 							? 'indeterminate'
 							: false,
 					onCheckedChange: () => {
-						state.onToggleAllRowsSelection();
+						table.toggleAllRowsSelected();
 					}
-				}
-			}),
-			cell: (row, state) => ({
-				snippet: checkBoxSnippet,
-				props: {
-					checked: state.isRowSelected(row),
+				}),
+			cell: ({ row }) => {
+				return renderSnippet(checkBoxSnippet, {
+					checked: row.getIsSelected(),
 					onCheckedChange: () => {
-						state.onToggleRowSelection(row);
+						row.toggleSelected();
 					}
-				}
-			}),
-			sortable: false
-		},
-		{
+				});
+			},
+			enableSorting: false
+		}),
+		columnHelper.accessor('name', {
 			id: 'name',
-			header: (state) => ({
-				snippet: sortSnippet,
-				props: {
+			header: ({ column }) =>
+				renderSnippet(sortSnippet, {
 					column: {
 						header: $_(`admin-pages.organizations.data-table.headers.name`),
 						id: 'name'
 					},
-					state
-				}
-			}),
-			cell: (row) => ({
-				snippet: orgLinkSnippet,
-				props: {
-					name: row.name,
-					slug: row.slug,
-					imageUrl: row.imageUrl
-				}
-			})
-		},
-		{
+					state: column
+				}),
+			cell: ({ row }) =>
+				renderSnippet(orgLinkSnippet, {
+					name: row.original.name,
+					slug: row.original.slug,
+					imageUrl: row.original.imageUrl
+				})
+		}),
+		columnHelper.accessor('membersCount', {
 			id: 'members_count',
-			header: (state) => ({
-				snippet: sortSnippet,
-				props: {
+			header: ({ column }) =>
+				renderSnippet(sortSnippet, {
 					column: {
 						header: $_(`admin-pages.organizations.data-table.headers.members-count`),
 						id: 'members_count'
 					},
-					state
-				}
-			}),
-			accessor: (row) => row.membersCount || 0,
-			align: 'right'
-		},
-		{
+					state: column
+				}),
+		}),
+		columnHelper.accessor('createdAt', {
 			id: 'created_at',
-			header: (state) => ({
-				snippet: sortSnippet,
-				props: {
+			header: ({ column }) =>
+				renderSnippet(sortSnippet, {
 					column: {
 						header: $_(`admin-pages.organizations.data-table.headers.last-modified`),
 						id: 'created_at'
 					},
-					state
-				}
-			}),
-			cell: (row) => ({
-				snippet: localizedDateSnippet,
-				props: {
-					date: row.createdAt
-				}
-			})
-		},
-		{
+					state: column
+				}),
+			cell: ({ row }) =>
+				renderSnippet(localizedDateSnippet, {
+					date: row.original.createdAt
+				}),
+		}),
+		columnHelper.accessor('publicMetadata.type', {
 			id: 'organizationType',
 			header: $_(`admin-pages.organizations.data-table.headers.type`),
-			cell: (row) => ({
-				snippet: orgTypeSnippet,
-				props: {
-					type: row.publicMetadata?.type
-				}
-			}),
-			sortable: false
-		},
-		{
+			cell: ({ row }) =>
+				renderSnippet(orgTypeSnippet, {
+					type: row.original.publicMetadata?.type ?? ""
+				}),
+			enableSorting: false
+		}),
+		columnHelper.accessor('id', {
 			id: 'actions',
 			header: '',
-			cell: (row) => ({
-				snippet: actionsSnippet,
-				props: {
-					id: row.id
+			cell: ({ row }) =>
+				renderSnippet(actionsSnippet, {
+					id: row.original.id
 				}
-			}),
-			sortable: false
-		}
-	];
+			),
+			enableSorting: false
+		})
+	]);
 </script>
 
 {#snippet actionsSnippet({ id }: { id: string })}
@@ -130,7 +112,7 @@
 	state
 }: {
 	column: { header: string; id: string };
-	state: TableState<unknown>;
+	state: Column<AdminOrgsOutput['data'][0]>
 })}
 	<DataTableSortToggle {column} {state} />
 {/snippet}
@@ -156,7 +138,10 @@
 	name: string;
 	imageUrl: string;
 })}
-	<a href="/admin/organizations/{slug}" class="hover:underline inline-flex gap-2 items-center align-middle">
+	<a
+		href="/admin/organizations/{slug}"
+		class="hover:underline inline-flex gap-2 items-center align-middle"
+	>
 		<Avatar.Root class="w-6 h-6">
 			<Avatar.Image src={imageUrl} alt={name} />
 			<Avatar.Fallback>{name}</Avatar.Fallback>

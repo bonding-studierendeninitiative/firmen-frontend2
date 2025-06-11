@@ -6,24 +6,23 @@
 	import { UploadAdvertisementDialog } from '@/@svelte/modules/UploadAdvertisementDialog';
 	import { Button } from '@/components/ui/button';
 	import { trpc } from '@/trpc/client';
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import { _ } from '@services';
 
 	let { data } = $props();
 	let isUploadOpen = $state(false);
 
-	const api = trpc($page);
+	const api = trpc(page);
 	const utils = api.createUtils();
 
-	const [advertsQuery, resolveAdverts] =
-		api.catalogueData.getAll.createInfiniteQuery(
-			{ limit: '10', documentType: "advert" },
-			{
-				getNextPageParam: (lastPage) =>
-					Math.max(Number(lastPage.pageNumber) + 1, Number(lastPage.totalPages) - 1).toString(),
-				lazy: true
-			}
-		);
+	const [advertsQuery, resolveAdverts] = api.catalogueData.getAll.createInfiniteQuery(
+		{ limit: '10', documentType: 'advert' },
+		{
+			getNextPageParam: (lastPage) =>
+				Math.max(Number(lastPage.pageNumber) + 1, Number(lastPage.totalPages) - 1).toString(),
+			lazy: true
+		}
+	);
 	const uploadFormQuery = api.catalogueData.uploadForm.createQuery(undefined, {
 		staleTime: Infinity
 	});
@@ -60,16 +59,16 @@
 				/>
 			{:else}
 				{@const groupedAdvertisements = allAdverts
-				.filter((advert) => advert != undefined)
-				.reduce((acc, advertisement) => {
-					const year = dayjs(advertisement.createdAt).year();
+					.filter((advert) => advert != undefined)
+					.reduce((acc, advertisement) => {
+						const year = dayjs(advertisement.activeVersion?.createdAt).year();
 
-					if (!acc[year]) {
-						acc[year] = [];
-					}
-					acc[year].push(advertisement);
-					return acc;
-				}, {})}
+						if (!acc[year]) {
+							acc[year] = [];
+						}
+						acc[year].push(advertisement);
+						return acc;
+					}, {})}
 				{#each Object.entries(groupedAdvertisements).sort( ([ayear, aadverts], [byear, badverts]) => byear.localeCompare(ayear) ) as [year, advertisements]}
 					<div class="space-y-4 @container/adverts">
 						<h2 class="text-xl font-bold border-b">{year}</h2>
@@ -84,14 +83,14 @@
 				{/each}
 			{/if}
 		{/if}
+		{#if $advertsQuery.isLoading || $advertsQuery.isFetching}
+			<LoaderCircle class="w-10 h-10 mx-auto animate-spin" />
+		{:else if $advertsQuery.isError}
+			<article>
+				Error loading adverts: {$advertsQuery.error}
+			</article>
+		{/if}
 	{:catch error}
 		<p>{error.message}</p>
 	{/await}
-	{#if $advertsQuery.isPending || $advertsQuery.isFetching}
-		<LoaderCircle class="w-10 h-10 mx-auto animate-spin" />
-	{:else if $advertsQuery.isError}
-		<article>
-			Error loading adverts: {$advertsQuery.error}
-		</article>
-	{/if}
 </div>

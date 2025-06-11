@@ -7,7 +7,7 @@
 	import type { CreateBuyOptionRequest } from '@schema';
 	import { Control, Description, Field, FieldErrors, Label } from '@/components/ui/form';
 	import { Input } from '@/components/ui/input';
-	import { toast } from 'svelte-french-toast';
+	import { toast } from 'svelte-sonner';
 	import { page } from '$app/stores';
 
 	export let createForm: SuperValidated<Infer<CreateBuyOptionRequest>>;

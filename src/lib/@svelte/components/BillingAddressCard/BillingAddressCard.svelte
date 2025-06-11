@@ -9,15 +9,19 @@
 	import { type Infer, superForm, type SuperValidated } from 'sveltekit-superforms';
 	import { Trash } from 'lucide-svelte';
 	import { Button } from '@/components/ui/button';
-	import toast from 'svelte-french-toast';
-	import * as Dialog from "@/components/ui/dialog"
+	import { toast } from 'svelte-sonner';
+	import * as Dialog from '@/components/ui/dialog';
 	import { invalidate } from '$app/navigation';
 
 	export let isDefault: boolean;
 	export let billingAddress: Infer<BillingAddressTemplate>;
 	let isDeleteFormOpen = false;
-	export let deleteBillingAddressTemplateForm: SuperValidated<Infer<DeleteBillingAddressTemplateForm>>;
-	export let makeBillingAddressTemplateDefaultForm: SuperValidated<Infer<MakeBillingAddressTemplateDefaultForm>>;
+	export let deleteBillingAddressTemplateForm: SuperValidated<
+		Infer<DeleteBillingAddressTemplateForm>
+	>;
+	export let makeBillingAddressTemplateDefaultForm: SuperValidated<
+		Infer<MakeBillingAddressTemplateDefaultForm>
+	>;
 	const { enhance: deleteEnhance } = superForm(deleteBillingAddressTemplateForm, {
 		onResult({ result }) {
 			if (result.type === 'success') {
@@ -53,8 +57,10 @@
 				</div>
 			{:else}
 				<form action="?/makeBillingAddressTemplateDefault" method="post" use:makeDefaultEnhance>
-					<input type="hidden" name="billingAddressTemplateId" value={billingAddress.id}>
-				<Button class="mx-6" on:click={() => undefined} type="submit">{$_('user-pages.settings.makeItDefault')}</Button>
+					<input type="hidden" name="billingAddressTemplateId" value={billingAddress.id} />
+					<Button class="mx-6" on:click={() => undefined} type="submit"
+						>{$_('user-pages.settings.makeItDefault')}</Button
+					>
 				</form>
 			{/if}
 			<button class="text-stone-500"><PencilSquareIcon /></button>
@@ -68,12 +74,12 @@
 						<Dialog.Description>
 							{$_('user-pages.settings.deleteAddressDescription')}
 						</Dialog.Description>
-								<input name="billingAddressTemplateId" type="hidden" value={billingAddress.id} />
+						<input name="billingAddressTemplateId" type="hidden" value={billingAddress.id} />
 						<Dialog.Footer>
 							<Button variant="secondary" on:click={() => undefined}>
 								{$_('common.cancel')}
 							</Button>
-							<Button variant="destructive" type="submit">{$_("common.delete")}</Button>
+							<Button variant="destructive" type="submit">{$_('common.delete')}</Button>
 						</Dialog.Footer>
 					</form>
 				</Dialog.Content>

@@ -1,4 +1,4 @@
-import { RadioGroup as RadioGroupPrimitive } from "bits-ui";
+import { RadioGroup as RadioGroupPrimitive } from "bits-ui-old";
 
 import Root from "./radio-group.svelte";
 import Item from "./radio-group-item.svelte";

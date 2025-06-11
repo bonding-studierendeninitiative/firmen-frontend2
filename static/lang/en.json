@@ -211,7 +211,15 @@
       "contact-people": "Contact people",
       "addons": "Additional services",
       "last-updated": "Last edited:",
-      "id": "ID:"
+      "id": "ID:",
+      "logo-missing": {
+        "description": "No logo has been selected",
+        "action": "Pick a logo"
+      },
+      "advertisement-missing": {
+        "description": "No advertisement has been selected",
+        "action": "Pick an advert now"
+      }
     }
   },
   "modules": {
@@ -316,7 +324,11 @@
       "file-size": "File size:",
       "file-created": "Created:",
       "file-modified": "Modified:",
-      "status-history": "Status history"
+      "status-history": "Status history",
+      "status": {
+        "UPLOAD": "Uploaded",
+        "THUMBS_DONE": "Thumbnails created"
+      }
     },
     "admin-view-advertisement-dialog": {
       "file-information": "File information",
@@ -774,6 +786,9 @@
         },
         "successCreated": "User successfully created!"
       }
+    },
+    "catalogue-data": {
+      "logos": "Logos"
     }
   },
   "admin-pages": {

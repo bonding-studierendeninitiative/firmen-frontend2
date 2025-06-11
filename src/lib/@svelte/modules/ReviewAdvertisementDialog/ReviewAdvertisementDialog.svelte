@@ -8,12 +8,12 @@
 	import { cn } from '@/utils';
 	import ReviewAdvertisementForm from '@/@svelte/modules/ReviewAdvertisementDialog/ReviewAdvertisementForm.svelte';
 	import { trpc } from '@/trpc/client';
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 
 	let open: boolean;
 
 	export let advertisement: InferOutput<AdvertisementSchema>;
-	const api = trpc($page)
+	const api = trpc(page)
 	const reviewFormQuery = api.admin.documents.reviewForm.createQuery()
 </script>
 

@@ -1,12 +1,12 @@
 import { authorizedOrgMemberProcedure, router } from '@/trpc/server';
 import { file, literal, nonEmpty, nullish, object, parse, pipe, string, union } from 'valibot';
 import {
-	PickLogoRequest,
 	UploadCatalogueDataForm,
 } from '@schema';
 import { superValidate } from 'sveltekit-superforms';
 import { valibot } from 'sveltekit-superforms/adapters';
 import { TRPCError } from '@trpc/server';
+import type { Problem } from '@api/client';
 
 const GetCatalogDataSchema = object({
 	documentType: union([literal("logo"), literal("advert")]),
@@ -104,6 +104,21 @@ export const catalogueDataRouter = router({
 			});
 			return response;
 		}),
+	getDocumentVersionDescription: authorizedOrgMemberProcedure
+		.input((input) => parse(object({
+			documentId: string(),
+			versionId: string(),
+		}), input))
+		.query(async ({ ctx, input: { documentId, versionId } }) => {
+			const response = await ctx.api.get("/api/v2/organization/{organizationId}/catalogue-data/{documentId}/versions/{versionId}/description", {
+				path: {
+					organizationId: ctx.session.orgId,
+					documentId,
+					versionId
+				}
+			});
+			return response;
+		}),
 	pickLogo: authorizedOrgMemberProcedure
 		.input((input) => parse(object({
 			eventRegistrationId: string(),
@@ -145,9 +160,9 @@ export const catalogueDataRouter = router({
 		)
 		.output((output) => parse(nullish(string()), output))
 		.query(async ({ ctx, input }) => {
-			const response = await ctx.api.request("get", "/api/v2/organization/{organizationId}/catalogue-data/{assetId}/download", {
+			const response = await ctx.api.request("get", "/api/v2/organization/{organizationId}/catalogue-data/{documentId}/download", {
 				path: {
-					assetId: input.documentId,
+					documentId: input.documentId,
 					organizationId: input.organizationId
 				}
 			});
@@ -171,9 +186,9 @@ export const catalogueDataRouter = router({
 		)
 		.output((output) => parse(nullish(string()), output))
 		.query(async ({ ctx, input }) => {
-			const response = await ctx.api.request("get", "/api/v2/organization/{organizationId}/catalogue-data/{assetId}/thumbnail", {
+			const response = await ctx.api.request("get", "/api/v2/organization/{organizationId}/catalogue-data/{documentId}/thumbnail", {
 				path: {
-					assetId: input.documentId,
+					documentId: input.documentId,
 					organizationId: ctx.session.orgId
 				},
 				query: {
@@ -191,12 +206,19 @@ export const catalogueDataRouter = router({
 	deleteDocument: authorizedOrgMemberProcedure
 		.input((input) => parse(pipe(string(), nonEmpty()), input))
 		.mutation(async ({ ctx, input }) => {
-			await ctx.api.delete("/api/v2/organization/{organizationId}/catalogue-data/{assetId}", {
+			const response = await ctx.api.request("delete", "/api/v2/organization/{organizationId}/catalogue-data/{documentId}", {
 				path: {
-					assetId: input,
+					documentId: input,
 					organizationId: ctx.session.orgId
+				},
+				query: {
+					"ignore-conflict": false
 				}
 			})
+			if (response.status !== 204) {
+				const problem = (await response.json()) as Problem
+				throw new TRPCError({code: "CONFLICT", message: problem.detail})
+			}
 		}),
 	uploadForm: authorizedOrgMemberProcedure.query(async ({ ctx }) => {
 		return await superValidate(

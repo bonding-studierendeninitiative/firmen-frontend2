@@ -1,6 +1,6 @@
 <script lang="ts">
 	import * as Card from '@/components/ui/card';
-	import { PdfFilePreview, StatusBadge } from '@/@svelte/components';
+	import { StatusBadge } from '@/@svelte/components';
 	import { _ } from '@services';
 	import { cn } from '@/utils';
 	import { ViewAdvertisementDialog } from '@/@svelte/modules';
@@ -8,20 +8,26 @@
 	import type { DetailedDocumentOutput } from '@api/client';
 	import { trpc } from '@/trpc/client';
 	import { page } from '$app/stores';
-
+	import { LoaderCircle } from 'lucide-svelte';
 	export let advertisement: DetailedDocumentOutput;
 	let className = '';
 	export { className as class };
 
-	const download = trpc($page).catalogueData.generateDownloadLink.createQuery({
-		documentId: advertisement.id,
-		organizationId: advertisement.organizationId
-	});
+	const thumbnail = trpc($page).catalogueData.generateThumbnailLink.createQuery(
+		{
+			documentId: advertisement.id,
+			organizationId: advertisement.organizationId,
+			resolution: 'medium'
+		},
+		{
+			enabled: advertisement.activeVersion?.uploadStatus === 'COMPLETED'
+		}
+	);
 
 	let showDialog = false;
 </script>
 
-<section>
+<section class="w-full">
 	<Card.Root
 		class={cn(
 			'bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300',
@@ -39,8 +45,14 @@
 						>{$_('common.view-details')}</Button
 					>
 				</div>
-				{#if $download.data && Number($download.data?.length) > 0}
-					<PdfFilePreview url={`${$download.data}#toolbar=0&navpanes=0&scrollbar=0`} />
+				{#if advertisement.activeVersion?.uploadStatus === 'UPLOADED' || $thumbnail.isLoading}
+					<LoaderCircle class="mx-auto animate-spin w-5" />
+				{:else if $thumbnail.data}
+					<img
+						src={$thumbnail.data || '/placeholder.svg'}
+						alt={advertisement.title}
+						class="object-contain w-full h-full"
+					/>
 				{/if}
 			</div>
 		</Card.Header>
