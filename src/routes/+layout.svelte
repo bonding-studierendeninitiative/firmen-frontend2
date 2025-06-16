@@ -36,7 +36,7 @@
 
 </script>
 
-<RenderScan initialEnabled={PUBLIC_APP_ENVIRONMENT === "developement"} />
+<!--<RenderScan initialEnabled={PUBLIC_APP_ENVIRONMENT === "developement"} />-->
 
 {#if $isLocaleLoading}
 	<div class="flex justify-center items-center h-screen">
@@ -46,7 +46,7 @@
 {:else}
 	<div in:blur>
 		<QueryClientProvider client={queryClient}>
-			<SvelteQueryDevtools />
+			<!--<SvelteQueryDevtools />-->
 			<ClerkProvider publishableKey={PUBLIC_CLERK_PUBLISHABLE_KEY} localization={$locale === 'de' ? deDE : enUS}>
 				{@render children()}
 			</ClerkProvider>

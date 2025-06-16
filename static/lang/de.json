@@ -720,7 +720,7 @@
     },
     "dashboard": {
       "dashboard": "Dashboard",
-      "subHeading": "Willkommen zurück, {name}. Sehen Sie sich die neuesten Änderungen an Ihren Bonding-Projekten an!",
+      "subHeading": "Willkommen zurück, {name}. Sehen Sie sich die neuesten Änderungen an Ihren bonding-Projekten an!",
       "upcomingEvents": "Bevorstehende Veranstaltungen",
       "registeredEvents": "Registrierte Veranstaltungen",
       "noEventsRegistered": "Noch keine Veranstaltungen registriert!",

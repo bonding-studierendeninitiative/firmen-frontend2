@@ -8,7 +8,7 @@
 </script>
 
 <div class=" py-10 flex flex-col justify-center items-center bg-stone-50">
-	<h2 class=" text-base font-extrabold text-stone-950">{heading}</h2>
+	<h2 class=" text-base font-extrabold text-stone-950 text-center lg:text-left">{heading}</h2>
 	<p class="text-balance w-2/6 text-center text-stone-500 mb-3">{subHeading}</p>
 	{#if buttonText.length > 0 }
 		<Button variant="default" classes="mt-6"  on:click={onButtonClick}>{buttonText}</Button>
