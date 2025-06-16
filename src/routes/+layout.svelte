@@ -3,8 +3,6 @@
 	import { Toaster } from 'svelte-sonner';
 	import '../app.css';
 	import { setupI18n, isLocaleLoading, dir, locale } from '@services';
-	import { page } from '$app/stores';
-	import SuperDebug from 'sveltekit-superforms';
 	import { ClerkProvider } from 'svelte-clerk';
 	import { deDE, enUS } from '@clerk/localizations';
 	import { PUBLIC_CLERK_PUBLISHABLE_KEY } from '$env/static/public';
