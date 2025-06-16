@@ -53,7 +53,6 @@
 				{@render children()}
 			</ClerkProvider>
 		</QueryClientProvider>
-		<SuperDebug data={page} />
 	</div>
 {/if}
 <Toaster containerClassName="mr-7 mb-16" position="bottom-right" {toastOptions} />
