@@ -8,8 +8,8 @@
 	import { valibot } from 'sveltekit-superforms/adapters';
 	import { toast } from 'svelte-sonner';
 	import { Button } from '@/components/ui/button';
-	import { signOut } from '@auth/sveltekit/client';
 	import { type UpdateUserDetails, UpdateUserDetailsRequest } from '@schema';
+	import { SignOutButton, useClerkContext } from 'svelte-clerk';
 
 	export let validated: SuperValidated<Infer<UpdateUserDetails>>;
 	const superform = superForm<Infer<UpdateUserDetails>>(validated, {
@@ -26,6 +26,8 @@
 		}
 
 	});
+
+	const ctx = useClerkContext()
 	const { form: formData, enhance } = superform;
 </script>
 
@@ -80,7 +82,9 @@
 
 		<footer>
 			<footer class=" flex justify-end items-center w-full">
-				<Button variant="secondary" class="mr-2" on:click={() => signOut()}>{$_('common.back')}</Button>
+				<Button variant="secondary" class="mr-2" on:click={() => ctx.clerk?.signOut({
+					redirectUrl: "https://bonding.de"
+				})}>{$_('common.back')}</Button>
 				<Button type="submit" form="register-contact-person-form">{$_('common.continue')}</Button>
 			</footer>
 		</footer>
