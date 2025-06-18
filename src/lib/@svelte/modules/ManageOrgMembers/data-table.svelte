@@ -12,8 +12,14 @@
 	import { createColumnHelper } from '@tanstack/svelte-table';
 	import { renderSnippet } from '@/@svelte/components/QueryDataTable/render-helpers';
 
-	export let memberResponse: Readable<{ data: OrganizationMembership[]; totalCount: number }>;
-	export let organizationId: string;
+	interface Props {
+		memberResponse: Readable<{ data: OrganizationMembership[]; totalCount: number }>;
+		organizationId: string;
+		class?: string;
+		[key: string]: any;
+	}
+
+	let { memberResponse, organizationId, class: className = '', ...rest }: Props = $props();
 
 	let data = derived([memberResponse], ([memberResponse]) => memberResponse.data);
 	let totalCount = derived([memberResponse], ([memberResponse]) => memberResponse.totalCount);
@@ -82,7 +88,7 @@
 	<LocalizedDate {date} />
 {/snippet}
 
-<div class={cn(`space-y-4`, $$props.class)} {...$$restProps}>
+<div class={cn(`space-y-4`, className)} {...rest}>
 	<div class={cn(`flex items-center justify-between gap-4`)}>
 		<SearchInput class="max-w-sm" placeholder={$_('common.search')} type="text" />
 		<div class="flex items-center gap-4">

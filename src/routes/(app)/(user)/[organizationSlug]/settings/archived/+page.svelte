@@ -38,7 +38,7 @@
 		}
 	];
 
-	let isEventDetailsDrawerOpen = false;
+	let isEventDetailsDrawerOpen = $state(false);
 </script>
 
 <div>

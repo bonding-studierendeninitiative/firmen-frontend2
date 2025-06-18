@@ -180,7 +180,7 @@
 												{benefit}
 											</li>
 										{/each}
-										{#if registrationData.package.benefits.length > 3 }
+										{#if registrationData.package.benefits.length > 3}
 
 											<li class="text-sm text-muted-foreground">
 												+{registrationData.package.benefits.length - 3} more benefits

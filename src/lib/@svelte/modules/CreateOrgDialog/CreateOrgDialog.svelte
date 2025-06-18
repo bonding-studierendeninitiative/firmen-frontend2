@@ -12,7 +12,7 @@
 
 	const createForm = api.admin.orgs.createForm.createQuery();
 
-	let createOrgDialogOpen = false;
+	let createOrgDialogOpen = $state(false);
 </script>
 
 <Dialog.Root bind:open={createOrgDialogOpen}>

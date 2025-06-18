@@ -3,6 +3,11 @@
 	import { ColorLogoIcon } from '@/@svelte/icons';
 	import { LanguageSelect } from '@/@svelte/components';
 	import { _ } from '@services';
+	interface Props {
+		children?: import('svelte').Snippet;
+	}
+
+	let { children }: Props = $props();
 </script>
 	<div class=" flex w-full h-screen">
 			<div class=" w-3/4 flex-row">
@@ -13,7 +18,7 @@
 					</div>
 				</nav>
 				<div class=" flex justify-center items-center h-5/6">
-					<slot />
+					{@render children?.()}
 				</div>
 				<footer class=" px-10 py-4 border-t border-solid border-stone-200 bottom-0 fixed w-3/4">
 					<div class=" flex justify-between font-semi-light text-stone-500">

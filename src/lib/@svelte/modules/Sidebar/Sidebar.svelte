@@ -4,6 +4,11 @@
 	import { cn } from '@/utils/tailwind';
 	import { _ } from '@services';
 	import { UserButton } from 'svelte-clerk';
+	interface Props {
+		children?: import('svelte').Snippet;
+	}
+
+	let { children }: Props = $props();
 
 	const handleMenuToggler = () => {
 		const sidebar = document.getElementById('sidebar');
@@ -21,6 +26,8 @@
 			return '/sidebar_background.png';
 		} else return '/sidebar_background.png';
 	};
+
+	const SvelteComponent = $derived(Icons['WhiteLogoIcon']);
 </script>
 
 <div class=" !bg-white lg:flex">
@@ -61,9 +68,9 @@
 		<!-- Items -->
 		<div class="p-6 space-y-4 h-full flex flex-col justify-between">
 			<div>
-				<svelte:component this={Icons['WhiteLogoIcon']} />
+				<SvelteComponent />
 				<div class="!mt-10 space-y-2">
-					<slot />
+					{@render children?.()}
 				</div>
 			</div>
 			<UserButton showName="true" appearance={{elements: {

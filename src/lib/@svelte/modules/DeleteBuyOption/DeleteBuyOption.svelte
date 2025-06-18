@@ -9,7 +9,7 @@
 	import { trpc } from '@/trpc/client';
 	import { goto } from '$app/navigation';
 
-	let isOpen = false;
+	let isOpen = $state(false);
 
 	const api = trpc(page);
 

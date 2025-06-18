@@ -2,6 +2,11 @@
 	import { _ } from '@services';
 	import { fade } from 'svelte/transition';
 	import { LinkTabs } from '@/@svelte/components';
+	interface Props {
+		children?: import('svelte').Snippet;
+	}
+
+	let { children }: Props = $props();
 
 	const tabs = [{
 		name: 'organization',
@@ -22,6 +27,6 @@
 		<LinkTabs {tabs} />
 	</div>
 	<section class=" mt-10">
-		<slot />
+		{@render children?.()}
 	</section>
 </div>

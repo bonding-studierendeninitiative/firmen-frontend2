@@ -47,8 +47,8 @@
 			type: 'registrationSuccess'
 		}
 	];
-	let isSuccessModalOpen = false;
-	let isUpdatePortraitModalOpen = false;
+	let isSuccessModalOpen = $state(false);
+	let isUpdatePortraitModalOpen = $state(false);
 	const handleUpdatePortrait = (id: number) => {
 		isUpdatePortraitModalOpen = true;
 	};
