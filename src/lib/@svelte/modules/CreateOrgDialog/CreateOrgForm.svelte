@@ -10,13 +10,17 @@
 	import { LoaderCircle } from 'lucide-svelte';
 	import { _ } from '@services';
 	import { trpc } from '@/trpc/client';
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 
-	export let createForm: SuperValidated<InferOutput<CreateOrgRequest>>;
-	const api = trpc($page)
+	const api = trpc(page)
 	const utils = api.createUtils();
 
-	export let createOrgDialogOpen = false;
+	interface Props {
+		createForm: SuperValidated<InferOutput<CreateOrgRequest>>;
+		createOrgDialogOpen?: boolean;
+	}
+
+	let { createForm, createOrgDialogOpen = $bindable(false) }: Props = $props();
 
 	const superform = superForm(createForm, {
 		validators: valibot(CreateOrgRequestSchema),
@@ -38,31 +42,35 @@
 <form action="?/createOrg" method="post" id="create-org-form" use:enhance>
 	<div class="flex flex-col gap-1">
 		<Field form={superform} name="name">
-			<Control let:attrs>
-				<Label>{$_('admin-pages.organizations.name')}</Label>
-				<Input
-					{...attrs}
-					bind:value={$formData.name}
-					placeholder={$_(
-									'user-pages.organizations.createOrganization.placeholders.organizationName'
-								)}
-				/>
-			</Control>
+			<Control >
+				{#snippet children({ props })}
+								<Label>{$_('admin-pages.organizations.name')}</Label>
+					<Input
+						{...props}
+						bind:value={$formData.name}
+						placeholder={$_(
+										'user-pages.organizations.createOrganization.placeholders.organizationName'
+									)}
+					/>
+											{/snippet}
+						</Control>
 
 			<Description />
 			<FieldErrors />
 		</Field>
 		<Field form={superform} name="ownerMail">
-			<Control let:attrs>
-				<Label>{$_('admin-pages.organizations.ownerMail')}</Label>
-				<Input
-					{...attrs}
-					bind:value={$formData.ownerMail}
-					placeholder={$_(
-									'user-pages.organizations.createOrganization.placeholders.organizationEmail'
-								)}
-				/>
-			</Control>
+			<Control >
+				{#snippet children({ props })}
+								<Label>{$_('admin-pages.organizations.ownerMail')}</Label>
+					<Input
+						{...props}
+						bind:value={$formData.ownerMail}
+						placeholder={$_(
+										'user-pages.organizations.createOrganization.placeholders.organizationEmail'
+									)}
+					/>
+											{/snippet}
+						</Control>
 
 			<Description />
 			<FieldErrors />
@@ -73,7 +81,7 @@
 	<Button
 		class="mr-2"
 		variant="outline"
-		on:click={() => (createOrgDialogOpen = false)}>{$_('common.cancel')}</Button
+		onclick={() => (createOrgDialogOpen = false)}>{$_('common.cancel')}</Button
 	>
 	{#if $submitting}
 		<Button form="create-org-form" disabled>

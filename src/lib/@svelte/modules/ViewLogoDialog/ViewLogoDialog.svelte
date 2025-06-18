@@ -7,21 +7,25 @@
 	import { DeleteLogoDialog } from '@/@svelte/modules';
 	import { Button } from '@/components/ui/button';
 	import { trpc } from '@/trpc/client';
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import { DetailedDocumentOutput } from '@api/client';
 	import { LoaderCircle } from 'lucide-svelte';
 
-	export let open = false;
-	export let logo: DetailedDocumentOutput;
+	interface Props {
+		open?: boolean;
+		logo: DetailedDocumentOutput;
+	}
 
-	const download = trpc($page).catalogueData.generateDownloadLink.createQuery({
+	let { open = $bindable(false), logo }: Props = $props();
+
+	const download = trpc(page).catalogueData.generateDownloadLink.createQuery({
 		documentId: logo.id,
 		organizationId: logo.organizationId
 	}, {
 		staleTime: 15 * 60 * 1000
 	});
 
-	const thumbnail = trpc($page).catalogueData.generateThumbnailLink.createQuery(
+	const thumbnail = trpc(page).catalogueData.generateThumbnailLink.createQuery(
 		{
 			documentId: logo.id,
 			organizationId: logo.organizationId,
@@ -144,7 +148,7 @@
 				</div>
 			</div>
 			<Dialog.Footer>
-				<Button on:click={handleDownload}>{$_('common.download')}</Button>
+				<Button onclick={handleDownload}>{$_('common.download')}</Button>
 				<DeleteLogoDialog {logo} />
 			</Dialog.Footer>
 		{/if}

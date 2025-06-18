@@ -4,12 +4,11 @@
 
 	type $$Props = CollapsiblePrimitive.ContentProps;
 
-	export let transition: $$Props["transition"] = slide;
-	export let transitionConfig: $$Props["transitionConfig"] = {
+	let { transition = slide, transitionConfig = {
 		duration: 150,
-	};
+	}, children, ...rest }: $$Props = $props();
 </script>
 
-<CollapsiblePrimitive.Content {transition} {transitionConfig} {...$$restProps}>
-	<slot />
+<CollapsiblePrimitive.Content {transition} {transitionConfig} {...rest}>
+	{@render children?.()}
 </CollapsiblePrimitive.Content>

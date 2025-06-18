@@ -6,7 +6,11 @@
 	import IconInput from '$lib/@svelte/components/IconInput/IconInput.svelte';
 	import Textarea from '$lib/@svelte/components/Textarea/Textarea.svelte';
 
-	export let isOpen: boolean = false;
+	interface Props {
+		isOpen?: boolean;
+	}
+
+	let { isOpen = $bindable(false) }: Props = $props();
 
 	const disciplines = [
 		'Bauingenieurwesen',
@@ -16,10 +20,6 @@
 		'Maschinenbau',
 		'Technische Informatik'
 	];
-
-	let currentStep = 1;
-
-	$: isOpen, (currentStep = 1);
 </script>
 
 <div class="grid grid-cols-1 gap-y-4 w-full">
@@ -81,13 +81,19 @@
 	</div>
 	<hr class=" border border-stone-200 my-2" />
 	<IconInput iconType="startIcon" label={$_('user-pages.portraits.numberOfEmployees')}>
-		<span slot="icon-start">{$_('user-pages.portraits.inland')}</span>
+		{#snippet icon_start()}
+				<span >{$_('user-pages.portraits.inland')}</span>
+			{/snippet}
 	</IconInput>
 	<IconInput iconType="startIcon">
-		<span slot="icon-start">{$_('user-pages.portraits.eu')}</span>
+		{#snippet icon_start()}
+				<span >{$_('user-pages.portraits.eu')}</span>
+			{/snippet}
 	</IconInput>
 	<IconInput iconType="startIcon">
-		<span slot="icon-start">{$_('user-pages.portraits.global')}</span>
+		{#snippet icon_start()}
+				<span >{$_('user-pages.portraits.global')}</span>
+			{/snippet}
 	</IconInput>
 	<Input label={$_('user-pages.portraits.universityGraduates')} />
 	<Input label={$_('user-pages.portraits.desiredDisciplines')} />
@@ -194,7 +200,7 @@
 				}}
 				>{$_('common.cancel')}
 			</Button>
-			<GradientButton onClick={() => (currentStep = 2)}>{$_('common.save')}</GradientButton>
+			<GradientButton onClick={() => {}}>{$_('common.save')}</GradientButton>
 		</div>
 	</footer>
 </div>

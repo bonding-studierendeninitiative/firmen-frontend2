@@ -8,7 +8,7 @@
 	import { Button } from '@/components/ui/form';
 	import { _ } from '@services';
 	import { goto } from '$app/navigation';
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import { trpc } from '@/trpc/client';
 	import {toast} from 'svelte-sonner';
 
@@ -20,7 +20,7 @@
 
 	let { open = $bindable(false), id, orgId }: Props = $props();
 
-	const api = trpc($page);
+	const api = trpc(page);
 
 	const utils = api.createUtils();
 
@@ -76,7 +76,7 @@
 		<Dialog.Footer>
 			<Button
 				disabled={!selectedLogo || $pickLogo.isPending}
-				on:click={() => {
+				onclick={() => {
 					$pickLogo.mutate(
 						{ documentId: selectedLogo, eventRegistrationId: id, versionId: $logos.data?.documents?.find(document => document.id === selectedLogo)?.activeVersion?.versionId },
 						{

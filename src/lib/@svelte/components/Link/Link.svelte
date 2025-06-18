@@ -1,17 +1,16 @@
 <script lang="ts">
 	import { cn } from '@/utils/tailwind';
-
-	export let href: $$Props['href'] = '#';
-
 	import { type Props, linkVariants } from './index.js';
 
-	type $$Props = Props;
-
-	let className: $$Props['class'] = undefined;
-	export let variant: $$Props['variant'] = 'default';
-	export { className as class };
+	let {
+		href = '#',
+		class: className = undefined,
+		variant = 'default',
+		children,
+		...rest
+	}: Props = $props();
 </script>
 
-<a {href} class={cn(linkVariants({ variant, className }))} {...$$restProps}>
-	<slot />
+<a {href} class={cn(linkVariants({ variant, className }))} {...rest}>
+	{@render children?.()}
 </a>

@@ -6,14 +6,18 @@
 
 	const onActionButtonClick = () => {};
 
-	export let notificationType:
+
+	export const notificationDate: Date | null = null;
+	interface Props {
+		notificationType: 
 		| 'registrationSuccess'
 		| 'registrationRejected'
 		| 'simpleNotification';
+		notificationContent?: string;
+		handleUpdatePortrait?: (() => void) | undefined;
+	}
 
-	export let notificationContent: string = '';
-	export const notificationDate: Date | null = null;
-	export let handleUpdatePortrait: (() => void) | undefined = undefined;
+	let { notificationType, notificationContent = '', handleUpdatePortrait = undefined }: Props = $props();
 
 	const getNotificationIcon = (notificationType: string) => {
 		switch (notificationType) {
@@ -25,7 +29,7 @@
 				return MessageIcon;
 		}
 	};
-	$: IconComponent = getNotificationIcon(notificationType);
+	let IconComponent = $derived(getNotificationIcon(notificationType));
 </script>
 
 <div
@@ -33,7 +37,7 @@
 >
 	<div class=" flex">
 		<div class={`rounded-lg inline-flex justify-center items-start mt-1 `}>
-			<svelte:component this={IconComponent} />
+			<IconComponent />
 		</div>
 		<div class=" flex flex-col ml-4">
 			<h3 class=" text-base text-stone-500">
@@ -41,7 +45,7 @@
 			</h3>
 			<div class=" py-2">
 				{#if notificationType === 'registrationSuccess'}
-					<ShadcnButton variant="gradient" on:click={() => handleUpdatePortrait?.()}>
+					<ShadcnButton variant="gradient" onclick={() => handleUpdatePortrait?.()}>
 						{$_('user-pages.notifications.updatePortrait')}
 					</ShadcnButton>
 				{:else if notificationType === 'registrationRejected'}

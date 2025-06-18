@@ -2,31 +2,34 @@
 	import { _, dayjs } from '@services';
 	import { Button } from '@/components/ui/button';
 	import * as Breadcrumb from '@/components/ui/breadcrumb';
-	import {
-		CalenderIcon,
-		LocationIcon
-	} from '@/@svelte/icons';
+	import { CalenderIcon, LocationIcon } from '@/@svelte/icons';
 	import { AddonList, LocalizedDate, LocalizedDateRange } from '@/@svelte/components';
-	import type { InferOutput } from 'valibot';
-	import type { GetAddonPackageTemplateResponse } from '@schema';
 	import { BuyOptionPreview } from '@/@svelte/modules';
 
-	export let event;
-	export let buyOption;
-	let selectedAddons: string[] = [];
-	let selectedAddonPackages: string[] = [];
-	let selectedPackageId: string = '';
-	let selectedAmountOfParticipationDays: string = '1';
-	let selectedEventDays: string[] = [];
-	export let orgSlug: string = '';
+	let selectedAddons: string[] = $state([]);
+	let selectedAddonPackages: string[] = $state([]);
+	let selectedPackageId: string = $state('');
+	let selectedAmountOfParticipationDays: string = $state('1');
+	let selectedEventDays: string[] = $state([]);
+	interface Props {
+		event: any;
+		buyOption: any;
+		orgSlug?: string;
+	}
 
-	$: searchParams = new URLSearchParams([
-		...selectedAddons.map((addon) => ['selectedAddon', addon]),
-		...selectedAddonPackages.map((addonPackage) => ['selectedAddonPackage', addonPackage]),
-		...(selectedPackageId ? [['selectedPackage', selectedPackageId]] : []),
-		...selectedEventDays.map((eventDay) => ['selectedEventDays', eventDay]),
-		...(selectedAmountOfParticipationDays ? [['selectedAmountOfParticipationDays', selectedAmountOfParticipationDays]] : [])
-	]);
+	let { event, buyOption, orgSlug = '' }: Props = $props();
+
+	let searchParams = $derived(
+		new URLSearchParams([
+			...selectedAddons.map((addon) => ['selectedAddon', addon]),
+			...selectedAddonPackages.map((addonPackage) => ['selectedAddonPackage', addonPackage]),
+			...(selectedPackageId ? [['selectedPackage', selectedPackageId]] : []),
+			...selectedEventDays.map((eventDay) => ['selectedEventDays', eventDay]),
+			...(selectedAmountOfParticipationDays
+				? [['selectedAmountOfParticipationDays', selectedAmountOfParticipationDays]]
+				: [])
+		])
+	);
 
 	const showCapacity = false;
 
@@ -59,11 +62,20 @@
 					<div class=" flex items-center mr-2">
 						<CalenderIcon />
 						{#if event?.dateTo && dayjs(event?.dateFrom) !== dayjs(event?.dateTo)}
-							<LocalizedDateRange class=" ml-2 text-sm text-stone-800 font-medium" format="short" hoverFormat="none"
-																	dateFrom={event?.dateFrom} dateTo={event?.dateTo} />
+							<LocalizedDateRange
+								class=" ml-2 text-sm text-stone-800 font-medium"
+								format="short"
+								hoverFormat="none"
+								dateFrom={event?.dateFrom}
+								dateTo={event?.dateTo}
+							/>
 						{:else}
-							<LocalizedDate class=" ml-2 text-sm text-stone-800 font-medium" format="short" hoverFormat="none"
-														 date={event?.dateFrom} />
+							<LocalizedDate
+								class=" ml-2 text-sm text-stone-800 font-medium"
+								format="short"
+								hoverFormat="none"
+								date={event?.dateFrom}
+							/>
 						{/if}
 					</div>
 					<div class=" flex items-center">
@@ -73,7 +85,6 @@
 				</div>
 			</div>
 		</div>
-
 	</div>
 	<div class=" my-10">
 		<hr />
@@ -87,8 +98,12 @@
 	<div class=" my-10">
 		<hr />
 	</div>
-	<BuyOptionPreview {buyOption} bind:selectedPackageId bind:selectedAmountOfParticipationDays bind:selectedEventDays />
-
+	<BuyOptionPreview
+		{buyOption}
+		bind:selectedPackageId
+		bind:selectedAmountOfParticipationDays
+		bind:selectedEventDays
+	/>
 
 	{#if buyOption.addonPackages.length > 0}
 		<section>
@@ -103,8 +118,9 @@
 	{/if}
 	<footer class=" flex mt-6 justify-end items-center">
 		{#if canProceed()}
-			<Button
-				href={`${event?.id}/event-registration?${searchParams}`}>{$_('common.continue')}</Button>
+			<Button href={`${event?.id}/event-registration?${searchParams}`}
+				>{$_('common.continue')}</Button
+			>
 		{:else}
 			<Button disabled={true}>{$_('common.continue')}</Button>
 		{/if}

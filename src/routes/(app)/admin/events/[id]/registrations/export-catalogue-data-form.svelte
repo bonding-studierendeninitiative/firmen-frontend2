@@ -6,16 +6,20 @@
 	import {toast} from 'svelte-sonner';
 	import { cn } from '@/utils';
 	import { trpc } from '@/trpc/client';
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import { _ } from '@services';
 
-	export let selectedEventRegistrations: Readable<string[]>;
-	export let disabled: boolean;
-	let open = false;
+	interface Props {
+		selectedEventRegistrations: Readable<string[]>;
+		disabled: boolean;
+	}
 
-	const api = trpc($page);
+	let { selectedEventRegistrations, disabled }: Props = $props();
+	let open = $state(false);
 
-	let documentType: 'advert' | 'logo' = 'logo';
+	const api = trpc(page);
+
+	let documentType: 'advert' | 'logo' = $state('logo');
 
 	const exportCatalogueData = api.admin.catalogueData.export.createMutation();
 </script>
@@ -34,7 +38,7 @@
 					<Tabs.Trigger value="logo">$_('admin-pages.events.event-registrations.export-catalogue-data.logos')</Tabs.Trigger>
 				</Tabs.List>
 			</Tabs.Root>
-			<Button on:click={()=> {
+			<Button onclick={()=> {
 				$exportCatalogueData.mutate({
 				documentType,
 				eventRegistrationIds: $selectedEventRegistrations

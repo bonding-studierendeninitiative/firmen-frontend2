@@ -7,10 +7,15 @@
 	import Package from './Package.svelte';
 	import { dayjs } from '@services/i18n';
 
-	export let eventRegistration: InferOutput<AdminEventRegistrationsResponse>['eventRegistrations'][number];
+	interface Props {
+		eventRegistration: InferOutput<AdminEventRegistrationsResponse>['eventRegistrations'][number];
+		[key: string]: any
+	}
+
+	let { eventRegistration, ...rest }: Props = $props();
 </script>
 
-<section {...$$props}>
+<section {...rest}>
 	<div class=" grid grid-cols-1 gap-4">
 		<span>{eventRegistration.organizationName}</span>
 		<span>Wunschtage</span>
@@ -21,13 +26,13 @@
 				<span>{date.format("ll")}</span>
 			{/each}
 		</div>
-		{#if eventRegistration.organizationComment }
+		{#if eventRegistration.organizationComment}
 			<div>{eventRegistration.organizationComment}</div>
 		{/if}
-		{#if eventRegistration.participationNote }
+		{#if eventRegistration.participationNote}
 			<div class="rounded-md border p-4">{eventRegistration.participationNote}</div>
 		{/if}
-		{#if eventRegistration.purchasedPackage }
+		{#if eventRegistration.purchasedPackage}
 			<Package _package={eventRegistration.purchasedPackage} />
 		{/if}
 	</div>

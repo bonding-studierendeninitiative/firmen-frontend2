@@ -1,4 +1,4 @@
-<script lang="ts" context="module">
+<script lang="ts" module>
 	import {
 		Calendar,
 		CheckCircle2,
@@ -102,8 +102,12 @@
 	import AdvertMissing from './advert-missing.svelte';
 	import PortraitMissing from './portrait-missing.svelte';
 
-	let isAddonsOpen = false;
-	export let registration: GetEventRegistrationForOrganizationOutput;
+	let isAddonsOpen = $state(false);
+	interface Props {
+		registration: GetEventRegistrationForOrganizationOutput;
+	}
+
+	let { registration }: Props = $props();
 
 	const statusConfig = {
 		created: { color: 'bg-blue-500', label: $_('status-text.created') },
@@ -112,12 +116,12 @@
 		withdrawn: { color: 'bg-gray-500', label: $_('status-text.withdrawn') }
 	};
 
-	let pickAdvertisementOpen = false;
-	let viewAdvertisementOpen = false;
-	let editContactPersonsOpen = false;
-	let viewLogoOpen = false;
-	let pickLogoOpen = false;
-	let submitPortraitOpen = false;
+	let pickAdvertisementOpen = $state(false);
+	let viewAdvertisementOpen = $state(false);
+	let editContactPersonsOpen = $state(false);
+	let viewLogoOpen = $state(false);
+	let pickLogoOpen = $state(false);
+	let submitPortraitOpen = $state(false);
 </script>
 
 <Card class="w-full max-w-2xl shadow-md hover:shadow-lg transition-shadow">
@@ -265,7 +269,7 @@
 								pickLogoOpen = true
 							}} logo={registration.logo} />
 						{:else}
-						<LogoMissing {pickLogoOpen} />
+						<LogoMissing bind:pickLogoOpen />
 						{/if}
 					</Tabs.Content>
 
@@ -301,7 +305,7 @@
 				<Button
 					variant="outline"
 					class="rounded-full px-2 py-1 text-sm font-semibold h-auto"
-					on:click={() => {
+					onclick={() => {
 						editContactPersonsOpen = true;
 					}}
 				>

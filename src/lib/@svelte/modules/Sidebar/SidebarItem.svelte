@@ -3,11 +3,22 @@
 	import { _ } from '@services';
 	import * as Icons from '$lib/@svelte/icons';
 
-	export let href;
-	export let label;
-	export let active: boolean;
-	export let icon: keyof typeof Icons;
+	interface Props {
+		href: any;
+		label: any;
+		active: boolean;
+		icon: keyof typeof Icons;
+	}
 
+	let {
+		href,
+		label,
+		active,
+		icon
+	}: Props = $props();
+
+
+	const SvelteComponent = $derived(Icons[icon]);
 </script>
 
 <a
@@ -17,6 +28,6 @@
 		"bg-brand": active
 	})}
 >
-	<svelte:component this={Icons[icon]} />
+	<SvelteComponent />
 	<span class="-mr-1 font-medium">{$_(`sidebar.${label}`)}</span>
 </a>

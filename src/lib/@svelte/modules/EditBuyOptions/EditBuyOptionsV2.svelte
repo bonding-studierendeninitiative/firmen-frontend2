@@ -34,7 +34,11 @@
 	import { Separator } from '@/components/ui/separator';
 	import { LocalizedDate } from '@/@svelte/components';
 
-	export let form: SuperValidated<Infer<UpdateBuyOptionRequest>>;
+	interface Props {
+		form: SuperValidated<Infer<UpdateBuyOptionRequest>>;
+	}
+
+	let { form }: Props = $props();
 
 	let superform = superForm<Infer<UpdateBuyOptionRequest>>(form, {
 		dataType: 'json',
@@ -57,7 +61,7 @@
 	type EventDay = Infer<UpdateBuyOptionRequest>['eventDays'][number]
 
 	// Reactive variables (equivalent to React's useState)
-	let activeTab = 'editor';
+	let activeTab = $state('editor');
 
 	function handleCreateEventDay(e: Event) {
 		e.preventDefault();
@@ -225,7 +229,7 @@
 						<section class="py-4 space-y-4">
 							<div class="flex flex-nowrap justify-between gap-4 items-center">
 								<h3 class="font-semibold text-lg flex-grow">{$_("components.editBuyOptions.eventDays.header")}</h3>
-								<Button on:click={handleCreateEventDay}>
+								<Button onclick={handleCreateEventDay}>
 									<Plus class="mr-2 h-4 w-4" />
 									Add event day
 								</Button>
@@ -314,7 +318,7 @@
 															</DialogFooter>
 														</DialogContent>
 													</Dialog>
-													<Button variant="ghost" size="icon" on:click={(e) => handleDeleteEventDay(e, index)}>
+													<Button variant="ghost" size="icon" onclick={(e) => handleDeleteEventDay(e, index)}>
 														<Trash2 class="h-4 w-4 text-destructive" />
 													</Button>
 												</div>
@@ -348,7 +352,7 @@
 					<Card>
 						<CardHeader class="flex flex-row items-center justify-between space-y-0 pb-2">
 							<CardTitle>{$_("components.editBuyOptions.services")}</CardTitle>
-							<Button size="sm" on:click={addService}>
+							<Button size="sm" onclick={addService}>
 								<Plus class="mr-2 h-4 w-4" />
 								{$_("components.editBuyOptions.addService")}
 							</Button>
@@ -362,10 +366,10 @@
 											<p class="text-sm text-muted-foreground">{service.valueType.valueOf()}</p>
 										</div>
 										<div class="flex gap-1">
-											<Button variant="ghost" size="icon" on:click={() => moveService(index, "up")}>
+											<Button variant="ghost" size="icon" onclick={() => moveService(index, "up")}>
 												<ArrowUp class="h-4 w-4" />
 											</Button>
-											<Button variant="ghost" size="icon" on:click={() => moveService(index, "down")}>
+											<Button variant="ghost" size="icon" onclick={() => moveService(index, "down")}>
 												<ArrowDown class="h-4 w-4" />
 											</Button>
 											<Dialog>
@@ -398,35 +402,39 @@
 															form={superform}
 															name={`services[${index}].valueType`}
 														>
-															<Control let:attrs>
-																<FormLabel>{$_("components.editBuyOptions.type")}</FormLabel>
-																<DropdownMenu.Root>
-																	<DropdownMenu.Trigger asChild let:builder>
-																		<Button class="!my-2 p-2" variant="outline" builders={[builder]}>
-																			{#if $formData.services[index].valueType === 'STRING'}
-																				Textfeld für generische Werte
-																			{:else if $formData.services[index].valueType === 'BOOLEAN'}
-																				Enthalten (ja/nein)
-																			{:else if $formData.services[index].valueType === 'INTEGER'}
-																				Anzahl (z. B. 2 Stühle)
-																			{/if}
-																		</Button>
-																	</DropdownMenu.Trigger>
-																	<DropdownMenu.Content>
-																		<DropdownMenu.RadioGroup
-																			{...attrs}
-																			bind:value={$formData.services[index].valueType}
-																		>
-																			<DropdownMenu.RadioItem
-																				value="STRING">{$_("components.editBuyOptions.typeText")}</DropdownMenu.RadioItem>
-																			<DropdownMenu.RadioItem
-																				value="BOOLEAN">{$_("components.editBuyOptions.typeBoolean")}</DropdownMenu.RadioItem>
-																			<DropdownMenu.RadioItem
-																				value="INTEGER">{$_("components.editBuyOptions.typeNumeric")}</DropdownMenu.RadioItem>
-																		</DropdownMenu.RadioGroup>
-																	</DropdownMenu.Content>
-																</DropdownMenu.Root>
-															</Control>
+															<Control >
+																{#snippet children({ props })}
+																																<FormLabel>{$_("components.editBuyOptions.type")}</FormLabel>
+																	<DropdownMenu.Root>
+																		<DropdownMenu.Trigger>
+																			{#snippet child({ props })}
+																																				<Button class="!my-2 p-2" variant="outline" {...props}>
+																					{#if $formData.services[index].valueType === 'STRING'}
+																						Textfeld für generische Werte
+																					{:else if $formData.services[index].valueType === 'BOOLEAN'}
+																						Enthalten (ja/nein)
+																					{:else if $formData.services[index].valueType === 'INTEGER'}
+																						Anzahl (z. B. 2 Stühle)
+																					{/if}
+																				</Button>
+																																																						{/snippet}
+																																		</DropdownMenu.Trigger>
+																		<DropdownMenu.Content>
+																			<DropdownMenu.RadioGroup
+																				{...props}
+																				bind:value={$formData.services[index].valueType}
+																			>
+																				<DropdownMenu.RadioItem
+																					value="STRING">{$_("components.editBuyOptions.typeText")}</DropdownMenu.RadioItem>
+																				<DropdownMenu.RadioItem
+																					value="BOOLEAN">{$_("components.editBuyOptions.typeBoolean")}</DropdownMenu.RadioItem>
+																				<DropdownMenu.RadioItem
+																					value="INTEGER">{$_("components.editBuyOptions.typeNumeric")}</DropdownMenu.RadioItem>
+																			</DropdownMenu.RadioGroup>
+																		</DropdownMenu.Content>
+																	</DropdownMenu.Root>
+																																															{/snippet}
+																														</Control>
 														</Field>
 													</div>
 													<DialogFooter>
@@ -436,7 +444,7 @@
 												</DialogContent>
 											</Dialog>
 
-											<Button variant="ghost" size="icon" on:click={() => removeService(index)}>
+											<Button variant="ghost" size="icon" onclick={() => removeService(index)}>
 												<Trash2 class="h-4 w-4 text-destructive" />
 											</Button>
 										</div>
@@ -450,7 +458,7 @@
 					<Card>
 						<CardHeader class="flex flex-row items-center justify-between space-y-0 pb-2">
 							<CardTitle>{$_("components.editBuyOptions.packages")}</CardTitle>
-							<Button size="sm" on:click={addPackage}>
+							<Button size="sm" onclick={addPackage}>
 								<Plus class="mr-2 h-4 w-4" />
 								{$_("components.editBuyOptions.addPackage")}
 							</Button>
@@ -468,10 +476,10 @@
 											})}</p>
 										</div>
 										<div class="flex gap-1">
-											<Button variant="ghost" size="icon" on:click={() => movePackage(index, "left")}>
+											<Button variant="ghost" size="icon" onclick={() => movePackage(index, "left")}>
 												<ArrowUp class="h-4 w-4" />
 											</Button>
-											<Button variant="ghost" size="icon" on:click={() => movePackage(index, "right")}>
+											<Button variant="ghost" size="icon" onclick={() => movePackage(index, "right")}>
 												<ArrowDown class="h-4 w-4" />
 											</Button>
 											<Dialog>
@@ -506,7 +514,7 @@
 													</DialogFooter>
 												</DialogContent>
 											</Dialog>
-											<Button variant="ghost" size="icon" on:click={() => removePackage(index)}>
+											<Button variant="ghost" size="icon" onclick={() => removePackage(index)}>
 												<Trash2 class="h-4 w-4 text-destructive" />
 											</Button>
 										</div>

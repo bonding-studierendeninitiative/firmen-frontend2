@@ -17,12 +17,16 @@
 		icon?: Component;
 	};
 
-	export let title: string;
-	export let options = [] as Options[];
-	export let counts: { [index: string]: number } = {};
+	interface Props {
+		title: string;
+		options?: any;
+		counts?: { [index: string]: number };
+	}
 
-	let open = false;
-	let selectedValues: string[] = [];
+	let { title, options = [] as Options[], counts = {} }: Props = $props();
+
+	let open = $state(false);
+	let selectedValues: string[] = $state([]);
 	const dispatch = createEventDispatcher<{
 		filterChange: string[];
 	}>();
@@ -38,34 +42,36 @@
 </script>
 
 <Popover.Root bind:open>
-	<Popover.Trigger asChild let:builder>
-		<Button builders={[builder]} variant="outline" class="border">
-			<Filter class="mr-2 h-4 w-4" />
-			{title}
+	<Popover.Trigger>
+		{#snippet child({ props })}
+				<Button {...props} variant="outline" class="border">
+				<Filter class="mr-2 h-4 w-4" />
+				{title}
 
-			{#if selectedValues?.length > 0}
-				<Separator orientation="vertical" class="mx-2 h-4" />
-				<Badge variant="secondary" class="rounded-sm px-1 font-normal lg:hidden">
-					{selectedValues.length}
-				</Badge>
-				<div class="hidden space-x-1 lg:flex">
-					{#if selectedValues.length > 2}
-						<Badge variant="secondary" class="rounded-sm px-1 font-normal">
-							{$_("components.dataTableFacetedFilter.filterLabelTemplate", {
-								values: { count: selectedValues.length }
-							})}
-						</Badge>
-					{:else}
-						{#each selectedValues as option}
+				{#if selectedValues?.length > 0}
+					<Separator orientation="vertical" class="mx-2 h-4" />
+					<Badge variant="secondary" class="rounded-sm px-1 font-normal lg:hidden">
+						{selectedValues.length}
+					</Badge>
+					<div class="hidden space-x-1 lg:flex">
+						{#if selectedValues.length > 2}
 							<Badge variant="secondary" class="rounded-sm px-1 font-normal">
-								{option}
+								{$_("components.dataTableFacetedFilter.filterLabelTemplate", {
+									values: { count: selectedValues.length }
+								})}
 							</Badge>
-						{/each}
-					{/if}
-				</div>
-			{/if}
-		</Button>
-	</Popover.Trigger>
+						{:else}
+							{#each selectedValues as option}
+								<Badge variant="secondary" class="rounded-sm px-1 font-normal">
+									{option}
+								</Badge>
+							{/each}
+						{/if}
+					</div>
+				{/if}
+			</Button>
+					{/snippet}
+		</Popover.Trigger>
 	<Popover.Content class="w-[200px] p-0" align="start" side="bottom">
 		<Command.Root>
 			<Command.Input placeholder={title} />
@@ -76,8 +82,8 @@
 						{@const Icon = option.icon}
 						<Command.Item
 							value={option.value}
-							onSelect={(currentValue) => {
-								handleSelect(currentValue);
+							onSelect={() => {
+								handleSelect(option.value);
 							}}
 						>
 							<div

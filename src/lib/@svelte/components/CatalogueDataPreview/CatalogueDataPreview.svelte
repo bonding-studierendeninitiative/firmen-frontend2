@@ -3,8 +3,12 @@
 	import type { OrgEventRegistration } from '@schema';
 	import { PdfFilePreview } from '@/@svelte/components';
 
-	export let eventRegistration: Infer<OrgEventRegistration>;
-	export let documentType: 'portrait' | 'advert' | 'logo';
+	interface Props {
+		eventRegistration: Infer<OrgEventRegistration>;
+		documentType: 'portrait' | 'advert' | 'logo';
+	}
+
+	let { eventRegistration, documentType }: Props = $props();
 </script>
 {#if documentType === 'portrait'}
 	<p>Placeholder</p>

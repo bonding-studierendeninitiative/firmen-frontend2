@@ -4,7 +4,7 @@
 	import { fade } from 'svelte/transition';
 	import { source } from 'sveltekit-sse';
 	import { trpc } from '@/trpc/client';
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import { invalidate } from '$app/navigation';
 
 	let { data, children } = $props();
@@ -24,7 +24,7 @@
 		}
 	]);
 
-	const api = trpc($page);
+	const api = trpc(page);
 	const utils = api.createUtils();
 
 	source('_api/events')

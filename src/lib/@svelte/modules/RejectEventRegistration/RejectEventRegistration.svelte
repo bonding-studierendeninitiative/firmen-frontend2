@@ -3,13 +3,17 @@
 	import * as Dialog from '@/components/ui/dialog';
 	import { _ } from '@services';
 	import { trpc } from '@/trpc/client';
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import { toast } from 'svelte-sonner';
 
-	export let isOpen: boolean;
-	export let id: string;
+	interface Props {
+		isOpen: boolean;
+		id: string;
+	}
 
-	const api = trpc($page);
+	let { isOpen = $bindable(), id }: Props = $props();
+
+	const api = trpc(page);
 	const utils = api.createUtils();
 
 	const rejectEventRegistration = api.admin.eventRegistrations.reject.createMutation();
@@ -31,7 +35,7 @@
 		</Dialog.Header>
 		<Dialog.Footer>
 			<Button
-				on:click={() => {
+				onclick={() => {
 					$rejectEventRegistration.mutate(
 						{
 							eventRegistrationId: id

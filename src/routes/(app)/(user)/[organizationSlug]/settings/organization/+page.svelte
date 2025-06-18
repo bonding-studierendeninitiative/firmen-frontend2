@@ -3,7 +3,7 @@
 	import { LoaderCircle } from 'lucide-svelte';
 	import { fade } from 'svelte/transition';
 
-	export let data;
+	let { data } = $props();
 </script>
 {#await data.editOrganizationDetailsForm}
 	<LoaderCircle class="w-10 h-10 mx-auto animate-spin" />

@@ -8,13 +8,17 @@
 	import { cn } from '@/utils';
 	import { trpc } from '@/trpc/client';
 	import ReviewLogoForm from '@/@svelte/modules/ReviewLogoDialog/ReviewLogoForm.svelte';
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 
-	let open: boolean;
+	let open: boolean = $state(false);
 
-	export let logo: InferOutput<LogoSchema>;
+	interface Props {
+		logo: InferOutput<LogoSchema>;
+	}
 
-	const api = trpc($page);
+	let { logo }: Props = $props();
+
+	const api = trpc(page);
 	const reviewFormQuery = api.admin.documents.reviewForm.createQuery();
 </script>
 

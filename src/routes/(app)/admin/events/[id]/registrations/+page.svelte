@@ -4,19 +4,19 @@
 	import { LoaderCircle } from 'lucide-svelte';
 	import { fade } from 'svelte/transition';
 	import { trpc } from '@/trpc/client';
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import { derived } from 'svelte/store';
 	import DataTable from './data-table.svelte';
 
-	export let data;
+	let { data } = $props();
 
-	const api = trpc($page);
+	const api = trpc(page);
 
 	const [eventRegistrationsQuery, resolveEventRegistrations] =
 		api.admin.events.getEventRegistrations.createInfiniteQuery(
 			{
 				limit: 10,
-				eventId: $page.params.id
+				eventId: page.params.id
 			},
 			{
 				getNextPageParam: (lastPage) =>

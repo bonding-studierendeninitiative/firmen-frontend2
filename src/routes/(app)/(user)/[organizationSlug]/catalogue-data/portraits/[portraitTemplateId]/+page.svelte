@@ -5,7 +5,11 @@
 	import { page } from '$app/state';
 	import { trpc } from '@/trpc/client';
 
-	export let data: PageData;
+	interface Props {
+		data: PageData;
+	}
+
+	let { data }: Props = $props();
 
 	let [editFormQuery, resolveForm] = trpc(page).portraitTemplates.editForm.createQuery(
 		page.params.portraitTemplateId,
@@ -20,6 +24,7 @@
 		validated={$editFormQuery.data}
 		isOpen={true}
 		onDialogChange={() => {
+			console.log("Protrait closed in Page");
 			goto('..');
 		}}
 	/>

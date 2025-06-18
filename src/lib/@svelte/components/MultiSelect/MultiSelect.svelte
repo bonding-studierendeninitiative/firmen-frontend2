@@ -1,21 +1,35 @@
 <script lang="ts">
 	import { Label, Helper, MultiSelect } from 'flowbite-svelte';
 
-	export let errorMessage: string = '';
-	export let label: string = '';
-	export let name: string = '';
-	export let value: any = null;
-	export let required: boolean = false;
 
-	export let items: {
+	interface Props {
+		errorMessage?: string;
+		label?: string;
+		name?: string;
+		value?: any;
+		required?: boolean;
+		items?: {
 		value: string;
 		name: string;
-	}[] = [
+	}[];
+		handleInput?: (e: any) => void;
+		[key: string]: any
+	}
+
+	let {
+		errorMessage = '',
+		label = '',
+		name = '',
+		value = $bindable(null),
+		required = false,
+		items = [
 		{ value: 'one', name: 'One' },
 		{ value: 'two', name: 'Two' },
 		{ value: 'three', name: 'Three' }
-	];
-	export let handleInput: (e: any) => void = () => {};
+	],
+		handleInput = () => {},
+		...rest
+	}: Props = $props();
 </script>
 
 <div class=" w-full">
@@ -35,7 +49,7 @@
 		bind:value
 		{required}
 		class=" placeholder-red-800"
-		{...$$restProps}
+		{...rest}
 	/>
 	<Helper class="text-red-500">{errorMessage}</Helper>
 </div>

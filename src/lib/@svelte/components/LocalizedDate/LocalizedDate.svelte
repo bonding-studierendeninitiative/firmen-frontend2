@@ -10,9 +10,14 @@
 		hoverFormat?: 'long' | 'short' | 'medium' | 'relative' | 'none';
 	};
 
-	export let date: $$Props['date'];
-	export let format: $$Props['format'] = 'relative';
-	export let hoverFormat: $$Props['hoverFormat'] = 'long';
+	interface Props {
+		date: $$Props['date'];
+		format?: $$Props['format'];
+		hoverFormat?: $$Props['hoverFormat'];
+		[key: string]: any
+	}
+
+	let { date, format = 'relative', hoverFormat = 'long', ...rest }: Props = $props();
 
 	function getDateForFormat(dayjs: dayjs.Dayjs, format: $$Props['format']) {
 		switch (format) {
@@ -29,12 +34,12 @@
 		}
 	}
 
-	$: dayjsDate = dayjs(date, { locale: $locale ?? "de" });
+	let dayjsDate = $derived(dayjs(date, { locale: $locale ?? "de" }));
 
 </script>
 
 {#if dayjsDate}
-	<span {...$$restProps} title={hoverFormat !== 'none' ? getDateForFormat(dayjsDate, hoverFormat) : undefined}>
+	<span {...rest} title={hoverFormat !== 'none' ? getDateForFormat(dayjsDate, hoverFormat) : undefined}>
 		{getDateForFormat(dayjsDate, format)}
 	</span>
 {/if}

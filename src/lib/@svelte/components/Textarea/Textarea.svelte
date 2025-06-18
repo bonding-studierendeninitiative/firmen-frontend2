@@ -3,15 +3,29 @@
 
 	type HandleInputType = undefined | { (e: any): void };
 
-	export let placeholder = '';
-	export let required = false;
-	export let classes = '';
-	export let value: string = '';
-	export let ref: any = null;
-	export let handleInput: HandleInputType = undefined;
-	export let errorMessage: string = '';
-	export let label: string = '';
-	export let name: string = '';
+	interface Props {
+		placeholder?: string;
+		required?: boolean;
+		classes?: string;
+		value?: string;
+		ref?: any;
+		handleInput?: HandleInputType;
+		errorMessage?: string;
+		label?: string;
+		name?: string;
+	}
+
+	let {
+		placeholder = '',
+		required = false,
+		classes = '',
+		value = $bindable(''),
+		ref = $bindable(null),
+		handleInput = undefined,
+		errorMessage = '',
+		label = '',
+		name = ''
+	}: Props = $props();
 </script>
 
 <div>

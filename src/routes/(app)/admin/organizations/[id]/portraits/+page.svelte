@@ -5,7 +5,7 @@
 	import type { InferOutput } from 'valibot';
 	import { LoaderCircle } from 'lucide-svelte';
 
-	export let data;
+	let { data } = $props();
 
 </script>
 

@@ -5,10 +5,19 @@
 	import type { OrgEventRegistration } from '@schema';
 	import type { InferOutput } from 'valibot';
 
-	export let date: string;
-	export let buttonText: string = 'register';
-	export let href: string;
-	export let eventRegistration: InferOutput<OrgEventRegistration>;
+	interface Props {
+		date: string;
+		buttonText?: string;
+		href: string;
+		eventRegistration: InferOutput<OrgEventRegistration>;
+	}
+
+	let {
+		date,
+		buttonText = 'register',
+		href,
+		eventRegistration
+	}: Props = $props();
 </script>
 
 <div class=" p-6 shadow-custom rounded-md border border-solid border-stone-200">

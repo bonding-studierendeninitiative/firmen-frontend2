@@ -1,5 +1,5 @@
 <script lang="ts">
-	export let error;
+	let { error } = $props();
 </script>
 
 <h1>⚠️ (Admin Orgs) {error?.message}</h1>

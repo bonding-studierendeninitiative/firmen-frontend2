@@ -3,11 +3,15 @@
 	import { LucideMail, LucidePhone } from 'lucide-svelte';
 	import { _ } from '@services';
 
-	export let contactPerson: {
+	interface Props {
+		contactPerson: {
 		fullName?: string | null | undefined;
 		email?: string | null | undefined;
 		phone?: string | null | undefined;
 	};
+	}
+
+	let { contactPerson }: Props = $props();
 </script>
 <div class="border p-4 rounded-xl flex flex-col gap-2">
 	<p class="text-sm">{$_("modules.contact-person.full-name")}</p>

@@ -3,7 +3,7 @@
 	import { _ } from '@services';
 	import { LoaderCircle } from 'lucide-svelte';
 
-	export let data;
+	let { data } = $props();
 </script>
 
 <section>

@@ -152,9 +152,10 @@
 	<div class="flex items-center justify-end space-x-4">
 		<div class="min-w-min">
 			<Select.Root
-				selected={selectedPageSize}
-				onSelectedChange={(v) => {
-					$params.limit = String(v?.value);
+				type="single"
+				value={selectedPageSize.value.toString()}
+				onValueChange={(v) => {
+					$params.limit = v;
 				}}
 			>
 				<Select.Trigger>
@@ -162,17 +163,17 @@
 				</Select.Trigger>
 				<Select.Content>
 					{#each pageSizes as size}
-						<Select.Item label={String(size)} value={size}>
+						<Select.Item label={String(size)} value={size.toString()}>
 							{size}
 						</Select.Item>
 					{/each}
 				</Select.Content>
 			</Select.Root>
 		</div>
-		<Button variant="outline" size="sm" on:click={previousPage} disabled={!hasPreviousPage}
+		<Button variant="outline" size="sm" onclick={previousPage} disabled={!hasPreviousPage}
 			>{$_('common.previous')}
 		</Button>
-		<Button variant="outline" size="sm" disabled={!hasNextPage} on:click={nextPage}
+		<Button variant="outline" size="sm" disabled={!hasNextPage} onclick={nextPage}
 			>{$_('common.next')}
 		</Button>
 	</div>

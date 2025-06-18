@@ -1,16 +1,15 @@
 <script lang="ts">
 	import { _ } from '@services';
 	import { NoDataFound } from '@/@svelte/components';
-	import type { PageData } from './$types';
 	import { LoaderCircle } from 'lucide-svelte';
 	import { fade } from 'svelte/transition';
 	import RegistrationCard from './registration-card.svelte';
 	import { trpc } from '@/trpc/client';
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 
-	export let data: PageData;
+	let { data } = $props();
 
-	const api = trpc($page);
+	const api = trpc(page);
 
 	const [eventRegistrationsQuery, resolveEventRegistrationsQuery] = api.eventRegistrations.forOrganization.createInfiniteQuery(
 		{ limit: 10, orgId: data.orgId },
@@ -43,7 +42,7 @@
 		{:then _ignored}
 			{@const allEventRegistrations = $eventRegistrationsQuery?.data?.pages.flatMap(page => page.eventRegistrations) ?? []}
 			<div in:fade class="mt-2 @container/registrations">
-				{#if allEventRegistrations.length > 0 }
+				{#if allEventRegistrations.length > 0}
 					<div class="grid grid-cols-1 @4xl/registrations:grid-cols-2 gap-8 items-start">
 						{#each allEventRegistrations as eventRegistration, index}
 							<RegistrationCard registration={eventRegistration}

@@ -1,8 +1,6 @@
 <script lang="ts">
 	import * as Dialog from '@/components/ui/dialog';
-	import type { InferOutput } from 'valibot';
-	import type { LogoSchema } from '@schema';
-	import { LocalizedDate, LogoStatusIcon, PdfFilePreview, StatusBadge } from '@/@svelte/components';
+	import { LocalizedDate, LogoStatusIcon, StatusBadge } from '@/@svelte/components';
 	import { _ } from '@services';
 	import { getHumanReadableFileSize } from '@/utils';
 	import { Badge } from '@/components/ui/badge';
@@ -10,9 +8,13 @@
 	import { Button } from '@/components/ui/button';
 	import { trpc } from '@/trpc/client';
 	import { page } from '$app/state';
-	import type { DetailedDocumentOutput, LogoOutput } from '@api/admin-client';
+	import type { LogoOutput } from '@api/admin-client';
 
-	export let logo: LogoOutput;
+	interface Props {
+		logo: LogoOutput;
+	}
+
+	let { logo }: Props = $props();
 
 	const logoData = trpc(page).catalogueData.getDocument.createQuery({
 		documentId: logo?.documentId
@@ -138,7 +140,7 @@
 			</div>
 			<Dialog.Footer class="flex justify-end">
 				<ReviewLogoDialog {logo} />
-				<Button disabled={$download.isPending} on:click={handleDownload}
+				<Button disabled={$download.isPending} onclick={handleDownload}
 					>{$_('common.download')}
 				</Button>
 				<DeleteLogoDialog {logo} />

@@ -2,12 +2,12 @@
 	import { _ } from '@services';
 	import { ManageOrgMembers } from '@/@svelte/modules';
 	import { LoaderCircle } from 'lucide-svelte';
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import { trpc } from '@/trpc/client.js';
 	import { queryParameters } from 'sveltekit-search-params';
 	import { derived } from 'svelte/store';
 
-	export let data;
+	let { data } = $props();
 
 	let params = queryParameters({
 		page: false,
@@ -32,7 +32,7 @@
 		return keyValid && valueValid;
 	}
 
-	const api = trpc($page);
+	const api = trpc(page);
 
 	const opts = api.admin.orgs.members.getAll.createQuery.opts({
 		initialData: data.orgMembers,
@@ -60,7 +60,7 @@
 		<LoaderCircle class="w-12 h-12 animate-spin mx-auto" />
 	{/if}
 	{#if $orgDetailsQuery.data}
-		{@const organizationInfo = Object.entries($orgDetailsQuery.data?)
+		{@const organizationInfo = Object.entries($orgDetailsQuery.data)
 			.filter(filterOrgEntries)
 			.map(([key, value]) => ({ label: key, value }))}
 		<div class="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full mt-5">

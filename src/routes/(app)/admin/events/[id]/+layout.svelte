@@ -2,7 +2,7 @@
 	import { goto } from '$app/navigation';
 	import { ReturnIcon } from '@/@svelte/icons';
 	import { LinkTabs } from '@/@svelte/components';
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import { Event } from '@/@svelte/components';
 	import { Button } from '@/components/ui/button';
 	import { _ } from '@services';
@@ -11,7 +11,7 @@
 	import { trpc } from '@/trpc/client';
 	import { cn } from '@/utils';
 
-	export let data;
+	let { data, children } = $props();
 
 	function getTabs(event: { id: string }) {
 		return [
@@ -22,13 +22,13 @@
 		];
 	}
 
-	const publishEvent = trpc($page).admin.events.publish.createMutation();
+	const publishEvent = trpc(page).admin.events.publish.createMutation();
 </script>
 
 <div>
 	<div class="flex justify-between items-start">
 		<button
-			on:click={() => goto('/admin/events')}
+			onclick={() => goto('/admin/events')}
 			class="h-10 w-10 flex flex-shrink justify-center rounded-lg items-center border text-stone-400 border-stone-200 mr-6"
 		>
 			<ReturnIcon />
@@ -39,7 +39,7 @@
 			<Event {event} />
 			<div class="flex-grow"></div>
 			{#if event?.status === 'UNPUBLISHED'}
-				<Button class={cn($publishEvent.isPending && "animate-pulse")} disabled={$publishEvent.isPending} on:click={() => $publishEvent.mutate({
+				<Button class={cn($publishEvent.isPending && "animate-pulse")} disabled={$publishEvent.isPending} onclick={() => $publishEvent.mutate({
 					eventId: event.id
 					}, {
 						onError: (error) => {
@@ -65,5 +65,5 @@
 		<div class="text-red-500">Error: {error.message}</div>
 	{/await}
 
-	<slot />
+	{@render children?.()}
 </div>

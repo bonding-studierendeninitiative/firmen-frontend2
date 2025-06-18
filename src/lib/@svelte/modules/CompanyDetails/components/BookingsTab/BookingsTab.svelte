@@ -4,7 +4,11 @@
 	import type { InferOutput } from 'valibot';
 	import { _ } from '@services';
 
-	export let eventRegistrations: InferOutput<GetEventRegistrationsForOrganizationResponse>['eventRegistrations'] = [];
+	interface Props {
+		eventRegistrations?: InferOutput<GetEventRegistrationsForOrganizationResponse>['eventRegistrations'];
+	}
+
+	let { eventRegistrations = [] }: Props = $props();
 </script>
 
 <section>

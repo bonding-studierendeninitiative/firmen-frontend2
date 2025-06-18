@@ -1,18 +1,34 @@
 <script lang="ts">
-	import { type ClassValue, clsx } from 'clsx';
+	import { type ClassValue } from 'clsx';
 	import { cn } from '@/utils/tailwind';
 
-	export let checked: boolean = false;
-	export let label: string = '';
-	export let name: string = '';
-	export let containerClass: ClassValue = '';
-	export let labelClasses: string = '';
+	interface Props {
+		checked?: boolean;
+		label?: string;
+		name?: string;
+		containerClass?: ClassValue;
+		labelClasses?: string;
+		description?: import('svelte').Snippet;
+		children?: import('svelte').Snippet;
+		[key: string]: any
+	}
+
+	let {
+		checked = $bindable(false),
+		label = '',
+		name = '',
+		containerClass = '',
+		labelClasses = '',
+		description,
+		children,
+		...rest
+	}: Props = $props();
 </script>
 
 <div class={cn('grid gap-x-4 gap-y-2 grid-cols-[auto_1fr_1fr]', containerClass)}>
 	<input
 		bind:checked
-		{...$$restProps}
+		{...rest}
 		id={name}
 		{name}
 		type="checkbox"
@@ -28,9 +44,9 @@
 		>
 	{/if}
 	<div class="col-span-2 col-start-2">
-		<slot name="description" />
+		{@render description?.()}
 	</div>
 	<div class="col-span-2 col-start-2">
-		<slot />
+		{@render children?.()}
 	</div>
 </div>

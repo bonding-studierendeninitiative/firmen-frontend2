@@ -6,14 +6,18 @@
 	import type { Jobs } from '@schema';
 	import { trpc } from '@/trpc/client';
 	import { derived, writable } from 'svelte/store';
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import { ClipboardList, LoaderCircle } from 'lucide-svelte';
 	import { cn } from '@/utils';
 	import { buttonVariants } from '@/components/ui/button';
 
-	export let initialData: InferOutput<Jobs>;
+	interface Props {
+		initialData: InferOutput<Jobs>;
+	}
 
-	const api = trpc($page);
+	let { initialData }: Props = $props();
+
+	const api = trpc(page);
 	const state = writable<'SUCCEEDED' | 'FAILED' | 'PROCESSING' | 'ENQUEUED' | 'SCHEDULED' | 'DELETED'>('SUCCEEDED');
 	const limit = writable('10');
 	const offset = writable('0');

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import { ScrollArea } from '@/components/ui/scroll-area';
 	import * as RadioGroup from '@/components/ui/radio-group';
 	import * as Card from '@/components/ui/card';
@@ -9,9 +9,9 @@
 
 	let { data, children } = $props();
 
-	let selectedEvent = $state($page.params.eventId);
+	let selectedEvent = $state(page.params.eventId);
 
-	const api = trpc($page);
+	const api = trpc(page);
 
 	const opts = api.eventRegistrations.forOrganization.createQuery.opts({
 		initialData: data.eventRegistrations
@@ -27,7 +27,7 @@
 	);
 
 	$effect(() => {
-		if (selectedEvent && !$page.url.pathname.includes(selectedEvent)) {
+		if (selectedEvent && !page.url.pathname.includes(selectedEvent)) {
 			goto(`/${data.orgSlug}/events/${selectedEvent}/registration`);
 		}
 	});

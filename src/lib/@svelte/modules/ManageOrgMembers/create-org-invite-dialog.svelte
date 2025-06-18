@@ -3,14 +3,18 @@
 	import * as Dialog from '$lib/components/ui/dialog';
 	import CreateOrgInviteForm from './create-org-invite-form.svelte';
 	import { trpc } from '@/trpc/client';
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import { cn } from '@/utils';
 	import { buttonVariants } from '@/components/ui/button';
 
-	let inviteMemberDialogOpen = false;
-	export let organizationId: string;
+	let inviteMemberDialogOpen = $state(false);
+	interface Props {
+		organizationId: string;
+	}
 
-	const api = trpc($page);
+	let { organizationId }: Props = $props();
+
+	const api = trpc(page);
 
 	const createInviteFormQuery = api.admin.orgs.members.createInviteForm.createQuery({
 		organizationId: organizationId

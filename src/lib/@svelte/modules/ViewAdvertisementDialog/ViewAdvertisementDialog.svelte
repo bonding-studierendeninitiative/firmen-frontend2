@@ -1,5 +1,5 @@
 <script lang="ts">
-	import * as Dialog from '@/components/ui/dialog';
+	import * as Dialog from '@/components/ui/dialog/index.js';
 	import { LocalizedDate, StatusBadge } from '@/@svelte/components';
 	import { _ } from '@services';
 	import { Badge } from '@/components/ui/badge';
@@ -7,23 +7,29 @@
 	import { DeleteAdvertisementDialog } from '@/@svelte/modules';
 	import { Button } from '@/components/ui/button';
 	import { trpc } from '@/trpc/client';
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import type { DetailedDocumentOutput } from '@api/client';
 	import { LoaderCircle } from 'lucide-svelte';
-	export let open = false;
-	export let advertisement: DetailedDocumentOutput;
+	interface Props {
+		open?: boolean;
+		advertisement: DetailedDocumentOutput;
+	}
 
-	const download = trpc($page).catalogueData.generateDownloadLink.createQuery(
+	let { open = $bindable(false), advertisement }: Props = $props();
+
+	const download = trpc(page).catalogueData.generateDownloadLink.createQuery(
 		{
 			documentId: advertisement.id,
 			organizationId: advertisement.organizationId
 		},
 		{
-			enabled: advertisement.activeVersion?.uploadStatus !== 'PENDING_UPLOAD' && advertisement.activeVersion?.uploadStatus !== 'PENDING_METADATA'
+			enabled:
+				advertisement.activeVersion?.uploadStatus !== 'PENDING_UPLOAD' &&
+				advertisement.activeVersion?.uploadStatus !== 'PENDING_METADATA'
 		}
 	);
 
-	const thumbnail = trpc($page).catalogueData.generateThumbnailLink.createQuery(
+	const thumbnail = trpc(page).catalogueData.generateThumbnailLink.createQuery(
 		{
 			documentId: advertisement.id,
 			organizationId: advertisement.organizationId,
@@ -139,7 +145,7 @@
 					</div>
 					<div class="flex-grow"></div>
 					<Dialog.Footer>
-						<Button disabled={$download.isPending} on:click={handleDownload}
+						<Button disabled={$download.isPending} onclick={handleDownload}
 							>{$_('common.download')}
 						</Button>
 						<DeleteAdvertisementDialog {advertisement} />

@@ -14,10 +14,19 @@
 	import { Label } from '@/components/ui/label';
 	import { CalendarDays, Check, Info } from 'lucide-svelte';
 
-	export let buyOption;
-	export let selectedAmountOfParticipationDays: string = '1';
-	export let selectedEventDays: string[] = [];
-	export let selectedPackageId: string = '';
+	interface Props {
+		buyOption: any;
+		selectedAmountOfParticipationDays?: string;
+		selectedEventDays?: string[];
+		selectedPackageId?: string;
+	}
+
+	let {
+		buyOption,
+		selectedAmountOfParticipationDays = $bindable('1'),
+		selectedEventDays = $bindable([]),
+		selectedPackageId = $bindable('')
+	}: Props = $props();
 </script>
 
 <section class=" my-10">
@@ -90,7 +99,7 @@
 				{#each buyOption?.packages as pkg}
 					<Table.Cell class=" p-3">
 						<div class=" flex justify-center items-center">
-							<Button on:click={() => selectedPackageId=pkg.id}
+							<Button onclick={() => selectedPackageId=pkg.id}
 											variant={selectedPackageId === pkg.id? "default" : "outline"} class="!py-1.5 !px-4">
 								{$_('common.select')}
 							</Button>

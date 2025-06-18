@@ -10,9 +10,13 @@
 	import { trpc } from '@/trpc/client';
 	import { page } from '$app/state';
 
-	let open: boolean;
+	let open: boolean = $state();
 
-	export let advertisement: InferOutput<AdvertisementSchema>;
+	interface Props {
+		advertisement: InferOutput<AdvertisementSchema>;
+	}
+
+	let { advertisement }: Props = $props();
 	const api = trpc(page)
 	const reviewFormQuery = api.admin.documents.reviewForm.createQuery()
 </script>

@@ -9,9 +9,13 @@
 	import { trpc } from '@/trpc/client';
 	import { LoaderCircle } from 'lucide-svelte';
 
-	export let logo: SimpleDocumentOutput;
-	let className = '';
-	export { className as class };
+	interface Props {
+		logo: SimpleDocumentOutput;
+		class?: string;
+	}
+
+	let { logo, class: className = '' }: Props = $props();
+	
 
 	const thumbnail = trpc(page).catalogueData.generateThumbnailLink.createQuery({
 		documentId: logo.id,

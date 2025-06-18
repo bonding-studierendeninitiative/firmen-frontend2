@@ -5,16 +5,20 @@
 	import { toast } from 'svelte-sonner';
 	import { _ } from '@services';
 	import { trpc } from '@/trpc/client';
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 
-	export let id: string;
-	export let orgId: string;
 
-	const api = trpc($page);
+	const api = trpc(page);
 	const utils = api.createUtils()
 	const removeMember = api.admin.orgs.members.remove.createMutation();
 
-	export let open = false;
+	interface Props {
+		id: string;
+		orgId: string;
+		open?: boolean;
+	}
+
+	let { id, orgId, open = $bindable(false) }: Props = $props();
 </script>
 
 <Dialog.Root bind:open>
@@ -25,7 +29,7 @@
 		</Dialog.Header>
 		<Dialog.Footer class="pt-6">
 			<Dialog.Close class={buttonVariants({variant: "outline"})}>{$_("common.cancel")}</Dialog.Close>
-			<Button on:click={() => {
+			<Button onclick={() => {
 					$removeMember.mutate({userId: id, organizationId: orgId}, {
 						onError: (error) => {
 							toast.error(error.message);

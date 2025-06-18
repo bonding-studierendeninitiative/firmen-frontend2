@@ -10,7 +10,11 @@
 	import {toast} from 'svelte-sonner';
 	import { buttonVariants } from '@/components/ui/button';
 
-	export let createBillingAddressTemplateForm: SuperValidated<Infer<CreateBillingAddressTemplateForm>>;
+	interface Props {
+		createBillingAddressTemplateForm: SuperValidated<Infer<CreateBillingAddressTemplateForm>>;
+	}
+
+	let { createBillingAddressTemplateForm }: Props = $props();
 
 	const superform = superForm<Infer<CreateBillingAddressTemplateForm>>(createBillingAddressTemplateForm, {
 		validators: valibotClient(formSchema),
@@ -26,7 +30,7 @@
 	});
 	const { form: formData, enhance } = superform;
 
-	let open: boolean = false;
+	let open: boolean = $state(false);
 </script>
 
 <Dialog.Root bind:open={open}>
@@ -42,60 +46,74 @@
 			</Dialog.Header>
 			<div class=" grid grid-cols-1 gap-6">
 				<Field form={superform} name="organizationName">
-					<Control let:attrs>
-						<Label>{$_('modules.add-billing-address-template.companyName')}</Label>
-						<Input {...attrs} bind:value={$formData.organizationName} />
-					</Control>
+					<Control >
+						{#snippet children({ props })}
+												<Label>{$_('modules.add-billing-address-template.companyName')}</Label>
+							<Input {...props} bind:value={$formData.organizationName} />
+																	{/snippet}
+										</Control>
 					<FieldErrors />
 				</Field>
 				<Field form={superform} name="street">
-					<Control let:attrs>
-						<Label>{$_('modules.add-billing-address-template.streetHouseNo')}</Label>
-						<Input {...attrs} bind:value={$formData.street} />
-					</Control>
+					<Control >
+						{#snippet children({ props })}
+												<Label>{$_('modules.add-billing-address-template.streetHouseNo')}</Label>
+							<Input {...props} bind:value={$formData.street} />
+																	{/snippet}
+										</Control>
 					<FieldErrors />
 				</Field>
 				<div class=" grid grid-cols-2 gap-x-4">
 					<Field form={superform} name="zipCode">
-						<Control let:attrs>
-							<Label>{$_('modules.add-billing-address-template.postalCode')}</Label>
-							<Input {...attrs} bind:value={$formData.zipCode} />
-						</Control>
+						<Control >
+							{#snippet children({ props })}
+														<Label>{$_('modules.add-billing-address-template.postalCode')}</Label>
+								<Input {...props} bind:value={$formData.zipCode} />
+																				{/snippet}
+												</Control>
 						<FieldErrors />
 					</Field>
 					<Field form={superform} name="city">
-						<Control let:attrs>
-							<Label>{$_('modules.add-billing-address-template.city')}</Label>
-							<Input {...attrs} bind:value={$formData.city} />
-						</Control>
+						<Control >
+							{#snippet children({ props })}
+														<Label>{$_('modules.add-billing-address-template.city')}</Label>
+								<Input {...props} bind:value={$formData.city} />
+																				{/snippet}
+												</Control>
 						<FieldErrors />
 					</Field>
 				</div>
 				<Field form={superform} name="country">
-					<Control let:attrs>
-						<Label>{$_('modules.add-billing-address-template.country')}</Label>
-						<Input {...attrs} bind:value={$formData.country} />
-					</Control>
+					<Control >
+						{#snippet children({ props })}
+												<Label>{$_('modules.add-billing-address-template.country')}</Label>
+							<Input {...props} bind:value={$formData.country} />
+																	{/snippet}
+										</Control>
 					<FieldErrors />
 				</Field>
 				<Separator />
 				<Field form={superform} name="vat">
-					<Control let:attrs>
-						<Label>{$_('modules.add-billing-address-template.vat')}</Label>
-						<Input {...attrs} bind:value={$formData.vat} />
-					</Control>
+					<Control >
+						{#snippet children({ props })}
+												<Label>{$_('modules.add-billing-address-template.vat')}</Label>
+							<Input {...props} bind:value={$formData.vat} />
+																	{/snippet}
+										</Control>
 					<FieldErrors />
 				</Field>
 				<Field form={superform} name="billingReference">
-					<Control let:attrs>
-						<Label>{$_('modules.add-billing-address-template.billingReference')}</Label>
-						<Input {...attrs} bind:value={$formData.billingReference} />
-					</Control>
+					<Control >
+						{#snippet children({ props })}
+												<Label>{$_('modules.add-billing-address-template.billingReference')}</Label>
+							<Input {...props} bind:value={$formData.billingReference} />
+																	{/snippet}
+										</Control>
 					<FieldErrors />
 				</Field>
 			</div>
 			<Dialog.Footer>
-				<Button variant="secondary" class="mr-2" on:click={() => (open = false)}
+				<Button variant="secondary" class="mr-2" onclick={() => (open = false)}
 				>{$_('common.cancel')}</Button
 				>
 				<Button form="create-billing-address-template-form" variant="gradient" type="submit"

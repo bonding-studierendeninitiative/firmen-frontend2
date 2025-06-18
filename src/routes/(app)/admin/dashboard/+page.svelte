@@ -9,7 +9,7 @@
 	} from '@/components/ui/skeleton';
 	import { Link } from '@/@svelte/components';
 
-	export let data;
+	let { data } = $props();
 </script>
 
 <h1 class=" text-stone-950 text-3xl font-extrabold">{$_('admin-pages.dashboard.dashboard')}</h1>

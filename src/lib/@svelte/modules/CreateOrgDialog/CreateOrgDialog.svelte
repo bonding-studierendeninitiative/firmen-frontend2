@@ -6,9 +6,9 @@
 	import { _ } from '@services';
 	import CreateOrgForm from '@/@svelte/modules/CreateOrgDialog/CreateOrgForm.svelte';
 	import { trpc } from '@/trpc/client';
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 
-	const api = trpc($page)
+	const api = trpc(page)
 
 	const createForm = api.admin.orgs.createForm.createQuery();
 

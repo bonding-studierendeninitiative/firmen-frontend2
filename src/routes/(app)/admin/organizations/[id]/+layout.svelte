@@ -5,7 +5,7 @@
 	import { _ } from '@services';
 	import { LoaderCircle, TriangleAlert } from 'lucide-svelte';
 
-	export let data;
+	let { data, children } = $props();
 </script>
 
 {#await data.organizationDetails}
@@ -52,7 +52,7 @@
 		]}
 	/>
 
-	<slot />
+	{@render children?.()}
 {:catch error}
 	<p>{error.message}</p>
 {/await}

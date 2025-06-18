@@ -1,8 +1,9 @@
 <script lang="ts">
+	import Registration_addon_tree from './registration-addon-tree.svelte';
 	import { CheckCircle2 } from 'lucide-svelte';
 	import X from 'lucide-svelte/icons/x';
 
-	export let addons = [];
+	let { addons = [] } = $props();
 </script>
 
 <ul class='space-y-1 text-sm'>
@@ -19,9 +20,9 @@
 				{/if}
 				<span class={addon.selected ? 'font-medium' : 'text-muted-foreground'}> {addon.title} </span>
 			</div>
-			{#if addon.addons && addon.addons.length > 0 }
+			{#if addon.addons && addon.addons.length > 0}
 				<ul class='pl-6 space-y-1 mt-1'>
-					<svelte:self addons={addon.addons} />
+					<Registration_addon_tree addons={addon.addons} />
 				</ul>
 			{/if}
 		</li>

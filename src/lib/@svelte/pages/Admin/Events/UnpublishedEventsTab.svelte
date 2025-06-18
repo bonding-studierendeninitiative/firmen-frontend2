@@ -3,15 +3,19 @@
 	import { GridIcon, ListIcon } from '$lib/@svelte/icons';
 	import { ButtonIcon, EventInfoBox, InfoListItem, SearchInput } from '$lib/@svelte/components';
 
-	export let unpublishedEvents: {
-		heading: string;
-		subHeading: string | undefined;
-		date: string | null;
-		id: string;
-	}[] = [];
-	export let handleEventRegistration: (id: string) => void = () => {};
+	interface Props {
+		unpublishedEvents?: {
+			heading: string;
+			subHeading: string | undefined;
+			date: string | null;
+			id: string;
+		}[];
+		handleEventRegistration?: (id: string) => void;
+	}
 
-	let isListView = true;
+	let { unpublishedEvents = [], handleEventRegistration = () => {} }: Props = $props();
+
+	let isListView = $state(true);
 </script>
 
 <section class=" mt-10 flex justify-between w-full">

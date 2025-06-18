@@ -1,7 +1,7 @@
 import { createCaller } from '@/trpc/router';
 
 export const load = async (event) => {
-	const status = event.url.searchParams.getAll('status').map((status) => status.toUpperCase()) ?? [
+	const status = JSON.parse(event.url.searchParams.get('status') ?? "[]").map((status) => status.toUpperCase()) ?? [
 		'PUBLISHED'
 	];
 	const size = Number(event.url.searchParams.get('size') ?? '10');

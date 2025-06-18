@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { NoDataFound } from '@/@svelte/components';
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import { goto, invalidate } from '$app/navigation';
 	import { DeleteBuyOption, BuyOptionSelector, CreateBuyOption } from '@/@svelte/modules';
 	import { Button } from '@/components/ui/button';
@@ -13,7 +13,7 @@
 	import { setContext } from 'svelte';
 	import { trpc } from '@/trpc/client.js';
 
-	export let data;
+	let { data, children } = $props();
 
 	function mapBuyOptionToValue(
 		buyOption: InferOutput<GetBuyOptionsResponse>['buyOptions'][number]
@@ -29,7 +29,7 @@
 	let isDialogOpen = writable(false);
 	setContext('isCreateBuyOptionDialogOpen', isDialogOpen);
 
-	const api = trpc($page);
+	const api = trpc(page);
 
 	const activateBuyOption = api.admin.events.buyOptions.activate.createMutation();
 </script>
@@ -43,26 +43,26 @@
 			<nav class="flex justify-between gap-x-2">
 				<BuyOptionSelector
 					buyOptions={buyOptions?.buyOptions?.map(mapBuyOptionToValue) ?? []}
-					value={$page.params.buyOptionId}
+					value={page.params.buyOptionId}
 					onSelect={async (value) => {
-						await goto(`/admin/events/${$page.params.id}/buy-options/${value}`);
+						await goto(`/admin/events/${page.params.id}/buy-options/${value}`);
 						await invalidate('buyOption');
 					}}
 				/>
 				<DeleteBuyOption />
 				<div class="flex-grow"></div>
 				<Button
-					on:click={() => {
+					onclick={() => {
 						$activateBuyOption.mutate({
-							buyOptionId: $page.params.buyOptionId,
-							eventId: $page.params.eventId
+							buyOptionId: page.params.buyOptionId,
+							eventId: page.params.eventId
 						});
 					}}
-					disabled={!$page.params.buyOptionId || $page.params.buyOptionId === activeBuyOption?.id}
+					disabled={!page.params.buyOptionId || page.params.buyOptionId === activeBuyOption?.id}
 					>{$_('admin-pages.events.buy-options.publish')}</Button
 				>
 			</nav>
-			<slot />
+			{@render children?.()}
 		{:else}
 			<NoDataFound
 				onButtonClick={() => ($isDialogOpen = true)}

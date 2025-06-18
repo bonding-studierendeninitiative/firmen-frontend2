@@ -2,14 +2,22 @@
 	import { _ } from '@services';
 	import { EventInfoBox, InfoListItem } from '$lib/@svelte/components';
 
-	export let publishedEvents: { heading: string; subHeading: string | undefined; date: string | null; id: string }[] =
-		[];
-	export let handleEventRegistration: (id: string) => void = () => {
-	};
-	export let handleBuyOptions: (id: string) => void = () => {
-	};
 
-	export let isListView;
+	interface Props {
+		publishedEvents?: { heading: string; subHeading: string | undefined; date: string | null; id: string }[];
+		handleEventRegistration?: (id: string) => void;
+		handleBuyOptions?: (id: string) => void;
+		isListView: any;
+	}
+
+	let {
+		publishedEvents = [],
+		handleEventRegistration = () => {
+	},
+		handleBuyOptions = () => {
+	},
+		isListView
+	}: Props = $props();
 </script>
 <section class=" mt-6">
 	{#if isListView}

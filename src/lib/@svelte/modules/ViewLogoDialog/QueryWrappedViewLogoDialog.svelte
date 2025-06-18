@@ -3,8 +3,12 @@
 	import ViewLogoDialog from './ViewLogoDialog.svelte';
 	import { page } from '$app/state';
 
-	export let open: boolean = false;
-	export let documentId: string;
+	interface Props {
+		open?: boolean;
+		documentId: string;
+	}
+
+	let { open = $bindable(false), documentId }: Props = $props();
 
 	const documentQuery = trpc(page).catalogueData.getDocument.createQuery({
 		documentId

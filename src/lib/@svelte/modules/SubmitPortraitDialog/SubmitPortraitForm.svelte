@@ -842,7 +842,7 @@
         <!-- Navigation buttons -->
         <div class="flex justify-between mt-12 max-w-4xl mx-auto">
             {#if currentStep > 0}
-                <Button type="button" variant="outline" on:click={prevStep}>
+                <Button type="button" variant="outline" onclick={prevStep}>
                     <ArrowLeft class="h-4 w-4 mr-2" />
                     Back
                 </Button>
@@ -850,13 +850,13 @@
 
             <div class="space-x-4">
                 {#if currentStep > 0}
-                    <Button type="button" variant="outline" on:click={resetForm}>Reset Form</Button>
+                    <Button type="button" variant="outline" onclick={resetForm}>Reset Form</Button>
                 {/if}
 
                 {#if currentStep < steps.length - 1}
                     <Button
                         type="button"
-                        on:click={nextStep}
+                        onclick={nextStep}
                         disabled={(currentStep === 0 && !startOption) ||
                             (currentStep === 0 && startOption === 'template' && !selectedTemplate)}
                     >

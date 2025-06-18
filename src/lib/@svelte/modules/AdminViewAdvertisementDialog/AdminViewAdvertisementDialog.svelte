@@ -9,11 +9,15 @@
 	import { DeleteAdvertisementDialog, ReviewAdvertisementDialog } from '@/@svelte/modules';
 	import { Button } from '@/components/ui/button';
 	import { trpc } from '@/trpc/client';
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 
-	export let advertisement: InferOutput<AdvertisementSchema>;
+	interface Props {
+		advertisement: InferOutput<AdvertisementSchema>;
+	}
 
-	const download = trpc($page).catalogueData.advertisements.generateDownloadLink.createMutation();
+	let { advertisement }: Props = $props();
+
+	const download = trpc(page).catalogueData.advertisements.generateDownloadLink.createMutation();
 
 	function handleDownload() {
 		$download.mutate({
@@ -100,7 +104,7 @@
 					<div class="flex-grow"></div>
 					<Dialog.Footer class="flex justify-end">
 						<ReviewAdvertisementDialog {advertisement} />
-						<Button disabled={$download.isPending} on:click={handleDownload}>{$_("common.download")}
+						<Button disabled={$download.isPending} onclick={handleDownload}>{$_("common.download")}
 						</Button>
 						<DeleteAdvertisementDialog {advertisement} />
 					</Dialog.Footer>

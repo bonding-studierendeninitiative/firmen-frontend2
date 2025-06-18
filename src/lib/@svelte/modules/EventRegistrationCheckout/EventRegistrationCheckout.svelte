@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { run } from 'svelte/legacy';
+
 	import { _, locale } from '@services';
 	import { AddonList, LocalizedDate, Modal } from '@/@svelte/components';
 	import { Input } from '@/components/ui/input';
@@ -16,15 +18,23 @@
 	import SuperDebug, { type Infer, intProxy, superForm } from 'sveltekit-superforms';
 	import { valibot } from 'sveltekit-superforms/adapters';
 	import { toast } from 'svelte-sonner';
-	import { type CreateEventRegistration, CreateEventRegistrationSchema, type GetBuyOptionResponse } from '@schema';
+	import {
+		type CreateEventRegistration,
+		CreateEventRegistrationSchema,
+		type GetBuyOptionResponse
+	} from '@schema';
 	import { CalendarDays, Check } from 'lucide-svelte';
 	import type { InferOutput } from 'valibot';
 
-	export let addonPackages;
-	export let createEventRegistrationForm;
-	export let orgSlug: string;
-	export let event;
-	export let buyOption: InferOutput<GetBuyOptionResponse>;
+	interface Props {
+		addonPackages: any;
+		createEventRegistrationForm: any;
+		orgSlug: string;
+		event: any;
+		buyOption: InferOutput<GetBuyOptionResponse>;
+	}
+
+	let { addonPackages, createEventRegistrationForm, orgSlug, event, buyOption }: Props = $props();
 
 	const superform = superForm<Infer<CreateEventRegistration>>(createEventRegistrationForm!, {
 		validators: valibot(CreateEventRegistrationSchema),
@@ -41,14 +51,24 @@
 	});
 	const { form: formData, enhance } = superform;
 
-	let isOpen = false;
+	let isOpen = $state(false);
 
-	let billingEqualCompany = false;
-	$: if (billingEqualCompany) $formData.billingOrganizationName = $formData.contractLegalEntityName;
-	$: if (billingEqualCompany) $formData.billingStreet = $formData.contractAddressStreet;
-	$: if (billingEqualCompany) $formData.billingZipCode = $formData.contractAddressZipCode;
-	$: if (billingEqualCompany) $formData.billingCity = $formData.contractAddressCity;
-	$: if (billingEqualCompany) $formData.billingCountry = $formData.contractAddressCountry;
+	let billingEqualCompany = $state(false);
+	run(() => {
+		if (billingEqualCompany) $formData.billingOrganizationName = $formData.contractLegalEntityName;
+	});
+	run(() => {
+		if (billingEqualCompany) $formData.billingStreet = $formData.contractAddressStreet;
+	});
+	run(() => {
+		if (billingEqualCompany) $formData.billingZipCode = $formData.contractAddressZipCode;
+	});
+	run(() => {
+		if (billingEqualCompany) $formData.billingCity = $formData.contractAddressCity;
+	});
+	run(() => {
+		if (billingEqualCompany) $formData.billingCountry = $formData.contractAddressCountry;
+	});
 
 	function handlePackageSelect(v: boolean, pkgID: string) {
 		if (v) {
@@ -65,7 +85,9 @@
 
 		if ($formData.selectedAmountOfParticipationDays > 1) {
 			const extraDays = $formData.selectedAmountOfParticipationDays - 1;
-			const cheapestPackage = buyOption?.packages.filter(pkg => Boolean(pkg.price)).sort((a, b) => a.price - b.price)[0];
+			const cheapestPackage = buyOption?.packages
+				.filter((pkg) => Boolean(pkg.price))
+				.sort((a, b) => a.price - b.price)[0];
 			return pkg ? Number(pkg.price) + extraDays * Number(cheapestPackage?.price) : 0;
 		} else {
 			return pkg ? Number(pkg.price) : 0;
@@ -98,16 +120,22 @@
 		}, 0);
 	}
 
-	$: selectedPackagePrice = getPackagePrice($formData.packageId) as number;
-	$: selectedAddonPrice = getSelectedAddonPackagesPrice(
-		addonPackages ?? [],
-		$formData.selectedAddonPackages ?? [],
-		$formData.selectedAddons ?? []
-	) as number;
+	let selectedPackagePrice = $derived(getPackagePrice($formData.packageId) as number);
+	let selectedAddonPrice = $derived(
+		getSelectedAddonPackagesPrice(
+			addonPackages ?? [],
+			$formData.selectedAddonPackages ?? [],
+			$formData.selectedAddons ?? []
+		) as number
+	);
 
-	const selectedAmountOfParticipationDaysProxy = intProxy(superform, 'selectedAmountOfParticipationDays', {});
+	const selectedAmountOfParticipationDaysProxy = intProxy(
+		superform,
+		'selectedAmountOfParticipationDays',
+		{}
+	);
 
-	let termsAccepted = false;
+	let termsAccepted = $state(false);
 </script>
 
 <Modal bind:isOpen>
@@ -125,11 +153,7 @@
 		</div>
 	</div>
 	<footer class=" flex items-center justify-center">
-		<Button
-			variant="gradient"
-			class="!py-1.5"
-			on:click={() => goto(`/${orgSlug}/events`)}
-		>
+		<Button variant="gradient" class="!py-1.5" onclick={() => goto(`/${orgSlug}/events`)}>
 			{$_('common.viewEvents')}
 		</Button>
 	</footer>
@@ -138,14 +162,14 @@
 	<Breadcrumb.Root>
 		<Breadcrumb.List>
 			<Breadcrumb.Item>
-				<Breadcrumb.Item let:attrs>
-					<a href={`/${orgSlug}/events`} {...attrs}>{$_('user-pages.events.events')}</a>
+				<Breadcrumb.Item>
+						<a href={`/${orgSlug}/events`}>{$_('user-pages.events.events')}</a>
 				</Breadcrumb.Item>
 			</Breadcrumb.Item>
 			<Breadcrumb.Separator />
 			<Breadcrumb.Item>
-				<Breadcrumb.Item let:attrs>
-					<a href={`/${orgSlug}/events/${event?.id}`} {...attrs}>{event?.name}</a>
+				<Breadcrumb.Item>
+						<a href={`/${orgSlug}/events/${event?.id}`}>{event?.name}</a>
 				</Breadcrumb.Item>
 			</Breadcrumb.Item>
 			<Breadcrumb.Separator />
@@ -155,8 +179,7 @@
 		</Breadcrumb.List>
 	</Breadcrumb.Root>
 </div>
-<div class="max-w-screen-lg mx-auto ">
-
+<div class="max-w-screen-lg mx-auto">
 	<div class=" flex justify-between items-start">
 		<h3 class=" text-xl font-extrabold text-stone-800">
 			{$_('user-pages.events.registrationForm')}
@@ -180,29 +203,35 @@
 				{$_('user-pages.events.event-registration.companyInformation')}
 			</h4>
 			<Field form={superform} name="contractLegalEntityName">
-				<Control let:attrs>
-					<Label>{$_('user-pages.events.event-registration.labels.contractLegalEntityName')}</Label>
-					<Input
-						{...attrs}
-						bind:value={$formData.contractLegalEntityName}
-						placeholder={$_(
-							'user-pages.events.event-registration.placeholders.contractLegalEntityName'
-						)}
-					/>
+				<Control>
+					{#snippet children({ props })}
+						<Label
+							>{$_('user-pages.events.event-registration.labels.contractLegalEntityName')}</Label
+						>
+						<Input
+							{...props}
+							bind:value={$formData.contractLegalEntityName}
+							placeholder={$_(
+								'user-pages.events.event-registration.placeholders.contractLegalEntityName'
+							)}
+						/>
+					{/snippet}
 				</Control>
 				<Description />
 				<FieldErrors />
 			</Field>
 			<Field form={superform} name="contractAddressStreet">
-				<Control let:attrs>
-					<Label>{$_('user-pages.events.event-registration.labels.contractAddressStreet')}</Label>
-					<Input
-						{...attrs}
-						bind:value={$formData.contractAddressStreet}
-						placeholder={$_(
-							'user-pages.events.event-registration.placeholders.contractAddressStreet'
-						)}
-					/>
+				<Control>
+					{#snippet children({ props })}
+						<Label>{$_('user-pages.events.event-registration.labels.contractAddressStreet')}</Label>
+						<Input
+							{...props}
+							bind:value={$formData.contractAddressStreet}
+							placeholder={$_(
+								'user-pages.events.event-registration.placeholders.contractAddressStreet'
+							)}
+						/>
+					{/snippet}
 				</Control>
 				<Description />
 				<FieldErrors />
@@ -211,17 +240,21 @@
 				<div class="max-w-2xl">
 					<div class="mt-1">
 						<Field form={superform} name="contractAddressZipCode">
-							<Control let:attrs>
-								<Label
-								>{$_('user-pages.events.event-registration.labels.contractAddressZipCode')}</Label
-								>
-								<Input
-									{...attrs}
-									bind:value={$formData.contractAddressZipCode}
-									placeholder={$_(
-										'user-pages.events.event-registration.placeholders.contractAddressZipCode'
-									)}
-								/>
+							<Control>
+								{#snippet children({ props })}
+									<Label
+										>{$_(
+											'user-pages.events.event-registration.labels.contractAddressZipCode'
+										)}</Label
+									>
+									<Input
+										{...props}
+										bind:value={$formData.contractAddressZipCode}
+										placeholder={$_(
+											'user-pages.events.event-registration.placeholders.contractAddressZipCode'
+										)}
+									/>
+								{/snippet}
 							</Control>
 							<Description />
 							<FieldErrors />
@@ -231,17 +264,19 @@
 				<div class="flex-grow">
 					<div class="mt-1">
 						<Field form={superform} name="contractAddressCity">
-							<Control let:attrs>
-								<Label
-								>{$_('user-pages.events.event-registration.labels.contractAddressCity')}</Label
-								>
-								<Input
-									{...attrs}
-									bind:value={$formData.contractAddressCity}
-									placeholder={$_(
-										'user-pages.events.event-registration.placeholders.contractAddressCity'
-									)}
-								/>
+							<Control>
+								{#snippet children({ props })}
+									<Label
+										>{$_('user-pages.events.event-registration.labels.contractAddressCity')}</Label
+									>
+									<Input
+										{...props}
+										bind:value={$formData.contractAddressCity}
+										placeholder={$_(
+											'user-pages.events.event-registration.placeholders.contractAddressCity'
+										)}
+									/>
+								{/snippet}
 							</Control>
 							<Description />
 							<FieldErrors />
@@ -250,15 +285,18 @@
 				</div>
 			</div>
 			<Field form={superform} name="contractAddressCountry">
-				<Control let:attrs>
-					<Label>{$_('user-pages.events.event-registration.labels.contractAddressCountry')}</Label>
-					<Input
-						{...attrs}
-						bind:value={$formData.contractAddressCountry}
-						placeholder={$_(
-							'user-pages.events.event-registration.placeholders.contractAddressCountry'
-						)}
-					/>
+				<Control>
+					{#snippet children({ props })}
+						<Label>{$_('user-pages.events.event-registration.labels.contractAddressCountry')}</Label
+						>
+						<Input
+							{...props}
+							bind:value={$formData.contractAddressCountry}
+							placeholder={$_(
+								'user-pages.events.event-registration.placeholders.contractAddressCountry'
+							)}
+						/>
+					{/snippet}
 				</Control>
 				<Description />
 				<FieldErrors />
@@ -282,29 +320,35 @@
 				</Label>
 			</div>
 			<Field form={superform} name="billingOrganizationName">
-				<Control let:attrs>
-					<Label>{$_('user-pages.events.event-registration.labels.billingOrganizationName')}</Label>
-					<Input
-						disabled={billingEqualCompany}
-						{...attrs}
-						bind:value={$formData.billingOrganizationName}
-						placeholder={$_(
-							'user-pages.events.event-registration.placeholders.billingOrganizationName'
-						)}
-					/>
+				<Control>
+					{#snippet children({ props })}
+						<Label
+							>{$_('user-pages.events.event-registration.labels.billingOrganizationName')}</Label
+						>
+						<Input
+							disabled={billingEqualCompany}
+							{...props}
+							bind:value={$formData.billingOrganizationName}
+							placeholder={$_(
+								'user-pages.events.event-registration.placeholders.billingOrganizationName'
+							)}
+						/>
+					{/snippet}
 				</Control>
 				<Description />
 				<FieldErrors />
 			</Field>
 			<Field form={superform} name="billingStreet">
-				<Control let:attrs>
-					<Label>{$_('user-pages.events.event-registration.labels.billingStreet')}</Label>
-					<Input
-						disabled={billingEqualCompany}
-						{...attrs}
-						bind:value={$formData.billingStreet}
-						placeholder={$_('user-pages.events.event-registration.placeholders.billingStreet')}
-					/>
+				<Control>
+					{#snippet children({ props })}
+						<Label>{$_('user-pages.events.event-registration.labels.billingStreet')}</Label>
+						<Input
+							disabled={billingEqualCompany}
+							{...props}
+							bind:value={$formData.billingStreet}
+							placeholder={$_('user-pages.events.event-registration.placeholders.billingStreet')}
+						/>
+					{/snippet}
 				</Control>
 				<Description />
 				<FieldErrors />
@@ -313,16 +357,18 @@
 				<div class="max-w-2xl">
 					<div class="mt-1">
 						<Field form={superform} name="billingZipCode">
-							<Control let:attrs>
-								<Label>{$_('user-pages.events.event-registration.labels.billingZipCode')}</Label>
-								<Input
-									disabled={billingEqualCompany}
-									{...attrs}
-									bind:value={$formData.billingZipCode}
-									placeholder={$_(
-										'user-pages.events.event-registration.placeholders.billingZipCode'
-									)}
-								/>
+							<Control>
+								{#snippet children({ props })}
+									<Label>{$_('user-pages.events.event-registration.labels.billingZipCode')}</Label>
+									<Input
+										disabled={billingEqualCompany}
+										{...props}
+										bind:value={$formData.billingZipCode}
+										placeholder={$_(
+											'user-pages.events.event-registration.placeholders.billingZipCode'
+										)}
+									/>
+								{/snippet}
 							</Control>
 							<Description />
 							<FieldErrors />
@@ -332,14 +378,18 @@
 				<div class="flex-grow">
 					<div class="mt-1">
 						<Field form={superform} name="billingCity">
-							<Control let:attrs>
-								<Label>{$_('user-pages.events.event-registration.labels.billingCity')}</Label>
-								<Input
-									disabled={billingEqualCompany}
-									{...attrs}
-									bind:value={$formData.billingCity}
-									placeholder={$_('user-pages.events.event-registration.placeholders.billingCity')}
-								/>
+							<Control>
+								{#snippet children({ props })}
+									<Label>{$_('user-pages.events.event-registration.labels.billingCity')}</Label>
+									<Input
+										disabled={billingEqualCompany}
+										{...props}
+										bind:value={$formData.billingCity}
+										placeholder={$_(
+											'user-pages.events.event-registration.placeholders.billingCity'
+										)}
+									/>
+								{/snippet}
 							</Control>
 							<Description />
 							<FieldErrors />
@@ -348,35 +398,41 @@
 				</div>
 			</div>
 			<Field form={superform} name="billingCountry">
-				<Control let:attrs>
-					<Label>{$_('user-pages.events.event-registration.labels.billingCountry')}</Label>
-					<Input
-						disabled={billingEqualCompany}
-						{...attrs}
-						bind:value={$formData.billingCountry}
-						placeholder={$_('user-pages.events.event-registration.placeholders.billingCountry')}
-					/>
+				<Control>
+					{#snippet children({ props })}
+						<Label>{$_('user-pages.events.event-registration.labels.billingCountry')}</Label>
+						<Input
+							disabled={billingEqualCompany}
+							{...props}
+							bind:value={$formData.billingCountry}
+							placeholder={$_('user-pages.events.event-registration.placeholders.billingCountry')}
+						/>
+					{/snippet}
 				</Control>
 				<Description />
 				<FieldErrors />
 			</Field>
 			<hr class="my-8" />
 			<Field form={superform} name="billingVat">
-				<Control let:attrs>
-					<Label>{$_('user-pages.events.event-registration.labels.billingVat')}</Label>
-					<Input
-						{...attrs}
-						bind:value={$formData.billingVat}
-						placeholder={$_('user-pages.events.event-registration.placeholders.billingVat')}
-					/>
+				<Control>
+					{#snippet children({ props })}
+						<Label>{$_('user-pages.events.event-registration.labels.billingVat')}</Label>
+						<Input
+							{...props}
+							bind:value={$formData.billingVat}
+							placeholder={$_('user-pages.events.event-registration.placeholders.billingVat')}
+						/>
+					{/snippet}
 				</Control>
 				<Description />
 				<FieldErrors />
 			</Field>
 			<Field form={superform} name="billingReference">
-				<Control let:attrs>
-					<Label>{$_('user-pages.events.event-registration.labels.billingReference')}</Label>
-					<Input {...attrs} bind:value={$formData.billingReference} placeholder={''} />
+				<Control>
+					{#snippet children({ props })}
+						<Label>{$_('user-pages.events.event-registration.labels.billingReference')}</Label>
+						<Input {...props} bind:value={$formData.billingReference} placeholder={''} />
+					{/snippet}
 				</Control>
 				<Description />
 				<FieldErrors />
@@ -384,9 +440,11 @@
 		</form>
 	</div>
 
-	{#if buyOption?.allowedSignUpDays > 1}
+	{#if Number(buyOption?.allowedSignUpDays) > 1}
 		<section class=" my-10">
-			<h4 class=" font-extrabold text-sm text-stone-900">{$_("user-pages.events.sign-up-days.header")}</h4>
+			<h4 class=" font-extrabold text-sm text-stone-900">
+				{$_('user-pages.events.sign-up-days.header')}
+			</h4>
 			<p class=" mt-2 text-stone-500 font-normal text-sm">
 				{$_('user-pages.events.sign-up-days.description')}
 			</p>
@@ -394,9 +452,11 @@
 				<Tabs.Root bind:value={$selectedAmountOfParticipationDaysProxy}>
 					<Tabs.List>
 						{#each Array.from(Array(buyOption?.allowedSignUpDays).keys()) as dayIndex}
-							<Tabs.Trigger value={(dayIndex + 1).toString()}>{$_('user-pages.events.sign-up-days.days', {
-								values: { days: (dayIndex + 1).toString() }
-							})}</Tabs.Trigger>
+							<Tabs.Trigger value={(dayIndex + 1).toString()}
+								>{$_('user-pages.events.sign-up-days.days', {
+									values: { days: (dayIndex + 1).toString() }
+								})}</Tabs.Trigger
+							>
 						{/each}
 					</Tabs.List>
 				</Tabs.Root>
@@ -409,28 +469,45 @@
 			{$_('user-pages.events.eventDaysDescription')}
 		</p>
 		<div class=" @container/event-days flex justify-between my-4">
-			<ToggleGroup.Root type="multiple" bind:value={$formData.selectedEventDays}
-												class="grid grid-cols-1 @xl/event-days:grid-cols-2 @3xl/event-days:grid-cols-3 gap-4">
+			<ToggleGroup.Root
+				type="multiple"
+				bind:value={$formData.selectedEventDays}
+				class="grid grid-cols-1 @xl/event-days:grid-cols-2 @3xl/event-days:grid-cols-3 gap-4"
+			>
 				{#each buyOption?.eventDays as day}
-					{@const dayjsData = dayjs(day.dayDate, { locale: $locale ?? "de-DE" })}
-					{@const dayName = dayjsData.format("dddd")}
+					{@const dayjsData = dayjs(day.dayDate, { locale: $locale ?? 'de-DE' })}
+					{@const dayName = dayjsData.format('dddd')}
 					<Label
 						for={day.dayDate}
-						class="border-muted bg-popover cursor-pointer hover:bg-accent hover:text-accent-foreground [&:has([data-state=on])]:border-primary [&:has([disabled])]:cursor-not-allowed rounded-md border-2 p-4">
-						<ToggleGroup.Item disabled={day.remainingCapacity < 1} value={day.dayDate} id={day.dayDate}
-															class="sr-only"
-															aria-label={dayName} />
+						class="border-muted bg-popover cursor-pointer hover:bg-accent hover:text-accent-foreground [&:has([data-state=on])]:border-primary [&:has([disabled])]:cursor-not-allowed rounded-md border-2 p-4"
+					>
+						<ToggleGroup.Item
+							disabled={day.remainingCapacity < 1}
+							value={day.dayDate}
+							id={day.dayDate}
+							class="sr-only"
+							aria-label={dayName}
+						/>
 						<div class="flex justify-between items-start gap-2">
 							<div>
 								<div class="flex items-center gap-2 mb-2">
 									<CalendarDays class="h-5 w-5 text-muted-foreground" />
-									<LocalizedDate date={day.dayDate} format="LL" class="font-medium text-lg text-nowrap" />
+									<LocalizedDate
+										date={day.dayDate}
+										format="LL"
+										class="font-medium text-lg text-nowrap"
+									/>
 								</div>
-								<LocalizedDate date={day.dayDate} format="dddd" class="text-muted-foreground text-nowrap" />
+								<LocalizedDate
+									date={day.dayDate}
+									format="dddd"
+									class="text-muted-foreground text-nowrap"
+								/>
 							</div>
 							{#if $formData.selectedEventDays.includes(day.dayDate)}
 								<div
-									class="h-6 w-6 rounded-full bg-primary flex-shrink-0 flex-grow-0 flex items-center justify-center">
+									class="h-6 w-6 rounded-full bg-primary flex-shrink-0 flex-grow-0 flex items-center justify-center"
+								>
 									<Check class="h-4 w-4 text-primary-foreground" />
 								</div>
 							{/if}
@@ -456,13 +533,10 @@
 					>
 						<div class=" px-3 py-4 flex justify-between items-center border-b border-stone-200">
 							<div class="flex items-center gap-2">
-								<RadioGroup.Item
-									value={pkg.id}
-									id={`package-${pkg.id}`}
-								/>
+								<RadioGroup.Item value={pkg.id} id={`package-${pkg.id}`} />
 								<span>
-								{pkg.name}
-									</span>
+									{pkg.name}
+								</span>
 							</div>
 							<span class="text-stone-800 font-extrabold">
 								{$number((pkg.price ?? 0) / 100, {
@@ -573,14 +647,14 @@
 </div>
 
 <style>
-    /* Scoped styling - it will only affect elements inside this Layout */
-    :global(.undertaking-text a) {
-        /* Example Tailwind-like styles */
-        color: #3b82f6; /* equivalent to text-blue-500 */
-        text-decoration: underline; /* underline */
-    }
+	/* Scoped styling - it will only affect elements inside this Layout */
+	:global(.undertaking-text a) {
+		/* Example Tailwind-like styles */
+		color: #3b82f6; /* equivalent to text-blue-500 */
+		text-decoration: underline; /* underline */
+	}
 
-    :global(.undertaking-text a:hover) {
-        color: #1e40af; /* equivalent to hover:text-blue-700 */
-    }
+	:global(.undertaking-text a:hover) {
+		color: #1e40af; /* equivalent to hover:text-blue-700 */
+	}
 </style>

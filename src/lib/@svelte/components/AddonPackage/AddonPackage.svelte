@@ -7,9 +7,10 @@
 	import { LoaderCircle } from 'lucide-svelte';
 	import { _ } from '@services';
 	import { trpc } from '@/trpc/client';
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 
-	export let addonPackage: {
+	interface Props {
+		addonPackage: {
 		id: string;
 		title: string;
 		description: string;
@@ -24,8 +25,11 @@
 			}
 		];
 	};
+	}
 
-	const api = trpc($page);
+	let { addonPackage }: Props = $props();
+
+	const api = trpc(page);
 
 	const deleteAddonPackage = api.admin.events.addonPackages.delete.createMutation();
 </script>
@@ -82,11 +86,11 @@
 			class="text-red-500 hover:text-red-700"
 			disabled={$deleteAddonPackage.isPending}
 			variant="ghost"
-			on:click={() => {
+			onclick={() => {
 				$deleteAddonPackage.mutate({
 					addonPackageId: addonPackage.id,
-					buyOptionId: $page.params.buyOptionId,
-					eventId: $page.params.id
+					buyOptionId: page.params.buyOptionId,
+					eventId: page.params.id
 				});
 			}}
 		>

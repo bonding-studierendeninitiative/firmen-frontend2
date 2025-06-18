@@ -2,11 +2,15 @@
 
 	import { LucideMail, LucidePhone } from 'lucide-svelte';
 
-	export let organization: {
+	interface Props {
+		organization: {
 		name?: string | null | undefined;
 		email?: string | null | undefined;
 		phone?: string | null | undefined;
 	};
+	}
+
+	let { organization }: Props = $props();
 </script>
 <div class="border p-4 rounded-xl flex flex-col gap-2">
 	<p class="text-sm">Organization:</p>

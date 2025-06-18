@@ -1,16 +1,16 @@
 <script lang="ts">
 	import { AdminJobs, Sidebar, SidebarItem } from '@/@svelte/modules';
 	import { ADMIN_SIDEBAR_LINKS } from '@constant';
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import { trpc } from '$lib/trpc/client';
 	import { LoaderCircle } from 'lucide-svelte';
 	import { writable } from 'svelte/store';
 
-	$: activeUrl = $page.url.pathname;
+	let activeUrl = $derived(page.url.pathname);
 
-	export let data;
+	let { data, children } = $props();
 
-	const api = trpc($page);
+	const api = trpc(page);
 	const filter = writable<{
 		limit: string,
 		offset: string,
@@ -46,7 +46,7 @@
 			<AdminJobs jobs={$jobs.data?.jobs ?? []} />
 		{/if}
 		<div class="w-full px-16 py-22 bg-white">
-			<slot />
+			{@render children?.()}
 		</div>
 	</div>
 

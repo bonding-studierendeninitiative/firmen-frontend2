@@ -3,11 +3,15 @@
 	import { goto } from '$app/navigation';
 	import { InputWithPrefix, Textarea } from '$lib/@svelte/components';
 	import { Button } from '@/components/ui/button';
-	import { type PortraitContactInfoSchema } from '$lib/services/portraitTemplates';
 	import { type Infer, superForm, type SuperValidated } from 'sveltekit-superforms';
 	import { toast } from 'svelte-sonner';
+	import type { PortraitContactInfoSchema } from '@schema';
 
-	export let data: SuperValidated<Infer<typeof PortraitContactInfoSchema>>;
+	interface Props {
+		data: SuperValidated<Infer<typeof PortraitContactInfoSchema>>;
+	}
+
+	let { data }: Props = $props();
 
 	const { form, enhance, constraints } = superForm(data, {
 		resetForm: false,
@@ -97,7 +101,7 @@
 		<footer>
 			<div class=" flex justify-end items-center my-6 pb-6">
 				<div class=" flex justify-between items-center">
-					<Button variant="secondary" on:click={() => goto('/dashboard')} class=" mr-8">
+					<Button variant="secondary" onclick={() => goto('/dashboard')} class=" mr-8">
 						{$_('common.cancel')}
 					</Button>
 					<Button variant="gradient" type="submit">{$_('common.save')}</Button>

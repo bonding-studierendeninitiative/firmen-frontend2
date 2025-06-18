@@ -3,14 +3,17 @@
 	import { _ } from '@services';
 	import { Tabs } from '@/@svelte/components';
 	import { ReturnIcon, CalenderIcon, LocationIcon } from '@/@svelte/icons';
-	import { CompanyInformationTab, PortraitTab } from '@/@svelte/pages';
-	import UploadsTab from '../../../../../../lib/@svelte/pages/Events/UploadsTab/UploadsTab.svelte';
+	import { CompanyInformationTab, PortraitTab, UploadsTab } from '@/@svelte/pages';
 	import { Button } from '@/components/ui/button';
 
-	let activeTab = 0;
-	export let heading = 'Tech Foundation 2024';
-	export let mainDate = 'Freitag, 17 März, 2024';
-	export let mainLocation = 'Lanxess Arena';
+	let activeTab = $state(0);
+	interface Props {
+		heading?: string;
+		mainDate?: string;
+		mainLocation?: string;
+	}
+
+	let { heading = 'Tech Foundation 2024', mainDate = 'Freitag, 17 März, 2024', mainLocation = 'Lanxess Arena' }: Props = $props();
 	const tabHeadings = ['companyInformation', 'portrait', 'uploads'];
 
 	const handleTabChange = (tabIndex: number) => {
@@ -22,7 +25,7 @@
 	<div class=" flex justify-between items-center">
 		<div class=" flex items-center">
 			<button
-				on:click={() => goto('/admin/events')}
+				onclick={() => goto('/admin/events')}
 				class="  h-10 w-10 flex flex-shrink justify-center rounded-lg items-center border text-stone-400 border-stone-200 mr-6"
 				><ReturnIcon /></button
 			>
@@ -47,10 +50,10 @@
 			</div>
 		</div>
 		<div class=" flex items-center">
-			<Button variant="outline" class=" mr-2 !py-1.5 !px-4" on:click={() => undefined}>
+			<Button variant="outline" class=" mr-2 !py-1.5 !px-4" onclick={() => undefined}>
 				{$_('common.exportFiles')}
 			</Button>
-			<Button variant="gradient" class=" !py-1.5 !px-4" on:click={() => undefined}>
+			<Button variant="gradient" class=" !py-1.5 !px-4" onclick={() => undefined}>
 				{$_('common.edit')}
 			</Button>
 		</div>

@@ -495,15 +495,15 @@
 
 		<DialogFooter class="p-6 pt-2 border-t">
 			<div class="flex justify-between w-full">
-				<Button variant="outline" on:click={() => {}}>
+				<Button variant="outline" onclick={() => {}}>
 					Close
 				</Button>
 				<div class="flex gap-2">
-					<Button variant="destructive" on:click={handleReject}>
+					<Button variant="destructive" onclick={handleReject}>
 						<X class="h-4 w-4 mr-2" />
 						Reject Registration
 					</Button>
-					<Button on:click={handleConfirm}>
+					<Button onclick={handleConfirm}>
 						<Check class="h-4 w-4 mr-2" />
 						Confirm Registration
 					</Button>

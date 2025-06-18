@@ -70,7 +70,7 @@
 			<StatusBadge variant={advert.status} label={$_('status-text.' + advert.status)} />
 		</div>
 
-		<Button on:click={() => {
+		<Button onclick={() => {
 pickNewAdvertisement()
 		}} variant="ghost" class="text-blue-700 px-0"><Replace class="w-4 h-4 mr-2" />Image-Anzeige ändern</Button>
 	</div>

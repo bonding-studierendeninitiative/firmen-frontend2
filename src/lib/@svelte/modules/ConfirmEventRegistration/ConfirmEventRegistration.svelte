@@ -7,12 +7,16 @@
 	import { EventRegistration } from '@/@svelte/modules';
 	import { _ } from '@services';
 	import { trpc } from '@/trpc/client';
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 
-	export let isOpen: boolean;
-	export let eventRegistration: InferOutput<AdminEventRegistrationsResponse>['eventRegistrations'][number];
+	interface Props {
+		isOpen: boolean;
+		eventRegistration: InferOutput<AdminEventRegistrationsResponse>['eventRegistrations'][number];
+	}
 
-	const api = trpc($page);
+	let { isOpen = $bindable(), eventRegistration }: Props = $props();
+
+	const api = trpc(page);
 	const utils = api.createUtils();
 
 	const confirmEventRegistration = api.admin.eventRegistrations.confirm.createMutation();
@@ -36,7 +40,7 @@
 
 		<Dialog.Footer>
 			<Button
-				on:click={() => {
+				onclick={() => {
 					$confirmEventRegistration.mutate(
 						{
 							eventRegistrationId: eventRegistration.id

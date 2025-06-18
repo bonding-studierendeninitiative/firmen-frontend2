@@ -10,9 +10,13 @@
 	import type { InferOutput } from 'valibot';
 	import { ManageOrgMembers } from '@/@svelte/modules';
 
-	export let data: PageServerData;
-	export let createInviteForm: SuperValidated<InferOutput<CreateOrgInviteRequest>> | undefined = data.createInviteForm;
-	export let organizationMembers: InferOutput<GetOrgMembersResponse> | undefined = data.organizationMembers;
+	interface Props {
+		data: PageServerData;
+		createInviteForm?: SuperValidated<InferOutput<CreateOrgInviteRequest>> | undefined;
+		organizationMembers?: InferOutput<GetOrgMembersResponse> | undefined;
+	}
+
+	let { data, createInviteForm = data.createInviteForm, organizationMembers = data.organizationMembers }: Props = $props();
 
 </script>
 

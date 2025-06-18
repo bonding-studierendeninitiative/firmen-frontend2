@@ -3,14 +3,18 @@
 	import { Button } from '@/components/ui/button';
 	import { toast } from 'svelte-sonner';
 	import { trpc } from '@/trpc/client';
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import { _ } from '@services';
 
-	export let open = false;
 
-	export let eventRegistrationId: string;
+	interface Props {
+		open?: boolean;
+		eventRegistrationId: string;
+	}
 
-	const api = trpc($page);
+	let { open = $bindable(false), eventRegistrationId }: Props = $props();
+
+	const api = trpc(page);
 	const utils = api.createUtils();
 
 	const deleteEventRegistration = api.admin.eventRegistrations.delete.createMutation();
@@ -22,7 +26,7 @@
 		<p>$_('admin-pages.events.event-registrations.delete-dialog.description')</p>
 		<Dialog.Footer>
 			<Button
-				on:click={() => {
+				onclick={() => {
 					$deleteEventRegistration.mutate(
 						{
 							eventRegistrationId
@@ -33,7 +37,7 @@
 								open = false;
 								toast.success($_('admin-pages.events.event-registrations.delete-dialog.success'));
 								await utils.admin.events.getEventRegistrations.invalidate({
-									eventId: $page.params.id
+									eventId: page.params.id
 								});
 							}
 						}

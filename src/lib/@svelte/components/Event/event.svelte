@@ -2,13 +2,17 @@
 	import { CalenderIcon, LocationIcon } from '@/@svelte/icons';
 	import { LocalizedDate } from '@/@svelte/components';
 
-	export let event:
+	interface Props {
+		event: 
 		| {
 		name: string;
 		dateFrom: string | null;
 		location?: string;
 	}
 		| undefined;
+	}
+
+	let { event }: Props = $props();
 </script>
 
 <div>

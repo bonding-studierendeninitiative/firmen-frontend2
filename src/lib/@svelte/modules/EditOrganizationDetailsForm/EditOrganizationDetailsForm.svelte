@@ -10,7 +10,11 @@
 	import { _ } from '@services';
 	import * as Card from '@/components/ui/card';
 
-	export let editOrganizationDetailsForm: SuperValidated<Infer<SetOrgDetailsRequest>>;
+	interface Props {
+		editOrganizationDetailsForm: SuperValidated<Infer<SetOrgDetailsRequest>>;
+	}
+
+	let { editOrganizationDetailsForm }: Props = $props();
 
 	const superform = superForm<Infer<SetOrgDetailsRequest>>(editOrganizationDetailsForm, {
 		validators: valibot(SetOrgDetailsRequestSchema),
@@ -42,55 +46,61 @@
 			<Card.Root>
 				<Card.Content class="pt-6">
 					<Field form={superform} name="name">
-						<Control let:attrs>
-							<Label>{$_('user-pages.organizations.createOrganization.labels.organizationName')}</Label>
-							<Input
-								class="max-w-md"
-								{...attrs}
-								bind:value={$formData.name}
-								placeholder={$_(
-							'user-pages.organizations.createOrganization.placeholders.organizationName'
-						)}
-							/>
-						</Control>
+						<Control >
+							{#snippet children({ props })}
+														<Label>{$_('user-pages.organizations.createOrganization.labels.organizationName')}</Label>
+								<Input
+									class="max-w-md"
+									{...props}
+									bind:value={$formData.name}
+									placeholder={$_(
+								'user-pages.organizations.createOrganization.placeholders.organizationName'
+							)}
+								/>
+																				{/snippet}
+												</Control>
 						<Description />
 						<FieldErrors />
 					</Field>
 					<Field form={superform} name="organizationAddress.street">
-						<Control let:attrs>
-							<Label
-							>{$_(
-								'user-pages.organizations.createOrganization.labels.organizationStreetAddress'
-							)}</Label
-							>
-							<Input
-								class="max-w-md"
-								{...attrs}
-								bind:value={$formData.organizationAddress.street}
-								placeholder={$_(
-							'user-pages.organizations.createOrganization.placeholders.organizationStreetAddress'
-						)}
-							/>
-						</Control>
+						<Control >
+							{#snippet children({ props })}
+														<Label
+								>{$_(
+									'user-pages.organizations.createOrganization.labels.organizationStreetAddress'
+								)}</Label
+								>
+								<Input
+									class="max-w-md"
+									{...props}
+									bind:value={$formData.organizationAddress.street}
+									placeholder={$_(
+								'user-pages.organizations.createOrganization.placeholders.organizationStreetAddress'
+							)}
+								/>
+																				{/snippet}
+												</Control>
 						<Description />
 						<FieldErrors />
 					</Field>
 					<Field form={superform} name="organizationAddress.extendedAddress">
-						<Control let:attrs>
-							<Label
-							>{$_(
-								'user-pages.organizations.createOrganization.labels.organizationExtendedAddress'
-							)}</Label
-							>
-							<Input
-								class="max-w-md"
-								{...attrs}
-								bind:value={$formData.organizationAddress.extendedAddress}
-								placeholder={$_(
-							'user-pages.organizations.createOrganization.placeholders.organizationExtendedAddress'
-						)}
-							/>
-						</Control>
+						<Control >
+							{#snippet children({ props })}
+														<Label
+								>{$_(
+									'user-pages.organizations.createOrganization.labels.organizationExtendedAddress'
+								)}</Label
+								>
+								<Input
+									class="max-w-md"
+									{...props}
+									bind:value={$formData.organizationAddress.extendedAddress}
+									placeholder={$_(
+								'user-pages.organizations.createOrganization.placeholders.organizationExtendedAddress'
+							)}
+								/>
+																				{/snippet}
+												</Control>
 						<Description />
 						<FieldErrors />
 					</Field>
@@ -99,20 +109,22 @@
 						<div class="max-w-28">
 							<div class="mt-1">
 								<Field form={superform} name="organizationAddress.zipCode">
-									<Control let:attrs>
-										<Label
-										>{$_(
-											'user-pages.organizations.createOrganization.labels.organizationZipCode'
-										)}</Label
-										>
-										<Input
-											{...attrs}
-											bind:value={$formData.organizationAddress.zipCode}
-											placeholder={$_(
-										'user-pages.organizations.createOrganization.placeholders.organizationZipCode'
-									)}
-										/>
-									</Control>
+									<Control >
+										{#snippet children({ props })}
+																				<Label
+											>{$_(
+												'user-pages.organizations.createOrganization.labels.organizationZipCode'
+											)}</Label
+											>
+											<Input
+												{...props}
+												bind:value={$formData.organizationAddress.zipCode}
+												placeholder={$_(
+											'user-pages.organizations.createOrganization.placeholders.organizationZipCode'
+										)}
+											/>
+																													{/snippet}
+																		</Control>
 									<Description />
 									<FieldErrors />
 								</Field>
@@ -121,21 +133,23 @@
 						<div class="flex-grow">
 							<div class="mt-1">
 								<Field form={superform} name="organizationAddress.locality">
-									<Control let:attrs>
-										<Label
-										>{$_(
-											'user-pages.organizations.createOrganization.labels.organizationLocality'
-										)}</Label
-										>
-										<Input
-											class="max-w-xs"
-											{...attrs}
-											bind:value={$formData.organizationAddress.locality}
-											placeholder={$_(
-										'user-pages.organizations.createOrganization.placeholders.organizationLocality'
-									)}
-										/>
-									</Control>
+									<Control >
+										{#snippet children({ props })}
+																				<Label
+											>{$_(
+												'user-pages.organizations.createOrganization.labels.organizationLocality'
+											)}</Label
+											>
+											<Input
+												class="max-w-xs"
+												{...props}
+												bind:value={$formData.organizationAddress.locality}
+												placeholder={$_(
+											'user-pages.organizations.createOrganization.placeholders.organizationLocality'
+										)}
+											/>
+																													{/snippet}
+																		</Control>
 									<Description />
 									<FieldErrors />
 								</Field>
@@ -162,52 +176,58 @@
 			<Card.Root>
 				<Card.Content class="pt-6">
 					<Field form={superform} name="organizationPhone">
-						<Control let:attrs>
-							<Label>{$_('user-pages.organizations.createOrganization.labels.organizationPhone')}</Label
-							>
-							<PhoneInput
-								class="max-w-md"
-								bind:selectedCountry={$formData.organizationAddress.country}
-								searchPlaceholder={$_(
-							'user-pages.organizations.createOrganization.placeholders.phoneCountryCodeSearch'
-						)}
-								bind:value={$formData.organizationPhone}
-								{...attrs}
-							/>
-						</Control>
+						<Control >
+							{#snippet children({ props })}
+														<Label>{$_('user-pages.organizations.createOrganization.labels.organizationPhone')}</Label
+								>
+								<PhoneInput
+									class="max-w-md"
+									bind:selectedCountry={$formData.organizationAddress.country}
+									searchPlaceholder={$_(
+								'user-pages.organizations.createOrganization.placeholders.phoneCountryCodeSearch'
+							)}
+									bind:value={$formData.organizationPhone}
+									{...props}
+								/>
+																				{/snippet}
+												</Control>
 						<Description />
 						<FieldErrors />
 					</Field>
 					<Field form={superform} name="organizationEmail">
-						<Control let:attrs>
-							<Label>{$_('user-pages.organizations.createOrganization.labels.organizationEmail')}</Label
-							>
-							<Input
-								class="max-w-md"
-								{...attrs}
-								bind:value={$formData.organizationEmail}
-								placeholder={$_(
-							'user-pages.organizations.createOrganization.placeholders.organizationEmail'
-						)}
-							/>
-						</Control>
+						<Control >
+							{#snippet children({ props })}
+														<Label>{$_('user-pages.organizations.createOrganization.labels.organizationEmail')}</Label
+								>
+								<Input
+									class="max-w-md"
+									{...props}
+									bind:value={$formData.organizationEmail}
+									placeholder={$_(
+								'user-pages.organizations.createOrganization.placeholders.organizationEmail'
+							)}
+								/>
+																				{/snippet}
+												</Control>
 						<Description />
 						<FieldErrors />
 					</Field>
 					<Field form={superform} name="organizationWebsite">
-						<Control let:attrs>
-							<Label
-							>{$_('user-pages.organizations.createOrganization.labels.organizationWebsite')}</Label
-							>
-							<Input
-								class="max-w-md"
-								{...attrs}
-								bind:value={$formData.organizationWebsite}
-								placeholder={$_(
-							'user-pages.organizations.createOrganization.placeholders.organizationWebsite'
-						)}
-							/>
-						</Control>
+						<Control >
+							{#snippet children({ props })}
+														<Label
+								>{$_('user-pages.organizations.createOrganization.labels.organizationWebsite')}</Label
+								>
+								<Input
+									class="max-w-md"
+									{...props}
+									bind:value={$formData.organizationWebsite}
+									placeholder={$_(
+								'user-pages.organizations.createOrganization.placeholders.organizationWebsite'
+							)}
+								/>
+																				{/snippet}
+												</Control>
 						<Description />
 						<FieldErrors />
 					</Field>

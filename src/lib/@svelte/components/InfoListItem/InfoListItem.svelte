@@ -5,13 +5,25 @@
 	import * as DropdownMenu from '@/components/ui/dropdown-menu';
 	import { _ } from '@services';
 
-	export let showButton = true;
-	export let heading: string;
-	export let subHeading: string | undefined;
-	export let date: string | null;
-	export let buttonText: string;
-	export let onRegisterClick: (() => void) | undefined = undefined;
-	export let onBuyOptionsClick: (() => void) | undefined = undefined;
+	interface Props {
+		showButton?: boolean;
+		heading: string;
+		subHeading: string | undefined;
+		date: string | null;
+		buttonText: string;
+		onRegisterClick?: (() => void) | undefined;
+		onBuyOptionsClick?: (() => void) | undefined;
+	}
+
+	let {
+		showButton = true,
+		heading,
+		subHeading,
+		date,
+		buttonText,
+		onRegisterClick = undefined,
+		onBuyOptionsClick = undefined
+	}: Props = $props();
 </script>
 
 <div class=" p-4 shadow-custom rounded-md border border-solid border-stone-200">
@@ -19,20 +31,22 @@
 		<Event event={{ dateFrom: date, location: subHeading, name: heading }} />
 		<div class="flex-grow"></div>
 		{#if showButton}
-			<Button size="sm" variant="secondary" class="!py-1.5" on:click={() => onRegisterClick?.()}>
+			<Button size="sm" variant="secondary" class="!py-1.5" onclick={() => onRegisterClick?.()}>
 				{buttonText}
 			</Button>
 			<DropdownMenu.Root>
-				<DropdownMenu.Trigger asChild let:builder>
-					<Button variant="ghost" builders={[builder]} size="icon" class="relative h-8 w-8 p-0">
-						<span class="sr-only">{$_("common.open-menu")}</span>
-						<Ellipsis class="h-4 w-4" />
-					</Button>
+				<DropdownMenu.Trigger>
+					{#snippet child({props})}
+						<Button variant="ghost" size="icon" class="relative h-8 w-8 p-0" {...props}>
+							<span class="sr-only">{$_("common.open-menu")}</span>
+							<Ellipsis class="h-4 w-4" />
+						</Button>
+					{/snippet}
 				</DropdownMenu.Trigger>
 				<DropdownMenu.Content>
 					<DropdownMenu.Group>
 						<DropdownMenu.Label>{heading}</DropdownMenu.Label>
-						<DropdownMenu.Item on:click={() => onBuyOptionsClick?.()}>
+						<DropdownMenu.Item onclick={() => onBuyOptionsClick?.()}>
 							{$_("admin-pages.events.show-buy-options")}
 						</DropdownMenu.Item>
 					</DropdownMenu.Group>

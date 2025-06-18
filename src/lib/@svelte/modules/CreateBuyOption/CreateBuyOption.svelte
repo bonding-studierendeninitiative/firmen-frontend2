@@ -8,10 +8,14 @@
 	import { Control, Description, Field, FieldErrors, Label } from '@/components/ui/form';
 	import { Input } from '@/components/ui/input';
 	import { toast } from 'svelte-sonner';
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 
-	export let createForm: SuperValidated<Infer<CreateBuyOptionRequest>>;
-	export let isDialogOpen = false;
+	interface Props {
+		createForm: SuperValidated<Infer<CreateBuyOptionRequest>>;
+		isDialogOpen?: boolean;
+	}
+
+	let { createForm, isDialogOpen = $bindable(false) }: Props = $props();
 
 	const superform = superForm(createForm, {
 		onResult({ result }) {
@@ -67,101 +71,109 @@
 		<form
 			class="flex flex-col gap-y-4"
 			method="post"
-			action={`/admin/events/${$page.params.id}/buy-options/?/createBuyOption`}
+			action={`/admin/events/${page.params.id}/buy-options/?/createBuyOption`}
 			use:enhance
 		>
 			<Field form={superform} name="name">
-				<Control let:attrs>
-					<Label>{$_("modules.create-buy-option.name")}</Label>
-					<Input {...attrs} bind:value={$formData.name} />
-				</Control>
+				<Control >
+					{#snippet children({ props })}
+										<Label>{$_("modules.create-buy-option.name")}</Label>
+						<Input {...props} bind:value={$formData.name} />
+														{/snippet}
+								</Control>
 				<Description />
 				<FieldErrors />
 			</Field>
 
 			<!--<Field form={superform} name="description">
-				<Control let:attrs>
-					<Label>Buy option description</Label>
-					<Input {...attrs} bind:value={$formData.description} />
+				<Control>
+					{#snippet children({ props })}
+						<Label>Buy option description</Label>
+						<Input {...props} bind:value={$formData.description} />
+					{/snippet}
 				</Control>
 				<Description />
 				<FieldErrors />
 			</Field> -->
 
 			<Field form={superform} name="packageCount">
-				<Control let:attrs>
-					<div class="flex flex-row items-center justify-between">
-						<Label>{$_("modules.create-buy-option.package-count")}</Label>
-						<div
-							class="flex items-center border rounded-md overflow-hidden focus-within:outline-transparent focus-within:ring-1 focus-within:ring-gray-900 dark:focus-within:ring-gray-50"
-						>
-							<Button
-								variant="ghost"
-								size="icon"
-								class="h-10 w-10 text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800"
-								disabled={$formData.packageCount <= 0}
-								on:click={decreasePackagesCount}
+				<Control >
+					{#snippet children({ props })}
+										<div class="flex flex-row items-center justify-between">
+							<Label>{$_("modules.create-buy-option.package-count")}</Label>
+							<div
+								class="flex items-center border rounded-md overflow-hidden focus-within:outline-transparent focus-within:ring-1 focus-within:ring-gray-900 dark:focus-within:ring-gray-50"
 							>
-								<Minus class="h-5 w-5" />
-							</Button>
-							<Input
-								type="number"
-								class="px-3 py-2 text-center w-10 border-none focus-visible:outline-transparent focus-visible:ring-transparent"
-								{...attrs}
-								bind:value={$formData.packageCount}
-								{...$constraints.packageCount}
-							></Input>
-							<Button
-								variant="ghost"
-								size="icon"
-								class="h-10 w-10 text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800"
-								disabled={$formData.packageCount >= 10}
-								on:click={increasePackagesCount}
-							>
-								<Plus class="h-5 w-5" />
-							</Button>
+								<Button
+									variant="ghost"
+									size="icon"
+									class="h-10 w-10 text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800"
+									disabled={$formData.packageCount <= 0}
+									onclick={decreasePackagesCount}
+								>
+									<Minus class="h-5 w-5" />
+								</Button>
+								<Input
+									type="number"
+									class="px-3 py-2 text-center w-10 border-none focus-visible:outline-transparent focus-visible:ring-transparent"
+									{...props}
+									bind:value={$formData.packageCount}
+									{...$constraints.packageCount}
+								></Input>
+								<Button
+									variant="ghost"
+									size="icon"
+									class="h-10 w-10 text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800"
+									disabled={$formData.packageCount >= 10}
+									onclick={increasePackagesCount}
+								>
+									<Plus class="h-5 w-5" />
+								</Button>
+							</div>
 						</div>
-					</div>
-				</Control>
+														{/snippet}
+								</Control>
 				<Description />
 				<FieldErrors />
 			</Field>
 
 			<Field form={superform} name="serviceCount">
-				<Control let:attrs>
-					<div class="flex flex-row items-center justify-between">
-						<Label>{$_("modules.create-buy-option.service-count")}</Label>
-						<div
-							class="flex items-center border rounded-md overflow-hidden focus-within:outline-transparent focus-within:ring-1 focus-within:ring-gray-900 dark:focus-within:ring-gray-50"
-						>
-							<Button
-								variant="ghost"
-								size="icon"
-								class="h-10 w-10 text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800"
-								disabled={$formData.serviceCount <= 0}
-								on:click={decreaseServicesCount}
+				<Control >
+					{#snippet children({ props })}
+										<div class="flex flex-row items-center justify-between">
+							<Label>{$_("modules.create-buy-option.service-count")}</Label>
+							<div
+								class="flex items-center border rounded-md overflow-hidden focus-within:outline-transparent focus-within:ring-1 focus-within:ring-gray-900 dark:focus-within:ring-gray-50"
 							>
-								<Minus class="h-5 w-5" />
-							</Button>
-							<Input
-								type="number"
-								class="px-3 py-2 text-center w-10 border-none focus-visible:outline-transparent focus-visible:ring-transparent"
-								{...attrs}
-								bind:value={$formData.serviceCount}
-								{...$constraints.serviceCount}
-							></Input>
-							<Button
-								variant="ghost"
-								size="icon"
-								class="h-10 w-10 text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800"
-								disabled={$formData.serviceCount >= 10}
-								on:click={increaseServicesCount}
-							>
-								<Plus class="h-5 w-5" />
-							</Button>
+								<Button
+									variant="ghost"
+									size="icon"
+									class="h-10 w-10 text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800"
+									disabled={$formData.serviceCount <= 0}
+									onclick={decreaseServicesCount}
+								>
+									<Minus class="h-5 w-5" />
+								</Button>
+								<Input
+									type="number"
+									class="px-3 py-2 text-center w-10 border-none focus-visible:outline-transparent focus-visible:ring-transparent"
+									{...props}
+									bind:value={$formData.serviceCount}
+									{...$constraints.serviceCount}
+								></Input>
+								<Button
+									variant="ghost"
+									size="icon"
+									class="h-10 w-10 text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800"
+									disabled={$formData.serviceCount >= 10}
+									onclick={increaseServicesCount}
+								>
+									<Plus class="h-5 w-5" />
+								</Button>
+							</div>
 						</div>
-					</div>
-				</Control>
+														{/snippet}
+								</Control>
 				<Description />
 				<FieldErrors />
 			</Field>

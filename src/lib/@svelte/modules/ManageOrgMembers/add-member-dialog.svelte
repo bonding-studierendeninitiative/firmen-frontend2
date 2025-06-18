@@ -9,18 +9,24 @@
 	import { toast } from 'svelte-sonner';
 	import { _ } from '@services';
 	import { trpc } from '@/trpc/client';
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import { Label } from '@/components/ui/label';
 	import { writable } from 'svelte/store';
 	import { debouncer } from '@/stores/debouncer';
 	import { tick } from 'svelte';
 	import { cn } from '@/utils';
 
-	export let orgId: string;
+	interface Props {
+		orgId: string;
+	}
 
-	const api = trpc($page);
+	let { orgId }: Props = $props();
+
+	const api = trpc(page);
 	const utils = api.createUtils();
 	const addMember = api.admin.orgs.members.addMember.createMutation();
+
+	let triggerRef = $state<HTMLButtonElement>(null!)
 
 	let userFilters = writable({
 		query: '',
@@ -37,9 +43,9 @@
 	});
 	let users = api.admin.users.getAll.createQuery(debouncer(userFilters));
 
-	let open = false;
+	let open = $state(false);
 
-	let isUsersOpen = false;
+	let isUsersOpen = $state(false);
 	let user:
 		| {
 				firstName: string;
@@ -49,23 +55,23 @@
 				emailAddresses: {emailAddress: string}[];
 		  }
 		| null
-		| undefined = null;
+		| undefined = $state(null);
 
 	// We want to refocus the trigger button when the user selects
 	// an item from the list so users can continue navigating the
 	// rest of the form with the keyboard.
-	function closeAndFocusTrigger(triggerId: string) {
+	function closeAndFocusTrigger() {
 		isUsersOpen = false;
 		tick().then(() => {
-			document.getElementById(triggerId)?.focus();
+			triggerRef?.focus();
 		});
 	}
 
-	function handleUserSelect(newValue: string, ids: { trigger: string }) {
+	function handleUserSelect(newValue: string) {
 		$selectedUser.id = newValue;
 		user = $users.data?.data.find((org) => org.id === newValue)
 
-		closeAndFocusTrigger(ids.trigger);
+		closeAndFocusTrigger();
 	}
 </script>
 
@@ -87,60 +93,64 @@
 			</Card.Header>
 			<Card.Content class="space-y-2 pt-6">
 				<div class="flex items-start">
-					<Popover.Root bind:open={isUsersOpen} let:ids>
-						<Popover.Trigger asChild let:builder>
-							<Button
-								aria-expanded={isUsersOpen}
-								builders={[builder]}
-								class="w-full justify-between"
-								role="combobox"
-								variant="outline"
-							>
-								{user
-									? user.firstName + ' ' + user.lastName
-									: $_('modules.add-member-dialog.select-trigger')}
-								<ChevronsUpDown class="ml-2 h-4 w-4 shrink-0 opacity-50" />
-							</Button>
-						</Popover.Trigger>
-						<Popover.Content class="w-[40ch] p-0">
-							<Command.Root shouldFilter={false}>
-								<Label class="flex items-center gap-2 py-2">
-									<Search class="h-5 w-5 ml-2" />
-									<input
-										bind:value={$userFilters.query}
-										class="w-full outline-transparent border-transparent py-2"
-										placeholder={$_('modules.add-member-dialog.search-users-placeholder')}
-									/>
-								</Label>
-								<Command.Separator />
-								{#if $users.isLoading}
-									<Command.Loading class="flex items-center justify-center py-2">
-										<LoaderCircle class="h-6 w-6 text-primary animate-spin" />
-									</Command.Loading>
-								{:else}
-									<Command.List>
-										{#each $users.data?.data ?? [] as user}
-											<Command.Item
-												value={user.id}
-												onSelect={(currentValue) => {
-													handleUserSelect(currentValue, ids);
-												}}
-											>
-												<Check
-													class={cn(
-														'mr-2 h-4 w-4',
-														$selectedUser.id !== user.id && 'text-transparent'
-													)}
-												/>
-												{user.firstName + ' ' + user.lastName}
-											</Command.Item>
-										{/each}
-									</Command.List>
-								{/if}
-								<Command.Empty>{$_('modules.add-member-dialog.no-users-found')}</Command.Empty>
-							</Command.Root>
-						</Popover.Content>
-					</Popover.Root>
+					<Popover.Root bind:open={isUsersOpen} >
+						{#snippet children()}
+												<Popover.Trigger bind:ref={triggerRef}>
+								{#snippet child({ props })}
+														<Button
+										aria-expanded={isUsersOpen}
+										{...props}
+										class="w-full justify-between"
+										role="combobox"
+										variant="outline"
+									>
+										{user
+											? user.firstName + ' ' + user.lastName
+											: $_('modules.add-member-dialog.select-trigger')}
+										<ChevronsUpDown class="ml-2 h-4 w-4 shrink-0 opacity-50" />
+									</Button>
+																					{/snippet}
+												</Popover.Trigger>
+							<Popover.Content class="w-[40ch] p-0">
+								<Command.Root shouldFilter={false}>
+									<Label class="flex items-center gap-2 py-2">
+										<Search class="h-5 w-5 ml-2" />
+										<input
+											bind:value={$userFilters.query}
+											class="w-full outline-transparent border-transparent py-2"
+											placeholder={$_('modules.add-member-dialog.search-users-placeholder')}
+										/>
+									</Label>
+									<Command.Separator />
+									{#if $users.isLoading}
+										<Command.Loading class="flex items-center justify-center py-2">
+											<LoaderCircle class="h-6 w-6 text-primary animate-spin" />
+										</Command.Loading>
+									{:else}
+										<Command.List>
+											{#each $users.data?.data ?? [] as user}
+												<Command.Item
+													value={user.id}
+													onSelect={() => {
+														handleUserSelect(user.id);
+													}}
+												>
+													<Check
+														class={cn(
+															'mr-2 h-4 w-4',
+															$selectedUser.id !== user.id && 'text-transparent'
+														)}
+													/>
+													{user.firstName + ' ' + user.lastName}
+												</Command.Item>
+											{/each}
+										</Command.List>
+									{/if}
+									<Command.Empty>{$_('modules.add-member-dialog.no-users-found')}</Command.Empty>
+								</Command.Root>
+							</Popover.Content>
+																	{/snippet}
+										</Popover.Root>
 				</div>
 				{#if user}
 					<div class="flex gap-x-4 px-2 items-center" >
@@ -161,7 +171,7 @@
 				>{$_('common.cancel')}</Dialog.Close
 			>
 			<Button
-				on:click={() => {
+				onclick={() => {
 					$addMember.mutate(
 						{ userId: $selectedUser.id, organizationId: orgId },
 						{

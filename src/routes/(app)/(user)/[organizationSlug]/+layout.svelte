@@ -2,11 +2,11 @@
 	import { Sidebar, SidebarItem } from '@/@svelte/modules';
 	import { OrganizationSwitcher } from 'svelte-clerk';
 	import { USER_SIDEBAR_LINKS } from '@constant';
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import { LoaderCircle } from 'lucide-svelte';
 
-	$: activeUrl = $page.url.pathname;
-	export let data;
+	let activeUrl = $derived(page.url.pathname);
+	let { data, children } = $props();
 </script>
 
 <div class=" lg:flex w-full">
@@ -35,7 +35,7 @@
 
 	<div class="h-[100dvh] w-full overflow-y-scroll">
 		<div class="w-full px-16 py-22 bg-white">
-			<slot />
+			{@render children?.()}
 		</div>
 	</div>
 </div>

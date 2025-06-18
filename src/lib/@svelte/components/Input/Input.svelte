@@ -5,20 +5,38 @@
 
 	type HandleInputType = undefined | { (e: any): void };
 
-	export let placeholder = '';
-	export let classes = '';
-	export let type: 'number' | 'text' | 'email' | 'password' = 'text';
-	export let value: string = '';
-	export let ref: any = null;
-	export let name: string = '';
-	export let handleInput: HandleInputType = undefined;
-	export let errorMessage: string = '';
-	export let label: string = '';
-	export let required: boolean = false;
-	export let hintText: string = '';
+	interface Props {
+		placeholder?: string;
+		classes?: string;
+		type?: 'number' | 'text' | 'email' | 'password';
+		value?: string;
+		ref?: any;
+		name?: string;
+		handleInput?: HandleInputType;
+		errorMessage?: string;
+		label?: string;
+		required?: boolean;
+		hintText?: string;
+		[key: string]: any
+	}
 
-	let showPassword = false;
-	let isToggled = false;
+	let {
+		placeholder = '',
+		classes = '',
+		type = $bindable('text'),
+		value = $bindable(''),
+		ref = $bindable(null),
+		name = '',
+		handleInput = undefined,
+		errorMessage = '',
+		label = '',
+		required = false,
+		hintText = '',
+		...rest
+	}: Props = $props();
+
+	let showPassword = $state(false);
+	let isToggled = $state(false);
 </script>
 
 <div>
@@ -36,7 +54,7 @@
 	<div class="relative">
 		<Input
 			id={name}
-			{...$$restProps}
+			{...rest}
 			{placeholder}
 			{type}
 			{value}
@@ -56,7 +74,7 @@
 			<div class="absolute inset-y-0 end-0 z-10 flex items-center pe-3 text-slate-400">
 				{#if showPassword}
 					<button
-						on:click={() => {
+						onclick={() => {
 							showPassword = false;
 							type = 'password';
 							isToggled = true;
@@ -66,7 +84,7 @@
 					</button>
 				{:else}
 					<button
-						on:click={() => {
+						onclick={() => {
 							showPassword = true;
 							type = 'text';
 							isToggled = true;

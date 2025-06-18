@@ -1,7 +1,11 @@
 <script lang="ts">
-	export let src: string;
-	export let userName: string;
 	import * as Avatar from "@/components/ui/avatar"
+	interface Props {
+		src: string;
+		userName: string;
+	}
+
+	let { src, userName }: Props = $props();
 </script>
 <Avatar.Root class="w-6 h-6">
 	<Avatar.Image src={src} alt={userName} />

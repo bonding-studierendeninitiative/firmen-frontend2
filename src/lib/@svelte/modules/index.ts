@@ -1,5 +1,4 @@
 export * from './Sidebar';
-export * from './Navbar';
 export * from './DeleteBuyOption';
 export * from './CreateBuyOption';
 export * from './BuyOptionSelector';

@@ -6,7 +6,7 @@
 	import { Separator } from '@/components/ui/separator';
 	import { LoaderCircle } from 'lucide-svelte';
 
-	export let data;
+	let { data } = $props();
 </script>
 
 <div class="flex flex-col gap-y-2 justify-center @container p-6 rounded-xl border">

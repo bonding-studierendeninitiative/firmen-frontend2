@@ -5,12 +5,16 @@
 	import { toast } from 'svelte-sonner';
 	import { _ } from '@services';
 	import { trpc } from '@/trpc/client';
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import type { AdvertisementOutput } from '@api/client';
 
-	export let advertisement: AdvertisementOutput;
-	let open = false;
-	const api = trpc($page);
+	interface Props {
+		advertisement: AdvertisementOutput;
+	}
+
+	let { advertisement }: Props = $props();
+	let open = $state(false);
+	const api = trpc(page);
 	const utils = api.createUtils();
 
 	const deleteAdvertisement = api.catalogueData.deleteDocument.createMutation();
@@ -38,7 +42,7 @@
 				>{$_('common.cancel')}</Dialog.Close
 			>
 			<Button
-				on:click={() => {
+				onclick={() => {
 					if (advertisement.id) {
 						$deleteAdvertisement.mutate(advertisement.id, {
 							onError: (error) => {

@@ -11,10 +11,9 @@
 	import { GridIcon, ListIcon } from '@/@svelte/icons';
 	import { blur } from 'svelte/transition';
 	import EventStatusFilter from './event-status-filter.svelte';
-	import { eventStatusFilters } from '@/stores';
-	import { onMount } from 'svelte';
+	import { queryParameters, ssp } from 'sveltekit-search-params';
 
-	export let data;
+	let { data } = $props();
 
 	const mapEvent = (event: {
 		id: string;
@@ -31,27 +30,19 @@
 			date: event.dateFrom
 		};
 	};
-	let isListView = true;
+	let isListView = $state(true);
+
+	const Params = queryParameters({
+		status: ssp.array<string>(),
+		page: false,
+		sort: false
+	});
 
 	function resetFiltering() {
-		const params = new URLSearchParams(page.url.searchParams);
-		params.delete('status');
-		params.delete('page');
-		params.delete('sort');
-		goto(`?${params}`);
+		$Params.status = null;
+		$Params.page = null;
+		$Params.sort = null;
 	}
-
-	$: {
-		const params = new URLSearchParams(page.url.searchParams);
-		params.delete('status');
-		$eventStatusFilters.forEach(status => params.append('status', status));
-		goto(`?${params}`);
-	}
-
-	onMount(() => {
-		$eventStatusFilters = page.url.searchParams.getAll('status');
-	})
-
 </script>
 
 <div class="space-y-6">
@@ -72,61 +63,73 @@
 			>
 				<GridIcon />
 			</ButtonIcon>
-			<ButtonIcon onClick={() => (isListView = true)} classes={`${isListView ? '!text-brand' : ''}`}>
+			<ButtonIcon
+				onClick={() => (isListView = true)}
+				classes={`${isListView ? '!text-brand' : ''}`}
+			>
 				<ListIcon />
 			</ButtonIcon>
 		</div>
 	</section>
 	{#await data.events}
 		<LoaderCircle class=" w-16 h-16 mx-auto animate-spin" />
-	{:then events }
+	{:then events}
 		<section in:blur class="space-y-6">
-			{#if events?.totalElements > 0}
+			{#if Number(events?.totalElements) > 0}
 				<PublishedEventsTab
 					{isListView}
-					publishedEvents={events?.data.map(mapEvent) ?? []}
-					handleEventRegistration={id => goto(`/admin/events/${id}/registrations/`)}
-					handleBuyOptions={id => goto(`/admin/events/${id}/buy-options/`)}
+					publishedEvents={events?.data?.map(mapEvent) ?? []}
+					handleEventRegistration={(id) => goto(`/admin/events/${id}/registrations/`)}
+					handleBuyOptions={(id) => goto(`/admin/events/${id}/buy-options/`)}
 				/>
-				<Pagination.Root class="mt-6" onPageChange={async (pageNumber) =>{
-			const params = new URLSearchParams(page.url.searchParams);
-			params.set('page', (pageNumber - 1).toString());
-			await goto(`?${params}`); }
-			} page={events?.page + 1} count={events?.totalElements} perPage={events?.size}
-												 let:pages
-												 let:currentPage>
-					<Pagination.Content>
-						<Pagination.Item>
-							<Pagination.PrevButton>
-								<ChevronLeft class="h-4 w-4" />
-								<span class="hidden sm:block">{$_("common.previous")}</span>
-							</Pagination.PrevButton>
-						</Pagination.Item>
-						{#each pages as page (page.key)}
-							{#if page.type === "ellipsis"}
-								<Pagination.Item>
-									<Pagination.Ellipsis />
-								</Pagination.Item>
-							{:else}
-								<Pagination.Item>
-									<Pagination.Link {page} isActive={currentPage === page.value}>
-										{page.value}
-									</Pagination.Link>
-								</Pagination.Item>
-							{/if}
-						{/each}
-						<Pagination.Item>
-							<Pagination.NextButton>
-								<span class="hidden sm:block">{$_("common.next")}</span>
-								<ChevronRight class="h-4 w-4" />
-							</Pagination.NextButton>
-						</Pagination.Item>
-					</Pagination.Content>
+				<Pagination.Root
+					class="mt-6"
+					onPageChange={async (pageNumber) => {
+						const params = new URLSearchParams(page.url.searchParams);
+						params.set('page', (pageNumber - 1).toString());
+						await goto(`?${params}`);
+					}}
+					page={Number(events?.page) + 1}
+					count={Number(events?.totalElements)}
+					perPage={events?.size}
+				>
+					{#snippet children({ pages, currentPage })}
+						<Pagination.Content>
+							<Pagination.Item>
+								<Pagination.PrevButton>
+									<ChevronLeft class="h-4 w-4" />
+									<span class="hidden sm:block">{$_('common.previous')}</span>
+								</Pagination.PrevButton>
+							</Pagination.Item>
+							{#each pages as page (page.key)}
+								{#if page.type === 'ellipsis'}
+									<Pagination.Item>
+										<Pagination.Ellipsis />
+									</Pagination.Item>
+								{:else}
+									<Pagination.Item>
+										<Pagination.Link {page} isActive={currentPage === page.value}>
+											{page.value}
+										</Pagination.Link>
+									</Pagination.Item>
+								{/if}
+							{/each}
+							<Pagination.Item>
+								<Pagination.NextButton>
+									<span class="hidden sm:block">{$_('common.next')}</span>
+									<ChevronRight class="h-4 w-4" />
+								</Pagination.NextButton>
+							</Pagination.Item>
+						</Pagination.Content>
+					{/snippet}
 				</Pagination.Root>
 			{:else}
-				<NoDataFound heading={$_('admin-pages.events.no-data-heading')}
-										 subHeading={$_('admin-pages.events.no-data-message')}
-										 buttonText="Suchfilter löschen" onButtonClick={resetFiltering} />
+				<NoDataFound
+					heading={$_('admin-pages.events.no-data-heading')}
+					subHeading={$_('admin-pages.events.no-data-message')}
+					buttonText="Suchfilter löschen"
+					onButtonClick={resetFiltering}
+				/>
 			{/if}
 		</section>
 	{:catch error}

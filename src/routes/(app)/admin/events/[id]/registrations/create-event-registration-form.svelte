@@ -7,7 +7,7 @@
 	import * as Avatar from '@/components/ui/avatar';
 	import { cn } from '@/utils';
 	import { Building, Check, ChevronsUpDown, LoaderCircle, Settings, Users } from 'lucide-svelte';
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import { tick } from 'svelte';
 	import { Button } from '@/components/ui/button';
 	import { writable } from 'svelte/store';
@@ -32,36 +32,41 @@
 		page: 0,
 		sort: '+created_at' as const
 	});
-	const api = trpc($page);
+	const api = trpc(page);
 	const utils = api.createUtils();
 	let organizationMembers = api.admin.orgs.members.getAll.createQuery(selectedOrg);
 	let organizations = api.admin.orgs.list.createQuery(debouncer(orgFilters));
 	const createEventRegistration = api.admin.eventRegistrations.create.createMutation();
-	let isOrgsOpen = false;
-	let contactPeople: string[] = [];
-	let canUploadAdvertisement = false;
-	let confirmedRegistration = false;
+	let isOrgsOpen = $state(false);
+	let contactPeople: string[] = $state([]);
+	let canUploadAdvertisement = $state(false);
+	let confirmedRegistration = $state(false);
 
-	export let open: boolean;
+	interface Props {
+		open: boolean;
+	}
 
-	let orgName = '';
+	let { open = $bindable() }: Props = $props();
+
+	let orgName = $state('');
+	let triggerRef = $state<HTMLButtonElement>(null!);
 
 	// We want to refocus the trigger button when the user selects
 	// an item from the list so users can continue navigating the
 	// rest of the form with the keyboard.
-	function closeAndFocusTrigger(triggerId: string) {
+	function closeAndFocusTrigger() {
 		isOrgsOpen = false;
 		tick().then(() => {
-			document.getElementById(triggerId)?.focus();
+			triggerRef?.focus();
 		});
 	}
 
-	function handleOrgSelect(newValue: string, ids: { trigger: string }) {
+	function handleOrgSelect(newValue: string) {
 		$selectedOrg.organizationId = newValue;
 		contactPeople = [];
 		orgName = $organizations.data?.data.find((org) => org.id === newValue)?.name;
 
-		closeAndFocusTrigger(ids.trigger);
+		closeAndFocusTrigger();
 	}
 
 	function resetDialog() {
@@ -96,59 +101,64 @@
 				</Card.Header>
 				<Card.Content class="space-y-2 pt-6">
 					<div class="flex items-start">
-						<Popover.Root bind:open={isOrgsOpen} let:ids>
-							<Popover.Trigger asChild let:builder>
-								<Button
-									aria-expanded={isOrgsOpen}
-									builders={[builder]}
-									class="w-full justify-between"
-									role="combobox"
-									variant="outline"
-								>
-									{orgName || $_('modules.admin-create-event-registration.choose-org')}
-									<ChevronsUpDown class="ml-2 h-4 w-4 shrink-0 opacity-50" />
-								</Button>
-							</Popover.Trigger>
-							<Popover.Content class="w-[40ch] p-0">
-								<Command.Root shouldFilter={false}>
-									<Label class="flex items-center gap-2 py-2">
-										<Search class="h-5 w-5 ml-2" />
-										<input
-											bind:value={$orgFilters.query}
-											class="w-full outline-transparent border-transparent py-2"
-											placeholder="Search orgs..."
-										/>
-									</Label>
-									<Command.Separator />
-									{#if $organizations.isLoading}
-										<Command.Loading class="flex items-center justify-center py-2">
-											<LoaderCircle class="h-6 w-6 text-primary animate-spin" />
-										</Command.Loading>
-									{:else}
-										<Command.List>
-											{#each $organizations.data?.data ?? [] as organization}
-												<Command.Item
-													value={organization.id}
-													onSelect={(currentValue) => {
-														handleOrgSelect(currentValue, ids);
-													}}
-												>
-													<Check
-														class={cn(
-															'mr-2 h-4 w-4',
-															$selectedOrg.organizationId !== organization.id && 'text-transparent'
-														)}
-													/>
-													{organization.name}
-												</Command.Item>
-											{/each}
-										</Command.List>
-									{/if}
-									<Command.Empty
-										>{$_('modules.admin-create-event-registration.no-orgs-found')}</Command.Empty
-									>
-								</Command.Root>
-							</Popover.Content>
+						<Popover.Root bind:open={isOrgsOpen}>
+							{#snippet children()}
+								<Popover.Trigger>
+									{#snippet child({ props })}
+										<Button
+											aria-expanded={isOrgsOpen}
+											{...props}
+											class="w-full justify-between"
+											role="combobox"
+											variant="outline"
+										>
+											{orgName || $_('modules.admin-create-event-registration.choose-org')}
+											<ChevronsUpDown class="ml-2 h-4 w-4 shrink-0 opacity-50" />
+										</Button>
+									{/snippet}
+								</Popover.Trigger>
+								<Popover.Content class="w-[40ch] p-0">
+									<Command.Root shouldFilter={false}>
+										<Label class="flex items-center gap-2 py-2">
+											<Search class="h-5 w-5 ml-2" />
+											<input
+												bind:value={$orgFilters.query}
+												class="w-full outline-transparent border-transparent py-2"
+												placeholder="Search orgs..."
+											/>
+										</Label>
+										<Command.Separator />
+										{#if $organizations.isLoading}
+											<Command.Loading class="flex items-center justify-center py-2">
+												<LoaderCircle class="h-6 w-6 text-primary animate-spin" />
+											</Command.Loading>
+										{:else}
+											<Command.List>
+												{#each $organizations.data?.data ?? [] as organization}
+													<Command.Item
+														value={organization.id}
+														onSelect={(currentValue) => {
+															handleOrgSelect(currentValue);
+														}}
+													>
+														<Check
+															class={cn(
+																'mr-2 h-4 w-4',
+																$selectedOrg.organizationId !== organization.id &&
+																	'text-transparent'
+															)}
+														/>
+														{organization.name}
+													</Command.Item>
+												{/each}
+											</Command.List>
+										{/if}
+										<Command.Empty
+											>{$_('modules.admin-create-event-registration.no-orgs-found')}</Command.Empty
+										>
+									</Command.Root>
+								</Popover.Content>
+							{/snippet}
 						</Popover.Root>
 					</div>
 				</Card.Content>
@@ -253,10 +263,10 @@
 		<Dialog.Footer>
 			<Button
 				disabled={!$selectedOrg.organizationId || !contactPeople.length}
-				on:click={() => {
+				onclick={() => {
 					$createEventRegistration.mutate(
 						{
-							eventId: $page.params.id,
+							eventId: page.params.id,
 							organizationId: $selectedOrg.organizationId,
 							contactPeople,
 							canUploadAdvertisement,
@@ -270,7 +280,7 @@
 								open = false;
 								toast.success('Anmeldung erfolgreich erstellt');
 								await utils.admin.events.getEventRegistrations.invalidate({
-									eventId: $page.params.id
+									eventId: page.params.id
 								});
 								resetDialog();
 							}

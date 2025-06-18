@@ -26,7 +26,7 @@
 		{/if}
 
 		<Dialog.Footer>
-			<!--<Button disabled={!selectedPortrait || $pickPortrait.isPending} on:click={() => {
+			<!--<Button disabled={!selectedPortrait || $pickPortrait.isPending} onclick={() => {
 				$pickPortrait.mutate({ portraitId: selectedPortrait, eventRegistrationId: id, organizationId: orgId })
 			}}>{$_("common.select")}</Button>-->
 		</Dialog.Footer>

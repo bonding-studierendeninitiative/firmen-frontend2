@@ -9,22 +9,26 @@
 	import { FileText, LoaderCircle, Trash2 } from 'lucide-svelte';
 	import * as Dialog from '@/components/ui/dialog';
 	import { _ } from '@services';
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import { toast } from 'svelte-sonner';
 	import { trpc } from '@/trpc/client';
 
-	export let portrait: InferOutput<GetPortraitTemplatesResponse>['portraitTemplates'][number];
+	interface Props {
+		portrait: InferOutput<GetPortraitTemplatesResponse>['portraitTemplates'][number];
+	}
 
-	const api = trpc($page);
+	let { portrait }: Props = $props();
+
+	const api = trpc(page);
 
 	const deletePortrait = api.portraitTemplates.delete.createMutation();
 
-	let deleteDialogOpen = false;
+	let deleteDialogOpen = $state(false);
 </script>
 
 
 <Card.Root class="h-full transition-all hover:shadow-md cursor-pointer relative group ">
-	<Button on:click={() => deleteDialogOpen = true} variant="ghost" size="icon"
+	<Button onclick={() => deleteDialogOpen = true} variant="ghost" size="icon"
 					class="absolute top-2 right-2 p-0 max-w-6 max-h-6 text-muted-foreground hover:bg-destructive hover:text-destructive-foreground ">
 		<Trash2 class="h-3.5 w-3.5" />
 	</Button>
@@ -53,13 +57,13 @@
 			<p>{portrait.title}</p>
 		</Dialog.Description>
 		<Dialog.Footer class="flex justify-end items-center w-full">
-			<Button variant="secondary" on:click={() => deleteDialogOpen=false}>{$_('common.cancel')}</Button>
+			<Button variant="secondary" onclick={() => deleteDialogOpen=false}>{$_('common.cancel')}</Button>
 			{#if $deletePortrait.isPending}
 				<Button form={`delete-portrait-form-${portrait.id}`} disabled variant="destructive">
 					<LoaderCircle class="mr-2 h-4 w-4 animate-spin" />{$_('common.delete')}
 				</Button>
 			{:else}
-				<Button on:click={
+				<Button onclick={
 				() => {
 					$deletePortrait.mutate(portrait.id, {
 						onError: (error) => {

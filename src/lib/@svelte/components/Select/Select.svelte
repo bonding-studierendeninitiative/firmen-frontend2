@@ -2,21 +2,36 @@
 	import { Label, Helper, Select } from 'flowbite-svelte';
 	import { cn } from '@/utils/tailwind';
 
-	export let errorMessage: string = '';
-	export let label: string = '';
-	export let name: string = '';
-	export let value: any = null;
-	export let required: boolean = false;
+	interface Props {
+		errorMessage?: string;
+		label?: string;
+		name?: string;
+		value?: any;
+		required?: boolean;
+		class?: string;
+		items?: {
+			value: string;
+			name: string;
+		}[];
+		handleInput?: (e: any) => void;
+		[key: string]: any;
+	}
 
-	export let items: {
-		value: string;
-		name: string;
-	}[] = [
-		{ value: 'one', name: 'One' },
-		{ value: 'two', name: 'Two' },
-		{ value: 'three', name: 'Three' }
-	];
-	export let handleInput: (e: any) => void = () => {};
+	let {
+		errorMessage = '',
+		label = '',
+		name = '',
+		value = $bindable(null),
+		required = false,
+		class: className = '',
+		items = [
+			{ value: 'one', name: 'One' },
+			{ value: 'two', name: 'Two' },
+			{ value: 'three', name: 'Three' }
+		],
+		handleInput = () => {},
+		...rest
+	}: Props = $props();
 </script>
 
 <div>
@@ -35,8 +50,8 @@
 		{name}
 		bind:value
 		{required}
-		class={cn(`placeholder-red-800`, $$props.class)}
-		{...$$restProps}
+		class={cn(`placeholder-red-800`, className)}
+		{...rest}
 	/>
 	<Helper class="text-red-500">{errorMessage}</Helper>
 </div>

@@ -5,15 +5,15 @@
 	import { _ } from '@services';
 	import { cn } from '@/utils/tailwind';
 	import type { OrganizationMembership } from 'svelte-clerk/server';
-
-	export let memberResponse: Readable<{ data: OrganizationMembership[]; totalCount: number }>;
-	export let organizationId: string;
 	import { LocalizedDate, SearchInput, QueryDataTable } from '@/@svelte/components';
 	import CreateOrgInviteDialog from './create-org-invite-dialog.svelte';
 	import AddMemberDialog from './add-member-dialog.svelte';
 	import DataTableRoleSwitcher from './data-table-role-switcher.svelte';
 	import { createColumnHelper } from '@tanstack/svelte-table';
 	import { renderSnippet } from '@/@svelte/components/QueryDataTable/render-helpers';
+
+	export let memberResponse: Readable<{ data: OrganizationMembership[]; totalCount: number }>;
+	export let organizationId: string;
 
 	let data = derived([memberResponse], ([memberResponse]) => memberResponse.data);
 	let totalCount = derived([memberResponse], ([memberResponse]) => memberResponse.totalCount);

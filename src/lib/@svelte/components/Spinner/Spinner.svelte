@@ -1,7 +1,9 @@
 <script lang="ts">
 	import { twMerge } from 'tailwind-merge';
 
-	export let color:
+	
+	interface Props {
+		color?: 
 		| 'primary'
 		| 'blue'
 		| 'gray'
@@ -12,13 +14,28 @@
 		| 'purple'
 		| 'white'
 		| 'custom'
-		| undefined = 'primary';
-	export let bg: string = 'text-gray-300';
-	export let customColor: string = '';
-	export let size: string | number = '8';
-	// these two props add fine control over the spinner colors
-	export let currentFill: string = 'currentFill';
-	export let currentColor: string = 'currentColor';
+		| undefined;
+		bg?: string;
+		customColor?: string;
+		size?: string | number;
+		// these two props add fine control over the spinner colors
+		currentFill?: string;
+		currentColor?: string;
+		class?: string;
+		[key: string]: any
+	}
+
+	let {
+		color = $bindable('primary'),
+		bg = 'text-gray-300',
+		customColor = '',
+		size = '8',
+		currentFill = 'currentFill',
+		currentColor = 'currentColor',
+		class: className = '',
+		...rest
+	}: Props = $props();
+	
 
 	let iconsize = `w-${size} h-${size}`;
 
@@ -44,14 +61,14 @@
 </script>
 
 <svg
-	{...$$restProps}
+	{...rest}
 	role="status"
 	class={twMerge(
 		'inline -mt-px animate-spin dark:text-gray-600',
 		iconsize,
 		bg,
 		fillColorClass,
-		$$props.class
+		className
 	)}
 	viewBox="0 0 100 101"
 	fill="none"

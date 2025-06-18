@@ -1,6 +1,6 @@
 <script lang="ts">
 	import * as Icons from '$lib/@svelte/icons';
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import { cn } from '@/utils/tailwind';
 	import { _ } from '@services';
 	import { UserButton } from 'svelte-clerk';
@@ -13,7 +13,7 @@
 	};
 
 	function isAdmin() {
-		return $page.url.pathname?.includes('admin');
+		return page.url.pathname?.includes('admin');
 	}
 
 	const getImagePath = (): string => {
@@ -28,7 +28,7 @@
 		<!-- Mobile Navbar -->
 		<div class="flex justify-between items-center px-9 py-2">
 			<!-- Ícono de Menú -->
-			<button aria-label={$_('common.menu')} id="menu-button" class="lg:hidden" on:click={handleMenuToggler}>
+			<button aria-label={$_('common.menu')} id="menu-button" class="lg:hidden" onclick={handleMenuToggler}>
 				<i class="fas fa-bars text-brand text-lg"></i>
 			</button>
 			<!-- Logo -->

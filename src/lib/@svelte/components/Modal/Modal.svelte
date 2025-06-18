@@ -2,7 +2,12 @@
 	import { cubicOut } from 'svelte/easing';
 	import { fade } from 'svelte/transition';
 
-	export let isOpen: boolean;
+	interface Props {
+		isOpen: boolean;
+		children?: import('svelte').Snippet;
+	}
+
+	let { isOpen = $bindable(), children }: Props = $props();
 
 	function toggleDrawer() {
 		isOpen = !isOpen;
@@ -22,26 +27,26 @@
 		<div
 			role="button"
 			tabindex="0"
-			on:keydown={undefined}
+			onkeydown={undefined}
 			class="fixed inset-0 z-10 w-screen overflow-y-auto"
-			on:click={toggleDrawer}
+			onclick={toggleDrawer}
 		>
 			<div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
 				<div
 					role="button"
 					tabindex="0"
-					on:keydown={undefined}
+					onkeydown={undefined}
 					transition:fade={{
 						duration: 500,
 						easing: cubicOut
 					}}
-					on:click={(e) => {
+					onclick={(e) => {
 						e.preventDefault();
 						e.stopPropagation();
 					}}
 					class="py-10 px-10 transform cursor-default overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg"
 				>
-					<slot />
+					{@render children?.()}
 				</div>
 			</div>
 		</div>

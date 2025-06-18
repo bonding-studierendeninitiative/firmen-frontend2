@@ -14,7 +14,7 @@
 	let sortDirection = $derived.by(() => state.getIsSorted())
 </script>
 
-<Button class="px-0.5" variant="ghost" on:click={() => state.toggleSorting()}>
+<Button class="px-0.5" variant="ghost" onclick={() => state.toggleSorting()}>
 	{column.header}
 	{#if sortDirection === 'asc'}
 		<ArrowDown class="ml-2 h-4 w-4" />

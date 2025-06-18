@@ -10,9 +10,12 @@
 	import { toast } from 'svelte-sonner';
 	import type { InferOutput } from 'valibot';
 
-	export let inviteMemberDialogOpen = false;
+	interface Props {
+		inviteMemberDialogOpen?: boolean;
+		createInviteForm: SuperValidated<InferOutput<CreateOrgInviteRequest>>;
+	}
 
-	export let createInviteForm: SuperValidated<InferOutput<CreateOrgInviteRequest>>;
+	let { inviteMemberDialogOpen = $bindable(false), createInviteForm }: Props = $props();
 
 	let superform = superForm(createInviteForm, {
 		validators: valibot(CreateOrgInviteRequestSchema),
@@ -34,15 +37,17 @@
 <form action="?/createInvite" method="POST" use:enhance>
 	<div class=" flex flex-col gap-1">
 		<Field form={superform} name="userMail">
-			<Control let:attrs>
-				<Label>{$_('admin-pages.organizations.organizationEmail')}</Label>
-				<Input
-					{...attrs}
-					bind:value={$formData.userMail}
-					placeholder={$_(
-						'user-pages.organizations.createOrganization.placeholders.organizationEmail'
-					)}
-				/>
+			<Control>
+				{#snippet children({ props })}
+					<Label>{$_('admin-pages.organizations.organizationEmail')}</Label>
+					<Input
+						{...props}
+						bind:value={$formData.userMail}
+						placeholder={$_(
+							'user-pages.organizations.createOrganization.placeholders.organizationEmail'
+						)}
+					/>
+				{/snippet}
 			</Control>
 
 			<Description />
@@ -50,7 +55,7 @@
 		</Field>
 
 		<footer class=" flex justify-end items-center w-full">
-			<Button class="mr-2" variant="outline" on:click={() => (inviteMemberDialogOpen = false)}
+			<Button class="mr-2" variant="outline" onclick={() => (inviteMemberDialogOpen = false)}
 				>{$_('common.cancel')}</Button
 			>
 			{#if $submitting}
@@ -60,9 +65,7 @@
 					)}
 				</Button>
 			{:else}
-				<Button type="submit"
-					>{$_('modules.manage-org-members.invite')}</Button
-				>
+				<Button type="submit">{$_('modules.manage-org-members.invite')}</Button>
 			{/if}
 		</footer>
 	</div>

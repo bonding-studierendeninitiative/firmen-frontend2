@@ -5,14 +5,13 @@
 	import * as Command from '@/components/ui/command';
 	import { cn } from '@/utils';
 	import { Building, Check, ChevronsUpDown, LoaderCircle } from 'lucide-svelte';
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import { tick } from 'svelte';
 	import { Button } from '@/components/ui/button';
 	import { writable } from 'svelte/store';
 	import Search from 'lucide-svelte/icons/search';
 	import { toast } from 'svelte-sonner';
 	import { _ } from '@services';
-	import { Switch } from '@/components/ui/switch';
 	import { trpc } from '@/trpc/client';
 	import { debouncer } from '@/stores/debouncer';
 	import { Label } from '@/components/ui/label';
@@ -24,38 +23,39 @@
 		page: '0'
 	});
 	let selectedOrg = writable('');
-	const api = trpc($page);
+	const api = trpc(page);
 	const utils = api.createUtils();
 	// let organizationMembers = api.admin.orgs.members.getAll.createQuery(selectedOrg);
 	let legacyOrgsQuery = api.admin.legacyOrgs.getAll.createQuery(debouncer(orgFilters));
-	let importLegacyOrg = api.admin.legacyOrgs.import.createMutation({
+	let importLegacyOrg = api.admin.legacyOrgs.import.createMutation({});
+	let isOrgsOpen = $state(false);
+	let contactPeople: string[] = $state([]);
+	let adminContactPerson: string | null = $state(null);
 
-	});
-	let isOrgsOpen = false;
-	let contactPeople: string[] = [];
-	let adminContactPerson: string | null = null;
+	let open: boolean = $state(false);
 
-	let open: boolean;
-
-	let orgName = '';
-	let selectedOrgName = '';
+	let orgName = $state('');
+	let selectedOrgName = $state('');
 
 	// We want to refocus the trigger button when the user selects
 	// an item from the list so users can continue navigating the
 	// rest of the form with the keyboard.
-	function closeAndFocusTrigger(triggerId: string) {
+	function closeAndFocusTrigger() {
 		isOrgsOpen = false;
 		tick().then(() => {
-			document.getElementById(triggerId)?.focus();
+			triggerRef?.focus();
 		});
 	}
 
-	function handleOrgSelect(newValue: string, ids: { trigger: string }) {
+	let triggerRef = $state<HTMLButtonElement>(null!);
+
+	function handleOrgSelect(newValue: string) {
 		$selectedOrg = newValue;
 		contactPeople = [];
-		selectedOrgName = $legacyOrgsQuery.data?.organizations?.find((org) => org.id === newValue)?.name ?? "";
+		selectedOrgName =
+			$legacyOrgsQuery.data?.organizations?.find((org) => org.id === newValue)?.name ?? '';
 
-		closeAndFocusTrigger(ids.trigger);
+		closeAndFocusTrigger();
 	}
 </script>
 
@@ -78,59 +78,64 @@
 				</Card.Header>
 				<Card.Content class="space-y-2 pt-6">
 					<div class="flex items-start">
-						<Popover.Root bind:open={isOrgsOpen} let:ids>
-							<Popover.Trigger asChild let:builder>
-								<Button
-									aria-expanded={isOrgsOpen}
-									builders={[builder]}
-									class="w-full justify-between"
-									role="combobox"
-									variant="outline"
-								>
-									{selectedOrgName || $_('modules.admin-import-legacy-org.select-org-placeholder')}
-									<ChevronsUpDown class="ml-2 h-4 w-4 shrink-0 opacity-50" />
-								</Button>
-							</Popover.Trigger>
-							<Popover.Content class="w-[40ch] p-0">
-								<Command.Root shouldFilter={false}>
-									<Label class="flex items-center gap-2 py-2">
-										<Search class="h-5 w-5 ml-2" />
-										<input
-											bind:value={$orgFilters.query}
-											class="w-full outline-transparent border-transparent py-2"
-											placeholder="Search orgs..."
-										/>
-									</Label>
-									<Command.Separator />
-									<Command.List>
-										{#if $legacyOrgsQuery.isLoading}
-											<Command.Loading class="flex items-center justify-center py-2">
-												<LoaderCircle class="h-6 w-6 text-primary animate-spin" />
-											</Command.Loading>
-										{:else}
-											{#each $legacyOrgsQuery.data?.organizations ?? [] as organization}
-												<Command.Item
-													value={organization.id}
-													onSelect={(currentValue) => {
-														handleOrgSelect(currentValue, ids);
-													}}
-												>
-													<Check
-														class={cn(
-															'mr-2 h-4 w-4',
-															$selectedOrg !== organization.id && 'text-transparent'
-														)}
-													/>
-													{organization.name}
-												</Command.Item>
-											{/each}
-										{/if}
-									</Command.List>
-									<Command.Empty
-										>{$_('modules.admin-import-legacy-org.no-orgs-found')}</Command.Empty
-									>
-								</Command.Root>
-							</Popover.Content>
+						<Popover.Root bind:open={isOrgsOpen}>
+							{#snippet children()}
+								<Popover.Trigger bind:ref={triggerRef}>
+									{#snippet child({ props })}
+										<Button
+											aria-expanded={isOrgsOpen}
+											{...props}
+											class="w-full justify-between"
+											role="combobox"
+											variant="outline"
+										>
+											{selectedOrgName ||
+												$_('modules.admin-import-legacy-org.select-org-placeholder')}
+											<ChevronsUpDown class="ml-2 h-4 w-4 shrink-0 opacity-50" />
+										</Button>
+									{/snippet}
+								</Popover.Trigger>
+								<Popover.Content class="w-[40ch] p-0">
+									<Command.Root shouldFilter={false}>
+										<Label class="flex items-center gap-2 py-2">
+											<Search class="h-5 w-5 ml-2" />
+											<input
+												bind:value={$orgFilters.query}
+												class="w-full outline-transparent border-transparent py-2"
+												placeholder="Search orgs..."
+											/>
+										</Label>
+										<Command.Separator />
+										<Command.List>
+											{#if $legacyOrgsQuery.isLoading}
+												<Command.Loading class="flex items-center justify-center py-2">
+													<LoaderCircle class="h-6 w-6 text-primary animate-spin" />
+												</Command.Loading>
+											{:else}
+												{#each $legacyOrgsQuery.data?.organizations ?? [] as organization}
+													<Command.Item
+														value={organization.id}
+														onSelect={() => {
+															handleOrgSelect(organization.id);
+														}}
+													>
+														<Check
+															class={cn(
+																'mr-2 h-4 w-4',
+																$selectedOrg !== organization.id && 'text-transparent'
+															)}
+														/>
+														{organization.name}
+													</Command.Item>
+												{/each}
+											{/if}
+										</Command.List>
+										<Command.Empty
+											>{$_('modules.admin-import-legacy-org.no-orgs-found')}</Command.Empty
+										>
+									</Command.Root>
+								</Popover.Content>
+							{/snippet}
 						</Popover.Root>
 					</div>
 				</Card.Content>
@@ -147,15 +152,14 @@
 		<Dialog.Footer>
 			<Button
 				disabled={!$selectedOrg || !contactPeople.length}
-				on:click={() => {
+				onclick={() => {
 					$importLegacyOrg.mutate(
 						{
 							legacyOrgId: $selectedOrg,
 							request: {
 								adminContactPerson: adminContactPerson !== null ? adminContactPerson : undefined,
 								contactPeople,
-								organizationName: orgName,
-
+								organizationName: orgName
 							}
 						},
 						{
@@ -165,7 +169,7 @@
 							onSuccess: async () => {
 								open = false;
 								toast.success('Organisation erfolgreich importiert');
-								await utils.admin.orgs.list.invalidate()
+								await utils.admin.orgs.list.invalidate();
 							}
 						}
 					);

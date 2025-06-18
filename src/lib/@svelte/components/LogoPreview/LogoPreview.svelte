@@ -12,7 +12,7 @@
 	interface Props {
 		logo: LogoOutput;
 		class?: string;
-		pickNewLogo: () => void
+		pickNewLogo: () => void;
 	}
 
 	let { logo, class: className = '', pickNewLogo }: Props = $props();
@@ -70,8 +70,12 @@
 			<StatusBadge variant={logo.status} label={$_('status-text.' + logo.status)} />
 		</div>
 
-		<Button on:click={() => {
-pickNewLogo()
-		}} variant="ghost" class="text-blue-700 px-0"><Replace class="w-4 h-4 mr-2" />Logo ändern</Button>
+		<Button
+			onclick={() => {
+				pickNewLogo();
+			}}
+			variant="ghost"
+			class="text-blue-700 px-0"><Replace class="w-4 h-4 mr-2" />Logo ändern</Button
+		>
 	</div>
 </section>

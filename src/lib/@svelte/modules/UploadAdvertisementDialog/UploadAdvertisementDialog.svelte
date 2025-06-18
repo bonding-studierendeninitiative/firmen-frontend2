@@ -11,8 +11,12 @@
 	import { cn } from '@/utils';
 	import { Plus } from 'lucide-svelte';
 
-	export let open: boolean;
-	export let advertisementUploadForm: SuperValidated<Infer<UploadAdvertisementRequest>>;
+	interface Props {
+		open: boolean;
+		advertisementUploadForm: SuperValidated<Infer<UploadAdvertisementRequest>>;
+	}
+
+	let { open = $bindable(), advertisementUploadForm }: Props = $props();
 
 	const superform = superForm(advertisementUploadForm, {
 		validators: valibotClient(UploadAdvertisementRequest),
@@ -41,26 +45,32 @@
 				<Dialog.Description>{$_("modules.upload-advertisement.description")}</Dialog.Description>
 			</Dialog.Header>
 			<Field class="flex-col flex justify-start" form={superform} name="title">
-				<Control let:attrs>
-					<Label>{$_("modules.upload-advertisement.name")}</Label>
-					<Input {...attrs} bind:value={$formData.title}/>
-				</Control>
+				<Control >
+					{#snippet children({ props })}
+										<Label>{$_("modules.upload-advertisement.name")}</Label>
+						<Input {...props} bind:value={$formData.title}/>
+														{/snippet}
+								</Control>
 				<Description />
 				<FieldErrors />
 			</Field>
 			<Field class="flex-col flex justify-start" form={superform} name="file">
-				<Control let:attrs>
-					<Label>{$_("modules.upload-advertisement.file")}</Label>
-					<Input type="file" {...attrs}
-								 on:input={(e) => $formData.file = e.currentTarget.files?.item(0)} />
-				</Control>
+				<Control >
+					{#snippet children({ props })}
+										<Label>{$_("modules.upload-advertisement.file")}</Label>
+						<Input type="file" {...props}
+									 oninput={(e) => $formData.file = e.currentTarget.files?.item(0)} />
+														{/snippet}
+								</Control>
 				<Description />
 				<FieldErrors />
 			</Field>
 			<Field form={superform} name="orgId">
-				<Control let:attrs>
-					<input type="hidden" value={$formData.orgId} name={attrs.name} />
-				</Control>
+				<Control >
+					{#snippet children({ props })}
+										<input type="hidden" value={$formData.orgId} name={props.name} />
+														{/snippet}
+								</Control>
 			</Field>
 			<Dialog.Footer>
 				<Button disabled={!isTainted($tainted)}

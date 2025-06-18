@@ -1,10 +1,14 @@
 <script lang="ts">
 	import * as Avatar from '@/components/ui/avatar';
 
-	export let organization: {
+	interface Props {
+		organization: {
 		name: string;
 		logo: string;
 	};
+	}
+
+	let { organization }: Props = $props();
 </script>
 
 <div class="flex flex-row items-center gap-2">

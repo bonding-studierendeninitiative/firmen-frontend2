@@ -9,7 +9,11 @@
 	import { toast } from 'svelte-sonner';
 	import { Button } from '@/components/ui/button';
 
-	export let data: SuperValidated<Infer<typeof PortraitCompanyDetailsSchema>>;
+	interface Props {
+		data: SuperValidated<Infer<typeof PortraitCompanyDetailsSchema>>;
+	}
+
+	let { data }: Props = $props();
 
 	const { form, enhance, constraints } = superForm(data, {
 		resetForm: false,
@@ -166,7 +170,7 @@
 		<footer>
 			<div class=" flex justify-end items-center my-6 pb-6">
 				<div class=" flex justify-between items-center">
-					<Button variant="secondary" on:click={() => goto('/dashboard')} class=" mr-8"
+					<Button variant="secondary" onclick={() => goto('/dashboard')} class=" mr-8"
 						>{$_('common.cancel')}</Button
 					>
 					<Button variant="gradient" type="submit">{$_('common.save')}</Button>

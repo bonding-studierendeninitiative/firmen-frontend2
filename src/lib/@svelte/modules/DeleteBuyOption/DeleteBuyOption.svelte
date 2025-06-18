@@ -2,7 +2,7 @@
 	import { _ } from '@services/i18n.js';
 	import * as Dialog from '@/components/ui/dialog';
 	import { Button } from '@/components/ui/form';
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import { TrashIcon } from '@/@svelte/icons';
 	import { LoaderCircle } from 'lucide-svelte';
 	import { buttonVariants } from '@/components/ui/button';
@@ -11,7 +11,7 @@
 
 	let isOpen = false;
 
-	const api = trpc($page);
+	const api = trpc(page);
 
 	const deleteBuyOption = api.admin.events.buyOptions.delete.createMutation();
 </script>
@@ -19,7 +19,7 @@
 <Dialog.Root bind:open={isOpen}>
 	<Dialog.Overlay />
 	<Dialog.Trigger
-		disabled={$page.params.buyOptionId === null}
+		disabled={page.params.buyOptionId === null}
 		class={[buttonVariants({ variant: 'ghost', size: 'icon' }), 'text-red-500 hover:text-red-700']}
 	>
 		<TrashIcon classes="w-6 h-6" />
@@ -46,13 +46,13 @@
 				<Button
 					disabled={$deleteBuyOption.isPending}
 					variant="destructive"
-					on:click={() => {
+					onclick={() => {
 						$deleteBuyOption.mutate({
-							buyOptionId: $page.params.buyOptionId,
-							eventId: $page.params.id
+							buyOptionId: page.params.buyOptionId,
+							eventId: page.params.id
 						}, {
 							onSuccess(data, variables, context) {
-								goto(`/admin/events/${$page.params.id}/buy-options`)
+								goto(`/admin/events/${page.params.id}/buy-options`)
 								isOpen = false
 							},
 						});

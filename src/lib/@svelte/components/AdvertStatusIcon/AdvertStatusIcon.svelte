@@ -3,8 +3,12 @@
 	import { tv, type VariantProps } from 'tailwind-variants';
 	import { cn } from '@/utils/tailwind';
 
-	export let variant: VariantProps<typeof advertStatusIconVariants>['variant'] = 'missing';
-	export let title: string = "";
+	interface Props {
+		variant?: VariantProps<typeof advertStatusIconVariants>['variant'];
+		title?: string;
+	}
+
+	let { variant = 'missing', title = "" }: Props = $props();
 
 	const advertStatusIconVariants = tv({
 		variants: {

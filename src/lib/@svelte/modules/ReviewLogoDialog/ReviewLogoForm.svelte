@@ -15,10 +15,14 @@
 	import { LogoPreview } from '@/@svelte/components';
 	import type { InferOutput } from 'valibot';
 
-	export let open: boolean;
 
-	export let logo: InferOutput<LogoSchema>;
-	export let catalogueDataReviewForm: SuperValidated<Infer<ReviewDocumentRequest>>;
+	interface Props {
+		open: boolean;
+		logo: InferOutput<LogoSchema>;
+		catalogueDataReviewForm: SuperValidated<Infer<ReviewDocumentRequest>>;
+	}
+
+	let { open = $bindable(), logo, catalogueDataReviewForm }: Props = $props();
 
 	const superCatalogueDataReviewForm = superForm(catalogueDataReviewForm, {
 		dataType: 'json',
@@ -72,26 +76,31 @@
 		<div class="space-y-4 py-2 col-span-2">
 
 			<Field class="flex-col flex justify-start" form={superCatalogueDataReviewForm} name="documentChangeType">
-				<Control let:attrs>
-					<Label>{$_("modules.review-catalogue-data.feedback-type")}</Label>
-					<Tabs.Root class="p-1" bind:value={$formData.documentChangeType}>
-						<Tabs.List class="space-x-1">
-							{#each feedbackTypeOptions as { value, label, icon, clazz }}
-								<Tabs.Trigger {...attrs} class={clazz} {value}>
-									<svelte:component class="w-4 h-4 mr-2" this={icon} />{label}</Tabs.Trigger>
-							{/each}
-						</Tabs.List>
-					</Tabs.Root>
-				</Control>
+				<Control >
+					{#snippet children({ props })}
+										<Label>{$_("modules.review-catalogue-data.feedback-type")}</Label>
+						<Tabs.Root class="p-1" bind:value={$formData.documentChangeType}>
+							<Tabs.List class="space-x-1">
+								{#each feedbackTypeOptions as { value, label, icon, clazz }}
+									<Tabs.Trigger {...props} class={clazz} {value}>
+										{@const SvelteComponent = icon}
+									<SvelteComponent class="w-4 h-4 mr-2" />{label}</Tabs.Trigger>
+								{/each}
+							</Tabs.List>
+						</Tabs.Root>
+														{/snippet}
+								</Control>
 				<Description />
 				<FieldErrors />
 			</Field>
 
 			<Field class="flex-col flex justify-start" form={superCatalogueDataReviewForm} name="feedback">
-				<Control let:attrs>
-					<Label>{$_("admin-pages.events.feedback.placeholders.feedback")}</Label>
-					<Textarea {...attrs} bind:value={$formData.feedback} disabled={!$formData.documentChangeType} />
-				</Control>
+				<Control >
+					{#snippet children({ props })}
+										<Label>{$_("admin-pages.events.feedback.placeholders.feedback")}</Label>
+						<Textarea {...props} bind:value={$formData.feedback} disabled={!$formData.documentChangeType} />
+														{/snippet}
+								</Control>
 				<Description />
 				<FieldErrors />
 			</Field>

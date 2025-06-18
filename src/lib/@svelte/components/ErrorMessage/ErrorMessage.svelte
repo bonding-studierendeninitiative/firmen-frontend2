@@ -1,6 +1,10 @@
 <script lang="ts">
 	import { _ } from '@services';
-	export let message: string = '';
+	interface Props {
+		message?: string;
+	}
+
+	let { message = '' }: Props = $props();
 </script>
 
 {#if message}

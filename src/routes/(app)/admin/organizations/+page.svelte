@@ -5,7 +5,7 @@
 	import { SearchInput } from '@/@svelte/components';
 	import { CreateOrgDialog } from '@/@svelte/modules';
 	import { type AdminOrgsOutput, trpc } from '@/trpc/client';
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import { debouncer } from '@/stores/debouncer.js';
 	import { queryParameters } from 'sveltekit-search-params';
 	import OrganizationsDataTable from './organizations-data-table.svelte';
@@ -18,7 +18,7 @@
 		limit: false
 	});
 
-	export let data;
+	let { data } = $props();
 
 	let queryValue = writable('');
 
@@ -30,7 +30,7 @@
 		orderBy: params.sort ? decodeURIComponent(params.sort!) : undefined
 	}));
 
-	const api = trpc($page);
+	const api = trpc(page);
 	const opts = writable(
 		api.admin.orgs.list.createQuery.opts({
 			initialData: data.orgs,

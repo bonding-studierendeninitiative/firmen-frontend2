@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { preventDefault } from 'svelte/legacy';
+
 	import { Control, Description, Field, FieldErrors, Label } from '@/components/ui/form/index.js';
 	import { Textarea } from '@/components/ui/textarea/index.js';
 	import { Checkbox } from '@/@svelte/components/index.js';
@@ -13,7 +15,6 @@
 	import { type CreateEventAddonPackageFormSchema } from '@schema/eventAddonPackages.js';
 	import { ScrollArea } from '@/components/ui/scroll-area';
 
-	export let isOpen: boolean = false;
 	const handleAddSubAddon = (e: Event) => {
 		e.preventDefault();
 		form.update(
@@ -45,7 +46,12 @@
 		);
 	};
 
-	export let createAddonPackageForm: SuperValidated<Infer<CreateEventAddonPackageFormSchema>>;
+	interface Props {
+		isOpen?: boolean;
+		createAddonPackageForm: SuperValidated<Infer<CreateEventAddonPackageFormSchema>>;
+	}
+
+	let { isOpen = $bindable(false), createAddonPackageForm }: Props = $props();
 
 	const superform = superForm(createAddonPackageForm, {
 		dataType: 'json',
@@ -74,26 +80,32 @@
 			<ScrollArea class="h-[60dvh]">
 				<div class="-m-2 px-4 py-2 h-max flex flex-col gap-4 @lg:grid @lg:grid-cols-3">
 					<Field class="@lg:col-span-2" form={superform} name="addonPackage.title">
-						<Control let:attrs>
-							<Label>{$_('admin-pages.addons.addonName')}</Label>
-							<Input {...attrs} bind:value={$form.addonPackage.title} />
-						</Control>
+						<Control >
+							{#snippet children({ props })}
+														<Label>{$_('admin-pages.addons.addonName')}</Label>
+								<Input {...props} bind:value={$form.addonPackage.title} />
+																				{/snippet}
+												</Control>
 						<Description />
 						<FieldErrors />
 					</Field>
 					<Field class="@lg:col-span-1" form={superform} name="addonPackage.label">
-						<Control let:attrs>
-							<Label>{$_('admin-pages.addons.label')}</Label>
-							<Input {...attrs} bind:value={$form.addonPackage.label} />
-						</Control>
+						<Control >
+							{#snippet children({ props })}
+														<Label>{$_('admin-pages.addons.label')}</Label>
+								<Input {...props} bind:value={$form.addonPackage.label} />
+																				{/snippet}
+												</Control>
 						<Description />
 						<FieldErrors />
 					</Field>
 					<Field class="col-span-2" form={superform} name="addonPackage.description">
-						<Control let:attrs>
-							<Label>{$_('admin-pages.addons.packageInformation')}</Label>
-							<Textarea {...attrs} bind:value={$form.addonPackage.description} />
-						</Control>
+						<Control >
+							{#snippet children({ props })}
+														<Label>{$_('admin-pages.addons.packageInformation')}</Label>
+								<Textarea {...props} bind:value={$form.addonPackage.description} />
+																				{/snippet}
+												</Control>
 						<Description />
 						<FieldErrors />
 					</Field>
@@ -104,20 +116,24 @@
 						label={$_('admin-pages.addons.purchasable')}
 					>
 						<Helper color="gray">{$_('admin-pages.addons.purchasableDescription')}</Helper>
-						<Field slot="description" form={superform} name="addonPackage.price">
-							<Control let:attrs>
-								<Input
-									type="number"
-									required={!$form.addonPackage.purchasable}
-									disabled={!$form.addonPackage.purchasable}
-									{...attrs}
-									bind:value={$priceProxy}
-									placeholder={$_('admin-pages.addons.pricePlaceholder')}
-								/>
-							</Control>
-							<Description />
-							<FieldErrors />
-						</Field>
+						{#snippet description()}
+												<Field  form={superform} name="addonPackage.price">
+								<Control >
+									{#snippet children({ props })}
+																<Input
+											type="number"
+											required={!$form.addonPackage.purchasable}
+											disabled={!$form.addonPackage.purchasable}
+											{...props}
+											bind:value={$priceProxy}
+											placeholder={$_('admin-pages.addons.pricePlaceholder')}
+										/>
+																								{/snippet}
+														</Control>
+								<Description />
+								<FieldErrors />
+							</Field>
+											{/snippet}
 					</Checkbox>
 					<section class="col-span-3">
 						<fieldset class="border border-stone-300 rounded-lg p-4">
@@ -127,47 +143,55 @@
 									<div class={`p-2 relative grid grid-cols-2 gap-4 w-full`}>
 										<button
 											class="absolute right-3 top-4 text-red-500 hover:text-red-700 text-xs"
-											on:click|preventDefault={() => handleRemoveAddon(index)}
+											onclick={preventDefault(() => handleRemoveAddon(index))}
 										>
 											<TrashIcon />
 										</button>
 										<Field form={superform} name={`addonPackage.addons[${index}].title`}>
-											<Control let:attrs>
-												<Label>{$_('admin-pages.addons.subAddonName')}</Label>
-												<Input {...attrs} bind:value={$form.addonPackage.addons[index].title} />
-											</Control>
+											<Control >
+												{#snippet children({ props })}
+																								<Label>{$_('admin-pages.addons.subAddonName')}</Label>
+													<Input {...props} bind:value={$form.addonPackage.addons[index].title} />
+																																			{/snippet}
+																						</Control>
 											<Description />
 											<FieldErrors />
 										</Field>
 										<Field form={superform} name={`addonPackage.addons[${index}].price`}>
-											<Control let:attrs>
-												<Label>{$_('admin-pages.addons.price')}</Label>
-												<input
-													class="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex h-10 w-full rounded-md border px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-													type="number"
-													{...attrs}
-													bind:value={$form.addonPackage.addons[index].price}
-												/>
-											</Control>
+											<Control >
+												{#snippet children({ props })}
+																								<Label>{$_('admin-pages.addons.price')}</Label>
+													<input
+														class="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex h-10 w-full rounded-md border px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+														type="number"
+														{...props}
+														bind:value={$form.addonPackage.addons[index].price}
+													/>
+																																			{/snippet}
+																						</Control>
 											<Description />
 											<FieldErrors />
 										</Field>
 										<Field form={superform} name={`addonPackage.addons[${index}].description`}>
-											<Control let:attrs>
-												<Label>{$_('admin-pages.addons.subAddonDescription')}</Label>
-												<Input
-													{...attrs}
-													bind:value={$form.addonPackage.addons[index].description}
-												/>
-											</Control>
+											<Control >
+												{#snippet children({ props })}
+																								<Label>{$_('admin-pages.addons.subAddonDescription')}</Label>
+													<Input
+														{...props}
+														bind:value={$form.addonPackage.addons[index].description}
+													/>
+																																			{/snippet}
+																						</Control>
 											<Description />
 											<FieldErrors />
 										</Field>
 										<Field form={superform} name={`addonPackage.addons[${index}].label`}>
-											<Control let:attrs>
-												<Label>{$_('admin-pages.addons.label')}</Label>
-												<Input {...attrs} bind:value={$form.addonPackage.addons[index].label} />
-											</Control>
+											<Control >
+												{#snippet children({ props })}
+																								<Label>{$_('admin-pages.addons.label')}</Label>
+													<Input {...props} bind:value={$form.addonPackage.addons[index].label} />
+																																			{/snippet}
+																						</Control>
 											<Description />
 											<FieldErrors />
 										</Field>
@@ -177,7 +201,7 @@
 									{/if}
 								{/each}
 							</div>
-							<Button variant="link" class="!font-semibold" on:click={handleAddSubAddon}>
+							<Button variant="link" class="!font-semibold" onclick={handleAddSubAddon}>
 								<PlusIcon classes="mr-2" />{$_('admin-pages.addons.addSubAddon')}
 							</Button>
 						</fieldset>
@@ -189,7 +213,7 @@
 		<Dialog.Footer class="flex justify-end items-center gap-x-2 col-span-3">
 			<Button
 				variant="secondary"
-				on:click={() => {
+				onclick={() => {
 					isOpen = false;
 				}}
 				>{$_('common.cancel')}

@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { run } from 'svelte/legacy';
+
 	import {
 		ChevronDown,
 		ChevronUp,
@@ -16,7 +18,7 @@
 	import * as Avatar from '$lib/components/ui/avatar';
 	import { Badge } from '$lib/components/ui/badge';
 
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import { trpc } from '@/trpc/client';
 	import { derived, type Writable } from 'svelte/store';
 	import { Button } from '@/components/ui/button';
@@ -24,9 +26,15 @@
 	import type { DetailedLegacyOrganization } from '@api/admin-client';
 	import { Input } from '@/components/ui/input';
 
-	export let orgId: Writable<string>;
 
-	const api = trpc($page);
+	let {
+		orgId,
+		selectedContacts = $bindable([]),
+		adminContact = $bindable(null),
+		orgName = $bindable()
+	}: Props = $props();
+
+	const api = trpc(page);
 
 	const legacyOrgQuery = api.admin.legacyOrgs.getDetails.createQuery(
 		derived(orgId, (orgId) => ({
@@ -38,17 +46,23 @@
 
 	// Derived values with fallbacks
 	// State for contact people accordion
-	let contactsExpanded = false;
-	// State for selected contacts and roles
-	export let selectedContacts: string[] = [];
-	export let adminContact: string | null = null;
-	export let orgName: string;
-	$: orgName =
-		$legacyOrgQuery.data?.publicname ||
-		$legacyOrgQuery.data?.fullname ||
-		$legacyOrgQuery.data?.name ||
-		$legacyOrgQuery.data?.shortname ||
-		'Unnamed Organization';
+	let contactsExpanded = $state(false);
+	
+	interface Props {
+		orgId: Writable<string>;
+		// State for selected contacts and roles
+		selectedContacts?: string[];
+		adminContact?: string | null;
+		orgName: string;
+	}
+	run(() => {
+		orgName =
+			$legacyOrgQuery.data?.publicname ||
+			$legacyOrgQuery.data?.fullname ||
+			$legacyOrgQuery.data?.name ||
+			$legacyOrgQuery.data?.shortname ||
+			'Unnamed Organization';
+	});
 
 	// Helper function to get initials from name
 	function getInitials(name: string): string {
@@ -83,8 +97,10 @@
 		}
 	}
 	// Computed property to check if multiple contacts are selected
-	let multipleContactsSelected = false;
-	$: multipleContactsSelected = selectedContacts.length > 1;
+	let multipleContactsSelected = $state(false);
+	run(() => {
+		multipleContactsSelected = selectedContacts.length > 1;
+	});
 
 	// Set admin role for a contact
 	function setAdminRole(contactId: string) {
@@ -203,7 +219,7 @@
 				<div class="mt-4">
 					<button
 						class="flex w-full items-center justify-between rounded-md border p-3 text-left font-medium"
-						on:click={() => (contactsExpanded = !contactsExpanded)}
+						onclick={() => (contactsExpanded = !contactsExpanded)}
 					>
 						<div class="flex items-center gap-2">
 							<User class="h-4 w-4 text-muted-foreground" />
@@ -226,7 +242,7 @@
 										<!-- Selectable Avatar -->
 										<button
 											class="relative h-10 w-10 rounded-full overflow-hidden focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
-											on:click={() => toggleContactSelection(contact)}
+											onclick={() => toggleContactSelection(contact)}
 											aria-label={isContactSelected(contact)
 												? 'Deselect contact'
 												: 'Select contact'}
@@ -264,7 +280,7 @@
 															(!multipleContactsSelected || !isContactSelected(contact)) &&
 																'invisible'
 														]}
-														on:click={() => setAdminRole(contact.legacyId)}
+														onclick={() => setAdminRole(contact.legacyId)}
 													>
 														<Shield class="h-3 w-3" />
 													</Button>

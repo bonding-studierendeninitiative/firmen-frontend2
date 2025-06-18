@@ -1,13 +1,18 @@
 <script lang="ts">
-	export let classes: string = '';
-	export let onClick: () => void;
+	interface Props {
+		classes?: string;
+		onClick: () => void;
+		children?: import('svelte').Snippet;
+	}
+
+	let { classes = '', onClick, children }: Props = $props();
 </script>
 
 <button
-	on:click={onClick}
+	onclick={onClick}
 	class={'px-3 py-2.5 rounded-lg border border-stone-200 hover:bg-stone-100 text-stone-400 '.concat(
 		classes
 	)}
 >
-	<slot />
+	{@render children?.()}
 </button>

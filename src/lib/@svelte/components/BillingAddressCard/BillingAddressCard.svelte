@@ -13,15 +13,22 @@
 	import * as Dialog from '@/components/ui/dialog';
 	import { invalidate } from '$app/navigation';
 
-	export let isDefault: boolean;
-	export let billingAddress: Infer<BillingAddressTemplate>;
-	let isDeleteFormOpen = false;
-	export let deleteBillingAddressTemplateForm: SuperValidated<
-		Infer<DeleteBillingAddressTemplateForm>
-	>;
-	export let makeBillingAddressTemplateDefaultForm: SuperValidated<
-		Infer<MakeBillingAddressTemplateDefaultForm>
-	>;
+	let isDeleteFormOpen = $state(false);
+	interface Props {
+		isDefault: boolean;
+		billingAddress: Infer<BillingAddressTemplate>;
+		deleteBillingAddressTemplateForm: SuperValidated<Infer<DeleteBillingAddressTemplateForm>>;
+		makeBillingAddressTemplateDefaultForm: SuperValidated<
+			Infer<MakeBillingAddressTemplateDefaultForm>
+		>;
+	}
+
+	let {
+		isDefault,
+		billingAddress,
+		deleteBillingAddressTemplateForm,
+		makeBillingAddressTemplateDefaultForm
+	}: Props = $props();
 	const { enhance: deleteEnhance } = superForm(deleteBillingAddressTemplateForm, {
 		onResult({ result }) {
 			if (result.type === 'success') {
@@ -58,13 +65,13 @@
 			{:else}
 				<form action="?/makeBillingAddressTemplateDefault" method="post" use:makeDefaultEnhance>
 					<input type="hidden" name="billingAddressTemplateId" value={billingAddress.id} />
-					<Button class="mx-6" on:click={() => undefined} type="submit"
+					<Button class="mx-6" onclick={() => undefined} type="submit"
 						>{$_('user-pages.settings.makeItDefault')}</Button
 					>
 				</form>
 			{/if}
 			<button class="text-stone-500"><PencilSquareIcon /></button>
-			<Dialog.Root bind:open={isDeleteFormOpen} on:close={() => (isDeleteFormOpen = false)}>
+			<Dialog.Root bind:open={isDeleteFormOpen}>
 				<Dialog.Trigger>
 					<button class="text-stone-500"><Trash /></button>
 				</Dialog.Trigger>
@@ -76,7 +83,7 @@
 						</Dialog.Description>
 						<input name="billingAddressTemplateId" type="hidden" value={billingAddress.id} />
 						<Dialog.Footer>
-							<Button variant="secondary" on:click={() => undefined}>
+							<Button variant="secondary" onclick={() => undefined}>
 								{$_('common.cancel')}
 							</Button>
 							<Button variant="destructive" type="submit">{$_('common.delete')}</Button>

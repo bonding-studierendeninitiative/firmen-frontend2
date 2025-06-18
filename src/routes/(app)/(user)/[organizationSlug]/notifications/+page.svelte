@@ -102,7 +102,7 @@
 		<Button
 			class="!py-1.5"
 			variant="gradient"
-			on:click={() => {
+			onclick={() => {
 				isSuccessModalOpen = true;
 				isUpdatePortraitModalOpen = false;
 			}}
@@ -126,7 +126,7 @@
 		</div>
 	</div>
 	<footer class=" flex items-center justify-center">
-		<Button class="!py-1.5" variant="gradient" on:click={() => goto('/events')}>
+		<Button class="!py-1.5" variant="gradient" onclick={() => goto('/events')}>
 			{$_('common.viewEvents')}
 		</Button>
 	</footer>

@@ -18,5 +18,5 @@
     <span>
     {$_('components.registration-card.advertisement-missing.description')}
 </span>
-    <Button variant="default" on:click={() => pickAdvertisementOpen = true} >{$_('components.registration-card.advertisement-missing.action')}</Button>
+    <Button variant="default" onclick={() => pickAdvertisementOpen = true} >{$_('components.registration-card.advertisement-missing.action')}</Button>
 </div>

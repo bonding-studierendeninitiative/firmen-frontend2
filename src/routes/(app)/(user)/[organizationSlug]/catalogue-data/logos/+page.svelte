@@ -5,14 +5,14 @@
 	import { UploadLogoDialog } from '@/@svelte/modules';
 	import { Button } from '@/components/ui/button';
 	import { trpc } from '@/trpc/client';
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import { _, dayjs } from '@services/i18n';
 	import { derived } from 'svelte/store';
 	import LogoItem from './logo-item.svelte';
-	export let data;
-	let isUploadOpen = false;
+	let { data } = $props();
+	let isUploadOpen = $state(false);
 
-	const api = trpc($page);
+	const api = trpc(page);
 
 	const [logos, resolveLogos] =
 		api.catalogueData.getAll.createInfiniteQuery(

@@ -40,13 +40,16 @@
 	const handleDialogChange = (open: boolean) => {
 		if (open) return;
 
+		console.log("Protrait closed in Layout");
+		
+
 		$params.create = null
 	};
 </script>
 
 <div class="flex justify-between items-center">
 	<SearchInput placeholder={$_('common.search')} bind:value={searchValue} />
-	<Button variant="default" on:click={createNewDialog} class="m-0"
+	<Button variant="default" onclick={createNewDialog} class="m-0"
 		>{$_('user-pages.portraits.newPortrait')}</Button
 	>
 </div>

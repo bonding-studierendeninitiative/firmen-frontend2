@@ -2,9 +2,13 @@
 	import type { PageData } from './$types';
 	import { UpdateUserDetails } from '@/@svelte/modules';
 
-	export let data: PageData;
 	import { _ } from '@services';
 	import * as Card from '@/components/ui/card';
+	interface Props {
+		data: PageData;
+	}
+
+	let { data }: Props = $props();
 </script>
 
 

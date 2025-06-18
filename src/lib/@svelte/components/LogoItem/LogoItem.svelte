@@ -1,28 +1,34 @@
 <script lang="ts">
 	import * as Card from '@/components/ui/card';
-	import { PdfFilePreview, StatusBadge } from '@/@svelte/components';
+	import { StatusBadge } from '@/@svelte/components';
 	import { _ } from '@services';
 	import { cn } from '@/utils';
 	import { Button } from '@/components/ui/button';
 	import { ViewLogoDialog } from '@/@svelte/modules';
-	import { DetailedDocumentOutput, SimpleDocumentOutput } from '@api/client';
-	import { page } from '$app/stores';
+	import { SimpleDocumentOutput } from '@api/client';
+	import { page } from '$app/state';
 	import { trpc } from '@/trpc/client';
 	import { LoaderCircle } from 'lucide-svelte';
 
-	export let logo: SimpleDocumentOutput;
-	let className = '';
-	export { className as class };
+	interface Props {
+		logo: SimpleDocumentOutput;
+		class?: string;
+	}
 
-	const thumbnail = trpc($page).catalogueData.generateThumbnailLink.createQuery({
-		documentId: logo.id,
-		organizationId: logo.organizationId,
-		resolution: "small"
-	}, {
-		enabled: logo.activeVersion?.uploadStatus === "COMPLETED"
-	});
+	let { logo, class: className = '' }: Props = $props();
 
-	let showDialog = false;
+	const thumbnail = trpc(page).catalogueData.generateThumbnailLink.createQuery(
+		{
+			documentId: logo.id,
+			organizationId: logo.organizationId,
+			resolution: 'small'
+		},
+		{
+			enabled: logo.activeVersion?.uploadStatus === 'COMPLETED'
+		}
+	);
+
+	let showDialog = $state(false);
 </script>
 
 <section class="w-full">
@@ -39,25 +45,28 @@
 				<div
 					class="absolute inset-0 flex items-center transition-opacity duration-300 justify-center opacity-0 hover:opacity-100 bg-gray-900/60"
 				>
-					<Button variant="outline" on:click={() => (showDialog = true)}
+					<Button variant="outline" onclick={() => (showDialog = true)}
 						>{$_('common.view-details')}</Button
 					>
 				</div>
-				{#if logo.activeVersion?.uploadStatus==="UPLOADED" || $thumbnail.isLoading}
-				<LoaderCircle class="mx-auto animate-spin w-5" />
+				{#if logo.activeVersion?.uploadStatus === 'UPLOADED' || $thumbnail.isLoading}
+					<LoaderCircle class="mx-auto animate-spin w-5" />
 				{:else if $thumbnail.data}
 					<img
-							src={$thumbnail.data || '/placeholder.svg'}
-							alt={logo.title}
-							class="object-contain w-full h-full"
-						/>
+						src={$thumbnail.data || '/placeholder.svg'}
+						alt={logo.title}
+						class="object-contain w-full h-full"
+					/>
 				{/if}
 			</div>
 		</Card.Header>
 		<Card.Content class="p-4 pt-0">
 			<div class="flex justify-between items-center gap-2 @container">
 				<h3 title={logo.title} class="font-semibold text-lg truncate">{logo.title}</h3>
-				<StatusBadge variant={logo.activeVersion?.reviewStatus} label={$_('status-text.' + logo.activeVersion?.reviewStatus)} />
+				<StatusBadge
+					variant={logo.activeVersion?.reviewStatus}
+					label={$_('status-text.' + logo.activeVersion?.reviewStatus)}
+				/>
 			</div>
 		</Card.Content>
 	</Card.Root>

@@ -4,11 +4,21 @@
 	import { LocalizedDate } from '@/@svelte/components';
 	import { Button } from '@/components/ui/button';
 
-	export let heading: string;
-	export let subHeading: string;
-	export let date: string;
-	export let buttonText: string = 'register';
-	export let href: string;
+	interface Props {
+		heading: string;
+		subHeading: string;
+		date: string;
+		buttonText?: string;
+		href: string;
+	}
+
+	let {
+		heading,
+		subHeading,
+		date,
+		buttonText = 'register',
+		href
+	}: Props = $props();
 </script>
 
 <div class=" p-6 shadow-custom rounded-md border border-solid border-stone-200">

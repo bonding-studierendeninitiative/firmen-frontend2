@@ -9,9 +9,13 @@
 	import { number, _ } from '@services/i18n';
 	import { onMount } from 'svelte';
 
-	export let addons: InferOutput<GetAddonPackageTemplateResponse>[] = [];
-	export let selectedAddonPackages: string[] = [];
-	export let selectedAddons: string[] = [];
+	interface Props {
+		addons?: InferOutput<GetAddonPackageTemplateResponse>[];
+		selectedAddonPackages?: string[];
+		selectedAddons?: string[];
+	}
+
+	let { addons = [], selectedAddonPackages = $bindable([]), selectedAddons = $bindable([]) }: Props = $props();
 
 	onMount(async () => {
 		for (const addonPackage of addons) {

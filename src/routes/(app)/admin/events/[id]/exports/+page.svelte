@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { ExportItem } from '@/@svelte/components/ExportItem';
 
-	export let data;
+	let { data } = $props();
 </script>
 
 {#each data.exports ?? [] as _export}

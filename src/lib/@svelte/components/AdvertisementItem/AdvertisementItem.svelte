@@ -7,13 +7,17 @@
 	import { Button } from '@/components/ui/button';
 	import type { DetailedDocumentOutput } from '@api/client';
 	import { trpc } from '@/trpc/client';
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import { LoaderCircle } from 'lucide-svelte';
-	export let advertisement: DetailedDocumentOutput;
-	let className = '';
-	export { className as class };
+	interface Props {
+		advertisement: DetailedDocumentOutput;
+		class?: string;
+	}
 
-	const thumbnail = trpc($page).catalogueData.generateThumbnailLink.createQuery(
+	let { advertisement, class: className = '' }: Props = $props();
+	
+
+	const thumbnail = trpc(page).catalogueData.generateThumbnailLink.createQuery(
 		{
 			documentId: advertisement.id,
 			organizationId: advertisement.organizationId,
@@ -24,7 +28,7 @@
 		}
 	);
 
-	let showDialog = false;
+	let showDialog = $state(false);
 </script>
 
 <section class="w-full">
@@ -41,7 +45,7 @@
 				<div
 					class="absolute inset-0 flex items-center transition-opacity duration-300 justify-center opacity-0 hover:opacity-100 focus-within:opacity-100 bg-gray-900/60"
 				>
-					<Button variant="outline" on:click={() => (showDialog = true)}
+					<Button variant="outline" onclick={() => (showDialog = true)}
 						>{$_('common.view-details')}</Button
 					>
 				</div>

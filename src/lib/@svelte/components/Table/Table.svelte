@@ -1,9 +1,19 @@
 <script lang="ts">
 	import { _ } from '@services';
 
-	export let columns: any[];
-	export let totalRecords: number | undefined;
-	export let classes: string = '';
+	interface Props {
+		columns: any[];
+		totalRecords: number | undefined;
+		classes?: string;
+		children?: import('svelte').Snippet;
+	}
+
+	let {
+		columns,
+		totalRecords,
+		classes = '',
+		children
+	}: Props = $props();
 </script>
 
 <div class={'w-full overflow-hidden rounded-lg shadow-xs border border-stone-200 '.concat(classes)}>
@@ -18,7 +28,7 @@
 				</tr>
 			</thead>
 			<tbody class="bg-white divide-y">
-				<slot />
+				{@render children?.()}
 			</tbody>
 		</table>
 	</div>

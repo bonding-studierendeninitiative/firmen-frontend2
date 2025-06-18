@@ -74,7 +74,7 @@
         <header class="pt-4 flex justify-between">
             <h2 class="text-2xl font-semibold text-slate-800">🖼️ {logo.title}</h2>
             <nav class="inline-flex gap-4">
-		<Button on:click={handleDownload}>{$_('common.download')}</Button>
+		<Button onclick={handleDownload}>{$_('common.download')}</Button>
 		<DeleteLogoDialog {logo} />
             </nav>
         </header>

@@ -5,11 +5,15 @@
 	import type { InferOutput } from 'valibot';
 	import type { GetEventsResponse } from '@schema';
 
-	export let events: InferOutput<GetEventsResponse>['events'];
-	export let orgSlug: string;
+	interface Props {
+		events: InferOutput<GetEventsResponse>['data'];
+		orgSlug: string;
+	}
+
+	let { events, orgSlug }: Props = $props();
 
 	let cities = [...new Set(events.map((item) => item.projectHSG))];
-	let checkedCities: string[] = cities;
+	let checkedCities: string[] = $state(cities);
 
 	function addItem(city: string) {
 		checkedCities = [...checkedCities, city];

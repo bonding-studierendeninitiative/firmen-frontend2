@@ -4,9 +4,11 @@
 	import type { GetPortraitTemplatesResponse } from '@schema';
 	import type { InferOutput } from 'valibot';
 
-	export let portraitTemplates: InferOutput<GetPortraitTemplatesResponse>['portraitTemplates'];
+	interface Props {
+		portraitTemplates: InferOutput<GetPortraitTemplatesResponse>['portraitTemplates'];
+	}
 
-	console.log({ portraitTemplates });
+	let { portraitTemplates }: Props = $props();
 </script>
 
 <section>
@@ -21,15 +23,17 @@
 					</div>
 					<div class=" flex flex-col ml-4">
 						<h3 class=" text-sm font-medium text-stone-800">{title}</h3>
-						<h4 class=" text-sm font-medium text-stone-500">{$_('common.branch')} - {displayName}</h4>
+						<h4 class=" text-sm font-medium text-stone-500">
+							{$_('common.branch')} - {displayName}
+						</h4>
 					</div>
 				</div>
 				<Button onClick={() => undefined} classes=" inline shadow-custom !py-1"
-				>{$_('common.download')}</Button
+					>{$_('common.download')}</Button
 				>
 			</div>
 		{/each}
-	{:else }
+	{:else}
 		<NoDataFound heading="" />
 	{/if}
 </section>

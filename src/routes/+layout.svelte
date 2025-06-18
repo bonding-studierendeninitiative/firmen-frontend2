@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMount, type Snippet } from 'svelte';
-	import { Toaster } from 'svelte-sonner';
+	import { Toaster, type ToastOptions } from 'svelte-sonner';
 	import '../app.css';
 	import { setupI18n, isLocaleLoading, dir, locale } from '@services';
 	import { ClerkProvider } from 'svelte-clerk';
@@ -30,8 +30,9 @@
 		document.dir = $dir;
 		setupI18n();
 	});
-	const toastOptions = {
-		duration: 5000
+	const toastOptions: ToastOptions = {
+		duration: 5000,
+		class: "mr-7 mb-16"
 	};
 
 </script>
@@ -53,4 +54,4 @@
 		</QueryClientProvider>
 	</div>
 {/if}
-<Toaster containerClassName="mr-7 mb-16" position="bottom-right" {toastOptions} />
+<Toaster position="bottom-right" {toastOptions} />

@@ -2,28 +2,47 @@
 	import { createEventDispatcher } from 'svelte';
 	import { TelInput, normalizedCountries, isSelected, clickOutsideAction } from 'svelte-tel-input';
 	import 'svelte-tel-input/styles/flags.css';
-	import type { Country, DetailedValue } from 'svelte-tel-input/types';
-	import type { CountryCode } from 'libphonenumber-js/types';
+	import type { Country, CountryCode, DetailedValue } from 'svelte-tel-input/types';
 	import { cn } from '@/utils/tailwind';
 
-	export let clickOutside = true;
-	export let closeOnClick = true;
-	export let disabled = false;
-	export let detailedValue: Partial<DetailedValue> | null = null;
-	export let value = '';
-	export let searchPlaceholder = 'Search';
-	export let name: string | undefined;
-	export let label: string | undefined;
-	export let required: boolean = false;
+	let searchText = $state('');
+	let isOpen = $state(false);
 
-	let searchText = '';
-	let isOpen = false;
-	export let selectedCountry: CountryCode = 'DE';
-	export let valid = true;
-	export let options = { invalidateOnCountryChange: true };
+	interface Props {
+		clickOutside?: boolean;
+		closeOnClick?: boolean;
+		disabled?: boolean;
+		detailedValue?: Partial<DetailedValue> | null;
+		value?: string;
+		searchPlaceholder?: string;
+		name: string | undefined;
+		label: string | undefined;
+		required?: boolean;
+		class?: string;
+		selectedCountry?: CountryCode;
+		valid?: boolean;
+		options?: any;
+	}
 
-	$: selectedCountryDialCode =
-		normalizedCountries.find((el) => el.iso2 === selectedCountry)?.dialCode || null;
+	let {
+		clickOutside = true,
+		closeOnClick = true,
+		disabled = false,
+		detailedValue = $bindable(null),
+		value = $bindable(''),
+		searchPlaceholder = 'Search',
+		name,
+		label,
+		required = false,
+		class: className = '',
+		selectedCountry = $bindable('DE'),
+		valid = $bindable(true),
+		options = { invalidateOnCountryChange: true }
+	}: Props = $props();
+
+	let selectedCountryDialCode = $derived(
+		normalizedCountries.find((el) => el.iso2 === selectedCountry)?.dialCode || null
+	);
 
 	const toggleDropDown = (e: Event) => {
 		e?.preventDefault();
@@ -96,7 +115,7 @@
 	};
 </script>
 
-<div class={cn($$props.class)}>
+<div class={cn(className)}>
 	{#if label}
 		<label class="block mb-1.5 font-medium marker:text-sm text-stone-800" for={name}
 			>{label}
@@ -121,11 +140,11 @@
 				aria-controls="dropdown-countries"
 				aria-expanded="false"
 				aria-haspopup="false"
-				on:click={toggleDropDown}
+				onclick={toggleDropDown}
 			>
 				{#if selectedCountry && selectedCountry !== null}
 					<div class="inline-flex items-center text-left">
-						<span class="flag flag-{selectedCountry.toLowerCase()} flex-shrink-0 mr-3" />
+						<span class="flag flag-{selectedCountry.toLowerCase()} flex-shrink-0 mr-3"></span>
 						<span class="text-gray-600 dark:text-gray-400">+{selectedCountryDialCode}</span>
 					</div>
 				{:else}
@@ -180,7 +199,7 @@
                             {isActive
 										? 'bg-gray-600 dark:text-white'
 										: 'dark:hover:text-white dark:text-gray-400'}"
-									on:click={(e) => {
+									onclick={(e) => {
 										handleSelect(country.iso2, e);
 									}}
 								>

@@ -9,7 +9,7 @@
 	<span>
 		{$_('components.registration-card.portrait-missing.description')}
 	</span>
-	<Button variant="default" on:click={() => (submitPortraitOpen = true)}
+	<Button variant="default" onclick={() => (submitPortraitOpen = true)}
 		>{$_('components.registration-card.portrait-missing.action')}</Button
 	>
 </div>

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import * as Dialog from '@/components/ui/dialog';
 	import * as RadioGroup from '@/components/ui/radio-group';
 	import { AdvertisementItem, NoDataFound } from '@/@svelte/components';
@@ -12,13 +12,17 @@
 	import { goto } from '$app/navigation';
 	import {toast} from 'svelte-sonner';
 
-	export let open = false;
-	export let id: string;
-	export let orgId: string;
+	interface Props {
+		open?: boolean;
+		id: string;
+		orgId: string;
+	}
 
-	let selectedAdvertisement = '';
+	let { open = $bindable(false), id, orgId }: Props = $props();
 
-	const api = trpc($page);
+	let selectedAdvertisement = $state('');
+
+	const api = trpc(page);
 
 	const utils = api.createUtils();
 	let advertisements = api.catalogueData.getAll.createQuery({
@@ -75,7 +79,7 @@
 		<Dialog.Footer>
 			<Button
 				disabled={!selectedAdvertisement || $pickAdvertisement.isPending}
-				on:click={() => {
+				onclick={() => {
 					$pickAdvertisement.mutate(
 						{
 							advertisementId: selectedAdvertisement,

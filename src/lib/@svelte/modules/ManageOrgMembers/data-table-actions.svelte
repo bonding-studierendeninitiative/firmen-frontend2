@@ -5,26 +5,32 @@
 	import { _ } from '@services';
 	import RemoveMemberDialog from './remove-member-dialog.svelte';
 	import AddMemberDialog from './add-member-dialog.svelte';
-	export let id: string;
-	export let orgId: string;
-	let open = false;
+	interface Props {
+		id: string;
+		orgId: string;
+	}
+
+	let { id, orgId }: Props = $props();
+	let open = $state(false);
 	let isAddOpen = false;
 </script>
 
 <RemoveMemberDialog {orgId} {id} bind:open />
 
 <DropdownMenu.Root>
-	<DropdownMenu.Trigger asChild let:builder>
-		<Button variant="ghost" builders={[builder]} size="icon" class="relative h-8 w-8 p-0">
-			<span class="sr-only">{$_('common.open-menu')}</span>
-			<Ellipsis class="h-4 w-4" />
-		</Button>
-	</DropdownMenu.Trigger>
+	<DropdownMenu.Trigger >
+		{#snippet child({ props })}
+				<Button variant="ghost" {...props} size="icon" class="relative h-8 w-8 p-0">
+				<span class="sr-only">{$_('common.open-menu')}</span>
+				<Ellipsis class="h-4 w-4" />
+			</Button>
+					{/snippet}
+		</DropdownMenu.Trigger>
 	<DropdownMenu.Content>
 		<DropdownMenu.Group>
 			<DropdownMenu.Item
 				class="text-red-500 hover:text-red-700"
-				on:click={() => {
+				onclick={() => {
 					open = true;
 				}}>{$_('common.remove')}</DropdownMenu.Item
 			>

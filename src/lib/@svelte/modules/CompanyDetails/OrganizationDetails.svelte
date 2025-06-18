@@ -9,14 +9,16 @@
 	import type { InferOutput } from 'valibot';
 	import type { SuperValidated } from 'sveltekit-superforms';
 
-	export let isOpen: boolean = false;
+	interface Props {
+		isOpen?: boolean;
+		organization: any;
+		createInviteForm: SuperValidated<InferOutput<CreateOrgInviteRequest>> | undefined;
+		orgMembers: InferOutput<GetOrgMembersResponse>;
+	}
 
-	export let organization: any;
+	let { isOpen = $bindable(false), organization, createInviteForm, orgMembers }: Props = $props();
 
-	export let createInviteForm: SuperValidated<InferOutput<CreateOrgInviteRequest>> | undefined;
-	export let orgMembers: InferOutput<GetOrgMembersResponse>;
-
-	let activeTab = 0;
+	let activeTab = $state(0);
 	const tabHeadings = ['companyInformation', 'portraits', 'bookings'];
 
 	const handleTabChange = (tabIndex: number) => {
@@ -39,9 +41,16 @@
 		<section class=" mt-10 max-h-[590px] overflow-y-scroll">
 			{#if activeTab === 0}
 				<div>
-					<CompanyInformationTab organizationInfo={Object.entries(organization).filter(
-						([key]) => key !== 'id' && key !== 'createdAt' && key !== 'updatedAt' && key !== undefined
-					).map(([key, value]) => ({ label: key, value }))} {orgMembers} {createInviteForm} />
+					<CompanyInformationTab
+						organizationInfo={Object.entries(organization)
+							.filter(
+								([key]) =>
+									key !== 'id' && key !== 'createdAt' && key !== 'updatedAt' && key !== undefined
+							)
+							.map(([key, value]) => ({ label: key, value }))}
+						{orgMembers}
+						{createInviteForm}
+					/>
 				</div>
 			{:else if activeTab === 1}
 				<div in:fade>

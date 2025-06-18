@@ -5,15 +5,14 @@
 	import * as Avatar from '@/components/ui/avatar';
 	import { cn } from '@/utils';
 	import { LoaderCircle, Users } from 'lucide-svelte';
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import { Button } from '@/components/ui/button';
 	import { _ } from '@services';
 	import { trpc } from '@/trpc/client';
 	import {toast} from 'svelte-sonner';
 
-	export let eventRegistrationId;
 
-	const api = trpc($page);
+	const api = trpc(page);
 
 	const utils = api.createUtils();
 
@@ -23,9 +22,14 @@
 	});
 	let changeContactPeople = api.eventRegistrations.changeContactPeople.createMutation();
 
-	export let open: boolean = false;
 
-	export let contactPeople: string[];
+	interface Props {
+		eventRegistrationId: any;
+		open?: boolean;
+		contactPeople: string[];
+	}
+
+	let { eventRegistrationId, open = $bindable(false), contactPeople = $bindable() }: Props = $props();
 
 </script>
 
@@ -87,7 +91,7 @@
 		</div>
 		<Dialog.Footer>
 			<Button disabled={$changeContactPeople.isPending || !contactPeople.length}
-							on:click={() => $changeContactPeople.mutate({ eventRegistrationId, contactPeople }, {
+							onclick={() => $changeContactPeople.mutate({ eventRegistrationId, contactPeople }, {
 				onError: (err) => {
 					console.error(err);
 					toast.error(err.message);
