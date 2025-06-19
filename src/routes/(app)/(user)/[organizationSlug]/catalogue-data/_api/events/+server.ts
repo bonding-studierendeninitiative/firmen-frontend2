@@ -2,7 +2,7 @@ import { orgSseControllers } from "@api/broadcaster";
 import { error } from "@sveltejs/kit";
 
 export function POST({ locals }) {
-    const orgId = locals.auth.orgId;
+    const { orgId } = locals.auth();
     if (!orgId) {
         throw error(400, 'Organization ID is required');
     }

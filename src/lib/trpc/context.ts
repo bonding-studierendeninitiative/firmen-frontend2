@@ -4,7 +4,7 @@ import { type AuthObject } from 'svelte-clerk/server';
 
 export async function createContext({ locals }: RequestEvent) {
 	return {
-		session: locals.auth as unknown as AuthObject
+		session: locals.auth() as unknown as AuthObject
 	};
 }
 
