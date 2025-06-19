@@ -48,11 +48,11 @@
 				duration: 300,
 				easing: cubicOut
 			}}
-			class=" fixed p-6 inset-y-0 right-0 flex flex-col w-[556px] bg-white border-r h-screen max-h-[100vh] overflow-auto"
+			class=" fixed p-6 inset-y-0 right-0 flex flex-col w-[556px] bg-white border-r h-screen max-h-dvh overflow-auto"
 		>
 			<div class="flex items-center justify-between pb-6 pt-2">
 				<span class=" font-bold text-stone-800 text-xl">{heading}</span>
-				<button class="text-stone-400 focus:outline-none" onclick={toggleDrawer}>
+				<button class="text-stone-400 focus:outline-hidden" onclick={toggleDrawer}>
 					<CrossIcon />
 				</button>
 			</div>

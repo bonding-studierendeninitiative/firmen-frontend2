@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { NoDataFound } from '@/@svelte/components';
-	import { LoaderCircle, Plus } from 'lucide-svelte';
+	import { LoaderCircle, Plus } from '@lucide/svelte';
 	import { fade } from 'svelte/transition';
 	import { UploadLogoDialog } from '@/@svelte/modules';
 	import { Button } from '@/components/ui/button';
@@ -50,14 +50,14 @@
 	<div class="flex justify-end">
 		{#if $uploadFormQuery.isLoading}
 			<Button class="min-w-32 mr-2" disabled>
-				<LoaderCircle class="w-5 h-5 mx-auto animate-spin" />
+				<LoaderCircle class="size-5 mx-auto animate-spin" />
 			</Button>
 		{:else if $uploadFormQuery.data}
 			<UploadLogoDialog bind:open={isUploadOpen} logoUploadForm={$uploadFormQuery.data} />
 		{/if}
 	</div>
 	{#await resolveLogos(data.data)}
-		<LoaderCircle class="w-10 h-10 mx-auto animate-spin" />
+		<LoaderCircle class="size-10 mx-auto animate-spin" />
 	{:then _ignored}
 		{#if $logos.data}
 			{#if $allLogos.length < 1}
@@ -81,7 +81,7 @@ isUploadOpen = true;
 			{/if}
 		{/if}
 		{#if $logos.isPending || $logos.isFetching}
-			<LoaderCircle class="w-10 h-10 mx-auto animate-spin" />
+			<LoaderCircle class="size-10 mx-auto animate-spin" />
 		{:else if $logos.isError}
 			<article>
 				Error loading logos: {$logos.error}

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { _ } from '@services';
 	import { ManageOrgMembers } from '@/@svelte/modules';
-	import { LoaderCircle } from 'lucide-svelte';
+	import { LoaderCircle } from '@lucide/svelte';
 	import { page } from '$app/state';
 	import { trpc } from '@/trpc/client.js';
 	import { queryParameters } from 'sveltekit-search-params';
@@ -57,7 +57,7 @@
 
 <section class="space-y-5">
 	{#if $orgDetailsQuery.isLoading}
-		<LoaderCircle class="w-12 h-12 animate-spin mx-auto" />
+		<LoaderCircle class="size-12 animate-spin mx-auto" />
 	{/if}
 	{#if $orgDetailsQuery.data}
 		{@const organizationInfo = Object.entries($orgDetailsQuery.data)
@@ -87,7 +87,7 @@
 		{$_(`admin-pages.organizations.contactPeople`)}
 	</h3>
 	{#if $orgMembersQuery.isLoading}
-		<LoaderCircle class="w-12 h-12 animate-spin mx-auto" />
+		<LoaderCircle class="size-12 animate-spin mx-auto" />
 	{/if}
 	{#if $orgMembersQuery.data}
 		<ManageOrgMembers organizationId={data.organizationId} memberResponse={orgMembersData} />

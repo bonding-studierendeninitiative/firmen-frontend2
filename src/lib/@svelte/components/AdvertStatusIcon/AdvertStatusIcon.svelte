@@ -1,7 +1,7 @@
 <script lang="ts">
 
 	import { tv, type VariantProps } from 'tailwind-variants';
-	import { cn } from '@/utils/tailwind';
+	import { cn } from '@/utils/ui';
 
 	interface Props {
 		variant?: VariantProps<typeof advertStatusIconVariants>['variant'];

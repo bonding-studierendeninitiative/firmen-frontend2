@@ -49,13 +49,13 @@
 		});
 </script>
 
-<div class="w-full h-full flex flex-col justify-start items-stretch min-h-max">
+<div class="size-full flex flex-col justify-start items-stretch min-h-max">
 	<h1 class=" text-stone-950 text-3xl font-extrabold">{$_('user-pages.portraits.portraits')}</h1>
 	<h4 class=" text-stone-500">{$_('user-pages.portraits.portraitsSubHeading')}</h4>
 	<div class=" mt-6">
 		<LinkTabs {tabs} />
 	</div>
-	<section class="flex-grow mt-6">
+	<section class="grow mt-6">
 		<div in:fade>
 			{@render children?.()}
 		</div>

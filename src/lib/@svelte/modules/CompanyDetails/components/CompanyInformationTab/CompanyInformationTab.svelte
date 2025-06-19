@@ -5,7 +5,7 @@
 	import type { InferOutput } from 'valibot';
 	import { ManageOrgMembers } from '@/@svelte/modules';
 	import type { OrganizationMembership } from 'svelte-clerk/server';
-	import { LoaderCircle } from 'lucide-svelte';
+	import { LoaderCircle } from '@lucide/svelte';
 
 	interface Props {
 		// organizationInfo: { label: string; value: string }[]; {Object.entries(orgData?.organization || {}).filter(filterOrgEntries).map(([key, value]) => ({ label: key, value }))}
@@ -35,7 +35,7 @@
 
 <section class="space-y-5">
 	{#await organizationDetails}
-		<LoaderCircle class="w-12 h-12 animate-spin mx-auto" />
+		<LoaderCircle class="size-12 animate-spin mx-auto" />
 	{:then organizationDetails}
 		{@const organizationInfo = Object.entries(organizationDetails)
 			.filter(filterOrgEntries)

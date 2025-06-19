@@ -4,7 +4,7 @@
 	import * as Card from '@/components/ui/card';
 	import { Button } from '@/components/ui/button';
 	import { TrashIcon } from '@/@svelte/icons';
-	import { LoaderCircle } from 'lucide-svelte';
+	import { LoaderCircle } from '@lucide/svelte';
 	import { _ } from '@services';
 	import { trpc } from '@/trpc/client';
 	import { page } from '$app/state';
@@ -65,7 +65,7 @@
 				{#if addon.label}
 					<Badge>{addon.label}</Badge>
 				{/if}
-				<div class="flex-grow"></div>
+				<div class="grow"></div>
 				{#if addon.price}
 					<span>
 						{$number(addon.price / 100, {
@@ -95,7 +95,7 @@
 			}}
 		>
 			{#if $deleteAddonPackage.isPending}
-				<LoaderCircle class="h-4 w-4 animate-spin" />
+				<LoaderCircle class="size-4 animate-spin" />
 			{:else}
 				<TrashIcon />
 			{/if}

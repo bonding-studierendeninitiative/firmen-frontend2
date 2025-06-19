@@ -140,7 +140,7 @@
 						<Table.Row>
 							{#each columns as column}
 								<Table.Cell>
-									<Skeleton class="w-full min-w-6 h-6" />
+									<Skeleton class="w-full min-size-6" />
 								</Table.Cell>
 							{/each}
 						</Table.Row>

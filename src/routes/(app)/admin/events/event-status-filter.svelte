@@ -1,6 +1,6 @@
 <script lang="ts">
 
-	import { Check, Filter, X } from 'lucide-svelte';
+	import { Check, Filter, X } from '@lucide/svelte';
 
 	import { Button, buttonVariants } from '@/components/ui/button';
 	import * as Popover from '@/components/ui/popover';
@@ -34,7 +34,7 @@
 </script>
 <Popover.Root>
 	<Popover.Trigger class={cn(buttonVariants({variant: 'outline', size: 'sm'}), 'border-dashed h-full px-4 mr-2')}>
-		<Filter class="mr-2 h-4 w-4" />
+		<Filter class="mr-2 size-4" />
 		{$_("components.event-status-filter.label")}
 		{#if Number($params.status?.length) > 0}
 			<Badge variant="secondary" class="ml-2 rounded-sm px-1 font-normal">
@@ -58,7 +58,7 @@
 						aria-label={`Filter by ${status} status`}
 					>
 						{#if $params.status?.includes(status)}
-							<Check class="h-4 w-4 mr-2" />
+							<Check class="size-4 mr-2" />
 						{/if}
 						{$_(`common.event-status.${status.toLowerCase()}`)}
 					</ToggleGroupItem>
@@ -72,7 +72,7 @@
 					onclick={clearFilters}
 				>
 					{$_("components.event-status-filter.clear")}
-					<X class="ml-1 h-3 w-3" />
+					<X class="ml-1 size-3" />
 				</Button>
 			{/if}
 		</div>

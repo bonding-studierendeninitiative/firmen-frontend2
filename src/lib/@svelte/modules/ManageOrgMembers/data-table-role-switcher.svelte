@@ -2,7 +2,7 @@
 	import * as Popover from '@/components/ui/popover';
 	import { Button } from '@/components/ui/button';
 	import * as Command from '@/components/ui/command';
-	import { Check, ChevronsUpDown } from 'lucide-svelte';
+	import { Check, ChevronsUpDown } from '@lucide/svelte';
 	import { trpc } from '@/trpc/client';
 	import { page } from '$app/state';
 	import { _ } from '@services';
@@ -60,7 +60,7 @@
 					class="w-[200px] justify-between"
 				>
 					{valueLabel}
-					<ChevronsUpDown class="ml-2 h-4 w-4 shrink-0 opacity-50" />
+					<ChevronsUpDown class="ml-2 size-4 shrink-0 opacity-50" />
 				</Button>
 			{/snippet}
 		</Popover.Trigger>
@@ -87,7 +87,7 @@
 								closeAndFocusTrigger();
 							}}
 						>
-							<Check class={cn('mr-2 h-4 w-4', value !== role.value && 'text-transparent')} />
+							<Check class={cn('mr-2 size-4', value !== role.value && 'text-transparent')} />
 							{role.label}
 						</Command.Item>
 					{/each}

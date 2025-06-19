@@ -4,7 +4,7 @@
 	import * as ToggleGroup from '@/components/ui/toggle-group';
 	import * as Avatar from '@/components/ui/avatar';
 	import { cn } from '@/utils';
-	import { LoaderCircle, Users } from 'lucide-svelte';
+	import { LoaderCircle, Users } from '@lucide/svelte';
 	import { page } from '$app/state';
 	import { Button } from '@/components/ui/button';
 	import { _ } from '@services';
@@ -44,14 +44,14 @@
 			<Card.Root>
 				<Card.Header class="pb-2">
 					<Card.Title class="text-lg flex items-center">
-						<Users class="h-5 w-5 mr-2" />
+						<Users class="size-5 mr-2" />
 						{$_("modules.edit-contact-persons.members-card-header")}
 					</Card.Title>
 					<Card.Description></Card.Description>
 				</Card.Header>
 				<Card.Content class="space-y-6 pt-2">
 					{#if $organizationMembers.isLoading}
-						<LoaderCircle class="h-5 w-5 text-primary animate-spin mx-auto" />
+						<LoaderCircle class="size-5 text-primary animate-spin mx-auto" />
 					{/if}
 					{#if ($organizationMembers.data?.data.length ?? 0) < 1 && !$organizationMembers.isLoading}
 						<p>{$_("modules.edit-contact-persons.no-members")}</p>
@@ -71,7 +71,7 @@
 									)}
 									aria-label={`Select ${member.publicUserData?.firstName} ${member.publicUserData?.lastName}`}
 								>
-									<Avatar.Root class="h-6 w-6">
+									<Avatar.Root class="size-6">
 										<Avatar.Image src={member.publicUserData?.imageUrl}
 																	alt={member.publicUserData?.firstName + " " + member.publicUserData?.lastName} />
 										<Avatar.Fallback class="text-xs">

@@ -11,7 +11,7 @@
 	import { Control, Description, Field, FieldErrors, Label } from '@/components/ui/form';
 	import { _ } from '@services';
 	import { Textarea } from '@/components/ui/textarea';
-	import { CheckIcon, MessageCircleX, RefreshCwIcon } from 'lucide-svelte';
+	import { CheckIcon, MessageCircleX, RefreshCwIcon } from '@lucide/svelte';
 	import { AdvertisementPreview } from '@/@svelte/components';
 	import type { InferOutput } from 'valibot';
 
@@ -83,7 +83,7 @@
 								{#each feedbackTypeOptions as { value, label, icon, clazz }}
 									<Tabs.Trigger {...props} class={clazz} {value}>
 										{@const SvelteComponent = icon}
-									<SvelteComponent class="w-4 h-4 mr-2" />{label}</Tabs.Trigger>
+									<SvelteComponent class="size-4 mr-2" />{label}</Tabs.Trigger>
 								{/each}
 							</Tabs.List>
 						</Tabs.Root>

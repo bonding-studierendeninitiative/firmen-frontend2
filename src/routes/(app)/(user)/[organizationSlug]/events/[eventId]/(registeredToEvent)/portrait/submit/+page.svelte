@@ -26,7 +26,7 @@
 		Eye,
 		ChevronLeft,
 		LoaderCircle
-	} from 'lucide-svelte';
+	} from '@lucide/svelte';
 	import * as v from 'valibot';
 	import { superForm, type Infer } from 'sveltekit-superforms';
 	import { SubmitPortraitRequest } from '@schema';
@@ -186,7 +186,7 @@
 <div class="container mx-auto py-8 px-4">
 	<div class="flex items-center mb-8">
 		<Button variant="ghost" class="mr-4" onclick={() => goto('/portrait-example')}>
-			<ChevronLeft class="h-5 w-5 mr-1" />
+			<ChevronLeft class="size-5 mr-1" />
 			Back to Portraits
 		</Button>
 		<h1 class="text-3xl font-bold">Create New Portrait</h1>
@@ -201,7 +201,7 @@
 					>
 						<div
 							class={[
-								`flex items-center justify-center w-12 h-12 rounded-full mb-2 `,
+								`flex items-center justify-center size-12 rounded-full mb-2 `,
 								index < currentStep
 									? 'bg-primary text-primary-foreground'
 									: index === currentStep
@@ -209,7 +209,7 @@
 										: 'border-2 border-muted'
 							]}
 						>
-							<step.icon class="h-5 w-5" />
+							<step.icon class="size-5" />
 						</div>
 						<span class="text-xs md:text-sm text-center">{step.title}</span>
 					</div>
@@ -240,7 +240,7 @@
 							>
 								<Card.Header>
 									<Card.Title class="flex items-center">
-										<FileText class="h-5 w-5 mr-2" />
+										<FileText class="size-5 mr-2" />
 										Start from scratch
 									</Card.Title>
 									<Card.Description>Create a completely new portrait</Card.Description>
@@ -250,7 +250,7 @@
 								</Card.Content>
 								<Card.Footer class="justify-end">
 									{#if startOption === 'new'}
-										<Check class="h-5 w-5 text-primary" />
+										<Check class="size-5 text-primary" />
 									{/if}
 								</Card.Footer>
 							</Card.Root>
@@ -262,7 +262,7 @@
 							>
 								<Card.Header>
 									<Card.Title class="flex items-center">
-										<FileEdit class="h-5 w-5 mr-2" />
+										<FileEdit class="size-5 mr-2" />
 										Use a template
 									</Card.Title>
 									<Card.Description>Start with an existing portrait</Card.Description>
@@ -272,7 +272,7 @@
 								</Card.Content>
 								<Card.Footer class="justify-end">
 									{#if startOption === 'template'}
-										<Check class="h-5 w-5 text-primary" />
+										<Check class="size-5 text-primary" />
 									{/if}
 								</Card.Footer>
 							</Card.Root>
@@ -286,7 +286,7 @@
 						<RadioGroup.Root bind:value={selectedTemplate}>
 							<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
 								{#if $portraitTemplatesQuery.isLoading}
-									<LoaderCircle class="w-6 h-6 mx-auto animate-spin" />
+									<LoaderCircle class="size-6 mx-auto animate-spin" />
 								{:else}
 									{#each $portraitTemplatesQuery.data?.portraitTemplates ?? [] as template (template.id)}
 										<Label for={`portrait-template-${template.id}`}>
@@ -305,7 +305,7 @@
 															<Card.Description>{template.title}</Card.Description>
 														</div>
 														{#if selectedTemplate === template.id}
-															<Check class="h-5 w-5 text-primary" />
+															<Check class="size-5 text-primary" />
 														{/if}
 													</div>
 												</Card.Header>
@@ -785,19 +785,19 @@
 									<div class="mt-4 space-y-2">
 										{#if $formData.offersThesis}
 											<div class="flex items-center">
-												<Check class="h-5 w-5 text-primary mr-2" />
+												<Check class="size-5 text-primary mr-2" />
 												<span>Offers thesis opportunities</span>
 											</div>
 										{/if}
 										{#if $formData.offersInternships}
 											<div class="flex items-center">
-												<Check class="h-5 w-5 text-primary mr-2" />
+												<Check class="size-5 text-primary mr-2" />
 												<span>Offers internships</span>
 											</div>
 										{/if}
 										{#if $formData.offersOutOfCountryWork}
 											<div class="flex items-center">
-												<Check class="h-5 w-5 text-primary mr-2" />
+												<Check class="size-5 text-primary mr-2" />
 												<span>Offers international work</span>
 											</div>
 										{/if}
@@ -845,12 +845,12 @@
 		<div class="flex justify-between mt-12 max-w-4xl mx-auto">
 			{#if currentStep > 0}
 				<Button type="button" variant="outline" onclick={prevStep}>
-					<ArrowLeft class="h-4 w-4 mr-2" />
+					<ArrowLeft class="size-4 mr-2" />
 					Back
 				</Button>
 			{:else}
 				<Button type="button" variant="outline" onclick={() => goto('/portrait-example')}>
-					<ChevronLeft class="h-4 w-4 mr-2" />
+					<ChevronLeft class="size-4 mr-2" />
 					Back to Portraits
 				</Button>
 			{/if}
@@ -868,12 +868,12 @@
 							(currentStep === 0 && startOption === 'template' && !selectedTemplate)}
 					>
 						Next
-						<ArrowRight class="h-4 w-4 ml-2" />
+						<ArrowRight class="size-4 ml-2" />
 					</Button>
 				{:else}
 					<Button type="submit" disabled={$submitting}>
 						{#if $submitting}
-							<Loader2 class="mr-2 h-4 w-4 animate-spin" />
+							<Loader2 class="mr-2 size-4 animate-spin" />
 							Submitting...
 						{:else}
 							Submit Portrait

@@ -3,29 +3,42 @@
 	import { OrganizationSwitcher } from 'svelte-clerk';
 	import { USER_SIDEBAR_LINKS } from '@constant';
 	import { page } from '$app/state';
-	import { LoaderCircle } from 'lucide-svelte';
+	import { LoaderCircle } from '@lucide/svelte';
 
 	let activeUrl = $derived(page.url.pathname);
 	let { data, children } = $props();
+
+	type Org = {slug: string | null}
+
+	function getOrgUrl(organization: Org): string {
+		return`/${organization.slug}/dashboard`
+	}
 </script>
 
 <div class=" lg:flex w-full">
 	<Sidebar>
 		{#await data.organization}
-			<LoaderCircle class="w-10 h-10 mx-auto animate-spin text-white" />
+			<LoaderCircle class="size-10 mx-auto animate-spin text-white" />
 		{:then organization}
-			<OrganizationSwitcher appearance={
-			{elements: {
-				organizationSwitcherTrigger: 'text-white hover:text-white/80',
-				rootBox: 'ml-[0.45em]'
-			}}
-			} afterSelectOrganizationUrl={(organization) => {
-				return `/${organization.slug}/dashboard`;
-			}} hidePersonal={true} />
+			<OrganizationSwitcher
+				appearance={{
+					elements: {
+						organizationSwitcherTrigger: 'text-white! hover:text-white/80!',
+						rootBox: 'ml-[0.45em]'
+					}
+				}}
+				afterSelectOrganizationUrl={getOrgUrl}
+				hidePersonal={true}
+			/>
 
 			<div>
-				{#each USER_SIDEBAR_LINKS as { label, route, Icon } }
-					<SidebarItem href={`/${organization.slug}${route}`} {label} icon={Icon} active={activeUrl.includes(route)} />
+				{#each USER_SIDEBAR_LINKS as { label, route, Icon }}
+					<SidebarItem
+						href={`/${organization.slug}${route}`}
+						{label}
+						icon={Icon}
+						active={activeUrl.includes(route)}
+					/>
 				{/each}
 			</div>
 		{:catch error}
@@ -33,7 +46,7 @@
 		{/await}
 	</Sidebar>
 
-	<div class="h-[100dvh] w-full overflow-y-scroll">
+	<div class="h-dvh w-full overflow-y-scroll">
 		<div class="w-full px-16 py-22 bg-white">
 			{@render children?.()}
 		</div>

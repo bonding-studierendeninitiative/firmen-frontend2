@@ -130,7 +130,7 @@
 								</Field>
 							</div>
 						</div>
-						<div class="flex-grow">
+						<div class="grow">
 							<div class="mt-1">
 								<Field form={superform} name="organizationAddress.locality">
 									<Control >

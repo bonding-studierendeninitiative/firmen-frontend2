@@ -6,7 +6,7 @@
 <script lang="ts" generics="TData, TValue">
 	import { Button } from '@/components/ui/button';
 	import type { Column } from '@tanstack/svelte-table';
-	import { ArrowUp, ArrowDown, ArrowUpDown } from 'lucide-svelte';
+	import { ArrowUp, ArrowDown, ArrowUpDown } from '@lucide/svelte';
 
 	let { column, state }: { column: { id: string; header: string }; state: Column<TData, TValue> } =
 		$props();
@@ -17,10 +17,10 @@
 <Button class="px-0.5" variant="ghost" onclick={() => state.toggleSorting()}>
 	{column.header}
 	{#if sortDirection === 'asc'}
-		<ArrowDown class="ml-2 h-4 w-4" />
+		<ArrowDown class="ml-2 size-4" />
 	{:else if sortDirection === 'desc'}
-		<ArrowUp class="ml-2 h-4 w-4" />
+		<ArrowUp class="ml-2 size-4" />
 	{:else}
-		<ArrowUpDown class="ml-2 h-4 w-4" />
+		<ArrowUpDown class="ml-2 size-4" />
 	{/if}
 </Button>

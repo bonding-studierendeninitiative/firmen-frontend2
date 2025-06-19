@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Pagination as PaginationPrimitive } from "bits-ui";
-	import { cn } from "@/utils/tailwind";
+	import { cn } from "@/utils/ui";
 	import { type Props, buttonVariants } from "$lib/components/ui/button/index.js";
 
 	let {
@@ -26,7 +26,7 @@
 	{page}
 	class={cn(
 		buttonVariants({
-			variant: isActive ? "outline" : "ghost",
+			variant: isActive ? "outline-solid" : "ghost",
 			size,
 		}),
 		className

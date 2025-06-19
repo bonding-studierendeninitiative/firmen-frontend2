@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { _, number } from '@services';
-	import { Plus, Trash2, Save, Eye, ArrowUp, ArrowDown, Calendar } from 'lucide-svelte';
+	import { Plus, Trash2, Save, Eye, ArrowUp, ArrowDown, Calendar } from '@lucide/svelte';
 	import { Button, buttonVariants } from '@/components/ui/button';
 	import { Input } from '@/components/ui/input';
 	import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -28,10 +28,6 @@
 	import type { InferOutput } from 'valibot';
 	import { BuyOptionPreview } from '@/@svelte/modules';
 	import { cn } from '@/utils';
-	import { TrashIcon } from '@/@svelte/icons';
-	import { CaretDown, CaretUp } from 'svelte-radix';
-	import NumericInput from '@/@svelte/components/NumericInput/NumericInput.svelte';
-	import { Separator } from '@/components/ui/separator';
 	import { LocalizedDate } from '@/@svelte/components';
 
 	interface Props {
@@ -198,7 +194,7 @@
 			</div>
 			<div class="flex gap-2">
 				<Button type="submit" disabled={!isTainted($tainted)} class={cn(isTainted($tainted) ? "animate-pulse":null)}>
-					<Save class="mr-2 h-4 w-4" />
+					<Save class="mr-2 size-4" />
 					{$_("components.editBuyOptions.saveBuyOption")}
 				</Button>
 			</div>
@@ -228,9 +224,9 @@
 						</div>
 						<section class="py-4 space-y-4">
 							<div class="flex flex-nowrap justify-between gap-4 items-center">
-								<h3 class="font-semibold text-lg flex-grow">{$_("components.editBuyOptions.eventDays.header")}</h3>
+								<h3 class="font-semibold text-lg grow">{$_("components.editBuyOptions.eventDays.header")}</h3>
 								<Button onclick={handleCreateEventDay}>
-									<Plus class="mr-2 h-4 w-4" />
+									<Plus class="mr-2 size-4" />
 									Add event day
 								</Button>
 							</div>
@@ -246,7 +242,7 @@
 											<div class="flex items-center justify-between p-4 border rounded-md">
 												<div class="flex-1">
 													<div class="flex items-center gap-2">
-														<Calendar class="h-5 w-5 text-muted-foreground" />
+														<Calendar class="size-5 text-muted-foreground" />
 														<LocalizedDate format="dddd, LL" date={day.dayDate} />
 													</div>
 													<div class="mt-2 space-y-1">
@@ -260,7 +256,7 @@
 												<div class="flex gap-2 ml-4">
 													<Dialog>
 														<DialogTrigger class={cn(buttonVariants({variant: 'ghost', size: 'icon'}))}>
-															<Eye class="h-4 w-4" />
+															<Eye class="size-4" />
 														</DialogTrigger>
 														<DialogContent class="sm:max-w-[500px]">
 															<DialogHeader>
@@ -312,14 +308,14 @@
 																</div>
 															</div>
 															<DialogFooter>
-																<DialogClose class={buttonVariants({variant: "outline"})}>
+																<DialogClose class={buttonVariants({variant: "outline-solid"})}>
 																	{$_("common.confirm")}
 																</DialogClose>
 															</DialogFooter>
 														</DialogContent>
 													</Dialog>
 													<Button variant="ghost" size="icon" onclick={(e) => handleDeleteEventDay(e, index)}>
-														<Trash2 class="h-4 w-4 text-destructive" />
+														<Trash2 class="size-4 text-destructive" />
 													</Button>
 												</div>
 											</div>
@@ -331,7 +327,7 @@
 						{#if $formData.eventDays.length > 1}
 							<section class="py-4 space-y-4">
 								<h3
-									class="font-semibold text-lg flex-grow">{$_("components.editBuyOptions.eventDays.signUpDays.header")}</h3>
+									class="font-semibold text-lg grow">{$_("components.editBuyOptions.eventDays.signUpDays.header")}</h3>
 								<Tabs bind:value={$signUpDaysProxy}>
 									<TabsList>
 										{#each $formData.eventDays as _someDay, dayIndex}
@@ -353,7 +349,7 @@
 						<CardHeader class="flex flex-row items-center justify-between space-y-0 pb-2">
 							<CardTitle>{$_("components.editBuyOptions.services")}</CardTitle>
 							<Button size="sm" onclick={addService}>
-								<Plus class="mr-2 h-4 w-4" />
+								<Plus class="mr-2 size-4" />
 								{$_("components.editBuyOptions.addService")}
 							</Button>
 						</CardHeader>
@@ -367,14 +363,14 @@
 										</div>
 										<div class="flex gap-1">
 											<Button variant="ghost" size="icon" onclick={() => moveService(index, "up")}>
-												<ArrowUp class="h-4 w-4" />
+												<ArrowUp class="size-4" />
 											</Button>
 											<Button variant="ghost" size="icon" onclick={() => moveService(index, "down")}>
-												<ArrowDown class="h-4 w-4" />
+												<ArrowDown class="size-4" />
 											</Button>
 											<Dialog>
 												<DialogTrigger class={cn(buttonVariants({variant: 'ghost', size: 'icon'}))}>
-													<Eye class="h-4 w-4" />
+													<Eye class="size-4" />
 												</DialogTrigger>
 												<DialogContent class="sm:max-w-[500px]">
 													<DialogHeader>
@@ -408,7 +404,7 @@
 																	<DropdownMenu.Root>
 																		<DropdownMenu.Trigger>
 																			{#snippet child({ props })}
-																																				<Button class="!my-2 p-2" variant="outline" {...props}>
+																																				<Button class="my-2! p-2" variant="outline" {...props}>
 																					{#if $formData.services[index].valueType === 'STRING'}
 																						Textfeld für generische Werte
 																					{:else if $formData.services[index].valueType === 'BOOLEAN'}
@@ -439,13 +435,13 @@
 													</div>
 													<DialogFooter>
 														<DialogClose
-															class={buttonVariants({variant: "outline"})}>{$_("common.confirm")}</DialogClose>
+															class={buttonVariants({variant: "outline-solid"})}>{$_("common.confirm")}</DialogClose>
 													</DialogFooter>
 												</DialogContent>
 											</Dialog>
 
 											<Button variant="ghost" size="icon" onclick={() => removeService(index)}>
-												<Trash2 class="h-4 w-4 text-destructive" />
+												<Trash2 class="size-4 text-destructive" />
 											</Button>
 										</div>
 									</div>
@@ -459,7 +455,7 @@
 						<CardHeader class="flex flex-row items-center justify-between space-y-0 pb-2">
 							<CardTitle>{$_("components.editBuyOptions.packages")}</CardTitle>
 							<Button size="sm" onclick={addPackage}>
-								<Plus class="mr-2 h-4 w-4" />
+								<Plus class="mr-2 size-4" />
 								{$_("components.editBuyOptions.addPackage")}
 							</Button>
 						</CardHeader>
@@ -477,14 +473,14 @@
 										</div>
 										<div class="flex gap-1">
 											<Button variant="ghost" size="icon" onclick={() => movePackage(index, "left")}>
-												<ArrowUp class="h-4 w-4" />
+												<ArrowUp class="size-4" />
 											</Button>
 											<Button variant="ghost" size="icon" onclick={() => movePackage(index, "right")}>
-												<ArrowDown class="h-4 w-4" />
+												<ArrowDown class="size-4" />
 											</Button>
 											<Dialog>
 												<DialogTrigger class={cn(buttonVariants({variant: 'ghost', size: 'icon'}))}>
-													<Eye class="h-4 w-4" />
+													<Eye class="size-4" />
 												</DialogTrigger>
 												<DialogContent class="sm:max-w-[500px]">
 													<DialogHeader>
@@ -510,12 +506,12 @@
 													</div>
 													<DialogFooter>
 														<DialogClose
-															class={buttonVariants({variant: "outline"})}>{$_("common.confirm")}</DialogClose>
+															class={buttonVariants({variant: "outline-solid"})}>{$_("common.confirm")}</DialogClose>
 													</DialogFooter>
 												</DialogContent>
 											</Dialog>
 											<Button variant="ghost" size="icon" onclick={() => removePackage(index)}>
-												<Trash2 class="h-4 w-4 text-destructive" />
+												<Trash2 class="size-4 text-destructive" />
 											</Button>
 										</div>
 									</div>

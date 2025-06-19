@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { Progress as ProgressPrimitive, type WithoutChildrenOrChild } from "bits-ui";
-	import { cn } from "@/utils/tailwind";
+	import { Progress as ProgressPrimitive } from "bits-ui";
+	import { cn, type WithoutChildrenOrChild } from "@/utils/ui";
 
 	let {
 		ref = $bindable(null),
@@ -19,7 +19,7 @@
 	{...restProps}
 >
 	<div
-		class="bg-primary h-full w-full flex-1 transition-all"
+		class="bg-primary size-full flex-1 transition-all"
 		style={`transform: translateX(-${100 - (100 * (value ?? 0)) / (max ?? 1)}%)`}
 	></div>
 </ProgressPrimitive.Root>

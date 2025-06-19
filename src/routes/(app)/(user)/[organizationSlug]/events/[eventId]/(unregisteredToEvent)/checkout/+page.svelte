@@ -1,12 +1,12 @@
 <script lang="ts">
 	import { EventRegistrationCheckout } from '@/@svelte/modules';
-	import { LoaderCircle } from 'lucide-svelte';
+	import { LoaderCircle } from '@lucide/svelte';
 
 	let { data } = $props();
 </script>
 
 {#await data.eventRegistrationData}
-	<LoaderCircle class="w-10 h-10 mx-auto animate-spin" />
+	<LoaderCircle class="size-10 mx-auto animate-spin" />
 {:then eventDetails}
 	<EventRegistrationCheckout
 		event={eventDetails?.event}

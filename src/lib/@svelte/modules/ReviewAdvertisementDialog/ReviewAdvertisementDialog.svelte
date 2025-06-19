@@ -25,7 +25,7 @@
 	<Dialog.Trigger class={cn(buttonVariants({variant:"outline"}))} disabled={$reviewFormQuery.isLoading}>
 		Review&hellip;
 	</Dialog.Trigger>
-	<Dialog.Content class="max-w-screen-lg">
+	<Dialog.Content class="max-w-(--breakpoint-lg)">
 		{#if $reviewFormQuery.data}
 		<ReviewAdvertisementForm bind:open {advertisement} catalogueDataReviewForm={$reviewFormQuery.data} />
 			{/if}

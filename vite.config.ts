@@ -2,9 +2,11 @@ import { sentrySvelteKit } from '@sentry/sveltekit';
 import { sveltekit } from '@sveltejs/kit/vite';
 import { defineConfig } from 'vite';
 import { visualizer } from 'rollup-plugin-visualizer';
+import tailwindcss from "@tailwindcss/vite";
 
 export default defineConfig({
 	plugins: [
+		tailwindcss(),
 		sentrySvelteKit({
 			debug: true,
 			sourceMapsUploadOptions: {
@@ -16,7 +18,8 @@ export default defineConfig({
 					ignore: ['**/build/client/**/*'],
 					filesToDeleteAfterUpload: ['./build/**/*.map']
 				}
-			}
+			},
+			autoUploadSourceMaps: true,
 		}),
 		sveltekit(),
 		visualizer({

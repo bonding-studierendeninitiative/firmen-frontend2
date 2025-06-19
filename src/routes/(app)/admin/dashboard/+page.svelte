@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { _ } from '@services';
-	import { Archive, Globe, Shield } from 'lucide-svelte';
+	import { Archive, Globe, Shield } from '@lucide/svelte';
 	import * as Card from '@/components/ui/card';
 	import
 

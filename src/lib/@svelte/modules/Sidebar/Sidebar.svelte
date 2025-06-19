@@ -1,7 +1,7 @@
 <script lang="ts">
 	import * as Icons from '$lib/@svelte/icons';
 	import { page } from '$app/state';
-	import { cn } from '@/utils/tailwind';
+	import { cn } from '@/utils/ui';
 	import { _ } from '@services';
 	import { UserButton } from 'svelte-clerk';
 	interface Props {
@@ -27,10 +27,11 @@
 		} else return '/sidebar_background.png';
 	};
 
-	const SvelteComponent = $derived(Icons['WhiteLogoIcon']);
+	const WhiteLogo = $derived(Icons['WhiteLogoIcon']);
+	const Notification = $derived(Icons['NotificationIcon']);
 </script>
 
-<div class=" !bg-white lg:flex">
+<div class=" bg-white! lg:flex">
 	<nav class="bg-white border-b border-gray-300 lg:hidden">
 		<!-- Mobile Navbar -->
 		<div class="flex justify-between items-center px-9 py-2">
@@ -40,12 +41,13 @@
 			</button>
 			<!-- Logo -->
 			<div class="ml-1">
-				<img src="/logo.png" alt="logo" class="h-4 w-18" />
+				<img src="/logo.png" alt="logo" class="h-auto w-18" />
 			</div>
 
 			<!-- Ícono de Notificación y Perfil -->
 			<div class="space-x-4">
 				<button aria-label={$_('common.notifications')} >
+					<Notification />
 					<i class="fas fa-bell text-cyan-500 text-lg"></i>
 				</button>
 
@@ -68,14 +70,13 @@
 		<!-- Items -->
 		<div class="p-6 space-y-4 h-full flex flex-col justify-between">
 			<div>
-				<SvelteComponent />
-				<div class="!mt-10 space-y-2">
+				<WhiteLogo />
+				<div class="mt-10! space-y-2">
 					{@render children?.()}
 				</div>
 			</div>
-			<UserButton showName="true" appearance={{elements: {
-				rootBox: 'text-white',
-				userButtonOuterIdentifier: 'text-white',
+			<UserButton showName={true} appearance={{elements: {
+				userButtonTrigger: 'text-white! hover:text-white/80!',
 				userButtonBox: 'flex-row-reverse',
 			}}} />
 		</div>

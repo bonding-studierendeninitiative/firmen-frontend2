@@ -17,7 +17,7 @@
 		children
 	}: Props = $props();
 
-	const activeTabStyle = '  border-b-2 border-brand !text-brand';
+	const activeTabStyle = '  border-b-2 border-brand text-brand!';
 </script>
 
 <div class={`bg-white ${hasBorder ? 'border-b-2 border-stone-200' : ''}`}>
@@ -26,7 +26,7 @@
 			{#each tabHeadings as tabHeading, index (tabHeading)}
 				<button
 					onclick={() => handleTabChange(index)}
-					class={`text-stone-500 py-4 px-0 ${index === 0 ? 'mr-6' : 'mx-6'} block text-sm font-medium  focus:outline-none`.concat(
+					class={`text-stone-500 py-4 px-0 ${index === 0 ? 'mr-6' : 'mx-6'} block text-sm font-medium  focus:outline-hidden`.concat(
 						index === activeTab ? activeTabStyle : ''
 					)}
 				>

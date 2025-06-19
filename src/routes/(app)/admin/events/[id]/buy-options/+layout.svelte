@@ -7,7 +7,7 @@
 	import { _ } from '@services';
 	import type { InferOutput } from 'valibot';
 	import { type GetBuyOptionsResponse } from '@schema';
-	import { LoaderCircle } from 'lucide-svelte';
+	import { LoaderCircle } from '@lucide/svelte';
 	import { fade } from 'svelte/transition';
 	import { writable } from 'svelte/store';
 	import { setContext } from 'svelte';
@@ -35,7 +35,7 @@
 </script>
 
 {#await data.buyOptionData}
-	<LoaderCircle class="animate-spin w-14 h-14 mx-auto" />
+	<LoaderCircle class="animate-spin size-14 mx-auto" />
 {:then buyOptions}
 	<section in:fade class="mt-10 flex flex-col gap-y-8">
 		{#if (buyOptions?.totalElements ?? 0) > 0}
@@ -50,7 +50,7 @@
 					}}
 				/>
 				<DeleteBuyOption />
-				<div class="flex-grow"></div>
+				<div class="grow"></div>
 				<Button
 					onclick={() => {
 						$activateBuyOption.mutate({
@@ -76,7 +76,7 @@
 	<p class="text-red-500">Error: {error.message}</p>
 {/await}
 {#await data.createForm}
-	<LoaderCircle class="animate-spin w-16 h-16" />
+	<LoaderCircle class="animate-spin size-16" />
 {:then createForm}
 	<CreateBuyOption bind:isDialogOpen={$isDialogOpen} {createForm} />
 {:catch error}

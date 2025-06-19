@@ -17,7 +17,7 @@
 			<div class=" flex justify-between items-center mb-6">
 				<div class=" flex">
 					<div
-						class={`rounded-lg bg-brand text-white font-extrabold inline-flex justify-center items-center  w-12 h-12`}
+						class={`rounded-lg bg-brand text-white font-extrabold inline-flex justify-center items-center size-12`}
 					>
 						PDF
 					</div>
@@ -28,7 +28,7 @@
 						</h4>
 					</div>
 				</div>
-				<Button onClick={() => undefined} classes=" inline shadow-custom !py-1"
+				<Button onClick={() => undefined} classes=" inline shadow-custom py-1!"
 					>{$_('common.download')}</Button
 				>
 			</div>

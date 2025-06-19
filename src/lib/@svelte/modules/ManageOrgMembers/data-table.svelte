@@ -3,7 +3,7 @@
 	import DataTableActions from './data-table-actions.svelte';
 	import DataTableUserIcon from './data-table-user-icon.svelte';
 	import { _ } from '@services';
-	import { cn } from '@/utils/tailwind';
+	import { cn } from '@/utils/ui';
 	import type { OrganizationMembership } from 'svelte-clerk/server';
 	import { LocalizedDate, SearchInput, QueryDataTable } from '@/@svelte/components';
 	import CreateOrgInviteDialog from './create-org-invite-dialog.svelte';

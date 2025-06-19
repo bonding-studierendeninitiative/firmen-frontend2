@@ -9,7 +9,7 @@
 	import { trpc } from '@/trpc/client';
 	import { page } from '$app/state';
 	import { DetailedDocumentOutput } from '@api/client';
-	import { LoaderCircle } from 'lucide-svelte';
+	import { LoaderCircle } from '@lucide/svelte';
 
 	interface Props {
 		open?: boolean;
@@ -74,13 +74,13 @@
 					class="aspect-video bg-gray-100 dark:bg-gray-700 rounded-md flex items-center justify-center overflow-hidden"
 				>
 					{#if $thumbnail.isLoading}
-						<LoaderCircle class="mx-auto animate-spin w-8 h-8" />
+						<LoaderCircle class="mx-auto animate-spin size-8" />
 					{:else if $thumbnail.data}
 						{#if logo.activeVersion?.contentType?.startsWith('image/')}
 							<img
 								src={$thumbnail.data || '/placeholder.svg'}
 								alt={logo.title}
-								class="object-contain w-full h-full"
+								class="object-contain size-full"
 							/>
 						{:else}
 							<PdfFilePreview url={`${$thumbnail.data}#toolbar=0&navpanes=0&scrollbar=0`} />

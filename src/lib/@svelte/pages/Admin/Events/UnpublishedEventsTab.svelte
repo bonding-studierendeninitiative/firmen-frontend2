@@ -23,11 +23,11 @@
 	<div>
 		<ButtonIcon
 			onClick={() => (isListView = false)}
-			classes={` mr-1 ${!isListView ? '!text-brand' : ''}`}
+			classes={` mr-1 ${!isListView ? 'text-brand!' : ''}`}
 		>
 			<GridIcon />
 		</ButtonIcon>
-		<ButtonIcon onClick={() => (isListView = true)} classes={`${isListView ? '!text-brand' : ''}`}>
+		<ButtonIcon onClick={() => (isListView = true)} classes={`${isListView ? 'text-brand!' : ''}`}>
 			<ListIcon />
 		</ButtonIcon>
 	</div>

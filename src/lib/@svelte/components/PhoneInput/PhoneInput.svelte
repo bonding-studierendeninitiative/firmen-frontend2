@@ -3,7 +3,7 @@
 	import { TelInput, normalizedCountries, isSelected, clickOutsideAction } from 'svelte-tel-input';
 	import 'svelte-tel-input/styles/flags.css';
 	import type { Country, CountryCode, DetailedValue } from 'svelte-tel-input/types';
-	import { cn } from '@/utils/tailwind';
+	import { cn } from '@/utils/ui';
 
 	let searchText = $state('');
 	let isOpen = $state(false);
@@ -134,7 +134,7 @@
 			<button
 				id="states-button"
 				data-dropdown-toggle="dropdown-states"
-				class="relative flex-shrink-0 overflow-hidden z-3 whitespace-nowrap inline-flex items-center py-2.5 px-4 text-sm font-medium text-center text-gray-500 bg-gray-100 border border-gray-300 rounded-l-lg hover:bg-gray-200 focus:outline-none dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-white dark:border-gray-600"
+				class="relative shrink-0 overflow-hidden z-3 whitespace-nowrap inline-flex items-center py-2.5 px-4 text-sm font-medium text-center text-gray-500 bg-gray-100 border border-gray-300 rounded-l-lg hover:bg-gray-200 focus:outline-hidden dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-white dark:border-gray-600"
 				type="button"
 				role="combobox"
 				aria-controls="dropdown-countries"
@@ -144,7 +144,7 @@
 			>
 				{#if selectedCountry && selectedCountry !== null}
 					<div class="inline-flex items-center text-left">
-						<span class="flag flag-{selectedCountry.toLowerCase()} flex-shrink-0 mr-3"></span>
+						<span class="flag flag-{selectedCountry.toLowerCase()} shrink-0 mr-3"></span>
 						<span class="text-gray-600 dark:text-gray-400">+{selectedCountryDialCode}</span>
 					</div>
 				{:else}
@@ -152,7 +152,7 @@
 				{/if}
 				<svg
 					aria-hidden="true"
-					class="ml-1 w-4 h-4 {isOpen ? 'rotate-180' : ''}"
+					class="ml-1 size-4 {isOpen ? 'rotate-180' : ''}"
 					fill="currentColor"
 					viewBox="0 0 20 20"
 					xmlns="http://www.w3.org/2000/svg"
@@ -168,7 +168,7 @@
 			{#if isOpen}
 				<div
 					id="dropdown-countries"
-					class="absolute z-10 max-w-fit bg-white rounded divide-y divide-gray-100 shadow dark:bg-gray-700 overflow-hidden translate-y-11"
+					class="absolute z-10 max-w-fit bg-white rounded divide-y divide-gray-100 shadow-sm dark:bg-gray-700 overflow-hidden translate-y-11"
 					data-popper-reference-hidden=""
 					data-popper-escaped=""
 					data-popper-placement="bottom"
@@ -184,7 +184,7 @@
 						<input
 							aria-autocomplete="list"
 							type="text"
-							class="px-4 py-2 text-gray-900 focus:outline-none w-full sticky top-0"
+							class="px-4 py-2 text-gray-900 focus:outline-hidden w-full sticky top-0"
 							bind:value={searchText}
 							placeholder={searchPlaceholder}
 						/>
@@ -204,7 +204,7 @@
 									}}
 								>
 									<div class="inline-flex items-center text-left">
-										<span class="flag flag-{country.iso2.toLowerCase()} flex-shrink-0 mr-3"></span>
+										<span class="flag flag-{country.iso2.toLowerCase()} shrink-0 mr-3"></span>
 										<span class="mr-2">{country.name}</span>
 										<span class="text-gray-500">+{country.dialCode}</span>
 									</div>
@@ -225,7 +225,7 @@
 			{name}
 			{options}
 			{required}
-			class="text-sm rounded-r-lg block w-full p-2.5 focus:outline-none border border-gray-300 border-l-gray-100 dark:border-l-gray-700 dark:border-gray-600 bg-gray-50 dark:bg-gray-700
+			class="text-sm rounded-r-lg block w-full p-2.5 focus:outline-hidden border border-gray-300 border-l-gray-100 dark:border-l-gray-700 dark:border-gray-600 bg-gray-50 dark:bg-gray-700
         dark:placeholder-gray-400 dark:text-white text-gray-900"
 		/>
 	</div>

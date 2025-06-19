@@ -7,7 +7,7 @@
 
 	let { src, userName }: Props = $props();
 </script>
-<Avatar.Root class="w-6 h-6">
+<Avatar.Root class="size-6">
 	<Avatar.Image src={src} alt={userName} />
 	<Avatar.Fallback>{userName[0]}</Avatar.Fallback>
 </Avatar.Root>

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { _ } from '@services';
 	import { NoDataFound } from '@/@svelte/components';
-	import { LoaderCircle } from 'lucide-svelte';
+	import { LoaderCircle } from '@lucide/svelte';
 	import { fade } from 'svelte/transition';
 	import RegistrationCard from './registration-card.svelte';
 	import { trpc } from '@/trpc/client';
@@ -38,7 +38,7 @@
 			</h2>
 		</div>
 		{#await resolveEventRegistrationsQuery(data.eventRegistrations)}
-			<LoaderCircle class="w-10 h-10 mx-auto animate-spin" />
+			<LoaderCircle class="size-10 mx-auto animate-spin" />
 		{:then _ignored}
 			{@const allEventRegistrations = $eventRegistrationsQuery?.data?.pages.flatMap(page => page.eventRegistrations) ?? []}
 			<div in:fade class="mt-2 @container/registrations">

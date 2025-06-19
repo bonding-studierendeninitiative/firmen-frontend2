@@ -12,7 +12,7 @@
 </script>
 
 <div class="flex flex-row items-center gap-2">
-	<Avatar.Root class="w-6 h-6" >
+	<Avatar.Root class="size-6" >
 		<Avatar.Image src={organization.logo} />
 		<Avatar.Fallback>{organization.name[0]}</Avatar.Fallback>
 	</Avatar.Root>

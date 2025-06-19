@@ -9,7 +9,7 @@
 	import { valibotClient } from 'sveltekit-superforms/adapters';
 	import { UploadAdvertisementRequest } from '@schema';
 	import { cn } from '@/utils';
-	import { Plus } from 'lucide-svelte';
+	import { Plus } from '@lucide/svelte';
 
 	interface Props {
 		open: boolean;
@@ -35,7 +35,7 @@
 
 <Dialog.Root bind:open>
 	<Dialog.Trigger class={cn(buttonVariants({variant: 'default'}), "mr-2")}>
-		<Plus class="h-4 w-4 mr-2" />
+		<Plus class="size-4 mr-2" />
 		{$_("common.upload")}
 	</Dialog.Trigger>
 	<Dialog.Content>

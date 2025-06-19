@@ -42,7 +42,7 @@
 					<Card.Root
 						class={[
 							event.id === selectedEvent &&
-								'bg-muted outline-black outline-2 outline outline-offset-1'
+								'bg-muted outline-black outline-2 outline-solid outline-offset-1'
 						]}
 					>
 						<Card.Header>

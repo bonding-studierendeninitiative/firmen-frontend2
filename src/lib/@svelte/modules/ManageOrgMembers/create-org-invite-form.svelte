@@ -1,14 +1,14 @@
 <script lang="ts">
 	import { _ } from '@services';
-	import LoaderCircle from 'lucide-svelte/icons/loader-circle';
+	import LoaderCircle from '@lucide/svelte/icons/loader-circle';
 	import { Button } from '@/components/ui/button';
 	import { Control, Description, Field, FieldErrors, Label } from '@/components/ui/form';
-	import { Input } from '@/@svelte/components';
 	import { superForm, type SuperValidated } from 'sveltekit-superforms';
 	import { type CreateOrgInviteRequest, CreateOrgInviteRequestSchema } from '@schema';
 	import { valibot } from 'sveltekit-superforms/adapters';
 	import { toast } from 'svelte-sonner';
 	import type { InferOutput } from 'valibot';
+	import { Input } from '@/components/ui/input';
 
 	interface Props {
 		inviteMemberDialogOpen?: boolean;
@@ -60,7 +60,7 @@
 			>
 			{#if $submitting}
 				<Button disabled>
-					<LoaderCircle class="mr-2 h-4 w-4 animate-spin" />{$_(
+					<LoaderCircle class="mr-2 size-4 animate-spin" />{$_(
 						'modules.manage-org-members.invite'
 					)}
 				</Button>

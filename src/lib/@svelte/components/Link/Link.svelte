@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { cn } from '@/utils/tailwind';
+	import { cn } from '@/utils/ui.js';
 	import { type Props, linkVariants } from './index.js';
 
 	let {

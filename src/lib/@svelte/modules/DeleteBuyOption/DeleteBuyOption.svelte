@@ -4,7 +4,7 @@
 	import { Button } from '@/components/ui/form';
 	import { page } from '$app/state';
 	import { TrashIcon } from '@/@svelte/icons';
-	import { LoaderCircle } from 'lucide-svelte';
+	import { LoaderCircle } from '@lucide/svelte';
 	import { buttonVariants } from '@/components/ui/button';
 	import { trpc } from '@/trpc/client';
 	import { goto } from '$app/navigation';
@@ -22,7 +22,7 @@
 		disabled={page.params.buyOptionId === null}
 		class={[buttonVariants({ variant: 'ghost', size: 'icon' }), 'text-red-500 hover:text-red-700']}
 	>
-		<TrashIcon classes="w-6 h-6" />
+		<TrashIcon classes="size-6" />
 	</Dialog.Trigger>
 	<Dialog.Content>
 		<Dialog.Header>
@@ -59,7 +59,7 @@
 					}}
 				>
 					{#if $deleteBuyOption.isPending}
-						<LoaderCircle class="h-4 w-4 animate-spin" />
+						<LoaderCircle class="size-4 animate-spin" />
 					{:else}
 						{$_('common.delete')}
 					{/if}

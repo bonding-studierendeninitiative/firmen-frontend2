@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { _ } from '@services';
-	import { LoaderCircle } from 'lucide-svelte';
+	import { LoaderCircle } from '@lucide/svelte';
 	import { derived, type Readable, readable, writable } from 'svelte/store';
 	import { SearchInput } from '@/@svelte/components';
 	import { CreateOrgDialog } from '@/@svelte/modules';
@@ -65,12 +65,12 @@
 			type="text"
 			bind:value={$queryValue}
 		/>
-		<div class="flex-grow"></div>
+		<div class="grow"></div>
 		<CreateOrgDialog />
 		<ImportLegacyOrgDialog />
 	</section>
 	{#if $orgsQuery.isLoading}
-		<LoaderCircle class="w-10 h-10 mx-auto animate-spin" />
+		<LoaderCircle class="size-10 mx-auto animate-spin" />
 	{:else if $orgsData}
 		<OrganizationsDataTable
 			isLoading={$orgsQuery.isFetching}

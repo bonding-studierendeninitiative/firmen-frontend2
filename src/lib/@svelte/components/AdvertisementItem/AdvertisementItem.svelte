@@ -8,7 +8,7 @@
 	import type { DetailedDocumentOutput } from '@api/client';
 	import { trpc } from '@/trpc/client';
 	import { page } from '$app/state';
-	import { LoaderCircle } from 'lucide-svelte';
+	import { LoaderCircle } from '@lucide/svelte';
 	interface Props {
 		advertisement: DetailedDocumentOutput;
 		class?: string;
@@ -40,7 +40,7 @@
 	>
 		<Card.Header class="p-4">
 			<div
-				class="[aspect-ratio:1/_1.41] bg-gray-100 dark:bg-gray-700 rounded-md flex items-center justify-center gap-2 overflow-hidden relative"
+				class="aspect-[1/1.41] bg-gray-100 dark:bg-gray-700 rounded-md flex items-center justify-center gap-2 overflow-hidden relative"
 			>
 				<div
 					class="absolute inset-0 flex items-center transition-opacity duration-300 justify-center opacity-0 hover:opacity-100 focus-within:opacity-100 bg-gray-900/60"
@@ -50,12 +50,12 @@
 					>
 				</div>
 				{#if advertisement.activeVersion?.uploadStatus === 'UPLOADED' || $thumbnail.isLoading}
-					<LoaderCircle class="mx-auto animate-spin w-5" />
+					<LoaderCircle class="mx-auto animate-spin size-5" />
 				{:else if $thumbnail.data}
 					<img
 						src={$thumbnail.data || '/placeholder.svg'}
 						alt={advertisement.title}
-						class="object-contain w-full h-full"
+						class="object-contain size-full"
 					/>
 				{/if}
 			</div>

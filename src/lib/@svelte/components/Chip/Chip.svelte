@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { cn } from '@/utils/tailwind';
+	import { cn } from '@/utils/ui';
 	import { tv, type VariantProps } from 'tailwind-variants';
 
 	interface Props {

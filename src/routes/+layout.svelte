@@ -41,7 +41,7 @@
 
 {#if $isLocaleLoading}
 	<div class="flex justify-center items-center h-screen">
-		<div class="w-12 h-12 rounded-full border-stone-500 border-4 border-t-transparent animate-spin">
+		<div class="size-12 rounded-full border-stone-500 border-4 border-t-transparent animate-spin">
 		</div>
 	</div>
 {:else}

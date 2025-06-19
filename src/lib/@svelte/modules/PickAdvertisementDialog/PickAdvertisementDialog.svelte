@@ -4,7 +4,7 @@
 	import * as RadioGroup from '@/components/ui/radio-group';
 	import { AdvertisementItem, NoDataFound } from '@/@svelte/components';
 	import { Label } from '@/components/ui/label';
-	import { CheckCircle, CircleDashed, LoaderCircle } from 'lucide-svelte';
+	import { CheckCircle, CircleDashed, LoaderCircle } from '@lucide/svelte';
 	import { ScrollArea } from '@/components/ui/scroll-area';
 	import { Button } from '@/components/ui/form';
 	import { _ } from '@services';
@@ -34,14 +34,14 @@
 </script>
 
 <Dialog.Root bind:open>
-	<Dialog.Content class="max-w-[80dvw] max-h-[80dvh] @container/pickAdvertisement">
+	<Dialog.Content class="max-w-[80dvw] max-h-[80dvh] @container/pick-advertisement">
 		<Dialog.Header>
 			<Dialog.Title>{$_('modules.pick-advertisement-dialog.title')}</Dialog.Title>
 			<Dialog.Description>{$_('modules.pick-advertisement-dialog.description')}</Dialog.Description>
 		</Dialog.Header>
 		<ScrollArea class="max-h-[70dvh]">
 			{#if $advertisements.isLoading}
-				<LoaderCircle class="w-10 h-10 mx-auto animate-spin" />
+				<LoaderCircle class="size-10 mx-auto animate-spin" />
 			{:else if $advertisements.data?.documents?.length === 0}
 				<NoDataFound
 					heading={$_('modules.pick-advertisement-dialog.no-data')}
@@ -52,7 +52,7 @@
 			{:else}
 				<RadioGroup.Root bind:value={selectedAdvertisement}>
 					<div
-						class="grid grid-cols-1 gap-4 @sm/pickAdvertisement:grid-cols-2 @xl/pickAdvertisement:grid-cols-4"
+						class="grid grid-cols-1 gap-4 @sm/pick-advertisement:grid-cols-2 @xl/pick-advertisement:grid-cols-4"
 					>
 						{#each $advertisements.data?.documents ?? [] as advertisement}
 							<Label
@@ -65,9 +65,9 @@
 									class="sr-only"
 								/>
 								{#if advertisement.id === selectedAdvertisement}
-									<CheckCircle class="w-5 h-5 text-green-500" />
+									<CheckCircle class="size-5 text-green-500" />
 								{:else}
-									<CircleDashed class="w-5 h-5 text-gray-500" />
+									<CircleDashed class="size-5 text-gray-500" />
 								{/if}
 								<AdvertisementItem {advertisement} />
 							</Label>

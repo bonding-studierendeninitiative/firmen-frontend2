@@ -2,7 +2,7 @@
 	import Chip from '../Chip/Chip.svelte';
 	import { Checkbox } from '@/components/ui/checkbox/index.js';
 	import { Label } from '@/components/ui/label/index.js';
-	import { CircleCheck } from 'lucide-svelte';
+	import { CircleCheck } from '@lucide/svelte';
 	import type { GetAddonPackageTemplateResponse } from '@schema';
 	import * as HoverCard from '$lib/components/ui/hover-card/index.js';
 	import type { InferOutput } from 'valibot';
@@ -127,7 +127,7 @@
 				<div class=" px-3 py-1 flex items-center justify-between ml-8">
 					<div class="flex items-center space-x-2">
 						{#if checkedPKG}
-							<CircleCheck class="h-4 w-4" />
+							<CircleCheck class="size-4" />
 						{:else}
 							<Checkbox
 								id={addon.id}

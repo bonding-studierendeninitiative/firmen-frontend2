@@ -23,7 +23,7 @@
 		CreateEventRegistrationSchema,
 		type GetBuyOptionResponse
 	} from '@schema';
-	import { CalendarDays, Check } from 'lucide-svelte';
+	import { CalendarDays, Check } from '@lucide/svelte';
 	import type { InferOutput } from 'valibot';
 
 	interface Props {
@@ -153,7 +153,7 @@
 		</div>
 	</div>
 	<footer class=" flex items-center justify-center">
-		<Button variant="gradient" class="!py-1.5" onclick={() => goto(`/${orgSlug}/events`)}>
+		<Button variant="gradient" class="py-1.5!" onclick={() => goto(`/${orgSlug}/events`)}>
 			{$_('common.viewEvents')}
 		</Button>
 	</footer>
@@ -179,7 +179,7 @@
 		</Breadcrumb.List>
 	</Breadcrumb.Root>
 </div>
-<div class="max-w-screen-lg mx-auto">
+<div class="max-w-(--breakpoint-lg) mx-auto">
 	<div class=" flex justify-between items-start">
 		<h3 class=" text-xl font-extrabold text-stone-800">
 			{$_('user-pages.events.registrationForm')}
@@ -261,7 +261,7 @@
 						</Field>
 					</div>
 				</div>
-				<div class="flex-grow">
+				<div class="grow">
 					<div class="mt-1">
 						<Field form={superform} name="contractAddressCity">
 							<Control>
@@ -375,7 +375,7 @@
 						</Field>
 					</div>
 				</div>
-				<div class="flex-grow">
+				<div class="grow">
 					<div class="mt-1">
 						<Field form={superform} name="billingCity">
 							<Control>
@@ -491,7 +491,7 @@
 						<div class="flex justify-between items-start gap-2">
 							<div>
 								<div class="flex items-center gap-2 mb-2">
-									<CalendarDays class="h-5 w-5 text-muted-foreground" />
+									<CalendarDays class="size-5 text-muted-foreground" />
 									<LocalizedDate
 										date={day.dayDate}
 										format="LL"
@@ -506,9 +506,9 @@
 							</div>
 							{#if $formData.selectedEventDays.includes(day.dayDate)}
 								<div
-									class="h-6 w-6 rounded-full bg-primary flex-shrink-0 flex-grow-0 flex items-center justify-center"
+									class="size-6 rounded-full bg-primary shrink-0 grow-0 flex items-center justify-center"
 								>
-									<Check class="h-4 w-4 text-primary-foreground" />
+									<Check class="size-4 text-primary-foreground" />
 								</div>
 							{/if}
 						</div>

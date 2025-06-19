@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { _ } from '@services';
 	import { page } from '$app/state';
-	import { cn } from '@/utils/tailwind';
+	import { cn } from '@/utils/ui';
 
 	interface Props {
 		tabs: {
@@ -14,7 +14,7 @@
 
 	let { tabs, hasBorder = true, children }: Props = $props();
 
-	const activeTabStyle = '  border-b-2 border-brand !text-brand';
+	const activeTabStyle = '  border-b-2 border-brand text-brand!';
 </script>
 
 <div class={`bg-white ${hasBorder ? 'border-b-2 border-stone-200' : ''}`}>
@@ -24,7 +24,7 @@
 				<a
 					href={tab.href}
 					class={cn(
-						'text-stone-500 py-4 px-0 block text-sm font-medium focus:outline-none',
+						'text-stone-500 py-4 px-0 block text-sm font-medium focus:outline-hidden',
 						index === 0 ? 'mr-6' : 'mx-6',
 						page.url.href.includes(tab.href) ? activeTabStyle : undefined
 					)}

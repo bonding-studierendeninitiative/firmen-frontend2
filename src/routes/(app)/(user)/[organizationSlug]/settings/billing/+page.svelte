@@ -2,7 +2,7 @@
 	import { _ } from '@services';
 	import { BillingAddressCard } from '@/@svelte/components';
 	import { AddBillingAddressTemplate } from '@/@svelte/modules';
-	import { LoaderCircle } from 'lucide-svelte';
+	import { LoaderCircle } from '@lucide/svelte';
 	import { fade } from 'svelte/transition';
 
 	let { data } = $props();
@@ -17,7 +17,7 @@
 			<h4 class=" text-stone-500 text-sm">{$_('user-pages.settings.billingsSubHeading')}</h4>
 		</section>
 		{#await data.pageData}
-			<LoaderCircle class="w-10 h-10 mx-auto animate-spin" />
+			<LoaderCircle class="size-10 mx-auto animate-spin" />
 		{:then {makeBillingAddressTemplateDefaultForm, deleteBillingAddressTemplateForm, createBillingAddressTemplateForm, billingAddressTemplates, organization }}
 			<section in:fade class="flex flex-col @3xl:col-span-2 col-span-3">
 				{#each (billingAddressTemplates ?? []).filter(Boolean) as billingAddress, index (index)}

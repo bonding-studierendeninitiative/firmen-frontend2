@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { ErrorMessage } from '../ErrorMessage';
-	import { cn } from '@/utils/tailwind';
+	import { cn } from '@/utils/ui';
 
 	type HandleInputType = undefined | { (e: any): void };
 
@@ -39,7 +39,7 @@
 	}: Props = $props();
 </script>
 
-<div class={cn('flex-grow', rest.disabled && 'opacity-50')}>
+<div class={cn('grow', rest.disabled && 'opacity-50')}>
 	{#if label}
 		<label class="block mb-1.5 font-medium marker:text-sm text-stone-800" for={label}
 			>{label}
@@ -78,7 +78,7 @@
 					handleInput?.(e);
 				}}
 				class={cn(
-					'rounded-lg overflow-visible w-full border border-solid border-gray-300 bg-white shadow-custom flex p-2 pl-3 items-center gap-2 focus:outline-none  text-stone-800 text-sm font-normal ',
+					'rounded-lg overflow-visible w-full border border-solid border-gray-300 bg-white shadow-custom flex p-2 pl-3 items-center gap-2 focus:outline-hidden  text-stone-800 text-sm font-normal ',
 					classes
 				)}
 				{...rest}

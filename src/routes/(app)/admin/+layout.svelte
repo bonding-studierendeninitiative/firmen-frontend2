@@ -3,7 +3,7 @@
 	import { ADMIN_SIDEBAR_LINKS } from '@constant';
 	import { page } from '$app/state';
 	import { trpc } from '$lib/trpc/client';
-	import { LoaderCircle } from 'lucide-svelte';
+	import { LoaderCircle } from '@lucide/svelte';
 	import { writable } from 'svelte/store';
 
 	let activeUrl = $derived(page.url.pathname);
@@ -39,9 +39,9 @@
 		</div>
 	</Sidebar>
 
-	<div class="h-[100dvh] w-full flex-grow overflow-y-scroll">
+	<div class="h-dvh w-full grow overflow-y-scroll">
 		{#if $jobs.isLoading}
-			<LoaderCircle class="w-16 h-16 mx-auto animate-spin" />
+			<LoaderCircle class="size-16 mx-auto animate-spin" />
 		{:else if $jobs.data}
 			<AdminJobs jobs={$jobs.data?.jobs ?? []} />
 		{/if}

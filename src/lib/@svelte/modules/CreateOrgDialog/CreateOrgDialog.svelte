@@ -2,7 +2,7 @@
 	import { buttonVariants } from '@/components/ui/button';
 	import * as Dialog from '$lib/components/ui/dialog';
 	import { cn } from '@/utils';
-	import { CirclePlus } from 'lucide-svelte';
+	import { CirclePlus } from '@lucide/svelte';
 	import { _ } from '@services';
 	import CreateOrgForm from '@/@svelte/modules/CreateOrgDialog/CreateOrgForm.svelte';
 	import { trpc } from '@/trpc/client';
@@ -17,7 +17,7 @@
 
 <Dialog.Root bind:open={createOrgDialogOpen}>
 	<Dialog.Trigger class={cn(buttonVariants({variant:'outline'}))}>
-		<CirclePlus class="mr-2 h-4 w-4" />
+		<CirclePlus class="mr-2 size-4" />
 		{$_('common.create')}
 	</Dialog.Trigger>
 	<Dialog.Content class="sm:max-w-[425px]">

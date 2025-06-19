@@ -14,7 +14,7 @@
 	{@render children?.()}
 	{#if isClearable}
 		<span class=" p-0 m-0 ml-1 cursor-pointer">
-			<CrossIcon classes="!h-4 !w-4 " strokeWidth="2" />
+			<CrossIcon classes="size-4! " strokeWidth="2" />
 		</span>
 	{/if}
 </p>

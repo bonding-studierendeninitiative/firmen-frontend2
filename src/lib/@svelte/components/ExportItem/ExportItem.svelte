@@ -7,7 +7,7 @@
 	import { trpc } from '@/trpc/client';
 	import type { InferOutput } from 'valibot';
 	import type { Export } from '@schema';
-	import { Image } from 'lucide-svelte';
+	import { Image } from '@lucide/svelte';
 	import { _ } from '@services';
 
 	const download = trpc(page).admin.export.generateDownloadLink.createMutation();

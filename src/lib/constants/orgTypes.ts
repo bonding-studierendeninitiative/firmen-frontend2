@@ -1,4 +1,4 @@
-import { Building, Network, Star } from 'lucide-svelte';
+import { Building, Network, Star } from '@lucide/svelte';
 
 export const orgTypes = [
 	{ label: 'Gemeinnützig', value: 'nonprofit', icon: Star },

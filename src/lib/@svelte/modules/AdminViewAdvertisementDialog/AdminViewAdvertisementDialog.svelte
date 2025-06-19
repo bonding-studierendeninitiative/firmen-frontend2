@@ -48,7 +48,7 @@
 		{#if advertisement}
 			<div class="grid grid-cols-2 gap-6">
 				<div
-					class="[aspect-ratio:1/_1.41] bg-gray-100 dark:bg-gray-700 rounded-md flex items-center justify-center overflow-hidden">
+					class="aspect-[1/1.41] bg-gray-100 dark:bg-gray-700 rounded-md flex items-center justify-center overflow-hidden">
 					<PdfFilePreview url={`${advertisement.url}#toolbar=0&navpanes=0&scrollbar=0`} />
 				</div>
 
@@ -101,7 +101,7 @@
 							{/each}
 						</div>
 					</div>
-					<div class="flex-grow"></div>
+					<div class="grow"></div>
 					<Dialog.Footer class="flex justify-end">
 						<ReviewAdvertisementDialog {advertisement} />
 						<Button disabled={$download.isPending} onclick={handleDownload}>{$_("common.download")}

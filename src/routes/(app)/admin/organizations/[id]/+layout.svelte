@@ -3,19 +3,19 @@
 	import * as Alert from '@/components/ui/alert';
 	import * as Avatar from '@/components/ui/avatar';
 	import { _ } from '@services';
-	import { LoaderCircle, TriangleAlert } from 'lucide-svelte';
+	import { LoaderCircle, TriangleAlert } from '@lucide/svelte';
 
 	let { data, children } = $props();
 </script>
 
 {#await data.organizationDetails}
-	<LoaderCircle class="w-12 h-12 animate-spin mx-auto" />
+	<LoaderCircle class="size-12 animate-spin mx-auto" />
 {:then organizationDetails}
 	<header class="space-y-6 mb-6">
 		<Link href="/admin/organizations">{$_('admin-pages.organizations.back-to-overview')}</Link>
 		{#if organizationDetails?.is_bonding}
 			<Alert.Root class="bg-brand-yellow">
-				<TriangleAlert class="w-5 h-5" />
+				<TriangleAlert class="size-5" />
 				<Alert.Title>Das ist die bonding-Organisation</Alert.Title>
 				<Alert.Description
 					>Pass auf, wenn du auf dieser Seite änderungen durchführst.</Alert.Description

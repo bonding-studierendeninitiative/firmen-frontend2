@@ -4,14 +4,14 @@
 	import { CreateAddonPackage } from '@/@svelte/modules/CreateAddonPackage';
 	import { _ } from '@services';
 	import { Separator } from '@/components/ui/separator';
-	import { LoaderCircle } from 'lucide-svelte';
+	import { LoaderCircle } from '@lucide/svelte';
 
 	let { data } = $props();
 </script>
 
 <div class="flex flex-col gap-y-2 justify-center @container p-6 rounded-xl border">
 	{#await data.updateForm}
-		<LoaderCircle class="w-12 h-12 animate-spin mx-auto" />
+		<LoaderCircle class="size-12 animate-spin mx-auto" />
 	{:then form}
 		<EditBuyOptionsV2 {form} />
 	{:catch error}
@@ -21,7 +21,7 @@
 	<div class="py-6 space-y-6 w-full">
 		<h3 class="font-semibold text-lg">{$_("admin-pages.events.buy-options.addons")}</h3>
 		{#await data.addonPackages}
-			<LoaderCircle class="w-12 h-12 animate-spin mx-auto" />
+			<LoaderCircle class="size-12 animate-spin mx-auto" />
 		{:then addonPackages}
 			{#if addonPackages?.length > 0}
 				<div class="grid grid-cols-1 @2xl:grid-cols-2 @4xl:grid-cols-3 gap-4 w-full">
@@ -36,7 +36,7 @@
 			<p>{error.message}</p>
 		{/await}
 		{#await data.createAddonPackageForm}
-			<LoaderCircle class="w-12 h-12 animate-spin mx-auto" />
+			<LoaderCircle class="size-12 animate-spin mx-auto" />
 		{:then form}
 			<CreateAddonPackage createAddonPackageForm={form} />
 		{:catch error}

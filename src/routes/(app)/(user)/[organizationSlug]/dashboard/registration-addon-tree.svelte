@@ -1,7 +1,7 @@
 <script lang="ts">
 	import Registration_addon_tree from './registration-addon-tree.svelte';
-	import { CheckCircle2 } from 'lucide-svelte';
-	import X from 'lucide-svelte/icons/x';
+	import { CheckCircle2 } from '@lucide/svelte';
+	import X from '@lucide/svelte/icons/x';
 
 	let { addons = [] } = $props();
 </script>
@@ -12,10 +12,10 @@
 			<div class='flex items-center'>
 				{#if addon.selected}
 
-					<CheckCircle2 class='h-4 w-4 text-green-500 mr-2'
+					<CheckCircle2 class='size-4 text-green-500 mr-2'
 					/>
 				{:else}
-					<X class='h-4 w-4 text-muted-foreground mr-2'
+					<X class='size-4 text-muted-foreground mr-2'
 					/>
 				{/if}
 				<span class={addon.selected ? 'font-medium' : 'text-muted-foreground'}> {addon.title} </span>

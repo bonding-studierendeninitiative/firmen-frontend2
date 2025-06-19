@@ -16,7 +16,7 @@
 	}: Props = $props();
 </script>
 
-<div class={'w-full overflow-hidden rounded-lg shadow-xs border border-stone-200 '.concat(classes)}>
+<div class={'w-full overflow-hidden rounded-lg shadow-2xs border border-stone-200 '.concat(classes)}>
 	<div class="w-full overflow-x-auto">
 		<table class="w-full whitespace-no-wrap">
 			<thead>

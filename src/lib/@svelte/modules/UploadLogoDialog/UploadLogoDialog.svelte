@@ -7,7 +7,7 @@
 	import { Control, Description, Field, FieldErrors, Label } from '@/components/ui/form';
 	import { _ } from '@services';
 	import { Input } from '@/components/ui/input';
-	import { Plus } from 'lucide-svelte';
+	import { Plus } from '@lucide/svelte';
 	import { cn } from '@/utils';
 	import { trpc } from '@/trpc/client';
 	import { page } from '$app/state';
@@ -37,7 +37,7 @@
 
 <Dialog.Root bind:open>
 	<Dialog.Trigger class={cn(buttonVariants({ variant: 'default' }), 'mr-2')}>
-		<Plus class="h-4 w-4 mr-2" />
+		<Plus class="size-4 mr-2" />
 		{$_('common.upload')}
 	</Dialog.Trigger>
 	<Dialog.Content>

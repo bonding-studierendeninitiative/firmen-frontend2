@@ -1,14 +1,14 @@
 <script lang="ts">
 	import { InfoListItem, NoDataFound } from '$lib/@svelte/components';
 	import { _ } from '@services';
-	import { LoaderCircle } from 'lucide-svelte';
+	import { LoaderCircle } from '@lucide/svelte';
 
 	let { data } = $props();
 </script>
 
 <section>
 	{#await data.eventRegistrationData.eventRegistrations}
-		<LoaderCircle class="w-12 h-12 animate-spin mx-auto" />
+		<LoaderCircle class="size-12 animate-spin mx-auto" />
 		{:then eventRegistrations}
 	<div class="grid grid-cols-1 gap-8">
 		{#if eventRegistrations.length > 0}

@@ -3,11 +3,11 @@
 	import { NoDataFound, PortraitCard, SearchInput } from '@/@svelte/components';
 	import { Button } from '@/components/ui/button';
 	import { PortraitForm } from '@/@svelte/modules/PortraitForm';
-	import { LoaderCircle } from 'lucide-svelte';
+	import { LoaderCircle } from '@lucide/svelte';
 	import { fade } from 'svelte/transition';
 	import * as Pagination from '@/components/ui/pagination';
-	import ChevronLeft from 'lucide-svelte/icons/chevron-left';
-	import ChevronRight from 'lucide-svelte/icons/chevron-right';
+	import ChevronLeft from '@lucide/svelte/icons/chevron-left';
+	import ChevronRight from '@lucide/svelte/icons/chevron-right';
 	import { queryParameters } from 'sveltekit-search-params';
 
 	let { data, children } = $props();
@@ -54,7 +54,7 @@
 	>
 </div>
 {#await data.portraitTemplateData}
-	<LoaderCircle class="w-10 h-10 mx-auto animate-spin my-6" />
+	<LoaderCircle class="size-10 mx-auto animate-spin my-6" />
 {:then portraitTemplateData}
 	<section in:fade class="mt-4 flex flex-col gap-y-4">
 		{#if (portraitTemplateData?.portraitTemplates?.length ?? 0) < 1}
@@ -82,7 +82,7 @@
 					<Pagination.Content>
 						<Pagination.Item>
 							<Pagination.PrevButton>
-								<ChevronLeft class="h-4 w-4" />
+								<ChevronLeft class="size-4" />
 							</Pagination.PrevButton>
 						</Pagination.Item>
 						{#each pages as page (page.key)}
@@ -100,7 +100,7 @@
 						{/each}
 						<Pagination.Item>
 							<Pagination.NextButton>
-								<ChevronRight class="h-4 w-4" />
+								<ChevronRight class="size-4" />
 							</Pagination.NextButton>
 						</Pagination.Item>
 					</Pagination.Content>

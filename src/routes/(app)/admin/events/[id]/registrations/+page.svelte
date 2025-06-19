@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { _ } from '@services';
 	import { NoDataFound } from '@/@svelte/components';
-	import { LoaderCircle } from 'lucide-svelte';
+	import { LoaderCircle } from '@lucide/svelte';
 	import { fade } from 'svelte/transition';
 	import { trpc } from '@/trpc/client';
 	import { page } from '$app/state';
@@ -31,7 +31,7 @@
 </script>
 
 {#await resolveEventRegistrations(data.tableData)}
-	<LoaderCircle class="w-10 h-10 mx-auto animate-spin" />
+	<LoaderCircle class="size-10 mx-auto animate-spin" />
 {:then ignored}
 	<section in:fade class=" mt-6">
 		{#if !allEventRegistrations}

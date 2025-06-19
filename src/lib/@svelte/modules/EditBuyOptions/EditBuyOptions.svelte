@@ -12,17 +12,16 @@
 	import { Button } from '@/components/ui/button';
 	import * as DropdownMenu from '@/components/ui/dropdown-menu';
 	import * as Tabs from '@/components/ui/tabs';
-	import { Hash, Plus, Type } from 'lucide-svelte';
-	import Check from 'lucide-svelte/icons/check';
+	import { Hash, Plus, Type } from '@lucide/svelte';
+	import Check from '@lucide/svelte/icons/check';
 	import { Field, Label, Control, Description, FieldErrors } from '@/components/ui/form';
 	import { Input } from '@/components/ui/input';
 	import { Textarea } from '@/components/ui/textarea';
-	import NumericInput from '@/@svelte/components/NumericInput/NumericInput.svelte';
 	import { toast } from 'svelte-sonner';
 	import * as Table from '@/components/ui/table';
 	import { Separator } from '@/components/ui/separator';
-	import { cn } from '@/utils/tailwind';
-	import { CaretDown, CaretUp } from 'svelte-radix';
+	import { cn } from '@/utils/ui';
+	import { ChevronUp, ChevronDown } from '@lucide/svelte/icons';
 
 	interface Props {
 		form: SuperValidated<Infer<UpdateBuyOptionRequest>>;
@@ -157,7 +156,7 @@
 <form action="?/updateBuyOption" method="post" use:enhance class="space-y-2">
 	<div class="space-y-4">
 		<div class="flex gap-1">
-			<h3 class="font-semibold text-lg flex-grow">
+			<h3 class="font-semibold text-lg grow">
 				{$_('components.editBuyOptions.buyOption', {
 					values: {
 						buyOptionName: $formData.name
@@ -190,7 +189,7 @@
 	</div>
 	<Separator class="-mx-6 w-auto" />
 	<section class="py-4 space-y-4">
-		<h3 class="font-semibold text-lg flex-grow">
+		<h3 class="font-semibold text-lg grow">
 			{$_('components.editBuyOptions.eventDays.header')}
 		</h3>
 		{#each $formData.eventDays as _someDay, dayIndex}
@@ -219,7 +218,7 @@
 					<Control>
 						{#snippet children({ props })}
 							<Label>{$_('components.editBuyOptions.eventDays.remainingCapacity')}</Label>
-							<NumericInput
+							<Input
 								class="w-[7ch]"
 								{...props}
 								bind:value={$formData.eventDays[dayIndex].remainingCapacity}
@@ -244,14 +243,14 @@
 					variant="secondary"
 					onclick={(e) => handleMoveEventDayUp(e, dayIndex)}
 				>
-					<CaretUp />
+					<ChevronUp />
 				</Button>
 				<Button
 					disabled={dayIndex === $formData.eventDays.length - 1}
 					variant="secondary"
 					onclick={(e) => handleMoveEventDayDown(e, dayIndex)}
 				>
-					<CaretDown />
+					<ChevronDown />
 				</Button>
 				<Button
 					disabled={$formData.eventDays.length <= 1}
@@ -267,7 +266,7 @@
 	{#if $formData.eventDays.length > 1}
 		<Separator class="-mx-6 w-auto" />
 		<section class="py-4 space-y-4">
-			<h3 class="font-semibold text-lg flex-grow">
+			<h3 class="font-semibold text-lg grow">
 				{$_('components.editBuyOptions.eventDays.signUpDays.header')}
 			</h3>
 			<Tabs.Root bind:value={$signUpDaysProxy}>
@@ -285,7 +284,7 @@
 	{/if}
 	<Separator class="-mx-6 w-auto" />
 	<section class="py-4 space-y-4">
-		<h3 class="font-semibold text-lg flex-grow">{$_('components.editBuyOptions.packages')}</h3>
+		<h3 class="font-semibold text-lg grow">{$_('components.editBuyOptions.packages')}</h3>
 		<div class="rounded-lg overflow-x-scroll border">
 			<Table.Root class="min-w-full whitespace-no-wrap">
 				<Table.Header>
@@ -334,8 +333,9 @@
 									<Control>
 										{#snippet children({ props })}
 											<Label>{$_('components.editBuyOptions.packagePrice')}</Label>
-											<NumericInput
+											<Input
 												{...props}
+												type="number"
 												bind:value={$formData.packages[packageIndex].price}
 											/>
 										{/snippet}
@@ -369,7 +369,7 @@
 							{/if}
 							<td class="p-2 border-r">
 								<div class="flex items-end gap-2 justify-stretch">
-									<Field class="flex-grow" form={superform} name={`services[${serviceIndex}].name`}>
+									<Field class="grow" form={superform} name={`services[${serviceIndex}].name`}>
 										<Control>
 											{#snippet children({ props })}
 												<Label>{$_('components.editBuyOptions.serviceName')}</Label>
@@ -390,7 +390,7 @@
 												<DropdownMenu.Root>
 													<DropdownMenu.Trigger>
 														{#snippet child({ props })}
-															<Button class="!my-2 p-2" variant="outline" {...props}>
+															<Button class="my-2! p-2" variant="outline" {...props}>
 																{#if $formData.services[serviceIndex].valueType === 'STRING'}
 																	<Type />
 																{:else if $formData.services[serviceIndex].valueType === 'BOOLEAN'}
@@ -451,7 +451,7 @@
 											<Control>
 												{#snippet children({ props })}
 													<Label>{$_('components.editBuyOptions.value')}</Label>
-													<NumericInput
+													<Input
 														{...props}
 														bind:value={
 															$formData.packages[packageIndex].benefits[serviceIndex].numericValue

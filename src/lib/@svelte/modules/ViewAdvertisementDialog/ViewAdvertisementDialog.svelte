@@ -9,7 +9,7 @@
 	import { trpc } from '@/trpc/client';
 	import { page } from '$app/state';
 	import type { DetailedDocumentOutput } from '@api/client';
-	import { LoaderCircle } from 'lucide-svelte';
+	import { LoaderCircle } from '@lucide/svelte';
 	interface Props {
 		open?: boolean;
 		advertisement: DetailedDocumentOutput;
@@ -59,15 +59,15 @@
 		{#if advertisement}
 			<div class="grid grid-cols-2 gap-6">
 				{#if $thumbnail.isLoading}
-					<LoaderCircle class="mx-auto animate-spin w-8 h-8" />
+					<LoaderCircle class="mx-auto animate-spin size-8" />
 				{:else if $thumbnail.data}
 					<div
-						class="[aspect-ratio:1/_1.41] bg-gray-100 dark:bg-gray-700 rounded-md flex items-center justify-center overflow-hidden"
+						class="aspect-[1/1.41] bg-gray-100 dark:bg-gray-700 rounded-md flex items-center justify-center overflow-hidden"
 					>
 						<img
 							src={$thumbnail.data || '/placeholder.svg'}
 							alt={advertisement.title}
-							class="object-contain w-full h-full"
+							class="object-contain size-full"
 						/>
 					</div>
 				{/if}
@@ -143,7 +143,7 @@
 							{/each}
 						</div>
 					</div>
-					<div class="flex-grow"></div>
+					<div class="grow"></div>
 					<Dialog.Footer>
 						<Button disabled={$download.isPending} onclick={handleDownload}
 							>{$_('common.download')}

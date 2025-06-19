@@ -2,9 +2,9 @@
 	import * as Popover from '@/components/ui/popover';
 	import * as Command from '@/components/ui/command';
 	import { Button } from '@/components/ui/button';
-	import { ChevronsUpDown, PlusCircle } from 'lucide-svelte';
-	import Check from 'lucide-svelte/icons/check';
-	import { cn } from '@/utils/tailwind';
+	import { ChevronsUpDown, PlusCircle } from '@lucide/svelte';
+	import Check from '@lucide/svelte/icons/check';
+	import { cn } from '@/utils/ui';
 	import { getContext, tick } from 'svelte';
 	import { Badge } from '@/components/ui/badge';
 	import { _ } from '@services';
@@ -55,7 +55,7 @@
 					class="w-[300px] justify-between"
 				>
 					{selectedValue}
-					<ChevronsUpDown class="ml-2 h-4 w-4 shrink-0 opacity-50" />
+					<ChevronsUpDown class="ml-2 size-4 shrink-0 opacity-50" />
 				</Button>
 			{/snippet}
 		</Popover.Trigger>
@@ -76,9 +76,9 @@
 								}}
 							>
 								<Check
-									class={cn('mr-2 h-4 w-4', value !== buyOption.value && 'text-transparent')}
+									class={cn('mr-2 size-4', value !== buyOption.value && 'text-transparent')}
 								/>
-								<span class="flex-grow">{buyOption.label}</span>
+								<span class="grow">{buyOption.label}</span>
 								{#if buyOption.active}
 									<Badge variant="outline">{$_('modules.buy-option-selector.active')}</Badge>
 								{/if}
@@ -95,7 +95,7 @@
 								$isDialogOpen = true;
 							}}
 						>
-							<PlusCircle class="mr-2 h-4 w-4" />
+							<PlusCircle class="mr-2 size-4" />
 							{$_('modules.buy-option-selector.create-new')}
 						</Command.Item>
 					</Command.Group>

@@ -6,7 +6,7 @@
 	import { Link } from '@/@svelte/components';
 	import * as Card from '@/components/ui/card';
 	import { Button } from '@/components/ui/button';
-	import { FileText, LoaderCircle, Trash2 } from 'lucide-svelte';
+	import { FileText, LoaderCircle, Trash2 } from '@lucide/svelte';
 	import * as Dialog from '@/components/ui/dialog';
 	import { _ } from '@services';
 	import { page } from '$app/state';
@@ -30,12 +30,12 @@
 <Card.Root class="h-full transition-all hover:shadow-md cursor-pointer relative group ">
 	<Button onclick={() => deleteDialogOpen = true} variant="ghost" size="icon"
 					class="absolute top-2 right-2 p-0 max-w-6 max-h-6 text-muted-foreground hover:bg-destructive hover:text-destructive-foreground ">
-		<Trash2 class="h-3.5 w-3.5" />
+		<Trash2 class="size-3.5" />
 	</Button>
 	<Link data-sveltekit-replacestate href={`portraits/${portrait.id}`}
-				class="w-full h-full flex items-center hover:no-underline">
+				class="size-full flex items-center hover:no-underline">
 		<div class="flex justify-start items-center mr-2">
-			<div class="flex-shrink-0 w-12 h-12 rounded-full bg-primary/10 flex justify-center items-center m-4">
+			<div class="shrink-0 size-12 rounded-full bg-primary/10 flex justify-center items-center m-4">
 				<FileText />
 			</div>
 			<div>
@@ -60,7 +60,7 @@
 			<Button variant="secondary" onclick={() => deleteDialogOpen=false}>{$_('common.cancel')}</Button>
 			{#if $deletePortrait.isPending}
 				<Button form={`delete-portrait-form-${portrait.id}`} disabled variant="destructive">
-					<LoaderCircle class="mr-2 h-4 w-4 animate-spin" />{$_('common.delete')}
+					<LoaderCircle class="mr-2 size-4 animate-spin" />{$_('common.delete')}
 				</Button>
 			{:else}
 				<Button onclick={

@@ -37,7 +37,7 @@
 	}: Props = $props();
 	
 
-	let iconsize = `w-${size} h-${size}`;
+	let iconsize = `size-${size}`;
 
 	if (currentFill !== 'currentFill') {
 		color = undefined;

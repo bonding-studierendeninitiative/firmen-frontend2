@@ -15,7 +15,7 @@
 </script>
 
 <Dialog.Root bind:open>
-	<Dialog.Content class="max-w-[80dvw] max-h-[80dvh] @container/pickPortrait">
+	<Dialog.Content class="max-w-[80dvw] max-h-[80dvh] @container/pick-portrait">
 		<Dialog.Header>
 			<Dialog.Title>{$_('modules.submit-portrait-dialog.title')}</Dialog.Title>
 			<Dialog.Description>{$_('modules.submit-portrait-dialog.description')}</Dialog.Description>

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { AdvertisementItem, NoDataFound } from '@/@svelte/components';
 	import { dayjs } from '@services/i18n';
-	import { LoaderCircle } from 'lucide-svelte';
+	import { LoaderCircle } from '@lucide/svelte';
 	import { fade } from 'svelte/transition';
 	import { UploadAdvertisementDialog } from '@/@svelte/modules/UploadAdvertisementDialog';
 	import { Button } from '@/components/ui/button';
@@ -34,7 +34,7 @@
 	<div class="flex justify-end">
 		{#if $uploadFormQuery.isLoading}
 			<Button class="min-w-32 mr-2" disabled>
-				<LoaderCircle class="w-5 h-5 mx-auto animate-spin" />
+				<LoaderCircle class="size-5 mx-auto animate-spin" />
 			</Button>
 		{:else if $uploadFormQuery.data}
 			<UploadAdvertisementDialog
@@ -44,7 +44,7 @@
 		{/if}
 	</div>
 	{#await resolveAdverts(data.advertisementData)}
-		<LoaderCircle class="w-10 h-10 mx-auto animate-spin" />
+		<LoaderCircle class="size-10 mx-auto animate-spin" />
 	{:then _ignored}
 		{#if $advertsQuery?.data}
 			{@const allAdverts = $advertsQuery.data.pages.flatMap((page) => page.documents)}
@@ -84,7 +84,7 @@
 			{/if}
 		{/if}
 		{#if $advertsQuery.isLoading || $advertsQuery.isFetching}
-			<LoaderCircle class="w-10 h-10 mx-auto animate-spin" />
+			<LoaderCircle class="size-10 mx-auto animate-spin" />
 		{:else if $advertsQuery.isError}
 			<article>
 				Error loading adverts: {$advertsQuery.error}

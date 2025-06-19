@@ -32,7 +32,7 @@
 		Eye,
 		ChevronLeft,
 		LoaderCircle
-	} from 'lucide-svelte';
+	} from '@lucide/svelte';
 	import * as v from 'valibot';
 	import { superForm, type Infer, type SuperValidated } from 'sveltekit-superforms';
 	import { valibot } from 'sveltekit-superforms/adapters';
@@ -199,7 +199,7 @@
                     >
                         <div
                             class={[
-                                `flex items-center justify-center w-12 h-12 rounded-full mb-2 `,
+                                `flex items-center justify-center size-12 rounded-full mb-2 `,
                                 index < currentStep
                                     ? 'bg-primary text-primary-foreground'
                                     : index === currentStep
@@ -207,7 +207,7 @@
                                         : 'border-2 border-muted'
                             ]}
                         >
-                            <step.icon class="h-5 w-5" />
+                            <step.icon class="size-5" />
                         </div>
                         <span class="text-xs md:text-sm text-center">{step.title}</span>
                     </div>
@@ -238,7 +238,7 @@
                             >
                                 <Card.Header>
                                     <Card.Title class="flex items-center">
-                                        <FileText class="h-5 w-5 mr-2" />
+                                        <FileText class="size-5 mr-2" />
                                         Start from scratch
                                     </Card.Title>
                                     <Card.Description>Create a completely new portrait</Card.Description>
@@ -248,7 +248,7 @@
                                 </Card.Content>
                                 <Card.Footer class="justify-end">
                                     {#if startOption === 'new'}
-                                        <Check class="h-5 w-5 text-primary" />
+                                        <Check class="size-5 text-primary" />
                                     {/if}
                                 </Card.Footer>
                             </Card.Root>
@@ -260,7 +260,7 @@
                             >
                                 <Card.Header>
                                     <Card.Title class="flex items-center">
-                                        <FileEdit class="h-5 w-5 mr-2" />
+                                        <FileEdit class="size-5 mr-2" />
                                         Use a template
                                     </Card.Title>
                                     <Card.Description>Start with an existing portrait</Card.Description>
@@ -270,7 +270,7 @@
                                 </Card.Content>
                                 <Card.Footer class="justify-end">
                                     {#if startOption === 'template'}
-                                        <Check class="h-5 w-5 text-primary" />
+                                        <Check class="size-5 text-primary" />
                                     {/if}
                                 </Card.Footer>
                             </Card.Root>
@@ -284,7 +284,7 @@
                         <RadioGroup.Root bind:value={selectedTemplate}>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 {#if $portraitTemplatesQuery.isLoading}
-                                    <LoaderCircle class="w-6 h-6 mx-auto animate-spin" />
+                                    <LoaderCircle class="size-6 mx-auto animate-spin" />
                                 {:else}
                                     {#each $portraitTemplatesQuery.data?.portraitTemplates ?? [] as template (template.id)}
                                         <Label for={`portrait-template-${template.id}`}>
@@ -303,7 +303,7 @@
                                                             <Card.Description>{template.title}</Card.Description>
                                                         </div>
                                                         {#if selectedTemplate === template.id}
-                                                            <Check class="h-5 w-5 text-primary" />
+                                                            <Check class="size-5 text-primary" />
                                                         {/if}
                                                     </div>
                                                 </Card.Header>
@@ -336,9 +336,9 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <Field form={superform} name="title">
                         <Control>
-                            {#snippet children({ attrs })}
+                            {#snippet children({ props })}
                                 <FormLabel>Title*</FormLabel>
-                                <Input {...attrs} bind:value={$formData.title} />
+                                <Input {...props} bind:value={$formData.title} />
                             {/snippet}
                         </Control>
                         <FieldErrors />
@@ -346,9 +346,9 @@
 
                     <Field form={superform} name="displayName">
                         <Control>
-                            {#snippet children({ attrs })}
+                            {#snippet children({ props })}
                                 <FormLabel>Display Name*</FormLabel>
-                                <Input {...attrs} bind:value={$formData.displayName} />
+                                <Input {...props} bind:value={$formData.displayName} />
                             {/snippet}
                         </Control>
                         <FieldErrors />
@@ -357,9 +357,9 @@
 
                 <Field form={superform} name="comment">
                     <Control>
-                        {#snippet children({ attrs })}
+                        {#snippet children({ props })}
                             <FormLabel>Comment</FormLabel>
-                            <Textarea {...attrs} bind:value={$formData.comment} />
+                            <Textarea {...props} bind:value={$formData.comment} />
                         {/snippet}
                     </Control>
                     <FieldErrors />
@@ -368,9 +368,9 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <Field form={superform} name="industry">
                         <Control>
-                            {#snippet children({ attrs })}
+                            {#snippet children({ props })}
                                 <FormLabel>Industry*</FormLabel>
-                                <Input {...attrs} bind:value={$formData.industry} />
+                                <Input {...props} bind:value={$formData.industry} />
                             {/snippet}
                         </Control>
                         <FieldErrors />
@@ -378,9 +378,9 @@
 
                     <Field form={superform} name="products">
                         <Control>
-                            {#snippet children({ attrs })}
+                            {#snippet children({ props })}
                                 <FormLabel>Products</FormLabel>
-                                <Input {...attrs} bind:value={$formData.products} />
+                                <Input {...props} bind:value={$formData.products} />
                             {/snippet}
                         </Control>
                         <FieldErrors />
@@ -389,9 +389,9 @@
 
                 <Field form={superform} name="website">
                     <Control>
-                        {#snippet children({ attrs })}
+                        {#snippet children({ props })}
                             <FormLabel>Website*</FormLabel>
-                            <Input {...attrs} bind:value={$formData.website} type="url" />
+                            <Input {...props} bind:value={$formData.website} type="url" />
                         {/snippet}
                     </Control>
                     <FieldErrors />
@@ -410,9 +410,9 @@
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                             <Field form={superform} name="locationsWorldwide">
                                 <Control>
-                                    {#snippet children({ attrs })}
+                                    {#snippet children({ props })}
                                         <FormLabel>Worldwide*</FormLabel>
-                                        <Input {...attrs} bind:value={$formData.locationsWorldwide} />
+                                        <Input {...props} bind:value={$formData.locationsWorldwide} />
                                     {/snippet}
                                 </Control>
                                 <FieldErrors />
@@ -420,19 +420,19 @@
 
                             <Field form={superform} name="locationsEurope">
                                 <Control>
-                                    {#snippet children({ attrs })}
+                                    {#snippet children({ props })}
                                         <FormLabel>Europe*</FormLabel>
-                                        <Input {...attrs} bind:value={$formData.locationsEurope} />
+                                        <Input {...props} bind:value={$formData.locationsEurope} />
                                     {/snippet}
                                 </Control>
                                 <FieldErrors />
                             </Field>
 
-                            <Field form={superform} name="locations_germany">
+                            <Field form={superform} name="locationsGermany">
                                 <Control>
-                                    {#snippet children({ attrs })}
+                                    {#snippet children({ props })}
                                         <FormLabel>Germany*</FormLabel>
-                                        <Input {...attrs} bind:value={$formData.locationsGermany} />
+                                        <Input {...props} bind:value={$formData.locationsGermany} />
                                     {/snippet}
                                 </Control>
                                 <FieldErrors />
@@ -445,9 +445,9 @@
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                             <Field form={superform} name="revenueWorldwide">
                                 <Control>
-                                    {#snippet children({ attrs })}
+                                    {#snippet children({ props })}
                                         <FormLabel>Worldwide*</FormLabel>
-                                        <Input {...attrs} bind:value={$formData.revenueWorldwide} />
+                                        <Input {...props} bind:value={$formData.revenueWorldwide} />
                                     {/snippet}
                                 </Control>
                                 <FieldErrors />
@@ -455,9 +455,9 @@
 
                             <Field form={superform} name="revenueEurope">
                                 <Control>
-                                    {#snippet children({ attrs })}
+                                    {#snippet children({ props })}
                                         <FormLabel>Europe*</FormLabel>
-                                        <Input {...attrs} bind:value={$formData.revenueEurope} />
+                                        <Input {...props} bind:value={$formData.revenueEurope} />
                                     {/snippet}
                                 </Control>
                                 <FieldErrors />
@@ -465,9 +465,9 @@
 
                             <Field form={superform} name="revenueGermany">
                                 <Control>
-                                    {#snippet children({ attrs })}
+                                    {#snippet children({ props })}
                                         <FormLabel>Germany*</FormLabel>
-                                        <Input {...attrs} bind:value={$formData.revenueGermany} />
+                                        <Input {...props} bind:value={$formData.revenueGermany} />
                                     {/snippet}
                                 </Control>
                                 <FieldErrors />
@@ -489,9 +489,9 @@
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                             <Field form={superform} name="employeesWorldwide">
                                 <Control>
-                                    {#snippet children({ attrs })}
+                                    {#snippet children({ props })}
                                         <FormLabel>Worldwide*</FormLabel>
-                                        <Input {...attrs} bind:value={$formData.employeesWorldwide} />
+                                        <Input {...props} bind:value={$formData.employeesWorldwide} />
                                     {/snippet}
                                 </Control>
                                 <FieldErrors />
@@ -499,9 +499,9 @@
 
                             <Field form={superform} name="employeesEurope">
                                 <Control>
-                                    {#snippet children({ attrs })}
+                                    {#snippet children({ props })}
                                         <FormLabel>Europe*</FormLabel>
-                                        <Input {...attrs} bind:value={$formData.employeesEurope} />
+                                        <Input {...props} bind:value={$formData.employeesEurope} />
                                     {/snippet}
                                 </Control>
                                 <FieldErrors />
@@ -509,9 +509,9 @@
 
                             <Field form={superform} name="employeesGermany">
                                 <Control>
-                                    {#snippet children({ attrs })}
+                                    {#snippet children({ props })}
                                         <FormLabel>Germany*</FormLabel>
-                                        <Input {...attrs} bind:value={$formData.employeesGermany} />
+                                        <Input {...props} bind:value={$formData.employeesGermany} />
                                     {/snippet}
                                 </Control>
                                 <FieldErrors />
@@ -524,9 +524,9 @@
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                             <Field form={superform} name="graduates">
                                 <Control>
-                                    {#snippet children({ attrs })}
+                                    {#snippet children({ props })}
                                         <FormLabel>Graduates</FormLabel>
-                                        <Input {...attrs} bind:value={$formData.graduates} />
+                                        <Input {...props} bind:value={$formData.graduates} />
                                     {/snippet}
                                 </Control>
                                 <FieldErrors />
@@ -534,9 +534,9 @@
 
                             <Field form={superform} name="desiredDisciplines">
                                 <Control>
-                                    {#snippet children({ attrs })}
+                                    {#snippet children({ props })}
                                         <FormLabel>Desired Disciplines</FormLabel>
-                                        <Input {...attrs} bind:value={$formData.desiredDisciplines} />
+                                        <Input {...props} bind:value={$formData.desiredDisciplines} />
                                     {/snippet}
                                 </Control>
                                 <FieldErrors />
@@ -544,9 +544,9 @@
 
                             <Field form={superform} name="entryOptions">
                                 <Control>
-                                    {#snippet children({ attrs })}
+                                    {#snippet children({ props })}
                                         <FormLabel>Entry Options</FormLabel>
-                                        <Input {...attrs} bind:value={$formData.entryOptions} />
+                                        <Input {...props} bind:value={$formData.entryOptions} />
                                     {/snippet}
                                 </Control>
                                 <FieldErrors />
@@ -563,8 +563,8 @@
                                 class="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4"
                             >
                                 <Control>
-                                    {#snippet children({ attrs })}
-                                        <Checkbox {...attrs} bind:checked={$formData.offersThesis} />
+                                    {#snippet children({ props })}
+                                        <Checkbox {...props} bind:checked={$formData.offersThesis} />
                                         <div class="space-y-1 leading-none">
                                             <FormLabel>Offers Thesis</FormLabel>
                                             <Description>Company offers thesis opportunities</Description>
@@ -579,8 +579,8 @@
                                 class="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4"
                             >
                                 <Control>
-                                    {#snippet children({ attrs })}
-                                        <Checkbox {...attrs} bind:checked={$formData.offersOutOfCountryWork} />
+                                    {#snippet children({ props })}
+                                        <Checkbox {...props} bind:checked={$formData.offersOutOfCountryWork} />
                                         <div class="space-y-1 leading-none">
                                             <FormLabel>International Work</FormLabel>
                                             <Description>Offers international work opportunities</Description>
@@ -595,8 +595,8 @@
                                 class="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4"
                             >
                                 <Control>
-                                    {#snippet children({ attrs })}
-                                        <Checkbox {...attrs} bind:checked={$formData.offersInternships} />
+                                    {#snippet children({ props })}
+                                        <Checkbox {...props} bind:checked={$formData.offersInternships} />
                                         <div class="space-y-1 leading-none">
                                             <FormLabel>Offers Internships</FormLabel>
                                             <Description>Company offers internship opportunities</Description>
@@ -617,9 +617,9 @@
 
                 <Field form={superform} name="contactAddress">
                     <Control>
-                        {#snippet children({ attrs })}
+                        {#snippet children({ props })}
                             <FormLabel>Contact Address</FormLabel>
-                            <Textarea {...attrs} bind:value={$formData.contactAddress} />
+                            <Textarea {...props} bind:value={$formData.contactAddress} />
                         {/snippet}
                     </Control>
                     <FieldErrors />
@@ -628,9 +628,9 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <Field form={superform} name="contactPersonStudents">
                         <Control>
-                            {#snippet children({ attrs })}
+                            {#snippet children({ props })}
                                 <FormLabel>Contact Person for Students</FormLabel>
-                                <Textarea {...attrs} bind:value={$formData.contactPersonStudents} />
+                                <Textarea {...props} bind:value={$formData.contactPersonStudents} />
                             {/snippet}
                         </Control>
                         <Description>Maximum 5 lines allowed</Description>
@@ -639,9 +639,9 @@
 
                     <Field form={superform} name="contactPersonGraduates">
                         <Control>
-                            {#snippet children({ attrs })}
+                            {#snippet children({ props })}
                                 <FormLabel>Contact Person for Graduates</FormLabel>
-                                <Textarea {...attrs} bind:value={$formData.contactPersonGraduates} />
+                                <Textarea {...props} bind:value={$formData.contactPersonGraduates} />
                             {/snippet}
                         </Control>
                         <FieldErrors />
@@ -650,10 +650,10 @@
 
                 <Field form={superform} name="additionalInformation">
                     <Control>
-                        {#snippet children({ attrs })}
+                        {#snippet children({ props })}
                             <FormLabel>Additional Information*</FormLabel>
                             <Textarea
-                                {...attrs}
+                                {...props}
                                 bind:value={$formData.additionalInformation}
                                 class="min-h-[150px]"
                             />
@@ -783,19 +783,19 @@
                                     <div class="mt-4 space-y-2">
                                         {#if $formData.offersThesis}
                                             <div class="flex items-center">
-                                                <Check class="h-5 w-5 text-primary mr-2" />
+                                                <Check class="size-5 text-primary mr-2" />
                                                 <span>Offers thesis opportunities</span>
                                             </div>
                                         {/if}
                                         {#if $formData.offersInternships}
                                             <div class="flex items-center">
-                                                <Check class="h-5 w-5 text-primary mr-2" />
+                                                <Check class="size-5 text-primary mr-2" />
                                                 <span>Offers internships</span>
                                             </div>
                                         {/if}
                                         {#if $formData.offersOutOfCountryWork}
                                             <div class="flex items-center">
-                                                <Check class="h-5 w-5 text-primary mr-2" />
+                                                <Check class="size-5 text-primary mr-2" />
                                                 <span>Offers international work</span>
                                             </div>
                                         {/if}
@@ -843,7 +843,7 @@
         <div class="flex justify-between mt-12 max-w-4xl mx-auto">
             {#if currentStep > 0}
                 <Button type="button" variant="outline" onclick={prevStep}>
-                    <ArrowLeft class="h-4 w-4 mr-2" />
+                    <ArrowLeft class="size-4 mr-2" />
                     Back
                 </Button>
             {/if}
@@ -861,12 +861,12 @@
                             (currentStep === 0 && startOption === 'template' && !selectedTemplate)}
                     >
                         Next
-                        <ArrowRight class="h-4 w-4 ml-2" />
+                        <ArrowRight class="size-4 ml-2" />
                     </Button>
                 {:else}
                     <Button type="submit" disabled={$submitting}>
                         {#if $submitting}
-                            <Loader2 class="mr-2 h-4 w-4 animate-spin" />
+                            <Loader2 class="mr-2 size-4 animate-spin" />
                             Submitting...
                         {:else}
                             Submit Portrait

@@ -7,7 +7,7 @@
 	import { superForm, type SuperValidated } from 'sveltekit-superforms';
 	import type { InferOutput } from 'valibot';
 	import { type CreateOrgRequest, CreateOrgRequestSchema } from '@schema';
-	import { LoaderCircle } from 'lucide-svelte';
+	import { LoaderCircle } from '@lucide/svelte';
 	import { _ } from '@services';
 	import { trpc } from '@/trpc/client';
 	import { page } from '$app/state';
@@ -85,7 +85,7 @@
 	>
 	{#if $submitting}
 		<Button form="create-org-form" disabled>
-			<LoaderCircle class="mr-2 h-4 w-4 animate-spin" />{$_(
+			<LoaderCircle class="mr-2 size-4 animate-spin" />{$_(
 			'common.create'
 		)}
 		</Button>

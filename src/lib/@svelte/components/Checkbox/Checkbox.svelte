@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { type ClassValue } from 'clsx';
-	import { cn } from '@/utils/tailwind';
+	import { cn } from '@/utils/ui';
 
 	interface Props {
 		checked?: boolean;
@@ -32,7 +32,7 @@
 		id={name}
 		{name}
 		type="checkbox"
-		class="w-4 h-4 text-brand bg-gray-100 border-gray-300 rounded cursor-pointer col-span-1"
+		class="size-4 text-brand bg-gray-100 border-gray-300 rounded cursor-pointer col-span-1"
 	/>
 	{#if label}
 		<label

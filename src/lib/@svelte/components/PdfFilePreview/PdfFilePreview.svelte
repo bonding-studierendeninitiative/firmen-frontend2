@@ -13,4 +13,4 @@
 
 <embed
 	src={url}
-	width="100%" class={cn("[aspect-ratio:1/_1.41]", clazz)} {title} {...restProps} />
+	width="100%" class={cn("aspect-[1/1.41]", clazz)} {title} {...restProps} />

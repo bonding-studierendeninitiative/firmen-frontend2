@@ -13,7 +13,7 @@
 		LoaderCircle,
 		Check,
 		Shield
-	} from 'lucide-svelte';
+	} from '@lucide/svelte';
 	import * as Card from '$lib/components/ui/card';
 	import * as Avatar from '$lib/components/ui/avatar';
 	import { Badge } from '$lib/components/ui/badge';
@@ -115,7 +115,7 @@
 
 <Card.Root class="w-full max-w-2xl overflow-hidden">
 	{#if $legacyOrgQuery.isLoading || !$legacyOrgQuery.data}
-		<LoaderCircle class="animate-spin mx-auto w-10 h-10" />
+		<LoaderCircle class="animate-spin mx-auto size-10" />
 	{:else}
 		{@const organization = $legacyOrgQuery?.data}
 		{@const hasAddress =
@@ -147,7 +147,7 @@
 			<div class="space-y-2">
 				{#if organization.email}
 					<div class="flex items-center gap-2">
-						<Mail class="h-4 w-4 text-muted-foreground" />
+						<Mail class="size-4 text-muted-foreground" />
 						<a href="mailto:{organization.email}" class="text-sm hover:underline"
 							>{organization.email}</a
 						>
@@ -156,7 +156,7 @@
 
 				{#if organization.internet}
 					<div class="flex items-center gap-2">
-						<Globe class="h-4 w-4 text-muted-foreground" />
+						<Globe class="size-4 text-muted-foreground" />
 						<a
 							href={organization.internet.startsWith('http')
 								? organization.internet
@@ -172,7 +172,7 @@
 
 				{#if organization.fax}
 					<div class="flex items-center gap-2">
-						<File class="h-4 w-4 text-muted-foreground" />
+						<File class="size-4 text-muted-foreground" />
 						<span class="text-sm">{organization.fax}</span>
 					</div>
 				{/if}
@@ -182,7 +182,7 @@
 			{#if hasAddress}
 				<div class="rounded-md border p-3 space-y-1">
 					<div class="flex items-center gap-2 mb-1">
-						<MapPin class="h-4 w-4 text-muted-foreground" />
+						<MapPin class="size-4 text-muted-foreground" />
 						<span class="font-medium text-sm">{$_('modules.admin-import-legacy-org.address')}</span>
 					</div>
 
@@ -205,7 +205,7 @@
 
 					{#if organization.address?.phone}
 						<div class="flex items-center gap-2 mt-2">
-							<Phone class="h-4 w-4 text-muted-foreground" />
+							<Phone class="size-4 text-muted-foreground" />
 							<a href="tel:{organization.address.phone}" class="text-sm hover:underline"
 								>{organization.address.phone}</a
 							>
@@ -222,15 +222,15 @@
 						onclick={() => (contactsExpanded = !contactsExpanded)}
 					>
 						<div class="flex items-center gap-2">
-							<User class="h-4 w-4 text-muted-foreground" />
+							<User class="size-4 text-muted-foreground" />
 							<span
 								>{`${$_('modules.admin-import-legacy-org.contact-people')} (${selectedContacts.length}/${organization.contactPeople?.length || 0})`}</span
 							>
 						</div>
 						{#if contactsExpanded}
-							<ChevronUp class="h-4 w-4" />
+							<ChevronUp class="size-4" />
 						{:else}
-							<ChevronDown class="h-4 w-4" />
+							<ChevronDown class="size-4" />
 						{/if}
 					</button>
 
@@ -241,20 +241,20 @@
 									<div class="flex items-start gap-3">
 										<!-- Selectable Avatar -->
 										<button
-											class="relative h-10 w-10 rounded-full overflow-hidden focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+											class="relative size-10 rounded-full overflow-hidden focus:outline-hidden focus:ring-2 focus:ring-primary focus:ring-offset-2"
 											onclick={() => toggleContactSelection(contact)}
 											aria-label={isContactSelected(contact)
 												? 'Deselect contact'
 												: 'Select contact'}
 										>
 											<Avatar.Root
-												class={`h-10 w-10 ${isContactSelected(contact) ? 'bg-primary' : 'bg-muted'} text-secondary-foreground transition-colors`}
+												class={`size-10 ${isContactSelected(contact) ? 'bg-primary' : 'bg-muted'} text-secondary-foreground transition-colors`}
 											>
 												{#if isContactSelected(contact)}
 													<div
 														class="absolute inset-0 flex items-center justify-center bg-primary text-primary-foreground"
 													>
-														<Check class="h-5 w-5" />
+														<Check class="size-5" />
 													</div>
 												{:else}
 													<Avatar.Fallback>
@@ -276,13 +276,13 @@
 														size="icon"
 														title={adminContact === contact.legacyId ? 'Admin' : 'Make Admin'}
 														class={[
-															'h-7 w-7 text-xs',
+															'size-7 text-xs',
 															(!multipleContactsSelected || !isContactSelected(contact)) &&
 																'invisible'
 														]}
 														onclick={() => setAdminRole(contact.legacyId)}
 													>
-														<Shield class="h-3 w-3" />
+														<Shield class="size-3" />
 													</Button>
 												</div>
 												<!--{/if}-->
@@ -298,7 +298,7 @@
 											<div class="mt-2 space-y-1">
 												{#if contact.email}
 													<div class="flex items-center gap-2">
-														<Mail class="h-3 w-3 text-muted-foreground" />
+														<Mail class="size-3 text-muted-foreground" />
 														<a href="mailto:{contact.email}" class="text-xs hover:underline"
 															>{contact.email}</a
 														>
@@ -307,7 +307,7 @@
 
 												{#if contact.phone}
 													<div class="flex items-center gap-2">
-														<Phone class="h-3 w-3 text-muted-foreground" />
+														<Phone class="size-3 text-muted-foreground" />
 														<a href="tel:{contact.phone}" class="text-xs hover:underline"
 															>{contact.phone}</a
 														>
@@ -316,7 +316,7 @@
 
 												{#if contact.phone2}
 													<div class="flex items-center gap-2">
-														<Phone class="h-3 w-3 text-muted-foreground" />
+														<Phone class="size-3 text-muted-foreground" />
 														<a href="tel:{contact.phone2}" class="text-xs hover:underline"
 															>{contact.phone2}</a
 														>
@@ -325,7 +325,7 @@
 
 												{#if contact.fax}
 													<div class="flex items-center gap-2">
-														<File class="h-3 w-3 text-muted-foreground" />
+														<File class="size-3 text-muted-foreground" />
 														<span class="text-xs">{contact.fax}</span>
 													</div>
 												{/if}

@@ -1,6 +1,6 @@
 <script lang="ts">
 
-	import { LucideMail, LucidePhone } from 'lucide-svelte';
+	import { LucideMail, LucidePhone } from '@lucide/svelte';
 	import { _ } from '@services';
 
 	interface Props {

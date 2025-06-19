@@ -1,6 +1,6 @@
 <script lang="ts">
 	import * as Dialog from '@/components/ui/dialog';
-	import { Trash2 } from 'lucide-svelte';
+	import { Trash2 } from '@lucide/svelte';
 	import { Button, buttonVariants } from '@/components/ui/button';
 	import { toast } from 'svelte-sonner';
 	import { _ } from '@services';
@@ -22,7 +22,7 @@
 
 <Dialog.Root bind:open>
 	<Dialog.Trigger class={buttonVariants({ variant: 'destructive', size: 'icon' })}>
-		<Trash2 class="w-5 h-5" />
+		<Trash2 class="size-5" />
 	</Dialog.Trigger>
 	<Dialog.Content>
 		<Dialog.Header>
@@ -58,7 +58,7 @@
 				}}
 				variant="destructive"
 			>
-				<Trash2 class="mr-2 w-5 h-5" />
+				<Trash2 class="mr-2 size-5" />
 				{$_('common.delete')}
 			</Button>
 		</Dialog.Footer>

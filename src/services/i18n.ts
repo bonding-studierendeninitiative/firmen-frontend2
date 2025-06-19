@@ -15,15 +15,17 @@ import {
 	init,
 	isLoading
 } from 'svelte-i18n';
-import { allFakers, type Faker } from '@faker-js/faker';
+import { type Faker, fakerDE, fakerEN } from '@faker-js/faker';
 
 const MESSAGE_FILE_URL_TEMPLATE = '/lang/{locale}.json';
 
 export const faker: Readable<Faker> = derived(localeStore, (value) => {
-	if (!value || !Object.prototype.hasOwnProperty.call(allFakers, value)) {
-		return allFakers['en'];
+	switch (value) {
+		case "de":
+			return fakerDE
+		default:
+			return fakerEN
 	}
-	return allFakers[value as keyof typeof allFakers];
 });
 
 export const availableLocales = ['de', 'en'] as const;

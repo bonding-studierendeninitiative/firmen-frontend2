@@ -17,7 +17,7 @@
 {#if isOpen}
 	<div class="relative z-10" aria-labelledby="modal-title" role="dialog" aria-modal="true">
 		<div
-			class="fixed inset-0 bg-black opacity-20 transition-opacity w-full h-full"
+			class="fixed inset-0 bg-black opacity-20 transition-opacity size-full"
 			transition:fade={{
 				duration: 300,
 				easing: cubicOut

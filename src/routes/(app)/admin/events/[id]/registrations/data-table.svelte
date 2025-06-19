@@ -271,9 +271,9 @@
 <section class="flex gap-4 flex-wrap justify-end">
 	<SearchInput 
 		placeholder={$_('common.search')} 
-		on:input={(e) => $table.setGlobalFilter(e.currentTarget.value)} 
+		oninput={(e) => $table.setGlobalFilter(e.currentTarget.value)} 
 	/>
-	<div class="flex-grow"></div>
+	<div class="grow"></div>
 	<DataTableFacetedFilter
 		title={$_('admin-pages.events.event-registrations.data-table.filters.status')}
 		options={status.map((status) => ({
@@ -363,7 +363,7 @@
 						<Table.Row>
 							{#each columns as column}
 								<Table.Cell>
-									<Skeleton class="w-full min-w-6 h-6" />
+									<Skeleton class="w-full min-size-6" />
 								</Table.Cell>
 							{/each}
 						</Table.Row>

@@ -12,7 +12,7 @@ const linkVariants = tv({
 			secondary: 'bg-secondary text-secondary-foreground hover:bg-secondary/80',
 			ghost: 'hover:bg-accent hover:text-accent-foreground',
 			gradient:
-				'relative px-4 py-2.5 space-x-4 rounded-lg text-white font-semibold bg-gradient-to-b from-white/30 to-transparent bg-brand '
+				'relative px-4 py-2.5 space-x-4 rounded-lg text-white font-semibold bg-linear-to-b from-white/30 to-transparent bg-brand '
 		}
 	},
 	defaultVariants: {

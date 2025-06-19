@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { cn } from '@/utils/ui';
 	interface Props {
 		classes?: string;
 		strokeWidth?: string;
@@ -13,7 +14,7 @@
 	viewBox="0 0 24 24"
 	stroke-width={strokeWidth}
 	stroke="currentColor"
-	class={'w-6 h-6 ' + classes}
+	class={cn('size-6 ', classes)}
 >
 	<path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
 </svg>

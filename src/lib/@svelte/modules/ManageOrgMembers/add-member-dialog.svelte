@@ -4,7 +4,7 @@
 	import * as Popover from '@/components/ui/popover';
 	import * as Command from '@/components/ui/command';
 	import * as Avatar from '@/components/ui/avatar';
-	import { Check, ChevronsUpDown, LoaderCircle, Plus, Search, User } from 'lucide-svelte';
+	import { Check, ChevronsUpDown, LoaderCircle, Plus, Search, User } from '@lucide/svelte';
 	import { Button, buttonVariants } from '@/components/ui/button';
 	import { toast } from 'svelte-sonner';
 	import { _ } from '@services';
@@ -26,7 +26,7 @@
 	const utils = api.createUtils();
 	const addMember = api.admin.orgs.members.addMember.createMutation();
 
-	let triggerRef = $state<HTMLButtonElement>(null!)
+	let triggerRef = $state<HTMLButtonElement>(null!);
 
 	let userFilters = writable({
 		query: '',
@@ -46,16 +46,19 @@
 	let open = $state(false);
 
 	let isUsersOpen = $state(false);
+
 	let user:
 		| {
 				firstName: string;
 				lastName: string;
 				id: string;
 				imageUrl: string;
-				emailAddresses: {emailAddress: string}[];
+				emailAddresses: { emailAddress: string }[];
 		  }
 		| null
 		| undefined = $state(null);
+
+	let sendNotification = $state(false);
 
 	// We want to refocus the trigger button when the user selects
 	// an item from the list so users can continue navigating the
@@ -69,7 +72,7 @@
 
 	function handleUserSelect(newValue: string) {
 		$selectedUser.id = newValue;
-		user = $users.data?.data.find((org) => org.id === newValue)
+		user = $users.data?.data.find((org) => org.id === newValue);
 
 		closeAndFocusTrigger();
 	}
@@ -77,7 +80,7 @@
 
 <Dialog.Root bind:open>
 	<Dialog.Trigger class={buttonVariants({ variant: 'outline' })}
-		><Plus class="w-4 h-4 mr-4" />{$_('modules.add-member-dialog.trigger')}</Dialog.Trigger
+		><Plus class="size-4 mr-4" />{$_('modules.add-member-dialog.trigger')}</Dialog.Trigger
 	>
 	<Dialog.Content>
 		<Dialog.Header>
@@ -87,17 +90,17 @@
 		<Card.Root>
 			<Card.Header class="pb-2">
 				<Card.Title class="text-lg flex items-center">
-					<User class="h-5 w-5 mr-2" />
+					<User class="size-5 mr-2" />
 					{$_('modules.add-member-dialog.user-card-header')}
 				</Card.Title>
 			</Card.Header>
 			<Card.Content class="space-y-2 pt-6">
 				<div class="flex items-start">
-					<Popover.Root bind:open={isUsersOpen} >
+					<Popover.Root bind:open={isUsersOpen}>
 						{#snippet children()}
-												<Popover.Trigger bind:ref={triggerRef}>
+							<Popover.Trigger bind:ref={triggerRef}>
 								{#snippet child({ props })}
-														<Button
+									<Button
 										aria-expanded={isUsersOpen}
 										{...props}
 										class="w-full justify-between"
@@ -107,14 +110,14 @@
 										{user
 											? user.firstName + ' ' + user.lastName
 											: $_('modules.add-member-dialog.select-trigger')}
-										<ChevronsUpDown class="ml-2 h-4 w-4 shrink-0 opacity-50" />
+										<ChevronsUpDown class="ml-2 size-4 shrink-0 opacity-50" />
 									</Button>
-																					{/snippet}
-												</Popover.Trigger>
+								{/snippet}
+							</Popover.Trigger>
 							<Popover.Content class="w-[40ch] p-0">
 								<Command.Root shouldFilter={false}>
 									<Label class="flex items-center gap-2 py-2">
-										<Search class="h-5 w-5 ml-2" />
+										<Search class="size-5 ml-2" />
 										<input
 											bind:value={$userFilters.query}
 											class="w-full outline-transparent border-transparent py-2"
@@ -124,7 +127,7 @@
 									<Command.Separator />
 									{#if $users.isLoading}
 										<Command.Loading class="flex items-center justify-center py-2">
-											<LoaderCircle class="h-6 w-6 text-primary animate-spin" />
+											<LoaderCircle class="size-6 text-primary animate-spin" />
 										</Command.Loading>
 									{:else}
 										<Command.List>
@@ -137,7 +140,7 @@
 												>
 													<Check
 														class={cn(
-															'mr-2 h-4 w-4',
+															'mr-2 size-4',
 															$selectedUser.id !== user.id && 'text-transparent'
 														)}
 													/>
@@ -149,8 +152,8 @@
 									<Command.Empty>{$_('modules.add-member-dialog.no-users-found')}</Command.Empty>
 								</Command.Root>
 							</Popover.Content>
-																	{/snippet}
-										</Popover.Root>
+						{/snippet}
+					</Popover.Root>
 				</div>
 				{#if user}
 					<div class="flex gap-x-4 px-2 items-center" >
@@ -160,8 +163,8 @@
 						</Avatar.Root>
 						<div class="space-y-2 pt-2">
 						<p class="text-md font-semibold">{user.firstName + " " + user.lastName}</p>
-						<p class="text-sm">{user.emailAddresses[0].emailAddress}</p>
-					</div>
+							<p class="text-sm">{user.emailAddresses[0].emailAddress}</p>
+						</div>
 					</div>
 				{/if}
 			</Card.Content>
@@ -188,7 +191,7 @@
 				}}
 				variant="default"
 			>
-				<Plus class="mr-2 w-5 h-5" />
+				<Plus class="mr-2 size-5" />
 				{$_('common.add')}
 			</Button>
 		</Dialog.Footer>

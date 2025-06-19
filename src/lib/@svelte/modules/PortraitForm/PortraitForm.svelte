@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { _, faker } from '@services';
 	import { InputWithPrefix } from '$lib/@svelte/components';
-	import { superForm, type SuperValidated, type Infer, arrayProxy } from 'sveltekit-superforms';
+	import { superForm, type SuperValidated, type Infer } from 'sveltekit-superforms';
 	import { page } from '$app/state';
 	import { toast } from 'svelte-sonner';
 	import { goto } from '$app/navigation';
@@ -22,7 +22,7 @@
 	import { Control, Description, Field, FieldErrors, Label } from '@/components/ui/form';
 	import { valibotClient } from 'sveltekit-superforms/adapters';
 	import { cn } from '@/utils';
-	import { BookOpen, Briefcase, Globe, LoaderCircle } from 'lucide-svelte';
+	import { BookOpen, Briefcase, Globe, LoaderCircle } from '@lucide/svelte';
 
 	const isEditMode = page.url.searchParams.get('edit') !== null;
 	const portraitId = isEditMode ? page.url.searchParams.get('edit') : '';
@@ -152,7 +152,7 @@
 			>
 				<div class="grid grid-cols-1 gap-y-4 w-full p-2">
 					{#if $submitting}
-						<LoaderCircle class="mr-2 h-4 w-4 animate-spin" />
+						<LoaderCircle class="mr-2 size-4 animate-spin" />
 					{/if}
 					<Field form={superform} name="displayName">
 						<Control>
@@ -231,7 +231,7 @@
 					</Field>
 
 					<fieldset>
-						<legend class="data-[fs-error]:text-destructive text-sm font-medium leading-none"
+						<legend class="data-fs-error:text-destructive text-sm font-medium leading-none"
 							>{$_('user-pages.portraits.revenue')}</legend
 						>
 
@@ -277,7 +277,7 @@
 					</fieldset>
 
 					<fieldset>
-						<legend class="data-[fs-error]:text-destructive text-sm font-medium leading-none"
+						<legend class="data-fs-error:text-destructive text-sm font-medium leading-none"
 							>{$_('user-pages.portraits.locations')}</legend
 						>
 
@@ -323,7 +323,7 @@
 					</fieldset>
 
 					<fieldset>
-						<legend class="data-[fs-error]:text-destructive text-sm font-medium leading-none"
+						<legend class="data-fs-error:text-destructive text-sm font-medium leading-none"
 							>{$_('user-pages.portraits.numberOfEmployees')}</legend
 						>
 
@@ -381,7 +381,7 @@
 					</Field>
 
 					<fieldset>
-						<legend class="data-[fs-error]:text-destructive text-sm font-medium leading-none"
+						<legend class="data-fs-error:text-destructive text-sm font-medium leading-none"
 							>{$_('user-pages.portraits.offers')}</legend
 						>
 						<div class="flex flex-wrap gap-4 mt-2">
@@ -397,7 +397,7 @@
 									id="country-checkbox"
 								/>
 								<label for="country-checkbox" class="flex items-center cursor-pointer">
-									<Globe class="h-5 w-5 mr-2 text-muted-foreground" />
+									<Globe class="size-5 mr-2 text-muted-foreground" />
 									<span class="text-sm font-medium"
 										>{$_('user-pages.portraits.offersOutOfCountryWork')}</span
 									>
@@ -415,7 +415,7 @@
 									id="internship-checkbox"
 								/>
 								<label for="internship-checkbox" class="flex items-center cursor-pointer">
-									<Briefcase class="h-5 w-5 mr-2 text-muted-foreground" />
+									<Briefcase class="size-5 mr-2 text-muted-foreground" />
 									<span class="text-sm font-medium"
 										>{$_('user-pages.portraits.offersInternships')}</span
 									>
@@ -433,7 +433,7 @@
 									id="thesis-checkbox"
 								/>
 								<label for="thesis-checkbox" class="flex items-center cursor-pointer">
-									<BookOpen class="h-5 w-5 mr-2 text-muted-foreground" />
+									<BookOpen class="size-5 mr-2 text-muted-foreground" />
 									<span class="text-sm font-medium">{$_('user-pages.portraits.offersThesis')}</span>
 								</label>
 							</div>
@@ -538,7 +538,7 @@
 									form={isEditMode ? `create-portrait-form-${portraitId}` : 'create-portrait-form'}
 									disabled
 								>
-									<LoaderCircle class="mr-2 h-4 w-4 animate-spin" />{$_('common.save')}{$_(
+									<LoaderCircle class="mr-2 size-4 animate-spin" />{$_('common.save')}{$_(
 										'common.delete'
 									)}
 								</Button>

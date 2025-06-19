@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Calendar, Check, ChevronRight, Clock, Edit, MapPin, Package, Plus, Users, X } from 'lucide-svelte';
+	import { Calendar, Check, ChevronRight, Clock, Edit, MapPin, Package, Plus, Users, X } from '@lucide/svelte';
 
 	import { Badge } from '@/components/ui/badge';
 	import { Button } from '@/components/ui/button';
@@ -134,7 +134,7 @@
 						<Card>
 							<CardHeader class="pb-2">
 								<CardTitle class="text-lg flex items-center">
-									<Users class="h-5 w-5 mr-2" />
+									<Users class="size-5 mr-2" />
 									Organization
 								</CardTitle>
 							</CardHeader>
@@ -145,13 +145,13 @@
 											<img
 												src={registrationData.organization.logo || "/placeholder.svg"}
 												alt={registrationData.organization.name}
-												class="h-10 w-10 rounded-md"
+												class="size-10 rounded-md"
 											/>
 										</div>
 										<div>
 											<h3 class="font-medium">{registrationData.organization.name}</h3>
 											<p class="text-sm text-muted-foreground flex items-start">
-												<MapPin class="h-3.5 w-3.5 mr-1 mt-0.5" />
+												<MapPin class="size-3.5 mr-1 mt-0.5" />
 												{registrationData.organization.address}
 											</p>
 										</div>
@@ -163,7 +163,7 @@
 						<Card>
 							<CardHeader class="pb-2">
 								<CardTitle class="text-lg flex items-center">
-									<Package class="h-5 w-5 mr-2" />
+									<Package class="size-5 mr-2" />
 									Package
 								</CardTitle>
 							</CardHeader>
@@ -176,7 +176,7 @@
 									<ul class="text-sm space-y-1 mt-2">
 										{#each registrationData.package.benefits.slice(0, 3) as benefit, index}
 											<li class="flex items-start">
-												<Check class="h-3.5 w-3.5 mr-1.5 mt-0.5 text-green-500" />
+												<Check class="size-3.5 mr-1.5 mt-0.5 text-green-500" />
 												{benefit}
 											</li>
 										{/each}
@@ -194,7 +194,7 @@
 						<Card>
 							<CardHeader class="pb-2">
 								<CardTitle class="text-lg flex items-center">
-									<Calendar class="h-5 w-5 mr-2" />
+									<Calendar class="size-5 mr-2" />
 									Event Days
 								</CardTitle>
 							</CardHeader>
@@ -211,7 +211,7 @@
 										{/each}
 									</div>
 									<p class="text-sm text-muted-foreground mt-2">
-										<Clock class="h-3.5 w-3.5 inline mr-1" />
+										<Clock class="size-3.5 inline mr-1" />
 										Total registrations: {registrationData.registrationCount}
 									</p>
 								</div>
@@ -221,7 +221,7 @@
 						<Card>
 							<CardHeader class="pb-2">
 								<CardTitle class="text-lg flex items-center">
-									<Users class="h-5 w-5 mr-2" />
+									<Users class="size-5 mr-2" />
 									Contacts
 								</CardTitle>
 							</CardHeader>
@@ -267,13 +267,13 @@
 												<img
 													src={registrationData.organization.logo || "/placeholder.svg"}
 													alt={registrationData.organization.name}
-													class="h-16 w-16 rounded-md"
+													class="size-16 rounded-md"
 												/>
 											</div>
 											<div>
 												<h3 class="font-medium text-xl">{registrationData.organization.name}</h3>
 												<p class="text-sm text-muted-foreground flex items-start mt-1">
-													<MapPin class="h-3.5 w-3.5 mr-1 mt-0.5" />
+													<MapPin class="size-3.5 mr-1 mt-0.5" />
 													{registrationData.organization.address}
 												</p>
 											</div>
@@ -357,7 +357,7 @@
 										<ul class="mt-3 space-y-1">
 											{#each registrationData.package.benefits as benefit}
 												<li class="flex items-start">
-													<Check class="h-4 w-4 mr-2 mt-0.5 text-green-500" />
+													<Check class="size-4 mr-2 mt-0.5 text-green-500" />
 													<span>{benefit}</span>
 												</li>
 											{/each}
@@ -366,7 +366,7 @@
 									<div class="text-right">
 										<div class="text-2xl font-bold">{registrationData.package.price}</div>
 										<Button variant="outline" size="sm" class="mt-2">
-											<Edit class="h-3.5 w-3.5 mr-1.5" />
+											<Edit class="size-3.5 mr-1.5" />
 											Change Package
 										</Button>
 									</div>
@@ -393,7 +393,7 @@
 												{#each addon.items as item}
 													<div class="flex justify-between items-center">
 														<div class="flex items-center">
-															<ChevronRight class="h-3.5 w-3.5 mr-1.5 text-muted-foreground" />
+															<ChevronRight class="size-3.5 mr-1.5 text-muted-foreground" />
 															<span>
 																{item.name}
 																{#if item?.quantity}
@@ -411,7 +411,7 @@
 
 								<div class="mt-6 flex justify-end">
 									<Button variant="outline" size="sm">
-										<Plus class="h-3.5 w-3.5 mr-1.5" />
+										<Plus class="size-3.5 mr-1.5" />
 										Add Addon
 									</Button>
 								</div>
@@ -463,7 +463,7 @@
 														<div class="text-sm text-muted-foreground">{formatDate(day)}</div>
 													</div>
 													<Button variant="outline" size="sm">
-														<Edit class="h-3.5 w-3.5 mr-1.5" />
+														<Edit class="size-3.5 mr-1.5" />
 														Edit
 													</Button>
 												</CardContent>
@@ -500,11 +500,11 @@
 				</Button>
 				<div class="flex gap-2">
 					<Button variant="destructive" onclick={handleReject}>
-						<X class="h-4 w-4 mr-2" />
+						<X class="size-4 mr-2" />
 						Reject Registration
 					</Button>
 					<Button onclick={handleConfirm}>
-						<Check class="h-4 w-4 mr-2" />
+						<Check class="size-4 mr-2" />
 						Confirm Registration
 					</Button>
 				</div>

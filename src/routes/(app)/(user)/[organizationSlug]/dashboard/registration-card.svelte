@@ -9,7 +9,7 @@
 		Info,
 		Package,
 		Users
-	} from 'lucide-svelte';
+	} from '@lucide/svelte';
 
 	// Status mapping for visual indicators
 	const catalogueDataStatusConfig = {
@@ -72,11 +72,10 @@
 		CardHeader,
 		CardTitle
 	} from '@/components/ui/card';
-	import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+	import * as Collapsible from '@/components/ui/collapsible';
 	import RegistrationAddonTree from './registration-addon-tree.svelte';
 	import { Progress } from '@/components/ui/progress';
 	import { Separator } from '@/components/ui/separator';
-	import * as Tooltip from '@/components/ui/tooltip';
 	import {
 		AdvertisementPreview,
 		LocalizedDate,
@@ -94,7 +93,7 @@
 		ViewLogoDialog
 	} from '@/@svelte/modules';
 	import { PickAdvertisementDialog } from '@/@svelte/modules/PickAdvertisementDialog';
-	import { PenLine, Plus } from 'lucide-svelte';
+	import { PenLine, Plus } from '@lucide/svelte';
 	import type { GetEventRegistrationForOrganizationOutput } from '@api/client';
 	import SuperDebug from 'sveltekit-superforms';
 	import QueryWrappedViewLogoDialog from '@/@svelte/modules/ViewLogoDialog/QueryWrappedViewLogoDialog.svelte';
@@ -130,7 +129,11 @@
 		id={registration.id}
 		orgId={registration.organizationId}
 	/>
-	<PickLogoDialog bind:open={pickLogoOpen} id={registration.id} orgId={registration.organizationId} />
+	<PickLogoDialog
+		bind:open={pickLogoOpen}
+		id={registration.id}
+		orgId={registration.organizationId}
+	/>
 	{#if registration.advertisement}
 		<ViewAdvertisementDialog
 			bind:open={viewAdvertisementOpen}
@@ -148,7 +151,11 @@
 			documentId={registration.logo.documentId}
 		/>
 	{/if}
-	<SubmitPortraitDialog id={registration.id} orgId={registration.organizationId} bind:open={submitPortraitOpen} />
+	<SubmitPortraitDialog
+		id={registration.id}
+		orgId={registration.organizationId}
+		bind:open={submitPortraitOpen}
+	/>
 	<CardHeader class="pb-2">
 		<div class="flex justify-between items-start">
 			<div>
@@ -163,7 +170,7 @@
 	<CardContent class="space-y-4">
 		<div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-6">
 			<div class="flex items-center">
-				<Calendar class="h-4 w-4 mr-2 text-muted-foreground" />
+				<Calendar class="size-4 mr-2 text-muted-foreground" />
 				<LocalizedDateRange
 					format="ll"
 					hoverFormat="none"
@@ -174,7 +181,7 @@
 			</div>
 			{#if registration.purchasedPackage}
 				<div class="flex items-center">
-					<Package class="h-4 w-4 mr-2 text-muted-foreground" />
+					<Package class="size-4 mr-2 text-muted-foreground" />
 					<span class="text-sm font-medium"
 						>{$_('components.registration-card.package', {
 							values: {
@@ -186,7 +193,7 @@
 			{/if}
 			{#if registration.desiredEventRegistrationDayDates?.length > 0}
 				<div class="flex items-center">
-					<Clock class="h-4 w-4 mr-2 text-muted-foreground" />
+					<Clock class="size-4 mr-2 text-muted-foreground" />
 					<span class="text-sm"
 						>{$_('components.registration-card.desired-participation-days', {
 							values: {
@@ -224,9 +231,9 @@
 							value="logo"
 						>
 							{#if registration.logoStatus === 'confirmed'}
-								<CheckCircle2 class="h-3.5 w-3.5" />
+								<CheckCircle2 class="size-3.5" />
 							{:else}
-								<Info class="h-3.5 w-3.5" />
+								<Info class="size-3.5" />
 							{/if}
 							{$_('common.logo')}
 						</Tabs.Trigger>
@@ -240,9 +247,9 @@
 								value="advertisement"
 							>
 								{#if registration.advertisementStatus === 'confirmed'}
-									<CheckCircle2 class="h-3.5 w-3.5" />
+									<CheckCircle2 class="size-3.5" />
 								{:else}
-									<Info class="h-3.5 w-3.5" />
+									<Info class="size-3.5" />
 								{/if}
 								{$_('common.advert')}
 							</Tabs.Trigger>
@@ -255,9 +262,9 @@
 							value="portrait"
 						>
 							{#if registration.portraitStatus === 'confirmed'}
-								<CheckCircle2 class="h-3.5 w-3.5" />
+								<CheckCircle2 class="size-3.5" />
 							{:else}
-								<Info class="h-3.5 w-3.5" />
+								<Info class="size-3.5" />
 							{/if}
 							{$_('common.portrait')}
 						</Tabs.Trigger>
@@ -265,18 +272,24 @@
 
 					<Tabs.Content value="logo">
 						{#if registration.logoStatus !== 'missing'}
-							<LogoPreview pickNewLogo={() => {
-								pickLogoOpen = true
-							}} logo={registration.logo} />
+							<LogoPreview
+								pickNewLogo={() => {
+									pickLogoOpen = true;
+								}}
+								logo={registration.logo}
+							/>
 						{:else}
-						<LogoMissing bind:pickLogoOpen />
+							<LogoMissing bind:pickLogoOpen />
 						{/if}
 					</Tabs.Content>
 
 					{#if registration.canUploadAdvertisement}
 						<Tabs.Content value="advertisement">
 							{#if registration.advertisementStatus !== 'missing'}
-								<AdvertisementPreview pickNewAdvertisement={() => pickAdvertisementOpen = true} advert={registration.advertisement} />
+								<AdvertisementPreview
+									pickNewAdvertisement={() => (pickAdvertisementOpen = true)}
+									advert={registration.advertisement}
+								/>
 							{:else}
 								<AdvertMissing {registration} />
 							{/if}
@@ -298,7 +311,7 @@
 		<div class="space-y-2 @container/contact-people">
 			<div class="flex items-center justify-between">
 				<h4 class="text-sm font-medium flex items-center">
-					<Users class="h-4 w-4 mr-2" />
+					<Users class="size-4 mr-2" />
 					{$_('components.registration-card.contact-people')}
 				</h4>
 
@@ -310,10 +323,10 @@
 					}}
 				>
 					{#if Number(registration.contactPeople?.length) < 1}
-						<Plus class="h-4 w-4 mr-1" />
+						<Plus class="size-4 mr-1" />
 						{$_('common.select')}
 					{:else}
-						<PenLine class="w-4 h-4 mr-1" />{$_('common.edit')}
+						<PenLine class="size-4 mr-1" />{$_('common.edit')}
 					{/if}
 				</Button>
 			</div>
@@ -323,7 +336,7 @@
 						<div
 							class="text-sm flex items-center gap-3 rounded-full border border-neutral-300 bg-muted py-1 px-1.5"
 						>
-							<Avatar.Root class="w-8 h-8">
+							<Avatar.Root class="size-8">
 								<Avatar.Image src={contact.image} />
 								<Avatar.Fallback
 									>{contact.name
@@ -343,32 +356,32 @@
 			{/if}
 		</div>
 
-		{#if registration.addonPackages?.length > 0}
-			<Collapsible bind:open={isAddonsOpen} class="w-full">
+		{#if Number(registration.addonPackages?.length) > 0}
+			<Collapsible.Root bind:open={isAddonsOpen} class="w-full">
 				<div class="flex items-center justify-between">
 					<h4 class="text-sm font-medium flex items-center">
-						<Package class="h-4 w-4 mr-2" />
+						<Package class="size-4 mr-2" />
 						{$_('components.registration-card.addons')}
 					</h4>
-					<CollapsibleTrigger
-						class={cn(buttonVariants({ size: 'sm', variant: 'ghost' }), 'p-0 h-8 w-8')}
+					<Collapsible.Trigger
+						class={cn(buttonVariants({ size: 'sm', variant: 'ghost' }), 'p-0 size-8')}
 					>
 						{#if isAddonsOpen}
-							<ChevronDown class="h-4 w-4" />
+							<ChevronDown class="size-4" />
 						{:else}
-							<ChevronRight class="h-4 w-4" />
+							<ChevronRight class="size-4" />
 						{/if}
-					</CollapsibleTrigger>
+					</Collapsible.Trigger>
 				</div>
-				<CollapsibleContent class="mt-2">
+				<Collapsible.Content class="mt-2">
 					<RegistrationAddonTree addons={registration.addonPackages} />
-				</CollapsibleContent>
-			</Collapsible>
+				</Collapsible.Content>
+			</Collapsible.Root>
 		{/if}
 	</CardContent>
 	<CardFooter class="flex justify-between border-t pt-4">
 		<div class="flex items-center text-xs text-muted-foreground">
-			<FileText class="h-3.5 w-3.5 mr-1" />
+			<FileText class="size-3.5 mr-1" />
 			{$_('components.registration-card.id')}
 			{registration.id}
 		</div>

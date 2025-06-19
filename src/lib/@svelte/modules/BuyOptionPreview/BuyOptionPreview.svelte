@@ -12,7 +12,7 @@
 	import { number } from '@services/i18n';
 	import { LocalizedDate } from '@/@svelte/components';
 	import { Label } from '@/components/ui/label';
-	import { CalendarDays, Check, Info } from 'lucide-svelte';
+	import { CalendarDays, Check, Info } from '@lucide/svelte';
 
 	interface Props {
 		buyOption: any;
@@ -62,7 +62,7 @@
 							{#if service.description?.trim().length > 0}
 								<Tooltip.Root>
 									<Tooltip.Trigger>
-										<Info class="w-4 h-4" />
+										<Info class="size-4" />
 									</Tooltip.Trigger>
 									<Tooltip.Content class="max-w-[30ch]">
 										{service.description}
@@ -100,7 +100,7 @@
 					<Table.Cell class=" p-3">
 						<div class=" flex justify-center items-center">
 							<Button onclick={() => selectedPackageId=pkg.id}
-											variant={selectedPackageId === pkg.id? "default" : "outline"} class="!py-1.5 !px-4">
+											variant={selectedPackageId === pkg.id? "default" : "outline"} class="py-1.5! px-4!">
 								{$_('common.select')}
 							</Button>
 						</div>
@@ -149,7 +149,7 @@
 					<div class="flex justify-between items-start gap-2">
 						<div>
 							<div class="flex items-center gap-2 mb-2">
-								<CalendarDays class="h-5 w-5 text-muted-foreground" />
+								<CalendarDays class="size-5 text-muted-foreground" />
 								<LocalizedDate format="LL" hoverFormat="none" date={day.dayDate}
 															 class="font-medium text-lg text-nowrap" />
 							</div>
@@ -158,8 +158,8 @@
 						</div>
 						{#if selectedEventDays.includes(day.dayDate)}
 							<div
-								class="h-6 w-6 rounded-full bg-primary flex-shrink-0 flex-grow-0 flex items-center justify-center">
-								<Check class="h-4 w-4 text-primary-foreground" />
+								class="size-6 rounded-full bg-primary shrink-0 grow-0 flex items-center justify-center">
+								<Check class="size-4 text-primary-foreground" />
 							</div>
 						{/if}
 					</div>

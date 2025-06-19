@@ -53,7 +53,7 @@
 		</Breadcrumb.List>
 	</Breadcrumb.Root>
 </div>
-<div class="max-w-screen-lg mx-auto">
+<div class="max-w-(--breakpoint-lg) mx-auto">
 	<div class=" flex justify-between items-start">
 		<div class=" flex">
 			<div>

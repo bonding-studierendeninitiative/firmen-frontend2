@@ -7,7 +7,7 @@
 	import { trpc } from '@/trpc/client';
 	import LocalizedDate from '../LocalizedDate/LocalizedDate.svelte';
 	import { Button } from '@/components/ui/button';
-	import { Replace } from 'lucide-svelte';
+	import { Replace } from '@lucide/svelte';
 
 	interface Props {
 		logo: LogoOutput;
@@ -48,7 +48,7 @@
 			<img
 				src={$thumbnail.data || '/placeholder.svg'}
 				alt={logo.status}
-				class="object-contain w-full h-full"
+				class="object-contain size-full"
 			/>
 		</div>
 	{/if}
@@ -75,7 +75,7 @@
 				pickNewLogo();
 			}}
 			variant="ghost"
-			class="text-blue-700 px-0"><Replace class="w-4 h-4 mr-2" />Logo ändern</Button
+			class="text-blue-700 px-0"><Replace class="size-4 mr-2" />Logo ändern</Button
 		>
 	</div>
 </section>

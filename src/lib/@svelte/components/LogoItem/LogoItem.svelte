@@ -8,7 +8,7 @@
 	import { SimpleDocumentOutput } from '@api/client';
 	import { page } from '$app/state';
 	import { trpc } from '@/trpc/client';
-	import { LoaderCircle } from 'lucide-svelte';
+	import { LoaderCircle } from '@lucide/svelte';
 
 	interface Props {
 		logo: SimpleDocumentOutput;
@@ -55,7 +55,7 @@
 					<img
 						src={$thumbnail.data || '/placeholder.svg'}
 						alt={logo.title}
-						class="object-contain w-full h-full"
+						class="object-contain size-full"
 					/>
 				{/if}
 			</div>

@@ -76,7 +76,7 @@
 						<img
 							src={$thumbnail.data || '/placeholder.svg'}
 							alt={$logoData.data.title}
-							class="object-contain w-full h-full"
+							class="object-contain size-full"
 						/>
 					{/if}
 				</div>

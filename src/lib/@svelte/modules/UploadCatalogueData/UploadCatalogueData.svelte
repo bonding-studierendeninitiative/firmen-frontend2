@@ -9,7 +9,7 @@
 	import { Control, Description, Field, FieldErrors, Label } from '@/components/ui/form';
 	import { _ } from '@services';
 	import { Input } from '@/components/ui/input';
-	import { FileImage, Shield } from 'lucide-svelte';
+	import { FileImage, Shield } from '@lucide/svelte';
 
 	interface Props {
 		isOpen: boolean;
@@ -78,7 +78,7 @@
 								{#each documentTypeOptions as { value, label, icon }}
 									<Tabs.Trigger {value}>
 										{@const SvelteComponent = icon}
-										<SvelteComponent class="w-4 h-4 mr-2" />{label}</Tabs.Trigger
+										<SvelteComponent class="size-4 mr-2" />{label}</Tabs.Trigger
 									>
 								{/each}
 							</Tabs.List>

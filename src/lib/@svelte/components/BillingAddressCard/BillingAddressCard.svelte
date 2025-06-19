@@ -7,7 +7,7 @@
 		MakeBillingAddressTemplateDefaultForm
 	} from '@schema';
 	import { type Infer, superForm, type SuperValidated } from 'sveltekit-superforms';
-	import { Trash } from 'lucide-svelte';
+	import { Trash } from '@lucide/svelte';
 	import { Button } from '@/components/ui/button';
 	import { toast } from 'svelte-sonner';
 	import * as Dialog from '@/components/ui/dialog';

@@ -7,7 +7,7 @@
 	import { trpc } from '@/trpc/client';
 	import { derived, writable } from 'svelte/store';
 	import { page } from '$app/state';
-	import { ClipboardList, LoaderCircle } from 'lucide-svelte';
+	import { ClipboardList, LoaderCircle } from '@lucide/svelte';
 	import { cn } from '@/utils';
 	import { buttonVariants } from '@/components/ui/button';
 
@@ -36,12 +36,12 @@
 
 <Sheet.Root>
 	<Sheet.Trigger class={cn(buttonVariants({variant: 'ghost'}))}>
-		<ClipboardList class="w-6 h-6" />
+		<ClipboardList class="size-6" />
 	</Sheet.Trigger>
 	<Sheet.Content class="flex flex-col gap-4">
 		<Sheet.Header class="space-y-4">
 			<Sheet.Title class="inline-flex items-center gap-2">
-				<ClipboardList class="w-6 h-6" />
+				<ClipboardList class="size-6" />
 				Jobs
 			</Sheet.Title>
 			<Tabs.Root bind:value={$state}>
@@ -56,9 +56,9 @@
 			</Tabs.Root>
 		</Sheet.Header>
 		{#if $jobs.isLoading}
-			<LoaderCircle class="mx-auto h-5 w-5 animate-spin" />
+			<LoaderCircle class="mx-auto size-5 animate-spin" />
 		{/if}
-		<div class="flex-grow">
+		<div class="grow">
 			{#each $jobs.data?.jobs ?? [] as job}
 				<p>{job.name}</p>
 			{/each}

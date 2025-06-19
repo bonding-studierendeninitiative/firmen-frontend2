@@ -1,6 +1,6 @@
 <script lang="ts">
 
-	import { LucideMail, LucidePhone } from 'lucide-svelte';
+	import { LucideMail, LucidePhone } from '@lucide/svelte';
 
 	interface Props {
 		organization: {
@@ -21,7 +21,7 @@
 			<span>{organization.phone}</span>
 		</div>
 		<div class="flex gap-2 text-sm items-center">
-			<LucideMail class="w-4" />
+			<LucideMail class="size-4" />
 			<span>{organization.email}</span>
 		</div>
 	</div>

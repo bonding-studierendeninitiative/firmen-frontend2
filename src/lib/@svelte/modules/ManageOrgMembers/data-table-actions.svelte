@@ -1,5 +1,5 @@
 <script lang="ts">
-	import Ellipsis from 'lucide-svelte/icons/ellipsis';
+	import Ellipsis from '@lucide/svelte/icons/ellipsis';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
 	import { Button } from '$lib/components/ui/button';
 	import { _ } from '@services';
@@ -20,9 +20,9 @@
 <DropdownMenu.Root>
 	<DropdownMenu.Trigger >
 		{#snippet child({ props })}
-				<Button variant="ghost" {...props} size="icon" class="relative h-8 w-8 p-0">
+				<Button variant="ghost" {...props} size="icon" class="relative size-8 p-0">
 				<span class="sr-only">{$_('common.open-menu')}</span>
-				<Ellipsis class="h-4 w-4" />
+				<Ellipsis class="size-4" />
 			</Button>
 					{/snippet}
 		</DropdownMenu.Trigger>

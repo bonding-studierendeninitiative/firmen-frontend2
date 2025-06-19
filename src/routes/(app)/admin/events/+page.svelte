@@ -3,10 +3,10 @@
 	import { page } from '$app/state';
 	import { _ } from '@services';
 	import { PublishedEventsTab } from '@/@svelte/pages';
-	import { LoaderCircle } from 'lucide-svelte';
+	import { LoaderCircle } from '@lucide/svelte';
 	import * as Pagination from '@/components/ui/pagination';
-	import ChevronRight from 'lucide-svelte/icons/chevron-right';
-	import ChevronLeft from 'lucide-svelte/icons/chevron-left';
+	import ChevronRight from '@lucide/svelte/icons/chevron-right';
+	import ChevronLeft from '@lucide/svelte/icons/chevron-left';
 	import { ButtonIcon, NoDataFound, SearchInput } from '@/@svelte/components';
 	import { GridIcon, ListIcon } from '@/@svelte/icons';
 	import { blur } from 'svelte/transition';
@@ -59,20 +59,20 @@
 			<EventStatusFilter />
 			<ButtonIcon
 				onClick={() => (isListView = false)}
-				classes={`${!isListView ? '!text-brand' : ''}`}
+				classes={`${!isListView ? 'text-brand!' : ''}`}
 			>
 				<GridIcon />
 			</ButtonIcon>
 			<ButtonIcon
 				onClick={() => (isListView = true)}
-				classes={`${isListView ? '!text-brand' : ''}`}
+				classes={`${isListView ? 'text-brand!' : ''}`}
 			>
 				<ListIcon />
 			</ButtonIcon>
 		</div>
 	</section>
 	{#await data.events}
-		<LoaderCircle class=" w-16 h-16 mx-auto animate-spin" />
+		<LoaderCircle class=" size-16 mx-auto animate-spin" />
 	{:then events}
 		<section in:blur class="space-y-6">
 			{#if Number(events?.totalElements) > 0}
@@ -97,7 +97,7 @@
 						<Pagination.Content>
 							<Pagination.Item>
 								<Pagination.PrevButton>
-									<ChevronLeft class="h-4 w-4" />
+									<ChevronLeft class="size-4" />
 									<span class="hidden sm:block">{$_('common.previous')}</span>
 								</Pagination.PrevButton>
 							</Pagination.Item>
@@ -117,7 +117,7 @@
 							<Pagination.Item>
 								<Pagination.NextButton>
 									<span class="hidden sm:block">{$_('common.next')}</span>
-									<ChevronRight class="h-4 w-4" />
+									<ChevronRight class="size-4" />
 								</Pagination.NextButton>
 							</Pagination.Item>
 						</Pagination.Content>

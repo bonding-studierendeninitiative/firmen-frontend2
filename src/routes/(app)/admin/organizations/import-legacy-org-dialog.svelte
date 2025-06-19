@@ -4,12 +4,12 @@
 	import * as Popover from '@/components/ui/popover';
 	import * as Command from '@/components/ui/command';
 	import { cn } from '@/utils';
-	import { Building, Check, ChevronsUpDown, LoaderCircle } from 'lucide-svelte';
+	import { Building, Check, ChevronsUpDown, LoaderCircle } from '@lucide/svelte';
 	import { page } from '$app/state';
 	import { tick } from 'svelte';
 	import { Button } from '@/components/ui/button';
 	import { writable } from 'svelte/store';
-	import Search from 'lucide-svelte/icons/search';
+	import Search from '@lucide/svelte/icons/search';
 	import { toast } from 'svelte-sonner';
 	import { _ } from '@services';
 	import { trpc } from '@/trpc/client';
@@ -72,7 +72,7 @@
 			<Card.Root>
 				<Card.Header class="pb-2">
 					<Card.Title class="text-lg flex items-center">
-						<Building class="h-5 w-5 mr-2" />
+						<Building class="size-5 mr-2" />
 						{$_('modules.admin-import-legacy-org.org-card-header')}
 					</Card.Title>
 				</Card.Header>
@@ -91,14 +91,14 @@
 										>
 											{selectedOrgName ||
 												$_('modules.admin-import-legacy-org.select-org-placeholder')}
-											<ChevronsUpDown class="ml-2 h-4 w-4 shrink-0 opacity-50" />
+											<ChevronsUpDown class="ml-2 size-4 shrink-0 opacity-50" />
 										</Button>
 									{/snippet}
 								</Popover.Trigger>
 								<Popover.Content class="w-[40ch] p-0">
 									<Command.Root shouldFilter={false}>
 										<Label class="flex items-center gap-2 py-2">
-											<Search class="h-5 w-5 ml-2" />
+											<Search class="size-5 ml-2" />
 											<input
 												bind:value={$orgFilters.query}
 												class="w-full outline-transparent border-transparent py-2"
@@ -109,7 +109,7 @@
 										<Command.List>
 											{#if $legacyOrgsQuery.isLoading}
 												<Command.Loading class="flex items-center justify-center py-2">
-													<LoaderCircle class="h-6 w-6 text-primary animate-spin" />
+													<LoaderCircle class="size-6 text-primary animate-spin" />
 												</Command.Loading>
 											{:else}
 												{#each $legacyOrgsQuery.data?.organizations ?? [] as organization}
@@ -121,7 +121,7 @@
 													>
 														<Check
 															class={cn(
-																'mr-2 h-4 w-4',
+																'mr-2 size-4',
 																$selectedOrg !== organization.id && 'text-transparent'
 															)}
 														/>
