@@ -72,9 +72,9 @@ export const Problem = v.object({
   parameters: v.optional(v.record(v.string(), v.unknown())),
   instance: v.optional(v.string()),
   type: v.optional(v.string()),
-  title: v.optional(v.string()),
-  status: v.optional(StatusType),
   detail: v.optional(v.string()),
+  status: v.optional(StatusType),
+  title: v.optional(v.string()),
 });
 
 export type BillingAddressTemplateResponse = v.InferOutput<typeof BillingAddressTemplateResponse>;
@@ -124,6 +124,14 @@ export const AddBillingAddressTemplateInput = v.object({
   vat: v.string(),
   billingReference: v.string(),
   organizationName: v.string(),
+});
+
+export type OrgMemberNotificationRequest = v.InferOutput<typeof OrgMemberNotificationRequest>;
+export const OrgMemberNotificationRequest = v.object({
+  recipientEmail: v.string(),
+  userName: v.string(),
+  organizationName: v.string(),
+  adminName: v.string(),
 });
 
 export type RegisterOrganizationToEventOutput = v.InferOutput<typeof RegisterOrganizationToEventOutput>;
@@ -813,6 +821,17 @@ export const post_AddBillingAddressTemplate = v.object({
   response: BillingAddressTemplateResponse,
 });
 
+export type post_SendOrgMemberNotification = v.InferOutput<typeof post_SendOrgMemberNotification>;
+export const post_SendOrgMemberNotification = v.object({
+  method: v.literal("POST"),
+  path: v.literal("/api/v2/notifications/org-member"),
+  requestFormat: v.literal("json"),
+  parameters: v.object({
+    body: OrgMemberNotificationRequest,
+  }),
+  response: v.unknown(),
+});
+
 export type get_GetEventRegistrationsForOrganization = v.InferOutput<typeof get_GetEventRegistrationsForOrganization>;
 export const get_GetEventRegistrationsForOrganization = v.object({
   method: v.literal("GET"),
@@ -1206,6 +1225,7 @@ export const EndpointByMethod = {
       post_RestoreVersion,
     "/api/v2/organization/{organizationId}/catalogue-data/request-upload-url": post_RequestUploadUrl,
     "/api/v2/organization/{organizationId}/billing-address-template": post_AddBillingAddressTemplate,
+    "/api/v2/notifications/org-member": post_SendOrgMemberNotification,
     "/api/v2/event-registration": post_RegisterOrganizationToEvent,
     "/api/v2/event-registration/{eventRegistrationId}/withdraw": post_Withdraw,
     "/api/v2/event-registration/{eventRegistrationId}/portrait/submit": post_SubmitPortrait,

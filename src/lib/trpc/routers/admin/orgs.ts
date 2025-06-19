@@ -1,11 +1,12 @@
 import { adminProcedure, router } from '@/trpc/server';
-import { boolean, literal, nullish, number, object, optional, parse, pipe, string, union } from 'valibot';
+import { boolean, literal, nullish, number, object, optional, parse, string, union } from 'valibot';
 import { clerkClient } from 'svelte-clerk/server';
 import { CreateOrgInviteRequestSchema, CreateOrgRequestSchema } from '@schema';
 import { superValidate } from 'sveltekit-superforms';
 import { valibot } from 'sveltekit-superforms/adapters';
 import { makeSerializable } from '@/utils';
 import { PUBLIC_APP_URL } from '$env/static/public';
+import { TRPCError } from '@trpc/server';
 
 export const adminOrgsRouter = router({
 	members: router({
@@ -64,11 +65,33 @@ export const adminOrgsRouter = router({
 		addMember: adminProcedure
 			.input((input) => parse(object({
 				organizationId: string(),
-				userId: string()
+				userId: string(),
+				sendNotification: optional(boolean(), false)
 			}), input))
 			.mutation(
-				async ({ input }) => {
-					await clerkClient.organizations.createOrganizationMembership({ ...input, role: "org:member" })
+				async ({ input, ctx }) => {
+					const createdOrgMembership = await clerkClient.organizations.createOrganizationMembership({
+						userId: input.userId,
+						organizationId: input.organizationId,
+						role: "org:member"
+					})
+
+					if (input.sendNotification && createdOrgMembership.publicUserData?.identifier) {
+						const inviter = await clerkClient.users.getUser(ctx.session.userId);
+	
+						const result = await ctx.api.request("post", "/api/v2/notifications/org-member", {
+							body: {
+								adminName: inviter.fullName ?? "Unbekannter Nutzer:in",
+								organizationName: createdOrgMembership.organization.name,
+								recipientEmail: createdOrgMembership.publicUserData?.identifier,
+								userName: createdOrgMembership.publicUserData.firstName + " " + createdOrgMembership.publicUserData.lastName
+							}
+						})
+
+						if (result.status !== 204) {
+							throw new TRPCError({code: "INTERNAL_SERVER_ERROR", message: "The user could not be notified"})
+						}
+					}
 				}
 			)
 	}),

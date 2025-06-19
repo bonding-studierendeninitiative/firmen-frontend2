@@ -15,6 +15,7 @@
 	import { debouncer } from '@/stores/debouncer';
 	import { tick } from 'svelte';
 	import { cn } from '@/utils';
+	import { Switch } from '@/components/ui/switch';
 
 	interface Props {
 		orgId: string;
@@ -156,14 +157,18 @@
 					</Popover.Root>
 				</div>
 				{#if user}
-					<div class="flex gap-x-4 px-2 items-center" >
+					<div class="flex gap-x-4 p-2">
 						<Avatar.Root>
 							<Avatar.Image src={user.imageUrl} />
 							<Avatar.Fallback>{user.firstName[0] + user.lastName[0]}</Avatar.Fallback>
 						</Avatar.Root>
-						<div class="space-y-2 pt-2">
-						<p class="text-md font-semibold">{user.firstName + " " + user.lastName}</p>
+						<div class="space-y-2">
+							<p class="text-md font-semibold">{user.firstName + ' ' + user.lastName}</p>
 							<p class="text-sm">{user.emailAddresses[0].emailAddress}</p>
+							<div class="flex gap-3 items-center mt-6">
+								<Switch id="sendNotification" bind:checked={sendNotification} />
+								<Label for="sendNotification">Nutzer:in benachrichtigen</Label>
+							</div>
 						</div>
 					</div>
 				{/if}
@@ -176,7 +181,7 @@
 			<Button
 				onclick={() => {
 					$addMember.mutate(
-						{ userId: $selectedUser.id, organizationId: orgId },
+						{ userId: $selectedUser.id, organizationId: orgId, sendNotification },
 						{
 							onError: (error) => {
 								toast.error(error.message);
