@@ -3,6 +3,8 @@ import { sveltekit } from '@sveltejs/kit/vite';
 import { defineConfig } from 'vite';
 import { visualizer } from 'rollup-plugin-visualizer';
 import tailwindcss from "@tailwindcss/vite";
+import { quickpickle } from "quickpickle";
+import {svelteTesting} from "@testing-library/svelte/vite";
 
 export default defineConfig({
 	plugins: [

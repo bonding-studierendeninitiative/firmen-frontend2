@@ -12,7 +12,10 @@
     "typed-openapi": "typed-openapi http://localhost:8080/v3/api-docs/bonding-Firmen-API -o 'src/lib/api/client.ts' -r 'valibot'",
     "typed-openapi:admin": "typed-openapi http://localhost:8080/v3/api-docs/bonding-Firmen-Admin-API -o 'src/lib/api/admin-client.ts' -r 'valibot'",
     "lint": "prettier --check . && eslint .",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "test": "vitest run",
+    "test:ui": "vitest --ui",
+    "test:watch": "vitest"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.1.0",
@@ -24,20 +27,26 @@
     "@sveltejs/vite-plugin-svelte": "^5.1.0",
     "@tailwindcss/container-queries": "^0.1.1",
     "@tailwindcss/vite": "^4.1.10",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/svelte": "^5.2.8",
     "@tsconfig/svelte": "^5.0.4",
     "@types/eslint": "9.6.0",
     "@types/node": "^24.0.3",
     "@typescript-eslint/eslint-plugin": "^8.1.0",
     "@typescript-eslint/parser": "^8.1.0",
+    "@vitest/ui": "^3.2.4",
     "bits-ui": "1.8.0",
     "eslint": "^9.9.0",
     "eslint-config-prettier": "^10.1.5",
     "eslint-plugin-svelte": "^3.9.2",
     "formsnap": "^2.0.1",
+    "happy-dom": "^18.0.1",
     "mode-watcher": "^1.0.8",
     "paneforge": "1.0.0-next.5",
+    "pixelmatch": "^7.1.0",
     "prettier": "^3.3.3",
     "prettier-plugin-svelte": "^3.2.6",
+    "quickpickle": "^1.9.0",
     "rollup-plugin-visualizer": "^6.0.3",
     "svelte": "^5.34.3",
     "svelte-check": "^4.0.0",
@@ -52,7 +61,8 @@
     "typed-openapi": "^1.4.0",
     "typescript": "^5.5.4",
     "valibot": "^1.1.0",
-    "vaul-svelte": "1.0.0-next.7"
+    "vaul-svelte": "1.0.0-next.7",
+    "vitest": "^3.2.4"
   },
   "type": "module",
   "dependencies": {
