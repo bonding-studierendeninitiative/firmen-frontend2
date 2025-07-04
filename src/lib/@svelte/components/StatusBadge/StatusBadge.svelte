@@ -18,7 +18,8 @@
 				uploaded: 'border-fuchsia-600 bg-fuchsia-50 text-fuchsia-700',
 				'changes-requested': 'text-yellow-500',
 				rejected: 'border-red-600 bg-red-50 text-red-700',
-				confirmed: 'border-green-600 bg-green-50 text-green-700'
+				confirmed: 'border-green-600 bg-green-50 text-green-700',
+				unreviewed: 'border-yellow-600 bg-yellow-50 text-yellow-700'
 			}
 		},
 		defaultVariants: { variant: 'missing' }

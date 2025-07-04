@@ -1,0 +1,1 @@
+export { default as FancyMultiSelect } from "./fancy-multi-select.svelte"

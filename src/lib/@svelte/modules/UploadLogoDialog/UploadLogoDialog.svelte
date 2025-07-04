@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { Button, buttonVariants } from '@/components/ui/button';
 	import * as Dialog from '@/components/ui/dialog';
-	import { type Infer, superForm, type SuperValidated } from 'sveltekit-superforms';
+	import { fileProxy, type Infer, superForm, type SuperValidated } from 'sveltekit-superforms';
 	import { type UploadLogoRequest } from '@schema';
 	import { toast } from 'svelte-sonner';
 	import { Control, Description, Field, FieldErrors, Label } from '@/components/ui/form';
@@ -33,6 +33,8 @@
 		}
 	});
 	const { enhance, form: formData, submitting, tainted, isTainted } = superform;
+
+	let file = fileProxy(formData, "file")
 </script>
 
 <Dialog.Root bind:open>
@@ -66,14 +68,17 @@
 				<Control>
 					{#snippet children({ props })}
 						<Label>{$_('modules.upload-logo.file')}</Label>
-						<Input
-							type="file"
+						<!-- Due to some weird bug, we can't use Input here! (02.07.2025) -->
+						<input
+						class="focus-within:ring-2 focus-within:ring-offset-2 text-sm font-medium ring-offset-background border-input focus-visible:outline-hidden h-10 bg-gray-50  border rounded-md px-3 py-2 placeholder-gray-400 w-full"
+						accept="image/*, application/pdf"
 							{...props}
-							on:input={(e) => ($formData.file = e.currentTarget.files?.item(0))}
+							type="file"
+							bind:files={$file}
 						/>
 					{/snippet}
 				</Control>
-				<Description />
+				<Description>{$_("modules.upload-logo.file-description")}</Description>
 				<FieldErrors />
 			</Field>
 			<Field form={superform} name="orgId">

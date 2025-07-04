@@ -2,7 +2,7 @@
 	import { StatusBadge } from '@/@svelte/components';
 	import { _ } from '@services';
 	import { cn, getHumanReadableFileSize } from '@/utils';
-	import type { AdvertisementOutput } from '@api/client';
+	import type { RegistrationDocumentOutput } from '@api/client';
 	import { page } from '$app/state';
 	import { trpc } from '@/trpc/client';
 	import LocalizedDate from '../LocalizedDate/LocalizedDate.svelte';
@@ -10,27 +10,20 @@
 	import { Replace } from '@lucide/svelte';
 
 	interface Props {
-		advert: AdvertisementOutput;
+		advert: RegistrationDocumentOutput;
 		class?: string;
 		pickNewAdvertisement: () => void
 	}
 
 	let { advert, class: className = '', pickNewAdvertisement }: Props = $props();
 
-	const advertQuery = trpc(page).catalogueData.getDocumentVersionDescription.createQuery({
-		documentId: advert.documentId,
-		versionId: advert.versionId,
-	});
-
-	const advertData = $derived($advertQuery.data);
-
 	const thumbnail = trpc(page).catalogueData.generateThumbnailLink.createQuery(
 		{
-			documentId: advert.documentId,
+			documentId: advert?.documentVersion?.document?.id ?? '',
 			resolution: 'small'
 		},
 		{
-			enabled: advert.status !== 'missing'
+			enabled: advert?.documentVersion?.uploadStatus === "COMPLETED"
 		}
 	);
 </script>
@@ -54,20 +47,20 @@
 	{/if}
 
 	<div class="">
-		{#if advertData}
-			<p class="font-medium text-md pb-1">{advertData.title}</p>
+		{#if advert?.documentVersion}
+			<p class="font-medium text-md pb-1">{advert?.documentVersion?.document?.title}</p>
 			<p class="text-xs text-muted-foreground whitespace-nowrap">
-				{$_('file-types.' + (advertData.version?.contentType ?? 'unknown'))} · {getHumanReadableFileSize(
-					Number(advertData.version?.size)
+				{$_('file-types.' + (advert.documentVersion.contentType ?? 'unknown'))} · {getHumanReadableFileSize(
+					Number(advert.documentVersion.size)
 				)}
 			</p>
 			<p class="text-xs text-muted-foreground">
-				Zuletzt bearbeitet: <LocalizedDate date={advertData.version?.modifiedAt} />
+				Zuletzt bearbeitet: <LocalizedDate date={advert.documentVersion.modifiedAt} />
 			</p>
 		{/if}
 
 		<div class="pt-4 w-full @container">
-			<StatusBadge variant={advert.status} label={$_('status-text.' + advert.status)} />
+			<StatusBadge variant={advert?.status} label={$_('status-text.' + advert?.status)} />
 		</div>
 
 		<Button onclick={() => {

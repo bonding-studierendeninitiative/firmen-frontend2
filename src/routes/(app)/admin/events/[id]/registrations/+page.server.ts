@@ -16,20 +16,7 @@ export const load = async (event) => {
 };
 
 export const actions = {
-	reviewAdvertisement: async (event) => {
-		const form = await superValidate(event.request, valibot(ReviewDocumentRequest));
-		if (!form.valid) {
-			return fail(400, { form });
-		}
-
-		const api = await createCaller(event);
-
-		await api.admin.documents.review({
-			documentId: form.data.documentId,
-			data: form.data
-		});
-	},
-	reviewLogo: async (event) => {
+	reviewDocument: async (event) => {
 		const form = await superValidate(event.request, valibot(ReviewDocumentRequest));
 
 		if (!form.valid) {

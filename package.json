@@ -1,6 +1,6 @@
 {
   "name": "bonding",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "private": true,
   "scripts": {
     "dev": "vite dev",
@@ -83,7 +83,7 @@
     "svelte-i18n": "^4.0.0",
     "svelte-tel-input": "^3.5.0",
     "sveltekit-search-params": "^3.0.0",
-    "sveltekit-superforms": "^2.22.1",
+    "sveltekit-superforms": "^2.27.1",
     "tailwind-merge": "^2.5.2",
     "trpc-svelte-query-adapter": "^2.3.16",
     "trpc-sveltekit": "^3.6.3",

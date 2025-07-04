@@ -79,8 +79,8 @@ export const UpdateEventBuyOptionInput = v.object({
 
 export type StatusType = v.InferOutput<typeof StatusType>;
 export const StatusType = v.object({
-  statusCode: v.optional(v.number()),
   reasonPhrase: v.optional(v.string()),
+  statusCode: v.optional(v.number()),
 });
 
 export type Problem = v.InferOutput<typeof Problem>;
@@ -88,9 +88,9 @@ export const Problem = v.object({
   parameters: v.optional(v.record(v.string(), v.unknown())),
   instance: v.optional(v.string()),
   type: v.optional(v.string()),
+  detail: v.optional(v.string()),
   title: v.optional(v.string()),
   status: v.optional(StatusType),
-  detail: v.optional(v.string()),
 });
 
 export type AddonOutput = v.InferOutput<typeof AddonOutput>;
@@ -136,6 +136,76 @@ export const EditAddonPackageInput = v.object({
   description: v.string(),
   price: v.number(),
   addons: v.array(AddonInput),
+});
+
+export type ReviewCatalogueDataInput = v.InferOutput<typeof ReviewCatalogueDataInput>;
+export const ReviewCatalogueDataInput = v.object({
+  documentChangeType: v.union([
+    v.literal("upload"),
+    v.literal("confirmation"),
+    v.literal("rejection"),
+    v.literal("change-request"),
+    v.literal("thumbs-done"),
+  ]),
+  feedback: v.string(),
+});
+
+export type BaseDocumentOutput = v.InferOutput<typeof BaseDocumentOutput>;
+export const BaseDocumentOutput = v.object({
+  id: v.optional(v.string()),
+  title: v.optional(v.string()),
+  documentType: v.optional(v.union([v.literal("portrait"), v.literal("logo"), v.literal("advert")])),
+  organizationId: v.optional(v.string()),
+});
+
+export type DocumentFeedbackOutput = v.InferOutput<typeof DocumentFeedbackOutput>;
+export const DocumentFeedbackOutput = v.object({
+  feedbackType: v.optional(v.string()),
+  message: v.optional(v.string()),
+  timestamp: v.optional(v.string()),
+});
+
+export type DetailedDocumentVersionOutput = v.InferOutput<typeof DetailedDocumentVersionOutput>;
+export const DetailedDocumentVersionOutput = v.object({
+  versionId: v.optional(v.string()),
+  size: v.optional(v.number()),
+  contentType: v.optional(v.string()),
+  isLatest: v.optional(v.boolean()),
+  uploadStatus: v.optional(
+    v.union([
+      v.literal("PENDING_METADATA"),
+      v.literal("PENDING_UPLOAD"),
+      v.literal("UPLOADED"),
+      v.literal("PROCESSING_DERIVATIVES"),
+      v.literal("COMPLETED"),
+      v.literal("ERROR_UPLOAD"),
+      v.literal("ERROR_PROCESSING"),
+      v.literal("ARCHIVED"),
+      v.literal("DELETED"),
+    ]),
+  ),
+  document: v.optional(BaseDocumentOutput),
+  createdAt: v.optional(v.string()),
+  modifiedAt: v.optional(v.string()),
+  history: v.optional(v.array(DocumentFeedbackOutput)),
+});
+
+export type AdminRegistrationDocumentOutput = v.InferOutput<typeof AdminRegistrationDocumentOutput>;
+export const AdminRegistrationDocumentOutput = v.object({
+  id: v.optional(v.string()),
+  documentVersion: v.optional(DetailedDocumentVersionOutput),
+  status: v.optional(
+    v.union([v.literal("unreviewed"), v.literal("changes-requested"), v.literal("rejected"), v.literal("confirmed")]),
+  ),
+  documentType: v.optional(v.union([v.literal("portrait"), v.literal("logo"), v.literal("advert")])),
+  reviewer: v.optional(v.string()),
+  reviewComments: v.optional(v.string()),
+  requestedChanges: v.optional(v.string()),
+});
+
+export type ReviewDocumentOutput = v.InferOutput<typeof ReviewDocumentOutput>;
+export const ReviewDocumentOutput = v.object({
+  documentOutput: v.optional(AdminRegistrationDocumentOutput),
 });
 
 export type BillingAddressTemplateInput = v.InferOutput<typeof BillingAddressTemplateInput>;
@@ -232,66 +302,6 @@ export const AdminRegisterOrganizationToEventInput = v.object({
   contactPeople: v.array(v.string()),
   canUploadAdvertisement: v.boolean(),
   confirmedRegistration: v.boolean(),
-});
-
-export type ReviewCatalogueDataInput = v.InferOutput<typeof ReviewCatalogueDataInput>;
-export const ReviewCatalogueDataInput = v.object({
-  documentChangeType: v.union([
-    v.literal("upload"),
-    v.literal("confirmation"),
-    v.literal("rejection"),
-    v.literal("change-request"),
-    v.literal("thumbs-done"),
-  ]),
-  feedback: v.string(),
-});
-
-export type DocumentFeedbackOutput = v.InferOutput<typeof DocumentFeedbackOutput>;
-export const DocumentFeedbackOutput = v.object({
-  feedbackType: v.optional(v.string()),
-  message: v.optional(v.string()),
-  timestamp: v.optional(v.string()),
-});
-
-export type SimpleDocumentVersionOutput = v.InferOutput<typeof SimpleDocumentVersionOutput>;
-export const SimpleDocumentVersionOutput = v.object({
-  versionId: v.optional(v.string()),
-  size: v.optional(v.number()),
-  contentType: v.optional(v.string()),
-  isLatest: v.optional(v.boolean()),
-  uploadStatus: v.optional(
-    v.union([
-      v.literal("PENDING_METADATA"),
-      v.literal("PENDING_UPLOAD"),
-      v.literal("UPLOADED"),
-      v.literal("PROCESSING_DERIVATIVES"),
-      v.literal("COMPLETED"),
-      v.literal("ERROR_UPLOAD"),
-      v.literal("ERROR_PROCESSING"),
-      v.literal("ARCHIVED"),
-      v.literal("DELETED"),
-    ]),
-  ),
-  reviewStatus: v.optional(
-    v.union([v.literal("unreviewed"), v.literal("changes-requested"), v.literal("rejected"), v.literal("confirmed")]),
-  ),
-  createdAt: v.optional(v.string()),
-  modifiedAt: v.optional(v.string()),
-  history: v.optional(v.array(DocumentFeedbackOutput)),
-});
-
-export type DetailedDocumentOutput = v.InferOutput<typeof DetailedDocumentOutput>;
-export const DetailedDocumentOutput = v.object({
-  id: v.optional(v.string()),
-  title: v.optional(v.string()),
-  documentType: v.optional(v.union([v.literal("portrait"), v.literal("logo"), v.literal("advert")])),
-  activeVersion: v.optional(SimpleDocumentVersionOutput),
-  organizationId: v.optional(v.string()),
-});
-
-export type ReviewDocumentOutput = v.InferOutput<typeof ReviewDocumentOutput>;
-export const ReviewDocumentOutput = v.object({
-  documentOutput: v.optional(DetailedDocumentOutput),
 });
 
 export type SimpleLegacyOrganization = v.InferOutput<typeof SimpleLegacyOrganization>;
@@ -408,23 +418,6 @@ export const AllEventsOutput = v.object({
   status: v.optional(v.array(v.union([v.literal("UNPUBLISHED"), v.literal("PUBLISHED"), v.literal("ARCHIVED")]))),
 });
 
-export type AdvertisementOutput = v.InferOutput<typeof AdvertisementOutput>;
-export const AdvertisementOutput = v.object({
-  documentId: v.optional(v.string()),
-  versionId: v.optional(v.string()),
-  status: v.optional(
-    v.union([
-      v.literal("missing"),
-      v.literal("uploaded"),
-      v.literal("generating-thumbnails"),
-      v.literal("thumbnails-ready"),
-      v.literal("changes-requested"),
-      v.literal("rejected"),
-      v.literal("confirmed"),
-    ]),
-  ),
-});
-
 export type EventRegistrationAddonOutput = v.InferOutput<typeof EventRegistrationAddonOutput>;
 export const EventRegistrationAddonOutput = v.object({
   id: v.optional(v.string()),
@@ -453,23 +446,6 @@ export const PurchasedPackageOutput = v.object({
   name: v.optional(v.string()),
 });
 
-export type LogoOutput = v.InferOutput<typeof LogoOutput>;
-export const LogoOutput = v.object({
-  documentId: v.optional(v.string()),
-  versionId: v.optional(v.string()),
-  status: v.optional(
-    v.union([
-      v.literal("missing"),
-      v.literal("uploaded"),
-      v.literal("generating-thumbnails"),
-      v.literal("thumbnails-ready"),
-      v.literal("changes-requested"),
-      v.literal("rejected"),
-      v.literal("confirmed"),
-    ]),
-  ),
-});
-
 export type GetEventRegistrationForEventOutput = v.InferOutput<typeof GetEventRegistrationForEventOutput>;
 export const GetEventRegistrationForEventOutput = v.object({
   id: v.optional(v.string()),
@@ -482,8 +458,7 @@ export const GetEventRegistrationForEventOutput = v.object({
   participationNote: v.optional(v.string()),
   purchasedPackage: v.optional(PurchasedPackageOutput),
   addonPackages: v.optional(v.array(EventRegistrationAddonPackageOutput)),
-  advertisement: v.optional(AdvertisementOutput),
-  logo: v.optional(LogoOutput),
+  registrationDocuments: v.optional(v.array(AdminRegistrationDocumentOutput)),
   desiredEventRegistrationDays: v.optional(v.array(v.string())),
   organizationId: v.optional(v.string()),
   contactPeople: v.optional(v.array(v.string())),
@@ -629,6 +604,20 @@ export const delete_DeleteAddonPackage = v.object({
     }),
   }),
   response: v.unknown(),
+});
+
+export type post_ReviewDocument = v.InferOutput<typeof post_ReviewDocument>;
+export const post_ReviewDocument = v.object({
+  method: v.literal("POST"),
+  path: v.literal("/api/v2/admin/registration-document/{registrationDocumentId}/review"),
+  requestFormat: v.literal("json"),
+  parameters: v.object({
+    path: v.object({
+      registrationDocumentId: v.string(),
+    }),
+    body: ReviewCatalogueDataInput,
+  }),
+  response: ReviewDocumentOutput,
 });
 
 export type post_ImportLegacyOrganization = v.InferOutput<typeof post_ImportLegacyOrganization>;
@@ -838,20 +827,6 @@ export const post_ConfirmEventRegistration = v.object({
   response: v.unknown(),
 });
 
-export type post_ReviewDocument = v.InferOutput<typeof post_ReviewDocument>;
-export const post_ReviewDocument = v.object({
-  method: v.literal("POST"),
-  path: v.literal("/api/v2/admin/document/{documentId}/review"),
-  requestFormat: v.literal("json"),
-  parameters: v.object({
-    path: v.object({
-      documentId: v.string(),
-    }),
-    body: ReviewCatalogueDataInput,
-  }),
-  response: ReviewDocumentOutput,
-});
-
 export type get_GetAllLegacyOrganizations = v.InferOutput<typeof get_GetAllLegacyOrganizations>;
 export const get_GetAllLegacyOrganizations = v.object({
   method: v.literal("GET"),
@@ -1015,6 +990,7 @@ export const EndpointByMethod = {
     "/api/v2/admin/event-registration/{eventRegistrationId}": delete_DeleteEventRegistration,
   },
   post: {
+    "/api/v2/admin/registration-document/{registrationDocumentId}/review": post_ReviewDocument,
     "/api/v2/admin/organization/{id}/import": post_ImportLegacyOrganization,
     "/api/v2/admin/jobs/{jobId}/restart": post_RestartJob,
     "/api/v2/admin/jobs/import/events": post_ImportEvents,
@@ -1027,7 +1003,6 @@ export const EndpointByMethod = {
     "/api/v2/admin/event-registration": post_CreateEventRegistration,
     "/api/v2/admin/event-registration/{eventRegistrationId}/reject": post_RejectEventRegistration,
     "/api/v2/admin/event-registration/{eventRegistrationId}/confirm": post_ConfirmEventRegistration,
-    "/api/v2/admin/document/{documentId}/review": post_ReviewDocument,
   },
 };
 export type EndpointByMethod = typeof EndpointByMethod;

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { _, faker } from '@services';
-	import { InputWithPrefix } from '$lib/@svelte/components';
+	import { FancyMultiSelect, InputWithPrefix } from '$lib/@svelte/components';
 	import { superForm, type SuperValidated, type Infer } from 'sveltekit-superforms';
 	import { page } from '$app/state';
 	import { toast } from 'svelte-sonner';
@@ -11,7 +11,6 @@
 	import { ScrollArea } from '@/components/ui/scroll-area';
 	import { Textarea } from '@/components/ui/textarea';
 	import { Checkbox } from '@/components/ui/checkbox';
-	import * as Select from '@/components/ui/select';
 	import {
 		type CreatePortraitTemplateRequest,
 		PortraitTemplateSchema,
@@ -78,18 +77,16 @@
 	const { form: formData, enhance, submitting } = superform;
 
 	function getSelectedIndustry() {
-		console.log("Getting selected Industries");
-		
-		return convertDisciplineLabelsToObjects($formData.industry).map(
-			(discipline) => discipline.value
-		);
+		console.log('Getting selected Industries');
+
+		return convertDisciplineLabelsToObjects($formData.industry);
 	}
 
-	function setSelectedIndustry(values: string[]) {
-		console.log("Setting selected Industries", values);
+	function setSelectedIndustry(values: {value: string; label: string}[]) {
+		console.log('Setting selected Industries', values);
 		$formData.industry = values
 			? disciplines
-					.filter((discipline) => values.includes(discipline.value))
+					.filter((discipline) => values.includes(discipline))
 					.map((selectedIndustry) => selectedIndustry.label)
 					.join(', ')
 			: '';
@@ -199,18 +196,7 @@
 					<Field form={superform} name="industry">
 						<Control>
 							<Label>{$_('user-pages.portraits.branch')}</Label>
-							<Select.Root  type="multiple" bind:value={getSelectedIndustry, setSelectedIndustry}>
-								<Select.Trigger>
-									{$formData.industry}
-								</Select.Trigger>
-								<Select.Content>
-									{#each disciplines as discipline}
-										<Select.Item value={discipline.value} onselect={() => {
-											console.log("industry item selected")
-										}}>{discipline.label}</Select.Item>
-									{/each}
-								</Select.Content>
-							</Select.Root>
+							<FancyMultiSelect options={disciplines} bind:selected={getSelectedIndustry, setSelectedIndustry} placeholder={$_("user-pages.portraits.select-disciplines")} />
 						</Control>
 
 						<Description />
@@ -538,9 +524,7 @@
 									form={isEditMode ? `create-portrait-form-${portraitId}` : 'create-portrait-form'}
 									disabled
 								>
-									<LoaderCircle class="mr-2 size-4 animate-spin" />{$_('common.save')}{$_(
-										'common.delete'
-									)}
+									<LoaderCircle class="mr-2 size-4 animate-spin" />{$_('common.save')}
 								</Button>
 							{:else}
 								<Button

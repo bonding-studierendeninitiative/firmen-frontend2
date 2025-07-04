@@ -18,8 +18,8 @@
 	
 
 	const thumbnail = trpc(page).catalogueData.generateThumbnailLink.createQuery({
-		documentId: logo.id,
-		organizationId: logo.organizationId,
+		documentId: logo.id ?? '',
+		organizationId: logo.organizationId ?? '',
 		resolution: "small"
 	}, {
 		enabled: logo.activeVersion?.uploadStatus === "COMPLETED"
@@ -59,7 +59,7 @@
 		<Card.Content class="p-4 pt-0">
 			<div class="flex justify-between items-center gap-2 @container">
 				<h3 title={logo.title} class="font-semibold text-lg truncate">{logo.title}</h3>
-				<StatusBadge variant={logo.activeVersion?.reviewStatus} label={$_('status-text.' + logo.activeVersion?.reviewStatus)} />
+				<!--<StatusBadge variant={logo.activeVersion?.uploadStatus} label={$_('status-text.' + logo.activeVersion?.uploadStatus)} />-->
 			</div>
 		</Card.Content>
 	</Card.Root>

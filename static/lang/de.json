@@ -136,7 +136,9 @@
     "catalogue-data-history": {
       "rejection": "Ablehnung",
       "change-request": "Änderungsanfrage",
-      "confirmation": "Bestätigung"
+      "confirmation": "Bestätigung",
+      "thumbs_done": "Vorschaubilder erstellt",
+      "upload": "Hochgeladen"
     },
     "confirm": "Bestätigen",
     "request-changes": "Änderungen anfragen",
@@ -233,6 +235,10 @@
       "advertisement-missing": {
         "description": "Es wurde noch keine Imageanzeige ausgewählt",
         "action": "Jetzt Imageanzeige auswählen"
+      },
+      "portrait-missing": {
+        "description": "Es wurde noch kein Portrait bereitgestellt",
+        "action": "Jetzt Portrait auswählen"
       }
     }
   },
@@ -372,13 +378,15 @@
       "title": "Laden sie ein neues Logo hoch",
       "description": "Hochgeladene Logos können als Katalogdaten für Veranstaltungen und Projekte verwendet werden.",
       "file": "Datei",
-      "name": "Name des Logos"
+      "name": "Name des Logos",
+      "file-description": "Gültige Dateitypen: Bilddateien (.jpeg, .png usw.) und .pdf"
     },
     "upload-advertisement": {
       "title": "Laden sie eine neue Imageanzeige hoch",
       "description": "Hochgeladene Imageanzeigen können als Katalogdaten für Veranstaltungen und Projekte verwendet werden.",
       "file": "Datei",
-      "name": "Name der Imageanzeige"
+      "name": "Name der Imageanzeige",
+      "file-description": "Zulässige Dateiformate: Bilddateien (.JPEG, .PNG, etc.) und .PDF"
     },
     "pick-advertisement-dialog": {
       "title": "Wählen Sie eine Imageanzeige aus",
@@ -414,6 +422,46 @@
       "search-users-placeholder": "Nach Nutzer:innen suchen...",
       "no-users-found": "Keine Nutzer:innen gefunden",
       "success": "Mitglied wurde erfolgreich hinzugefügt"
+    },
+    "file-history": {
+      "title": "Dateihistorie"
+    },
+    "submit-portrait-dialog": {
+      "description": "Hier kommt noch eine gute Beschriebung rein",
+      "title": "Jetzt Portrait auswählen"
+    },
+    "submit-portrait-form": {
+      "firstHeading": "Wie möchten Sie anfangen?",
+      "start-from-scratch": {
+        "title": "Leeres Portrait",
+        "description": "Sie beginnen mit einem komplett leeren Portrait",
+        "body": "Vervollständigen Sie jede zutreffende Information im Formular"
+      },
+      "use-a-template": {
+        "title": "Vorlage",
+        "description": "Eine Vorlage aus existierenden Ausstellerdaten wählen",
+        "body": "Das Formular wird mit den Daten eines existierenden Portraits befüllt"
+      },
+      "select-template": "Eine Vorlage auswählen",
+      "step-1": {
+        "title": "Basisinformationen",
+        "short-title": "Basisinfos"
+      },
+      "step-0": {
+        "short-title": "Start"
+      },
+      "step-2": {
+        "short-title": "Standorte"
+      },
+      "step-3": {
+        "short-title": "Mitarbeitende"
+      },
+      "step-4": {
+        "short-title": "Kontakt"
+      },
+      "step-5": {
+        "short-title": "Vorschau"
+      }
     }
   },
   "sidebar": {
@@ -646,7 +694,8 @@
       "portraitDeletedSuccessMessage": "Portrait erfolgreich gelöscht",
       "portraitDeletedErrorMessage": "Ein Fehler ist aufgetreten. Portrait konnte nicht gelöscht werden.",
       "employees": "Mitarbeiter",
-      "portraitUpdatedSuccessfully": "Das Porträt wurde erfolgreich aktualisiert"
+      "portraitUpdatedSuccessfully": "Das Porträt wurde erfolgreich aktualisiert",
+      "select-disciplines": "Fachrichtungen auswählen..."
     },
     "events": {
       "event-registration": {

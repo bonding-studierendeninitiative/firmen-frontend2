@@ -30,7 +30,7 @@
 		limit: "10",
 		documentType: "advert"
 	});
-	let pickAdvertisement = api.catalogueData.pickAdvertisement.createMutation();
+	let pickAdvertisement = api.catalogueData.pickDocument.createMutation();
 </script>
 
 <Dialog.Root bind:open>
@@ -82,8 +82,9 @@
 				onclick={() => {
 					$pickAdvertisement.mutate(
 						{
-							advertisementId: selectedAdvertisement,
-							eventRegistrationId: id
+							documentId: selectedAdvertisement,
+							eventRegistrationId: id,
+							versionId: $advertisements.data?.documents?.find(document => document.id === selectedAdvertisement)?.activeVersion?.versionId
 						},
 						{
 							onError(error, variables, context) {

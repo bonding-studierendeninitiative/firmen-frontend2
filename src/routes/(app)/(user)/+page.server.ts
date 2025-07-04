@@ -6,7 +6,7 @@ export const load: PageServerLoad = async ({ parent }) => {
 	if (!user?.publicMetadata) {
 		redirect(302, '/add-personal-details');
 	} else if (!initialState.orgId) {
-		redirect(302, '/create-org');
+		redirect(302, '/select-org');
 	} else {
 		redirect(302, `/${initialState.orgSlug}/dashboard`);
 	}

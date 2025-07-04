@@ -8,7 +8,7 @@ const logger = createLogger();
 export const load = async (event) => {
 	const { initialState } = await event.parent();
 	if (!initialState?.orgId) {
-		redirect(302, '/create-org');
+		redirect(302, '/select-org');
 	} else if (initialState?.orgId === PUBLIC_BONDING_ORG_ID) {
 		logger.info('Member of bonding org detected. Redirecting to admin dashboard');
 		redirect(302, '/admin');

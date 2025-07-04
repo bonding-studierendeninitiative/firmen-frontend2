@@ -23,7 +23,7 @@
 
 	// Calculate the completion percentage for catalogue data
 	const calculateCatalogueCompletion = (
-		data: GetEventRegistrationForOrganizationOutput
+		data: EventRegistrationsForOrganizationOutput['eventRegistrations'][number]
 	): number => {
 		function getSingleCompletion(status: string): number {
 			switch (status) {
@@ -46,10 +46,17 @@
 
 		if (data.canUploadAdvertisement) {
 			total = 3;
-			status = [data.logoStatus, data.advertisementStatus, data.portraitStatus];
+			status = [
+				data.registrationDocuments?.find((d) => d.documentType === 'logo')?.status ?? '',
+				data.registrationDocuments?.find((d) => d.documentType === 'advert')?.status ?? '',
+				data.registrationDocuments?.find((d) => d.documentType === 'portrait')?.status ?? ''
+			];
 		} else {
 			total = 2;
-			status = [data.logoStatus, data.portraitStatus];
+			status = [
+				data.registrationDocuments?.find((d) => d.documentType === 'logo')?.status ?? '',
+				data.registrationDocuments?.find((d) => d.documentType === 'portrait')?.status ?? ''
+			];
 		}
 
 		const completed = status
@@ -94,7 +101,7 @@
 	} from '@/@svelte/modules';
 	import { PickAdvertisementDialog } from '@/@svelte/modules/PickAdvertisementDialog';
 	import { PenLine, Plus } from '@lucide/svelte';
-	import type { GetEventRegistrationForOrganizationOutput } from '@api/client';
+	import type { EventRegistrationsForOrganizationOutput } from '@/trpc/client';
 	import SuperDebug from 'sveltekit-superforms';
 	import QueryWrappedViewLogoDialog from '@/@svelte/modules/ViewLogoDialog/QueryWrappedViewLogoDialog.svelte';
 	import LogoMissing from './logo-missing.svelte';
@@ -103,10 +110,15 @@
 
 	let isAddonsOpen = $state(false);
 	interface Props {
-		registration: GetEventRegistrationForOrganizationOutput;
+		registration: EventRegistrationsForOrganizationOutput['eventRegistrations'][number];
 	}
 
 	let { registration }: Props = $props();
+
+	let logo = $derived(registration.registrationDocuments?.find((d) => d.documentType === 'logo'));
+	let advertisement = $derived(
+		registration.registrationDocuments?.find((d) => d.documentType === 'advert')
+	);
 
 	const statusConfig = {
 		created: { color: 'bg-blue-500', label: $_('status-text.created') },
@@ -126,34 +138,31 @@
 <Card class="w-full max-w-2xl shadow-md hover:shadow-lg transition-shadow">
 	<PickAdvertisementDialog
 		bind:open={pickAdvertisementOpen}
-		id={registration.id}
-		orgId={registration.organizationId}
+		id={registration.id ?? ''}
+		orgId={registration.organizationId ?? ''}
 	/>
 	<PickLogoDialog
 		bind:open={pickLogoOpen}
-		id={registration.id}
-		orgId={registration.organizationId}
+		id={registration.id ?? ''}
+		orgId={registration.organizationId ?? ''}
 	/>
-	{#if registration.advertisement}
-		<ViewAdvertisementDialog
-			bind:open={viewAdvertisementOpen}
-			advertisement={registration.advertisement}
-		/>
+	{#if advertisement}
+		<ViewAdvertisementDialog bind:open={viewAdvertisementOpen} {advertisement} />
 	{/if}
 	<EditContactPersons
 		bind:open={editContactPersonsOpen}
 		contactPeople={registration.contactPeople?.map(({ id }) => id)}
 		eventRegistrationId={registration.id}
 	/>
-	{#if registration.logo?.documentId}
+	{#if logo?.documentVersion?.document?.id}
 		<QueryWrappedViewLogoDialog
 			bind:open={viewLogoOpen}
-			documentId={registration.logo.documentId}
+			documentId={logo?.documentVersion?.document.id}
 		/>
 	{/if}
 	<SubmitPortraitDialog
-		id={registration.id}
-		orgId={registration.organizationId}
+		id={registration.id ?? ''}
+		orgId={registration.organizationId ?? ''}
 		bind:open={submitPortraitOpen}
 	/>
 	<CardHeader class="pb-2">
@@ -171,13 +180,24 @@
 		<div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-6">
 			<div class="flex items-center">
 				<Calendar class="size-4 mr-2 text-muted-foreground" />
-				<LocalizedDateRange
-					format="ll"
-					hoverFormat="none"
-					class="text-sm"
-					dateFrom={registration.event.dateFrom}
-					dateTo={registration.event.dateTo}
-				/>
+				{#if registration.event?.dateFrom}
+					{#if registration.event?.dateTo}
+						<LocalizedDateRange
+							format="ll"
+							hoverFormat="none"
+							class="text-sm"
+							dateFrom={registration.event.dateFrom}
+							dateTo={registration.event.dateTo}
+						/>
+					{:else}
+						<LocalizedDate
+							format="ll"
+							hoverFormat="none"
+							class="text-sm"
+							date={registration.event.dateFrom}
+						/>
+					{/if}
+				{/if}
 			</div>
 			{#if registration.purchasedPackage}
 				<div class="flex items-center">
@@ -191,7 +211,7 @@
 					>
 				</div>
 			{/if}
-			{#if registration.desiredEventRegistrationDayDates?.length > 0}
+			{#if Number(registration.desiredEventRegistrationDayDates?.length) > 0}
 				<div class="flex items-center">
 					<Clock class="size-4 mr-2 text-muted-foreground" />
 					<span class="text-sm"
@@ -226,11 +246,11 @@
 						<Tabs.Trigger
 							class={cn(
 								'flex items-center gap-1 text-xs',
-								catalogueDataStatusConfig[registration.logoStatus]?.color
+								catalogueDataStatusConfig[logo?.status ?? '']?.color
 							)}
 							value="logo"
 						>
-							{#if registration.logoStatus === 'confirmed'}
+							{#if logo?.status === 'confirmed'}
 								<CheckCircle2 class="size-3.5" />
 							{:else}
 								<Info class="size-3.5" />
@@ -242,11 +262,11 @@
 							<Tabs.Trigger
 								class={cn(
 									'flex items-center gap-1 text-xs',
-									catalogueDataStatusConfig[registration.advertisementStatus]?.color
+									catalogueDataStatusConfig[advertisement?.status ?? '']?.color
 								)}
 								value="advertisement"
 							>
-								{#if registration.advertisementStatus === 'confirmed'}
+								{#if advertisement?.status === 'confirmed'}
 									<CheckCircle2 class="size-3.5" />
 								{:else}
 									<Info class="size-3.5" />
@@ -271,12 +291,12 @@
 					</Tabs.List>
 
 					<Tabs.Content value="logo">
-						{#if registration.logoStatus !== 'missing'}
+						{#if logo}
 							<LogoPreview
 								pickNewLogo={() => {
 									pickLogoOpen = true;
 								}}
-								logo={registration.logo}
+								{logo}
 							/>
 						{:else}
 							<LogoMissing bind:pickLogoOpen />
@@ -285,10 +305,10 @@
 
 					{#if registration.canUploadAdvertisement}
 						<Tabs.Content value="advertisement">
-							{#if registration.advertisementStatus !== 'missing'}
+							{#if advertisement}
 								<AdvertisementPreview
 									pickNewAdvertisement={() => (pickAdvertisementOpen = true)}
-									advert={registration.advertisement}
+									advert={advertisement}
 								/>
 							{:else}
 								<AdvertMissing {registration} />
@@ -297,7 +317,7 @@
 					{/if}
 					<Tabs.Content value="portrait">
 						{#if registration.portraitStatus !== 'missing'}
-							<LogoPreview class="max-w-64" logo={registration.logo} />
+							<LogoPreview class="max-w-64" {logo} />
 						{:else}
 							<PortraitMissing bind:submitPortraitOpen />
 						{/if}

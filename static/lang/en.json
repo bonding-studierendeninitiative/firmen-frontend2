@@ -136,7 +136,9 @@
     "catalogue-data-history": {
       "rejection": "Rejection",
       "change-request": "Change request",
-      "confirmation": "Confirmation"
+      "confirmation": "Confirmation",
+      "upload": "Upload",
+      "thumbs_done": "Thumbnails generated"
     },
     "confirm": "Confirm",
     "request-changes": "Request changes",
@@ -219,6 +221,10 @@
       "advertisement-missing": {
         "description": "No advertisement has been selected",
         "action": "Pick an advert now"
+      },
+      "portrait-missing": {
+        "description": "No portrait has been provided yet.",
+        "action": "Pick a portrait now"
       }
     }
   },
@@ -358,13 +364,15 @@
       "title": "Upload a logo here",
       "description": "Uploaded logos can be used as catalogue data in events and projects.",
       "file": "File",
-      "name": "Title"
+      "name": "Title",
+      "file-description": "Valid file types: image files (.jpeg, .png, etc) and .pdf"
     },
     "upload-advertisement": {
       "title": "Upload a advertisement here",
       "description": "Uploaded advertisements can be used as catalogue data in events and projects.",
       "file": "File",
-      "name": "Title"
+      "name": "Title",
+      "file-description": "Allowed file types are: image file (.JPEG, .PNG, .TIFF, .BMP) and .PDF"
     },
     "pick-advertisement-dialog": {
       "title": "Pick a advertisement",
@@ -400,6 +408,46 @@
       "search-users-placeholder": "Search users...",
       "no-users-found": "No users were found",
       "success": "Member added successfully"
+    },
+    "file-history": {
+      "title": "File history"
+    },
+    "submit-portrait-dialog": {
+      "title": "Pick a portrait now"
+    },
+    "submit-portrait-form": {
+      "firstHeading": "How would you like to start?",
+      "start-from-scratch": {
+        "title": "Start from scratch",
+        "description": "Create a completely new portrait",
+        "body": "Begin with a blank form and fill in all details manually."
+      },
+      "use-a-template": {
+        "title": "Use a template",
+        "description": "Start with an existing portrait",
+        "body": "Choose from existing portraits as a starting point."
+      },
+      "select-template": "Select a template",
+      "step-1": {
+        "title": "Basic Information",
+        "short-title": "Basic Info"
+      },
+      "step-0": {
+        "title": "Start",
+        "short-title": "Start"
+      },
+      "step-2": {
+        "short-title": "Locations"
+      },
+      "step-3": {
+        "short-title": "Employees"
+      },
+      "step-4": {
+        "short-title": "Contact"
+      },
+      "step-5": {
+        "short-title": "Preview"
+      }
     }
   },
   "sidebar": {
@@ -631,7 +679,8 @@
       "portraitDeletedSuccessMessage": "Portrait deleted successfully.",
       "portraitDeletedErrorMessage": "An error occurred. Portrait could not be deleted.",
       "employees": "Employees",
-      "portraitUpdatedSuccessfully": "The portrait was updated successfully"
+      "portraitUpdatedSuccessfully": "The portrait was updated successfully",
+      "select-disciplines": "Select disciplines..."
     },
     "events": {
       "event-registration": {

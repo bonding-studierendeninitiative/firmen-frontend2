@@ -19,8 +19,8 @@
 
 	const thumbnail = trpc(page).catalogueData.generateThumbnailLink.createQuery(
 		{
-			documentId: advertisement.id,
-			organizationId: advertisement.organizationId,
+			documentId: advertisement.id ?? '',
+			organizationId: advertisement.organizationId ?? '',
 			resolution: 'medium'
 		},
 		{
@@ -65,10 +65,10 @@
 				<Card.Title title={advertisement.title} class="font-semibold text-lg truncate"
 					>{advertisement.title}</Card.Title
 				>
-				<StatusBadge
-					variant={advertisement.activeVersion?.reviewStatus}
-					label={$_('status-text.' + advertisement.activeVersion?.reviewStatus)}
-				/>
+				<!--<StatusBadge
+					variant={advertisement.activeVersion?.uploadStatus}
+					label={$_('status-text.' + advertisement.activeVersion?.uploadStatus)}
+				/>-->
 			</div>
 		</Card.Content>
 	</Card.Root>

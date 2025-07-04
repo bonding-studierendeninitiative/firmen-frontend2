@@ -119,33 +119,19 @@ export const catalogueDataRouter = router({
 			});
 			return response;
 		}),
-	pickLogo: authorizedOrgMemberProcedure
+	pickDocument: authorizedOrgMemberProcedure
 		.input((input) => parse(object({
 			eventRegistrationId: string(),
 			documentId: string(),
 			versionId: string()
 		}), input))
 		.mutation(async ({ ctx, input }) => {
-			const response = await ctx.api.request("post", "/api/v2/event-registration/{eventRegistrationId}/pick-logo/{documentId}/{versionId}", {
+			const response = await ctx.api.request("post", "/api/v2/event-registration/{eventRegistrationId}/pick-document/{documentId}/{versionId}", {
 				path: input
 			});
 
 			if (response.status !== 204) {
-				throw new TRPCError({ message: 'The logo could not be picked', code: "INTERNAL_SERVER_ERROR" });
-			}
-		}),
-	pickAdvertisement: authorizedOrgMemberProcedure
-		.input((input) => parse(object({
-			eventRegistrationId: string(),
-			advertisementId: string()
-		}), input))
-		.mutation(async ({ ctx, input }) => {
-			const response = await ctx.api.request("post", "/api/v2/event-registration/{eventRegistrationId}/pick-advertisement/{advertisementId}", {
-				path: input
-			});
-
-			if (response.status !== 204) {
-				throw new TRPCError({ message: 'The logo could not be picked', code: "INTERNAL_SERVER_ERROR" });
+				throw new TRPCError({ message: 'The document could not be picked', code: "INTERNAL_SERVER_ERROR" });
 			}
 		}),
 	generateDownloadLink: authorizedOrgMemberProcedure

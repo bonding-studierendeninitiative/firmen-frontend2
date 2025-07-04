@@ -11,6 +11,8 @@ type RouterInput = inferRouterInputs<Router>;
 
 export type AdminOrgsOutput = RouterOutput['admin']['orgs']['list'];
 export type EventRegistrationsForEventOutput = RouterOutput['admin']['events']['getEventRegistrations'];
+export type EventRegistrationsForOrganizationOutput = RouterOutput['eventRegistrations']['forOrganization'];
+export type UnregisteredEventsOutput = RouterOutput['events']['unregisteredEvents'];
 
 export function trpc(init?: TRPCClientInit, queryClient?: QueryClient) {
 	const isBrowser = typeof window !== 'undefined';

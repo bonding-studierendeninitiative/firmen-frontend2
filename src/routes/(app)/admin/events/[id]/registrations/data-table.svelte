@@ -13,7 +13,7 @@
 	import ExportCatalogueDataDialog from './export-catalogue-data-form.svelte';
 	import SimpleEventRegistrationOrganization from './simple-event-registration-organization.svelte';
 	import CreateEventRegistrationForm from './create-event-registration-form.svelte';
-	import { AdminViewAdvertisementDialog, AdminViewLogoDialog } from '@/@svelte/modules';
+	import { AdminViewAdvertisementDialog, AdminViewRegistrationDocumentDialog } from '@/@svelte/modules';
 	import type { EventRegistrationsForEventOutput } from '@/trpc/client';
 	import {
 		createColumnHelper,
@@ -27,6 +27,7 @@
 	import { queryParameters } from 'sveltekit-search-params';
 	import FlexRender from '@/@svelte/components/QueryDataTable/flex-render.svelte';
 	import { Skeleton } from '@/components/ui/skeleton';
+	import SuperDebug from 'sveltekit-superforms';
 
 	let {
 		data,
@@ -145,13 +146,26 @@
 				return renderComponent(PortraitStatusIcon, { variant: getValue() ?? '' });
 			}
 		}),
-		columnHelper.accessor('logo', {
+		columnHelper.accessor(({registrationDocuments}) => {
+			const logo = registrationDocuments?.find((document) => document.documentType === 'logo');
+			return logo ?? {
+				id: '',
+				status: 'missing',
+			};
+		}, {
+			id: 'logo',
 			header: $_('admin-pages.events.event-registrations.data-table.headers.logo-status'),
 			cell({ getValue }) {
-				return renderComponent(AdminViewLogoDialog, { logo: getValue() });
+				return renderComponent(AdminViewRegistrationDocumentDialog, { logo: getValue() });
 			}
 		}),
-		columnHelper.accessor('advertisement', {
+		columnHelper.accessor(({registrationDocuments}) => {
+			const advert = registrationDocuments?.find((document) => document.documentType === 'advert');
+			return advert ?? {
+				id: '',
+				status: 'missing',
+			};
+		}, {
 			header: $_('admin-pages.events.event-registrations.data-table.headers.advert-status'),
 			cell({ getValue }) {
 				return renderComponent(AdminViewAdvertisementDialog, { advertisement: getValue() });
@@ -372,4 +386,5 @@
 			</Table.Body>
 		</Table.Root>
 	</div>
+	<SuperDebug data={data} />
 </section>

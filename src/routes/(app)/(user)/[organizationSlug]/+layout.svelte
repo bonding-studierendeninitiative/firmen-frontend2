@@ -21,10 +21,14 @@
 			<LoaderCircle class="size-10 mx-auto animate-spin text-white" />
 		{:then organization}
 			<OrganizationSwitcher
+				createOrganizationMode="navigation"
+				createOrganizationUrl="/create-org/"
+				skipInvitationScreen={true}
 				appearance={{
 					elements: {
 						organizationSwitcherTrigger: 'text-white! hover:text-white/80!',
-						rootBox: 'ml-[0.45em]'
+						rootBox: 'ml-[0.45em]',
+						formButtonReset: "bg-primary!"
 					}
 				}}
 				afterSelectOrganizationUrl={getOrgUrl}

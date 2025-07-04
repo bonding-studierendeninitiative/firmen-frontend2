@@ -16,7 +16,8 @@
 				uploaded: 'text-fuchsia-500',
 				'changes-requested': 'text-yellow-500',
 				rejected: 'text-red-500',
-				confirmed: 'text-emerald-500'
+				confirmed: 'text-emerald-500',
+				unreviewed: 'text-stone-500'
 			}
 		},
 		defaultVariants: { variant: 'missing' }

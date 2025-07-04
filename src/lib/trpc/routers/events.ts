@@ -14,6 +14,7 @@ export const eventRouter = router({
 			)
 		)
 		.query(async ({ ctx, input }) => {
+			try {
 			const response = await ctx.api.get("/api/v2/event/unregistered", {
 				query: {
 					organizationId: ctx.session.orgId,
@@ -22,6 +23,9 @@ export const eventRouter = router({
 				},
 			});
 			return response
+		} catch (error) {
+			console.error(error);
+		}
 		}),
 	getPublished: authorizedOrgMemberProcedure
 		.input((input) => parse(

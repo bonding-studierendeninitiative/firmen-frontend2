@@ -137,8 +137,8 @@
 												{#each $organizations.data?.data ?? [] as organization}
 													<Command.Item
 														value={organization.id}
-														onSelect={(currentValue) => {
-															handleOrgSelect(currentValue);
+														onSelect={() => {
+															handleOrgSelect(organization.id);
 														}}
 													>
 														<Check

@@ -63,8 +63,8 @@ export const PortraitTemplateInput = v.object({
 
 export type StatusType = v.InferOutput<typeof StatusType>;
 export const StatusType = v.object({
-  statusCode: v.optional(v.number()),
   reasonPhrase: v.optional(v.string()),
+  statusCode: v.optional(v.number()),
 });
 
 export type Problem = v.InferOutput<typeof Problem>;
@@ -73,8 +73,8 @@ export const Problem = v.object({
   instance: v.optional(v.string()),
   type: v.optional(v.string()),
   detail: v.optional(v.string()),
-  status: v.optional(StatusType),
   title: v.optional(v.string()),
+  status: v.optional(StatusType),
 });
 
 export type BillingAddressTemplateResponse = v.InferOutput<typeof BillingAddressTemplateResponse>;
@@ -236,9 +236,6 @@ export const SimpleDocumentVersionOutput = v.object({
       v.literal("DELETED"),
     ]),
   ),
-  reviewStatus: v.optional(
-    v.union([v.literal("unreviewed"), v.literal("changes-requested"), v.literal("rejected"), v.literal("confirmed")]),
-  ),
   createdAt: v.optional(v.string()),
   modifiedAt: v.optional(v.string()),
   history: v.optional(v.array(DocumentFeedbackOutput)),
@@ -261,12 +258,11 @@ export const UnknownContentTypeDocumentVersionOutput = v.object({
   isLatest: v.optional(v.boolean()),
 });
 
-export type SimpleDocumentOutput = v.InferOutput<typeof SimpleDocumentOutput>;
-export const SimpleDocumentOutput = v.object({
+export type BaseDocumentOutput = v.InferOutput<typeof BaseDocumentOutput>;
+export const BaseDocumentOutput = v.object({
   id: v.optional(v.string()),
   title: v.optional(v.string()),
   documentType: v.optional(v.union([v.literal("portrait"), v.literal("logo"), v.literal("advert")])),
-  activeVersion: v.optional(SimpleDocumentVersionOutput),
   organizationId: v.optional(v.string()),
 });
 
@@ -289,10 +285,7 @@ export const DetailedDocumentVersionOutput = v.object({
       v.literal("DELETED"),
     ]),
   ),
-  reviewStatus: v.optional(
-    v.union([v.literal("unreviewed"), v.literal("changes-requested"), v.literal("rejected"), v.literal("confirmed")]),
-  ),
-  document: v.optional(SimpleDocumentOutput),
+  document: v.optional(BaseDocumentOutput),
   createdAt: v.optional(v.string()),
   modifiedAt: v.optional(v.string()),
   history: v.optional(v.array(DocumentFeedbackOutput)),
@@ -304,6 +297,15 @@ export const DocumentVersionDescription = v.object({
   title: v.optional(v.string()),
   documentType: v.optional(v.union([v.literal("portrait"), v.literal("logo"), v.literal("advert")])),
   version: v.optional(SimpleDocumentVersionOutput),
+  organizationId: v.optional(v.string()),
+});
+
+export type SimpleDocumentOutput = v.InferOutput<typeof SimpleDocumentOutput>;
+export const SimpleDocumentOutput = v.object({
+  id: v.optional(v.string()),
+  title: v.optional(v.string()),
+  documentType: v.optional(v.union([v.literal("portrait"), v.literal("logo"), v.literal("advert")])),
+  activeVersion: v.optional(SimpleDocumentVersionOutput),
   organizationId: v.optional(v.string()),
 });
 
@@ -354,23 +356,6 @@ export const DetailedEventResponse = v.object({
   modifiedAt: v.optional(v.string()),
 });
 
-export type AdvertisementOutput = v.InferOutput<typeof AdvertisementOutput>;
-export const AdvertisementOutput = v.object({
-  documentId: v.optional(v.string()),
-  versionId: v.optional(v.string()),
-  status: v.optional(
-    v.union([
-      v.literal("missing"),
-      v.literal("uploaded"),
-      v.literal("generating-thumbnails"),
-      v.literal("thumbnails-ready"),
-      v.literal("changes-requested"),
-      v.literal("rejected"),
-      v.literal("confirmed"),
-    ]),
-  ),
-});
-
 export type EventRegistrationAddonOutput = v.InferOutput<typeof EventRegistrationAddonOutput>;
 export const EventRegistrationAddonOutput = v.object({
   id: v.optional(v.string()),
@@ -409,21 +394,16 @@ export const SimpleEventResponse = v.object({
   dateTo: v.optional(v.string()),
 });
 
-export type LogoOutput = v.InferOutput<typeof LogoOutput>;
-export const LogoOutput = v.object({
-  documentId: v.optional(v.string()),
-  versionId: v.optional(v.string()),
+export type RegistrationDocumentOutput = v.InferOutput<typeof RegistrationDocumentOutput>;
+export const RegistrationDocumentOutput = v.object({
+  documentVersion: v.optional(DetailedDocumentVersionOutput),
   status: v.optional(
-    v.union([
-      v.literal("missing"),
-      v.literal("uploaded"),
-      v.literal("generating-thumbnails"),
-      v.literal("thumbnails-ready"),
-      v.literal("changes-requested"),
-      v.literal("rejected"),
-      v.literal("confirmed"),
-    ]),
+    v.union([v.literal("unreviewed"), v.literal("changes-requested"), v.literal("rejected"), v.literal("confirmed")]),
   ),
+  documentType: v.optional(v.union([v.literal("portrait"), v.literal("logo"), v.literal("advert")])),
+  reviewer: v.optional(v.string()),
+  reviewComments: v.optional(v.string()),
+  requestedChanges: v.optional(v.string()),
 });
 
 export type GetEventRegistrationForOrganizationOutput = v.InferOutput<typeof GetEventRegistrationForOrganizationOutput>;
@@ -433,17 +413,6 @@ export const GetEventRegistrationForOrganizationOutput = v.object({
   modifiedAt: v.optional(v.string()),
   status: v.optional(
     v.union([v.literal("created"), v.literal("rejected"), v.literal("confirmed"), v.literal("withdrawn")]),
-  ),
-  advertisementStatus: v.optional(
-    v.union([
-      v.literal("missing"),
-      v.literal("uploaded"),
-      v.literal("generating-thumbnails"),
-      v.literal("thumbnails-ready"),
-      v.literal("changes-requested"),
-      v.literal("rejected"),
-      v.literal("confirmed"),
-    ]),
   ),
   portraitStatus: v.optional(
     v.union([
@@ -455,25 +424,13 @@ export const GetEventRegistrationForOrganizationOutput = v.object({
       v.literal("confirmed"),
     ]),
   ),
-  logoStatus: v.optional(
-    v.union([
-      v.literal("missing"),
-      v.literal("uploaded"),
-      v.literal("generating-thumbnails"),
-      v.literal("thumbnails-ready"),
-      v.literal("changes-requested"),
-      v.literal("rejected"),
-      v.literal("confirmed"),
-    ]),
-  ),
   organizationComment: v.optional(v.string()),
   participationNote: v.optional(v.string()),
   purchasedPackage: v.optional(PurchasedPackageOutput),
   userId: v.optional(v.string()),
   event: v.optional(SimpleEventResponse),
   addonPackages: v.optional(v.array(EventRegistrationAddonPackageOutput)),
-  advertisement: v.optional(AdvertisementOutput),
-  logo: v.optional(LogoOutput),
+  registrationDocuments: v.optional(v.array(RegistrationDocumentOutput)),
   organizationId: v.optional(v.string()),
   desiredEventRegistrationDayDates: v.optional(v.array(v.string())),
   contactPeople: v.optional(v.array(v.string())),
@@ -561,6 +518,19 @@ export const GetEventRegistrationsForOrganizationOutput = v.object({
   totalElements: v.optional(v.number()),
 });
 
+export type AdminRegistrationDocumentOutput = v.InferOutput<typeof AdminRegistrationDocumentOutput>;
+export const AdminRegistrationDocumentOutput = v.object({
+  id: v.optional(v.string()),
+  documentVersion: v.optional(DetailedDocumentVersionOutput),
+  status: v.optional(
+    v.union([v.literal("unreviewed"), v.literal("changes-requested"), v.literal("rejected"), v.literal("confirmed")]),
+  ),
+  documentType: v.optional(v.union([v.literal("portrait"), v.literal("logo"), v.literal("advert")])),
+  reviewer: v.optional(v.string()),
+  reviewComments: v.optional(v.string()),
+  requestedChanges: v.optional(v.string()),
+});
+
 export type GetEventRegistrationForEventOutput = v.InferOutput<typeof GetEventRegistrationForEventOutput>;
 export const GetEventRegistrationForEventOutput = v.object({
   id: v.optional(v.string()),
@@ -573,8 +543,7 @@ export const GetEventRegistrationForEventOutput = v.object({
   participationNote: v.optional(v.string()),
   purchasedPackage: v.optional(PurchasedPackageOutput),
   addonPackages: v.optional(v.array(EventRegistrationAddonPackageOutput)),
-  advertisement: v.optional(AdvertisementOutput),
-  logo: v.optional(LogoOutput),
+  registrationDocuments: v.optional(v.array(AdminRegistrationDocumentOutput)),
   desiredEventRegistrationDays: v.optional(v.array(v.string())),
   organizationId: v.optional(v.string()),
   contactPeople: v.optional(v.array(v.string())),
@@ -588,33 +557,12 @@ export const GetEventRegistrationForUserOutput = v.object({
   status: v.optional(
     v.union([v.literal("created"), v.literal("rejected"), v.literal("confirmed"), v.literal("withdrawn")]),
   ),
-  advertisementStatus: v.optional(
-    v.union([
-      v.literal("missing"),
-      v.literal("uploaded"),
-      v.literal("generating-thumbnails"),
-      v.literal("thumbnails-ready"),
-      v.literal("changes-requested"),
-      v.literal("rejected"),
-      v.literal("confirmed"),
-    ]),
-  ),
+  registrationDocuments: v.optional(v.array(RegistrationDocumentOutput)),
   portraitStatus: v.optional(
     v.union([
       v.literal("missing"),
       v.literal("draft"),
       v.literal("submitted"),
-      v.literal("changes-requested"),
-      v.literal("rejected"),
-      v.literal("confirmed"),
-    ]),
-  ),
-  logoStatus: v.optional(
-    v.union([
-      v.literal("missing"),
-      v.literal("uploaded"),
-      v.literal("generating-thumbnails"),
-      v.literal("thumbnails-ready"),
       v.literal("changes-requested"),
       v.literal("rejected"),
       v.literal("confirmed"),
@@ -887,32 +835,16 @@ export const post_SubmitPortrait = v.object({
   response: v.unknown(),
 });
 
-export type post_PickLogoForEventRegistration = v.InferOutput<typeof post_PickLogoForEventRegistration>;
-export const post_PickLogoForEventRegistration = v.object({
+export type post_PickDocumentForEventRegistration = v.InferOutput<typeof post_PickDocumentForEventRegistration>;
+export const post_PickDocumentForEventRegistration = v.object({
   method: v.literal("POST"),
-  path: v.literal("/api/v2/event-registration/{eventRegistrationId}/pick-logo/{documentId}/{versionId}"),
+  path: v.literal("/api/v2/event-registration/{eventRegistrationId}/pick-document/{documentId}/{versionId}"),
   requestFormat: v.literal("json"),
   parameters: v.object({
     path: v.object({
       eventRegistrationId: v.string(),
       documentId: v.string(),
       versionId: v.string(),
-    }),
-  }),
-  response: v.unknown(),
-});
-
-export type post_PickAdvertisementForEventRegistration = v.InferOutput<
-  typeof post_PickAdvertisementForEventRegistration
->;
-export const post_PickAdvertisementForEventRegistration = v.object({
-  method: v.literal("POST"),
-  path: v.literal("/api/v2/event-registration/{eventRegistrationId}/pick-advertisement/{advertisementId}"),
-  requestFormat: v.literal("json"),
-  parameters: v.object({
-    path: v.object({
-      eventRegistrationId: v.string(),
-      advertisementId: v.string(),
     }),
   }),
   response: v.unknown(),
@@ -1229,10 +1161,8 @@ export const EndpointByMethod = {
     "/api/v2/event-registration": post_RegisterOrganizationToEvent,
     "/api/v2/event-registration/{eventRegistrationId}/withdraw": post_Withdraw,
     "/api/v2/event-registration/{eventRegistrationId}/portrait/submit": post_SubmitPortrait,
-    "/api/v2/event-registration/{eventRegistrationId}/pick-logo/{documentId}/{versionId}":
-      post_PickLogoForEventRegistration,
-    "/api/v2/event-registration/{eventRegistrationId}/pick-advertisement/{advertisementId}":
-      post_PickAdvertisementForEventRegistration,
+    "/api/v2/event-registration/{eventRegistrationId}/pick-document/{documentId}/{versionId}":
+      post_PickDocumentForEventRegistration,
     "/api/v2/event-registration/{eventRegistrationId}/change-contact-people": post_ChangeContactPeople,
   },
 };

@@ -1,5 +1,5 @@
 import { adminProcedure, router } from '@/trpc/server';
-import { object, parse, string } from 'valibot';
+import { nonEmpty, object, parse, pipe, string } from 'valibot';
 import { TRPCError } from '@trpc/server';
 import { ReviewDocumentRequest } from '@schema';
 import { superValidate } from 'sveltekit-superforms';
@@ -9,14 +9,14 @@ export const adminDocumentsRouter = router({
     review: adminProcedure
         .input((input) => parse(
             object({
-                documentId: string(),
+                documentId: pipe(string(), nonEmpty()),
                 data: ReviewDocumentRequest
             }),
             input
         ))
         .mutation(async ({ ctx, input }) => {
-            const response = await ctx.adminApi.request("post", "/api/v2/admin/document/{documentId}/review", {
-                path: { documentId: input.documentId },
+            const response = await ctx.adminApi.request("post", "/api/v2/admin/registration-document/{registrationDocumentId}/review", {
+                path: { registrationDocumentId: input.documentId },
                 body: input.data
             });
 

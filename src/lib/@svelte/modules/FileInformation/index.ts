@@ -1,0 +1,1 @@
+export { default as FileInformation } from "./file-information.svelte"

@@ -2,35 +2,29 @@
 	import { StatusBadge } from '@/@svelte/components';
 	import { _ } from '@services';
 	import { cn, getHumanReadableFileSize } from '@/utils';
-	import type { LogoOutput } from '@api/client';
+	import type { RegistrationDocumentOutput } from '@api/client';
 	import { page } from '$app/state';
 	import { trpc } from '@/trpc/client';
 	import LocalizedDate from '../LocalizedDate/LocalizedDate.svelte';
 	import { Button } from '@/components/ui/button';
 	import { Replace } from '@lucide/svelte';
+	import SuperDebug from 'sveltekit-superforms';
 
 	interface Props {
-		logo: LogoOutput;
+		logo: RegistrationDocumentOutput;
 		class?: string;
 		pickNewLogo: () => void;
 	}
 
 	let { logo, class: className = '', pickNewLogo }: Props = $props();
 
-	const logoQuery = trpc(page).catalogueData.getDocumentVersionDescription.createQuery({
-		documentId: logo.documentId,
-		versionId: logo.versionId
-	});
-
-	const logoData = $derived($logoQuery.data);
-
 	const thumbnail = trpc(page).catalogueData.generateThumbnailLink.createQuery(
 		{
-			documentId: logo.documentId,
+			documentId: logo.documentVersion?.document?.id ?? '',
 			resolution: 'small'
 		},
 		{
-			enabled: logo.status !== 'missing'
+			enabled: true
 		}
 	);
 </script>
@@ -54,15 +48,15 @@
 	{/if}
 
 	<div class="">
-		{#if logoData}
-			<p class="font-medium text-md pb-1">{logoData.title}</p>
+		{#if logo.documentVersion}
+			<p class="font-medium text-md pb-1">{logo.documentVersion.document?.title}</p>
 			<p class="text-xs text-muted-foreground whitespace-nowrap">
-				{$_('file-types.' + (logoData.version?.contentType ?? 'unknown'))} · {getHumanReadableFileSize(
-					Number(logoData.version?.size)
+				{$_('file-types.' + (logo.documentVersion.contentType ?? 'unknown'))} · {getHumanReadableFileSize(
+					Number(logo.documentVersion.size)
 				)}
 			</p>
 			<p class="text-xs text-muted-foreground">
-				Zuletzt bearbeitet: <LocalizedDate date={logoData.version?.modifiedAt} />
+				Zuletzt bearbeitet: <LocalizedDate date={logo.documentVersion.modifiedAt} />
 			</p>
 		{/if}
 

@@ -29,7 +29,7 @@
 		cursor: '0',
 		documentType: "logo"
 	});
-	let pickLogo = api.catalogueData.pickLogo.createMutation();
+	let pickLogo = api.catalogueData.pickDocument.createMutation();
 
 	let selectedLogo = $state('');
 </script>

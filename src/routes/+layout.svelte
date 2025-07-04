@@ -11,7 +11,7 @@
 	import { QueryClient, QueryClientProvider } from '@tanstack/svelte-query';
 	import { SvelteQueryDevtools } from '@tanstack/svelte-query-devtools';
 	import { RenderScan } from 'svelte-render-scan';
-	import {PUBLIC_APP_ENVIRONMENT} from "$env/static/public";
+	import { PUBLIC_APP_ENVIRONMENT } from '$env/static/public';
 	interface Props {
 		children: Snippet;
 	}
@@ -22,7 +22,7 @@
 		defaultOptions: {
 			queries: {
 				enabled: browser,
-				staleTime: 1000 * 60// * 60 * 24 * 7,
+				staleTime: 1000 * 60 // * 60 * 24 * 7,
 			}
 		}
 	});
@@ -32,23 +32,54 @@
 	});
 	const toastOptions: ToastOptions = {
 		duration: 5000,
-		class: "mr-7 mb-16"
+		class: 'mr-7 mb-16'
 	};
 
+	const delocalization = {
+		...deDE,
+		organizationProfile: {
+			...deDE.organizationProfile,
+			start: {
+				...deDE.organizationProfile?.start,
+				profileSection: {
+					...deDE.organizationProfile?.start?.profileSection,
+					uploadAction__title: 'Organisations-Avatar (optional)'
+				}
+			}
+		}
+	};
+
+	const enlocalization = {
+		...enUS,
+		organizationProfile: {
+			...enUS.organizationProfile,
+			start: {
+				...enUS.organizationProfile?.start,
+				profileSection: {
+					...enUS.organizationProfile?.start?.profileSection,
+					uploadAction__title: 'Organization avatar (optional)'
+				}
+			}
+		}
+	};
 </script>
 
 <!--<RenderScan initialEnabled={PUBLIC_APP_ENVIRONMENT === "developement"} />-->
 
 {#if $isLocaleLoading}
 	<div class="flex justify-center items-center h-screen">
-		<div class="size-12 rounded-full border-stone-500 border-4 border-t-transparent animate-spin">
-		</div>
+		<div
+			class="size-12 rounded-full border-stone-500 border-4 border-t-transparent animate-spin"
+		></div>
 	</div>
 {:else}
 	<div in:blur>
 		<QueryClientProvider client={queryClient}>
 			<!--<SvelteQueryDevtools />-->
-			<ClerkProvider publishableKey={PUBLIC_CLERK_PUBLISHABLE_KEY} localization={$locale === 'de' ? deDE : enUS}>
+			<ClerkProvider
+				publishableKey={PUBLIC_CLERK_PUBLISHABLE_KEY}
+				localization={$locale === "de" ? delocalization : enlocalization}
+			>
 				{@render children()}
 			</ClerkProvider>
 		</QueryClientProvider>

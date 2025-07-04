@@ -4,6 +4,7 @@
 	import { cn } from '@/utils/ui';
 	import { _ } from '@services';
 	import { UserButton } from 'svelte-clerk';
+	import { LanguageSelect } from '@/@svelte/components';
 	interface Props {
 		children?: import('svelte').Snippet;
 	}
@@ -75,10 +76,14 @@
 					{@render children?.()}
 				</div>
 			</div>
+			<div class="flex flex-row justify-between">
 			<UserButton showName={true} appearance={{elements: {
 				userButtonTrigger: 'text-white! hover:text-white/80!',
 				userButtonBox: 'flex-row-reverse',
 			}}} />
+
+		<LanguageSelect />
+	</div>
 		</div>
 	</div>
 </div>

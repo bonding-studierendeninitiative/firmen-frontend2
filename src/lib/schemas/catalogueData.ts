@@ -9,7 +9,8 @@ import {
 	pipe,
 	array,
 	transform,
-	nullable
+	nullable,
+	mimeType
 } from 'valibot';
 
 export const ExportCatalogueDataRequest = object({
@@ -47,7 +48,10 @@ export type UploadAdvertisementRequest = typeof UploadAdvertisementRequest;
 export const UploadLogoRequest = object({
 	orgId: pipe(string(), nonEmpty()),
 	title: pipe(string(), nonEmpty('Cannot be empty')),
-	file: file()
+	file: pipe(
+		file('Please select an image file.'),
+		mimeType(['image/*', 'application/pdf'], 'Please select an image file or a pdf.')
+	)
 });
 
 export type UploadLogoRequest = typeof UploadLogoRequest;
