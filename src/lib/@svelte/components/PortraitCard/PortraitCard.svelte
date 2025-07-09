@@ -1,7 +1,5 @@
 <script lang="ts">
-	import {
-		type GetPortraitTemplatesResponse
-	} from '@schema';
+	import { type GetPortraitTemplatesResponse } from '@schema';
 	import type { InferOutput } from 'valibot';
 	import { Link } from '@/@svelte/components';
 	import * as Card from '@/components/ui/card';
@@ -26,26 +24,32 @@
 	let deleteDialogOpen = $state(false);
 </script>
 
-
 <Card.Root class="h-full transition-all hover:shadow-md cursor-pointer relative group ">
-	<Button onclick={() => deleteDialogOpen = true} variant="ghost" size="icon"
-					class="absolute top-2 right-2 p-0 max-w-6 max-h-6 text-muted-foreground hover:bg-destructive hover:text-destructive-foreground ">
+	<Button
+		onclick={() => (deleteDialogOpen = true)}
+		variant="ghost"
+		size="icon"
+		class="absolute top-2 right-2 p-0 max-w-6 max-h-6 text-muted-foreground hover:bg-destructive hover:text-destructive-foreground "
+	>
 		<Trash2 class="size-3.5" />
 	</Button>
-	<Link data-sveltekit-replacestate href={`portraits/${portrait.id}`}
-				class="size-full flex items-center hover:no-underline">
-		<div class="flex justify-start items-center mr-2">
-			<div class="shrink-0 size-12 rounded-full bg-primary/10 flex justify-center items-center m-4">
-				<FileText />
-			</div>
-			<div>
-				<Card.Header>
-					<Card.Title class="font-medium text-base mb-1">{portrait.title}</Card.Title>
-				</Card.Header>
-
-			</div>
-		</div>
+	<Link
+		data-sveltekit-replacestate
+		href={`portraits/${portrait.id}`}
+		class="size-full hover:no-underline"
+	>
+			<Card.Header class="flex-row gap-4">
+				<div
+					class="shrink-0 size-12 rounded-full bg-primary/10 inline-flex justify-center items-center"
+				>
+					<FileText />
+				</div>
+				<Card.Title class="text-secondary-foreground font-medium text-base mb-1"
+					>{portrait.title}</Card.Title
+				>
+			</Card.Header>
 	</Link>
+	<Card.Footer></Card.Footer>
 </Card.Root>
 
 <Dialog.Root bind:open={deleteDialogOpen}>
@@ -57,25 +61,28 @@
 			<p>{portrait.title}</p>
 		</Dialog.Description>
 		<Dialog.Footer class="flex justify-end items-center w-full">
-			<Button variant="secondary" onclick={() => deleteDialogOpen=false}>{$_('common.cancel')}</Button>
+			<Button variant="secondary" onclick={() => (deleteDialogOpen = false)}
+				>{$_('common.cancel')}</Button
+			>
 			{#if $deletePortrait.isPending}
 				<Button form={`delete-portrait-form-${portrait.id}`} disabled variant="destructive">
 					<LoaderCircle class="mr-2 size-4 animate-spin" />{$_('common.delete')}
 				</Button>
 			{:else}
-				<Button onclick={
-				() => {
-					$deletePortrait.mutate(portrait.id, {
-						onError: (error) => {
-							toast.error(error.message);
-						},
-						onSuccess: () => {
-							toast.success($_('user-pages.portraits.portraitDeletedSuccessMessage'));
-							deleteDialogOpen = false;
-						}
-					});
-				}
-				} variant="destructive">{$_('common.delete')}</Button>
+				<Button
+					onclick={() => {
+						$deletePortrait.mutate(portrait.id, {
+							onError: (error) => {
+								toast.error(error.message);
+							},
+							onSuccess: () => {
+								toast.success($_('user-pages.portraits.portraitDeletedSuccessMessage'));
+								deleteDialogOpen = false;
+							}
+						});
+					}}
+					variant="destructive">{$_('common.delete')}</Button
+				>
 			{/if}
 		</Dialog.Footer>
 	</Dialog.Content>

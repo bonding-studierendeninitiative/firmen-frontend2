@@ -16,10 +16,11 @@ export const authorizedProcedure = publicProcedure.use(async ({ ctx, next }) => 
 		throw new TRPCError({ code: 'UNAUTHORIZED', message: 'Invalid session!' });
 	}
 	const tokenized_ctx = { session: ctx.session, token: await clerkClient.sessions.getToken(ctx.session.sessionId, 'access_token') }
+    const api = createApiClient(apiFetcher(tokenized_ctx), PUBLIC_BACKEND_HOST)
 	return next({
 		ctx: {
 			...tokenized_ctx,
-			api: createApiClient(apiFetcher(tokenized_ctx), PUBLIC_BACKEND_HOST)
+			api
 		}
 	});
 });

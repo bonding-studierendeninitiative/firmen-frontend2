@@ -1,8 +1,5 @@
 <script lang="ts">
-	import { LocalizedDate, PdfFilePreview, StatusBadge } from '@/@svelte/components';
 	import { _ } from '@services';
-	import { getHumanReadableFileSize } from '@/utils';
-	import { Badge } from '@/components/ui/badge';
 	import { DeleteLogoDialog, FileHistory, FileInformation } from '@/@svelte/modules';
 	import { Button } from '@/components/ui/button';
 	import { trpc } from '@/trpc/client';
@@ -55,8 +52,14 @@
 	}
 </script>
 
-<Breadcrumb.Root>
+<Breadcrumb.Root class="pt-4">
 	<Breadcrumb.List>
+		<Breadcrumb.Item>
+			<Breadcrumb.Link href={`.`}>
+				{$_('user-pages.catalogue-data.base')}
+			</Breadcrumb.Link>
+		</Breadcrumb.Item>
+		<Breadcrumb.Separator />
 		<Breadcrumb.Item>
 			<Breadcrumb.Link href={`.`}>
 				{$_('user-pages.catalogue-data.logos')}
@@ -69,11 +72,11 @@
 	</Breadcrumb.List>
 </Breadcrumb.Root>
 {#if logo}
-	<div class="grid gap-6 py-4">
+	<div class="grid gap-6 py-4 @container">
 		<header class="pt-4 flex justify-between">
 			<h2 class="text-2xl font-semibold text-slate-800">🖼️ {logo.title}</h2>
 			<nav class="inline-flex gap-4">
-				<Button onclick={handleDownload}>{$_('common.download')}</Button>
+				<Button variant="secondary" onclick={handleDownload}>{$_('common.download')}</Button>
 				<DeleteLogoDialog {logo} />
 			</nav>
 		</header>
@@ -91,7 +94,7 @@
 			{/if}
 		</div>
 
-		<div class="grid grid-cols-2 gap-8 text-sm">
+		<div class="grid grid-cols-1 gap-8 text-sm @md:grid-cols-2">
 			<FileHistory history={logo.activeVersion?.history ?? []} />
 
 			<FileInformation documentVersion={logo.activeVersion} />

@@ -7,6 +7,7 @@
 	import { trpc } from '@/trpc/client';
 	import { page } from '$app/state';
 	import type { DetailedDocumentOutput } from '@api/client';
+	import { goto } from '$app/navigation';
 
 	interface Props {
 		logo: DetailedDocumentOutput;
@@ -49,6 +50,7 @@
 						onSuccess: () => {
 							toast.success('Logo deleted');
 							utils.catalogueData.getAll.invalidate();
+							goto("../logos")
 							open = false;
 						}
 					});

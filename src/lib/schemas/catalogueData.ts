@@ -50,7 +50,7 @@ export const UploadLogoRequest = object({
 	title: pipe(string(), nonEmpty('Cannot be empty')),
 	file: pipe(
 		file('Please select an image file.'),
-		mimeType(['image/*', 'application/pdf'], 'Please select an image file or a pdf.')
+		mimeType(['image/png', 'image/jpeg', 'application/pdf'], 'Please select an image file or a pdf.')
 	)
 });
 

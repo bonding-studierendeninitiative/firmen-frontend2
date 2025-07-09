@@ -83,12 +83,7 @@
 	import RegistrationAddonTree from './registration-addon-tree.svelte';
 	import { Progress } from '@/components/ui/progress';
 	import { Separator } from '@/components/ui/separator';
-	import {
-		AdvertisementPreview,
-		LocalizedDate,
-		LocalizedDateRange,
-		LogoPreview
-	} from '@/@svelte/components';
+	import { LocalizedDate, LocalizedDateRange, LogoPreview } from '@/@svelte/components';
 	import { buttonVariants, Button } from '@/components/ui/button';
 	import { cn } from '@/utils';
 	import { _ } from '@services';
@@ -96,17 +91,17 @@
 		EditContactPersons,
 		PickLogoDialog,
 		SubmitPortraitDialog,
-		ViewAdvertisementDialog,
-		ViewLogoDialog
+		ViewAdvertisementDialog
 	} from '@/@svelte/modules';
 	import { PickAdvertisementDialog } from '@/@svelte/modules/PickAdvertisementDialog';
 	import { PenLine, Plus } from '@lucide/svelte';
 	import type { EventRegistrationsForOrganizationOutput } from '@/trpc/client';
-	import SuperDebug from 'sveltekit-superforms';
 	import QueryWrappedViewLogoDialog from '@/@svelte/modules/ViewLogoDialog/QueryWrappedViewLogoDialog.svelte';
-	import LogoMissing from './logo-missing.svelte';
-	import AdvertMissing from './advert-missing.svelte';
 	import PortraitMissing from './portrait-missing.svelte';
+	import RegistrationDocumentPreview from './registration-document-preview.svelte';
+	import RegistrationDocumentMissing from './registration-document-missing.svelte';
+	import { crossfade } from 'svelte/transition';
+	import { tv } from 'tailwind-variants';
 
 	let isAddonsOpen = $state(false);
 	interface Props {
@@ -120,12 +115,30 @@
 		registration.registrationDocuments?.find((d) => d.documentType === 'advert')
 	);
 
-	const statusConfig = {
-		created: { color: 'bg-blue-500', label: $_('status-text.created') },
-		confirmed: { color: 'bg-green-500', label: $_('status-text.confirmed') },
-		rejected: { color: 'bg-red-500', label: $_('status-text.rejected') },
-		withdrawn: { color: 'bg-gray-500', label: $_('status-text.withdrawn') }
-	};
+	const statusVariants = tv({
+		variants: {
+			status: {
+				created: 'bg-blue-500',
+				confirmed: 'bg-green-500',
+				rejected: 'bg-red-500',
+				withdrawn: 'bg-gray-500'
+			}
+		}
+	});
+
+	const catalogueDataStatusVariants = tv({
+		variants: {
+			status: {
+				'changes-requested': 'text-blue-500',
+				unreviewed: 'text-yellow-800 data-[state=active]:bg-yellow-300',
+				confirmed: 'text-green-600 data-[state=active]:bg-green-500 data-[state=active]:text-white',
+				rejected: 'text-red-500 data-[state=active]:bg-red-500 data-[state=active]:text-white',
+				missing: 'text-red-500 data-[state=active]:bg-red-500 data-[state=active]:text-white',
+				draft: 'text-yellow-500',
+				submitted: ""
+			}
+		}
+	});
 
 	let pickAdvertisementOpen = $state(false);
 	let viewAdvertisementOpen = $state(false);
@@ -171,8 +184,8 @@
 				<CardTitle class="text-xl font-bold">{registration.event?.name}</CardTitle>
 				<CardDescription class="mt-1">{registration.event?.location}</CardDescription>
 			</div>
-			<Badge class={`${statusConfig[registration.status].color} text-white`}>
-				{statusConfig[registration.status].label}
+			<Badge class={cn(statusVariants({ status: registration.status }), 'text-white')}>
+				{$_(`status-text.${registration.status}`)}
 			</Badge>
 		</div>
 	</CardHeader>
@@ -246,7 +259,7 @@
 						<Tabs.Trigger
 							class={cn(
 								'flex items-center gap-1 text-xs',
-								catalogueDataStatusConfig[logo?.status ?? '']?.color
+								catalogueDataStatusVariants({ status: logo?.status ?? 'missing' })
 							)}
 							value="logo"
 						>
@@ -262,7 +275,7 @@
 							<Tabs.Trigger
 								class={cn(
 									'flex items-center gap-1 text-xs',
-									catalogueDataStatusConfig[advertisement?.status ?? '']?.color
+									catalogueDataStatusVariants({ status: advertisement?.status ?? 'missing' })
 								)}
 								value="advertisement"
 							>
@@ -277,7 +290,7 @@
 						<Tabs.Trigger
 							class={cn(
 								'flex items-center gap-1 text-xs',
-								catalogueDataStatusConfig[registration.portraitStatus]?.color
+								catalogueDataStatusVariants({ status: registration.portraitStatus ?? 'missing' })
 							)}
 							value="portrait"
 						>
@@ -290,28 +303,34 @@
 						</Tabs.Trigger>
 					</Tabs.List>
 
-					<Tabs.Content value="logo">
+					<Tabs.Content class="@container/preview" value="logo">
 						{#if logo}
-							<LogoPreview
-								pickNewLogo={() => {
+							<RegistrationDocumentPreview
+								pickNewDocument={() => {
 									pickLogoOpen = true;
 								}}
-								{logo}
+								registrationDocument={logo}
 							/>
 						{:else}
-							<LogoMissing bind:pickLogoOpen />
+							<RegistrationDocumentMissing
+								documentType="logo"
+								pickNewDocument={() => (pickLogoOpen = true)}
+							/>
 						{/if}
 					</Tabs.Content>
 
 					{#if registration.canUploadAdvertisement}
-						<Tabs.Content value="advertisement">
+						<Tabs.Content class="@container/preview" value="advertisement">
 							{#if advertisement}
-								<AdvertisementPreview
-									pickNewAdvertisement={() => (pickAdvertisementOpen = true)}
-									advert={advertisement}
+								<RegistrationDocumentPreview
+									pickNewDocument={() => (pickAdvertisementOpen = true)}
+									registrationDocument={advertisement}
 								/>
 							{:else}
-								<AdvertMissing {registration} />
+								<RegistrationDocumentMissing
+									documentType="advert"
+									pickNewDocument={() => (pickAdvertisementOpen = true)}
+								/>
 							{/if}
 						</Tabs.Content>
 					{/if}
@@ -319,7 +338,10 @@
 						{#if registration.portraitStatus !== 'missing'}
 							<LogoPreview class="max-w-64" {logo} />
 						{:else}
-							<PortraitMissing bind:submitPortraitOpen />
+							<RegistrationDocumentMissing
+								documentType="portrait"
+								pickNewDocument={() => (submitPortraitOpen = true)}
+							/>
 						{/if}
 					</Tabs.Content>
 				</Tabs.Root>
@@ -354,7 +376,7 @@
 				<div class="grid grid-cols-1 @lg/contact-people:grid-cols-2 gap-2">
 					{#each registration.contactPeople ?? [] as contact (contact.name)}
 						<div
-							class="text-sm flex items-center gap-3 rounded-full border border-neutral-300 bg-muted py-1 px-1.5"
+							class="text-sm flex items-center gap-3 rounded-full border border-border bg-muted py-1 px-1.5"
 						>
 							<Avatar.Root class="size-8">
 								<Avatar.Image src={contact.image} />

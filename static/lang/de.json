@@ -1,75 +1,9 @@
 {
   "auth": {
-    "welcomeScreen": {
-      "welcomeTitle": "Firmenintranet",
-      "welcomeDescription": "Bitte loggen Sie sich ein, um fortzufahren."
-    },
-    "login": {
-      "admin-login": "Zum Admin-Dashboard",
-      "heading": "Anmeldung",
-      "subHeading": "Geben Sie Ihre Anmeldedaten ein",
-      "forgotPassword": "Passwort vergessen?",
-      "login": "Anmelden",
-      "notAMember": "Kein Mitglied?",
-      "joinNow": "Jetzt beitreten",
-      "codePlaceholder": "Code",
-      "loginWithMagicLink": "Anmelden mit einmaligem Code",
-      "loginWithPassword": "Anmelden mit Passwort"
-    },
-    "registration": {
-      "heading": "Registrierung",
-      "subHeading": "Geben Sie Ihre Anmeldedaten ein",
-      "createAccount": "Konto erstellen"
-    },
-    "forgotPassword": {
-      "heading": "Passwort zurücksetzen",
-      "subHeading": "Anweisungen mit Schritten zum Zurücksetzen des Passworts werden an Ihre E-Mail gesendet",
-      "resetPassword": "Passwort zurücksetzen",
-      "backToLogin": "Zurück zur Anmeldung",
-      "headingVerifyEmail": "E-Mail bestätigen",
-      "subHeadingVerifyEmail": "Ein Bestätigungscode wurde an Sie gesendet.\nGeben Sie den Code unten ein.",
-      "verifyCode": "Code überprüfen",
-      "resend": "Code erneut senden",
-      "headingEnterNewPassword": "Neues Passwort eingeben",
-      "subHeadingEnterNewPassword": "Fast fertig.\nGeben Sie jetzt Ihr neues Passwort ein.",
-      "aLowerCaseLetter": "Ein Kleinbuchstabe",
-      "aSpecialCharacter": "Ein Sonderzeichen",
-      "anUpperCaseLetter": "Ein Großbuchstabe",
-      "atLeast8Characters": "Mindestens 8 Zeichen",
-      "aNumber": "Eine Zahl",
-      "resetPasswordButton": "Passwort zurücksetzen"
-    },
-    "registration-success": {
-      "heading": "Erfolgreich registriert",
-      "subHeading": "Sie können jetzt auf Ihr Konto zugreifen und sich für Veranstaltungen registrieren. Wir halten Sie über Neuigkeiten und Updates auf dem Laufenden",
-      "createAccount": "Konto erstellen"
-    },
     "footer": {
       "privacyPolicy": "Datenschutzrichtlinie",
       "imprint": "Impressum"
     }
-  },
-  "auth-fields": {
-    "emailPlaceholder": "E-Mail-Adresse",
-    "passwordPlaceholder": "Passwort",
-    "codePlaceholder": "Code",
-    "firstName": "Vorname",
-    "lastName": "Nachname",
-    "companyName": "Firmenname",
-    "phoneNumber": "Telefonnummer",
-    "confirmPassword": "Passwort bestätigen"
-  },
-  "validation-messages": {
-    "moreThan8Characters": "Ihr neues Passwort muss mehr als 8 Zeichen lang sein.",
-    "required": "Dieses Feld ist erforderlich",
-    "Required": "Dieses Feld ist erforderlich",
-    "greaterStartDate": "Startdatum muss später als Enddatum sein",
-    "greaterStartTime": "Startzeit muss später als Endzeit sein",
-    "passwordNotMatched": "Passwort stimmt nicht überein",
-    "invalidEmail": "Ungültige E-Mail"
-  },
-  "success-messages": {
-    "registeredSuccessfully": "Eine E-Mail wurde an Sie gesendet, um die Registrierung zu bestätigen"
   },
   "common": {
     "remove": "Entfernen",
@@ -239,6 +173,36 @@
       "portrait-missing": {
         "description": "Es wurde noch kein Portrait bereitgestellt",
         "action": "Jetzt Portrait auswählen"
+      }
+    },
+    "registration-document-preview": {
+      "actions": {
+        "replace-document": {
+          "logo": "Logo ändern",
+          "advert": "Image-Anzeige ändern"
+        }
+      },
+      "last-edited": "Zuletzt bearbeitet: "
+    },
+    "registration-document-missing": {
+      "logo": {
+        "title": "Logo fehlt",
+        "description": "Es wurde noch kein Logo für diese Veranstaltung ausgewählt"
+      },
+      "advert": {
+        "title": "Image-Anzeige fehlt",
+        "description": "Es wurde noch keine Image-Anzeige für diese Veranstaltung ausgewählt."
+      },
+      "actions": {
+        "pick-document": {
+          "advert": "Image-Anzeige jetzt auswählen",
+          "logo": "Jetzt Logo auswählen",
+          "portrait": "Jetzt Portrait auswählen"
+        }
+      },
+      "portrait": {
+        "description": "Es wurde noch kein Portrait für diese Veranstaltung ausgewählt",
+        "title": "Portrait fehlt"
       }
     }
   },
@@ -448,7 +412,8 @@
         "short-title": "Basisinfos"
       },
       "step-0": {
-        "short-title": "Start"
+        "short-title": "Start",
+        "title": "Start"
       },
       "step-2": {
         "short-title": "Standorte"
@@ -462,6 +427,9 @@
       "step-5": {
         "short-title": "Vorschau"
       }
+    },
+    "review-event-registration": {
+      "description": "Hier kannst du die Veranstlatungsanmeldund ablehnen oder bestätigen"
     }
   },
   "sidebar": {
@@ -527,9 +495,6 @@
     "joined": "Trat bei",
     "firstName": "Vorname",
     "lastName": "Nachname"
-  },
-  "breadcrumbs": {
-    "events": "Veranstaltungen"
   },
   "file-types": {
     "application/pdf": "Vektorgrafik (PDF)",
@@ -856,7 +821,9 @@
       }
     },
     "catalogue-data": {
-      "logos": "Logos"
+      "logos": "Logos",
+      "base": "Ausstellerdaten",
+      "adverts": "Image-Anzeigen"
     }
   },
   "admin-pages": {
@@ -1048,6 +1015,11 @@
           "description": "Exporte werden im Hintergrund erstellt und können in den Details der Veranstaltung gefunden werden",
           "advertisements": "Image-Anzeigen",
           "logos": "Logos"
+        },
+        "review-event-registration": {
+          "title": "Veranstaltungsanmeldung überprüfen",
+          "proceed": "Überprüfung abschließen",
+          "document-type": "Dokumentart..."
         }
       },
       "feedback": {

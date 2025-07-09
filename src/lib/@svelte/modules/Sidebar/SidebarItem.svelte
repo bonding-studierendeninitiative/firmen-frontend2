@@ -25,7 +25,7 @@
 	{href}
 	aria-label={$_(`sidebar.${label}`)}
 	class={cn(`relative px-4 py-3 flex items-center space-x-4 rounded-lg text-white`, {
-		"bg-brand": active
+		"bg-white/20": active
 	})}
 >
 	<SvelteComponent />

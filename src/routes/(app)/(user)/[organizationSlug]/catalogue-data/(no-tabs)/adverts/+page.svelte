@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { AdvertisementItem, NoDataFound } from '@/@svelte/components';
+	import { LinkTabs, NoDataFound } from '@/@svelte/components';
 	import { dayjs } from '@services/i18n';
 	import { LoaderCircle } from '@lucide/svelte';
 	import { fade } from 'svelte/transition';
@@ -8,9 +8,25 @@
 	import { trpc } from '@/trpc/client';
 	import { page } from '$app/state';
 	import { _ } from '@services';
+	import AdvertItem from './advert-item.svelte';
 
 	let { data } = $props();
 	let isUploadOpen = $state(false);
+
+	let tabs = $derived([
+		{
+			name: 'catalogue-data-portraits',
+			href: `/${data.orgSlug}/catalogue-data/portraits`
+		},
+		{
+			name: 'catalogue-data-logos',
+			href: `/${data.orgSlug}/catalogue-data/logos`
+		},
+		{
+			name: 'catalogue-data-adverts',
+			href: `/${data.orgSlug}/catalogue-data/adverts`
+		}
+	]);
 
 	const api = trpc(page);
 	const utils = api.createUtils();
@@ -29,7 +45,13 @@
 
 	const uploadForm = $uploadFormQuery.data;
 </script>
-
+<div class="size-full flex flex-col justify-start items-stretch min-h-max">
+	<h1 class=" text-stone-950 text-3xl font-extrabold">{$_('user-pages.portraits.portraits')}</h1>
+	<h4 class=" text-stone-500">{$_('user-pages.portraits.portraitsSubHeading')}</h4>
+	<section class="grow">
+		<div class=" my-6">
+			<LinkTabs {tabs} />
+		</div>
 <div in:fade class="space-y-4">
 	<div class="flex justify-end">
 		{#if $uploadFormQuery.isLoading}
@@ -76,7 +98,7 @@
 							class="grid grid-cols-1 @lg:grid-cols-2 @3xl/adverts:grid-cols-3 @5xl/adverts:grid-cols-4 gap-4"
 						>
 							{#each advertisements as advertisement}
-								<AdvertisementItem {advertisement} />
+								<AdvertItem advert={advertisement} />
 							{/each}
 						</div>
 					</div>
@@ -93,4 +115,6 @@
 	{:catch error}
 		<p>{error.message}</p>
 	{/await}
+</div>
+</section>
 </div>

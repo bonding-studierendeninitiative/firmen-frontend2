@@ -47,7 +47,7 @@
 	};
 </script>
 
-<div class="flex justify-between items-center">
+<div class="flex justify-between items-center gap-4">
 	<SearchInput placeholder={$_('common.search')} bind:value={searchValue} />
 	<Button variant="default" onclick={createNewDialog} class="m-0"
 		>{$_('user-pages.portraits.newPortrait')}</Button
@@ -56,7 +56,7 @@
 {#await data.portraitTemplateData}
 	<LoaderCircle class="size-10 mx-auto animate-spin my-6" />
 {:then portraitTemplateData}
-	<section in:fade class="mt-4 flex flex-col gap-y-4">
+	<section in:fade class="mt-4 flex flex-col gap-y-4 @container/portraits">
 		{#if (portraitTemplateData?.portraitTemplates?.length ?? 0) < 1}
 			<NoDataFound
 				heading={$_('user-pages.portraits.noPortraitsFound')}
@@ -65,7 +65,7 @@
 				onButtonClick={() => ($params.create = 'true')}
 			/>
 		{:else}
-			<div class="grid grid-cols-3 gap-6">
+			<div class="grid grid-cols-1 @3xl/portraits:grid-cols-2 @5xl/portraits:grid-cols-3 @7xl/portraits:grid-cols-4 gap-6">
 				{#each portraitTemplateData?.portraitTemplates ?? [] as portrait}
 					<PortraitCard {portrait} />
 				{/each}

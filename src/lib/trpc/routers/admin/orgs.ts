@@ -78,7 +78,7 @@ export const adminOrgsRouter = router({
 
 					if (input.sendNotification && createdOrgMembership.publicUserData?.identifier) {
 						const inviter = await clerkClient.users.getUser(ctx.session.userId);
-	
+
 						const result = await ctx.api.request("post", "/api/v2/notifications/org-member", {
 							body: {
 								adminName: inviter.fullName ?? "Unbekannter Nutzer:in",
@@ -89,7 +89,7 @@ export const adminOrgsRouter = router({
 						})
 
 						if (result.status !== 204) {
-							throw new TRPCError({code: "INTERNAL_SERVER_ERROR", message: "The user could not be notified"})
+							throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "The user could not be notified" })
 						}
 					}
 				}

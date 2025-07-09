@@ -19,7 +19,7 @@
 				'changes-requested': 'text-yellow-500',
 				rejected: 'border-red-600 bg-red-50 text-red-700',
 				confirmed: 'border-green-600 bg-green-50 text-green-700',
-				unreviewed: 'border-yellow-600 bg-yellow-50 text-yellow-700'
+				unreviewed: 'border-yellow-700 bg-yellow-100 text-yellow-800'
 			}
 		},
 		defaultVariants: { variant: 'missing' }

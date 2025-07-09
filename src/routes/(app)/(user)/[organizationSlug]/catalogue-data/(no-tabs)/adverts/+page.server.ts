@@ -1,27 +1,30 @@
 import type { PageServerLoad } from './$types';
-import { UploadLogoRequest } from '@schema';
+import { UploadAdvertisementRequest } from '@schema';
 import { fail, superValidate, withFiles } from 'sveltekit-superforms';
 import { valibot } from 'sveltekit-superforms/adapters';
 import { createCaller } from '@/trpc/router';
 
 export const load: PageServerLoad = async (event) => {
+	const {organization} = await event.parent()
 	const api = await createCaller(event);
 
-	event.depends("orgLogos")
+	const org = await organization
+
+	event.depends("orgAdverts")
 
 	return {
-		data: api.catalogueData.getAll({
-			cursor: '0',
+		advertisementData: api.catalogueData.getAll({
 			limit: '10',
-			documentType: "logo"
-		})
+			documentType: "advert",
+			cursor: '0'
+		}),
+		orgSlug: org.slug
 	};
 };
 
 export const actions = {
-	uploadLogo: async (event) => {
-
-		const form = await superValidate(event.request, valibot(UploadLogoRequest), {
+	uploadAdvertisement: async (event) => {
+		const form = await superValidate(event.request, valibot(UploadAdvertisementRequest), {
 			strict: true
 		});
 		if (!form.valid) {
@@ -32,7 +35,7 @@ export const actions = {
 
 		await api.catalogueData.upload({
 			...form.data,
-			documentType: "logo"
+			documentType: "advert"
 		});
 
 		return withFiles({ form });

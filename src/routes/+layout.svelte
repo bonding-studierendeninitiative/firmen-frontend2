@@ -75,7 +75,7 @@
 {:else}
 	<div in:blur>
 		<QueryClientProvider client={queryClient}>
-			<!--<SvelteQueryDevtools />-->
+			<SvelteQueryDevtools />
 			<ClerkProvider
 				publishableKey={PUBLIC_CLERK_PUBLISHABLE_KEY}
 				localization={$locale === "de" ? delocalization : enlocalization}

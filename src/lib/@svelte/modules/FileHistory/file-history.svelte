@@ -8,9 +8,9 @@
         history: DocumentFeedbackOutput[];
     }
 
-    let { history }: Props = $props();
+    let { history, ...rest }: Props & HTMLAttributes<HTMLDivElement> = $props();
 </script>
-<div>
+<div {...rest}>
     <h4 class="font-semibold mb-2">
         {$_('modules.file-history.title')}
     </h4>
@@ -27,7 +27,7 @@
                 class:border-red-500={fileEvent.feedbackType === 'rejection'}
             >
                 <div class="flex items-center">
-                    <Badge>{$_(`common.catalogue-data-history.${fileEvent.feedbackType?.toLowerCase()}`)}</Badge>
+                    <Badge variant="secondary">{$_(`common.catalogue-data-history.${fileEvent.feedbackType?.toLowerCase()}`)}</Badge>
                 </div>
                 {#if fileEvent.message}
                     <p class="text-xs mt-1 text-gray-600 dark:text-gray-400">{fileEvent.message}</p>

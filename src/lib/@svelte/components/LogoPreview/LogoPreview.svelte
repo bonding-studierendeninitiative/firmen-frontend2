@@ -8,7 +8,6 @@
 	import LocalizedDate from '../LocalizedDate/LocalizedDate.svelte';
 	import { Button } from '@/components/ui/button';
 	import { Replace } from '@lucide/svelte';
-	import SuperDebug from 'sveltekit-superforms';
 
 	interface Props {
 		logo: RegistrationDocumentOutput;
@@ -31,7 +30,7 @@
 
 <section
 	class={cn(
-		'p-4 flex flex-row gap-4 w-full bg-muted rounded-xl border border-slate-300',
+		'p-4 flex flex-row gap-4 w-full bg-muted rounded-xl border border-border',
 		className
 	)}
 >
@@ -47,20 +46,22 @@
 		</div>
 	{/if}
 
-	<div class="">
+	<div class="space-y-4">
 		{#if logo.documentVersion}
-			<p class="font-medium text-md pb-1">{logo.documentVersion.document?.title}</p>
-			<p class="text-xs text-muted-foreground whitespace-nowrap">
-				{$_('file-types.' + (logo.documentVersion.contentType ?? 'unknown'))} · {getHumanReadableFileSize(
-					Number(logo.documentVersion.size)
-				)}
-			</p>
-			<p class="text-xs text-muted-foreground">
-				Zuletzt bearbeitet: <LocalizedDate date={logo.documentVersion.modifiedAt} />
-			</p>
+			<div>
+				<p class="font-medium text-md pb-1">{logo.documentVersion.document?.title}</p>
+				<p class="text-xs text-muted-foreground whitespace-nowrap">
+					{$_('file-types.' + (logo.documentVersion.contentType ?? 'unknown'))} · {getHumanReadableFileSize(
+						Number(logo.documentVersion.size)
+					)}
+				</p>
+				<p class="text-xs text-muted-foreground">
+					Zuletzt bearbeitet: <LocalizedDate date={logo.documentVersion.modifiedAt} />
+				</p>
+			</div>
 		{/if}
 
-		<div class="pt-4 w-full @container">
+		<div class="w-full @container">
 			<StatusBadge variant={logo.status} label={$_('status-text.' + logo.status)} />
 		</div>
 
@@ -69,7 +70,8 @@
 				pickNewLogo();
 			}}
 			variant="ghost"
-			class="text-blue-700 px-0"><Replace class="size-4 mr-2" />Logo ändern</Button
+			size="sm"
+			class="text-accent"><Replace class="size-4 mr-1" />Logo ändern</Button
 		>
 	</div>
 </section>

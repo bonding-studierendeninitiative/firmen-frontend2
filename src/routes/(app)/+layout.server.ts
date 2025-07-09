@@ -1,9 +1,13 @@
 import { redirect } from '@sveltejs/kit';
 
-export const load = async ({ parent }) => {
+export const load = async ({ parent, url }) => {
 	const { initialState } = await parent();
 
 	if (!initialState.userId) {
-		redirect(302, '/sign-in');
+		const redirectTo = url.pathname+url.search
+		const searchParams = new URLSearchParams({
+			redirectTo
+		})
+		redirect(302, `/sign-in?${searchParams}`);
 	}
 };

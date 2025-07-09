@@ -1,75 +1,9 @@
 {
   "auth": {
-    "welcomeScreen": {
-      "welcomeTitle": "Company Intranet",
-      "welcomeDescription": "Please log in to continue."
-    },
-    "login": {
-      "admin-login": "Zum Admin-Dashboard",
-      "heading": "Login",
-      "subHeading": "Enter your login details",
-      "forgotPassword": "Forgot Password?",
-      "login": "Login",
-      "notAMember": "Not a Member?",
-      "joinNow": "Join Now",
-      "codePlaceholder": "Code",
-      "loginWithMagicLink": "Login with Magic Link",
-      "loginWithPassword": "Login with Password"
-    },
-    "registration": {
-      "heading": "Registration",
-      "subHeading": "Enter your login details",
-      "createAccount": "Create Account"
-    },
-    "forgotPassword": {
-      "heading": "Reset Password",
-      "subHeading": "Instructions with Steps to Reset Password will be Sent to Your Email",
-      "resetPassword": "Reset Password",
-      "backToLogin": "Back to Login",
-      "headingVerifyEmail": "Verify Email",
-      "subHeadingVerifyEmail": "A verification code has been sent to you.\nEnter the code below.",
-      "verifyCode": "Verify Code",
-      "resend": "Resend Code",
-      "headingEnterNewPassword": "Enter New Password",
-      "subHeadingEnterNewPassword": "Almost Finished. \nNow Enter Your New Password.",
-      "aLowerCaseLetter": "A Lowercase Letter",
-      "aSpecialCharacter": "A Special Character",
-      "anUpperCaseLetter": "An Uppercase Letter",
-      "atLeast8Characters": "At Least 8 Characters",
-      "aNumber": "A Number",
-      "resetPasswordButton": "Reset Password"
-    },
-    "registration-success": {
-      "heading": "Registered Successfully",
-      "subHeading": "You can now access your account and register for events. We'll keep you up to date with news and updates",
-      "createAccount": "Create Account"
-    },
     "footer": {
       "privacyPolicy": "Privacy Policy",
       "imprint": "Imprint"
     }
-  },
-  "auth-fields": {
-    "emailPlaceholder": "Email Address",
-    "passwordPlaceholder": "Password",
-    "codePlaceholder": "Code",
-    "firstName": "First Name",
-    "lastName": "Last Name",
-    "companyName": "Company Name",
-    "phoneNumber": "Phone Number",
-    "confirmPassword": "Confirm Password"
-  },
-  "validation-messages": {
-    "moreThan8Characters": "Your new password must be more than 8 characters.",
-    "required": "This field is required",
-    "Required": "This field is required",
-    "greaterStartDate": "Start date must be greater than end date",
-    "greaterStartTime": "Start time must be greater than end time",
-    "passwordNotMatched": "Password doesn't match",
-    "invalidEmail": "Invalid Email"
-  },
-  "success-messages": {
-    "registeredSuccessfully": "An email was send to you to confirm the registration"
   },
   "common": {
     "remove": "Remove",
@@ -226,6 +160,36 @@
         "description": "No portrait has been provided yet.",
         "action": "Pick a portrait now"
       }
+    },
+    "registration-document-preview": {
+      "actions": {
+        "replace-document": {
+          "logo": "Replace logo",
+          "advert": "Replace advert"
+        }
+      },
+      "last-edited": "Last modified: "
+    },
+    "registration-document-missing": {
+      "logo": {
+        "title": "Logo missing",
+        "description": "You have not selected a logo for this registration."
+      },
+      "advert": {
+        "title": "Advert missing",
+        "description": "You have not selected an advertisement for this event."
+      },
+      "actions": {
+        "pick-document": {
+          "advert": "Pick advert now",
+          "logo": "Pick logo now",
+          "portrait": "Pick portrait now"
+        }
+      },
+      "portrait": {
+        "title": "Portrait missing",
+        "description": "You have not selected a portrait for this event."
+      }
     }
   },
   "modules": {
@@ -318,7 +282,7 @@
     },
     "view-advertisement-dialog": {
       "file-information": "File information",
-      "file-type": "File type::",
+      "file-type": "File type:",
       "file-size": "File size:",
       "file-created": "Created:",
       "file-modified": "Modified:",
@@ -512,9 +476,6 @@
     "joined": "Joined",
     "firstName": "First Name",
     "lastName": "Last Name"
-  },
-  "breadcrumbs": {
-    "events": "Events"
   },
   "file-types": {
     "application/pdf": "Vector graphic (PDF)",
@@ -837,7 +798,9 @@
       }
     },
     "catalogue-data": {
-      "logos": "Logos"
+      "logos": "Logos",
+      "base": "Catalogue data",
+      "adverts": "Adverts"
     }
   },
   "admin-pages": {
