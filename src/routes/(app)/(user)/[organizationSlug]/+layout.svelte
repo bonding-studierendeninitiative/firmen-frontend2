@@ -51,7 +51,7 @@
 	</Sidebar>
 
 	<div class="h-dvh w-full overflow-y-scroll @container">
-		<div class="w-full px-8 py-11 @xl:px-16 @xl:py-22 bg-white">
+		<div class="w-full p-6 @xl:px-16 @xl:py-22 bg-white">
 			{@render children?.()}
 		</div>
 	</div>
