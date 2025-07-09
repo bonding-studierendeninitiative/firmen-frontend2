@@ -10,6 +10,4 @@
 	});
 </script>
 
-<SuperDebug data={$safeRedirectTo} />
-
 <SignIn afterSignInUrl={$safeRedirectTo} />

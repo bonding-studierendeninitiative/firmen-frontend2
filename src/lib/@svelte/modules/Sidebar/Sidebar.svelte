@@ -80,7 +80,7 @@
 			<UserButton showName={true} appearance={{elements: {
 				userButtonTrigger: 'text-white! hover:text-white/80!',
 				userButtonBox: 'flex-row-reverse',
-			}}} />
+			}}} afterSignOutUrl="/" />
 
 		<LanguageSelect />
 	</div>
