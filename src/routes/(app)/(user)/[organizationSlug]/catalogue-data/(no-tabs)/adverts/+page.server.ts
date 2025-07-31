@@ -8,8 +8,6 @@ export const load: PageServerLoad = async (event) => {
 	const {organization} = await event.parent()
 	const api = await createCaller(event);
 
-	const org = await organization
-
 	event.depends("orgAdverts")
 
 	return {
@@ -18,7 +16,7 @@ export const load: PageServerLoad = async (event) => {
 			documentType: "advert",
 			cursor: '0'
 		}),
-		orgSlug: org.slug
+		orgSlug: organization.slug
 	};
 };
 

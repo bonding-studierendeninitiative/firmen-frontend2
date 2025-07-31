@@ -32,14 +32,12 @@ export const load = async ({ parent, url, isDataRequest }) => {
 		const { initialState, organization, eventDetails } = await parent();
 		if (!initialState.sessionId) return;
 
-		const org = await organization;
-
 		const { event, buyOption } = await eventDetails;
 
 		const createEventRegistrationForm = await superValidate(
 			{
 				eventId: event.id,
-				organizationId: org.id,
+				organizationId: organization.id,
 				contactPersonId: initialState.userId,
 				packageId: selectedPackage,
 				selectedAddons,
@@ -60,7 +58,7 @@ export const load = async ({ parent, url, isDataRequest }) => {
 		return {
 			createEventRegistrationForm,
 			confirmEventRegistrationForm,
-			orgSlug: org.slug,
+			orgSlug: organization.slug,
 			event,
 			buyOption
 		};

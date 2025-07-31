@@ -9,7 +9,7 @@ import { AddAddonPackageInput, UpdateEventBuyOptionInput } from '@api/admin-clie
 export const load = async (event) => {
 	event.depends('buyOption');
 
-	const api = await createCaller(event)
+	const api = await createCaller(event);
 
 	async function loadUpdateForm(eventId: string, buyOptionId: string) {
 		const buyOption = await api.admin.events.buyOptions.getOne({
@@ -17,15 +17,23 @@ export const load = async (event) => {
 			eventId
 		});
 
-		return await superValidate(buyOption, valibot(UpdateBuyOptionRequestSchema));
+		return await superValidate(
+			buyOption,
+			valibot(UpdateEventBuyOptionInput, {
+				undefinedStrategy: 'null'
+			}),
+			{
+				errors: false
+			}
+		);
 	}
 
 	async function loadAddonPackages(eventId: string, buyOptionId: string) {
 		const { addonPackages } = await api.admin.events.addonPackages.getAll({
 			buyOptionId: buyOptionId,
 			eventId,
-			page: "0",
-			limit: "10"
+			page: '0',
+			limit: '10'
 		});
 
 		return addonPackages;
@@ -40,7 +48,9 @@ export const load = async (event) => {
 		updateForm: event.isDataRequest
 			? loadUpdateForm(event.params.id, event.params.buyOptionId)
 			: await loadUpdateForm(event.params.id, event.params.buyOptionId),
-		createAddonPackageForm: event.isDataRequest ? createAddonPackageForm : await createAddonPackageForm
+		createAddonPackageForm: event.isDataRequest
+			? createAddonPackageForm
+			: await createAddonPackageForm
 	};
 };
 
@@ -51,7 +61,7 @@ export const actions = {
 			return fail(400, { form });
 		}
 
-		const api = await createCaller(event)
+		const api = await createCaller(event);
 
 		await api.admin.events.buyOptions.update({
 			data: form.data,
@@ -68,7 +78,7 @@ export const actions = {
 			return fail(400, { form });
 		}
 
-		const api = await createCaller(event)
+		const api = await createCaller(event);
 
 		await api.admin.events.addonPackages.create({
 			data: form.data,

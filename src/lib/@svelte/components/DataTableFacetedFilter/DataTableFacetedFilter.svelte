@@ -7,7 +7,6 @@
 	import { cn } from '@/utils/ui';
 	import { _ } from '@services';
 	import type { Component } from 'svelte-eslint-parser/lib/parser/svelte-ast-types-for-v5';
-	import { createEventDispatcher } from 'svelte';
 	import { Check, Filter } from '@lucide/svelte';
 
 	type Options = {
@@ -20,23 +19,19 @@
 		title: string;
 		options?: any;
 		counts?: { [index: string]: number };
+		selectedValues: string[]
 	}
 
-	let { title, options = [] as Options[], counts = {} }: Props = $props();
+	let { title, options = [] as Options[], counts = {}, selectedValues = $bindable() }: Props = $props();
 
 	let open = $state(false);
-	let selectedValues: string[] = $state([]);
-	const dispatch = createEventDispatcher<{
-		filterChange: string[];
-	}>();
 
-	function handleSelect(currentValue: string) {
+	function handleSelect(currentValue: string) {	
 		if (selectedValues.includes(currentValue)) {
 			selectedValues = selectedValues.filter((v) => v !== currentValue);
 		} else {
 			selectedValues = [...selectedValues, currentValue];
 		}
-		dispatch('filterChange', selectedValues);
 	}
 </script>
 
@@ -114,8 +109,7 @@
 					<Command.Item
 						class="justify-center text-center"
 						onSelect={() => {
-							selectedValues = [];
-							dispatch('filterChange', selectedValues);
+							selectedValues = []
 						}}
 					>
 						{$_('components.dataTableFacetedFilter.clearFilters')}

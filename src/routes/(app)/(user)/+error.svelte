@@ -2,4 +2,4 @@
 	let { error } = $props();
 </script>
 
-<h1>⚠️ (User) {error?.message}</h1>
+<h1>⚠️ (User) {JSON.stringify(error)}</h1>

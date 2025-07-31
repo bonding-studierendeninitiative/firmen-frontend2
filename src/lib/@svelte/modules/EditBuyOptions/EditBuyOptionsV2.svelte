@@ -11,7 +11,14 @@
 	import { Switch } from '@/components/ui/switch';
 	import { Textarea } from '@/components/ui/textarea';
 	import { Progress } from '@/components/ui/progress';
-	import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+	import {
+		Table,
+		TableBody,
+		TableCell,
+		TableHead,
+		TableHeader,
+		TableRow
+	} from '@/components/ui/table';
 	import {
 		Dialog,
 		DialogContent,
@@ -23,20 +30,21 @@
 		DialogClose
 	} from '@/components/ui/dialog';
 	import { type Infer, intProxy, superForm, type SuperValidated } from 'sveltekit-superforms';
-	import { type UpdateBuyOptionRequest, ValueType } from '@schema';
+	import { ValueType } from '@schema';
 	import { toast } from 'svelte-sonner';
 	import type { InferOutput } from 'valibot';
 	import { BuyOptionPreview } from '@/@svelte/modules';
 	import { cn } from '@/utils';
 	import { LocalizedDate } from '@/@svelte/components';
+	import type { UpdateEventBuyOptionInput } from '@api/admin-client';
 
 	interface Props {
-		form: SuperValidated<Infer<UpdateBuyOptionRequest>>;
+		form: SuperValidated<UpdateEventBuyOptionInput>;
 	}
 
 	let { form }: Props = $props();
 
-	let superform = superForm<Infer<UpdateBuyOptionRequest>>(form, {
+	let superform = superForm<UpdateEventBuyOptionInput>(form, {
 		dataType: 'json',
 		invalidateAll: 'force',
 		onResult({ result }) {
@@ -51,10 +59,13 @@
 
 	let signUpDaysProxy = intProxy(superform, 'allowedSignUpDays', { empty: 'null' });
 
-	type Service = Infer<UpdateBuyOptionRequest>['services'][number]
-	type Package = InferOutput<UpdateBuyOptionRequest>['packages'][number]
-	type PackageBenefit = Infer<UpdateBuyOptionRequest>['packages'][number]['benefits'][number]
-	type EventDay = Infer<UpdateBuyOptionRequest>['eventDays'][number]
+	type Service = Exclude<UpdateEventBuyOptionInput['services'], undefined>[number];
+	type Package = Exclude<UpdateEventBuyOptionInput['packages'], undefined>[number];
+	type PackageBenefit = Exclude<
+		UpdateEventBuyOptionInput['packages'],
+		undefined
+	>[number]['benefits'][number];
+	type EventDay = Exclude<UpdateEventBuyOptionInput['eventDays'], undefined>[number];
 
 	// Reactive variables (equivalent to React's useState)
 	let activeTab = $state('editor');
@@ -64,7 +75,7 @@
 		formData.update((oldForm) => ({
 			...oldForm,
 			eventDays: [
-				...oldForm.eventDays,
+				...(oldForm.eventDays ?? []),
 				{
 					dayDate: new Date().toISOString().split('T')[0] ?? '2025-01-01',
 					totalCapacity: 0,
@@ -79,8 +90,8 @@
 		formData.update((oldForm) => ({
 			...oldForm,
 			eventDays: [
-				...oldForm.eventDays.slice(0, dayIndex),
-				...oldForm.eventDays.slice(dayIndex + 1)
+				...(oldForm.eventDays?.slice(0, dayIndex) ?? []),
+				...(oldForm.eventDays?.slice(dayIndex + 1) ?? [])
 			]
 		}));
 	}
@@ -95,23 +106,19 @@
 
 		$formData = {
 			...$formData,
-			services: [...$formData.services, newService],
-			packages: $formData.packages.map((pkg) => ({
+			services: [...($formData.services ?? []), newService],
+			packages: $formData.packages?.map((pkg) => ({
 				...pkg,
-				benefits: [
-					...pkg.benefits,
-					{}
-				]
+				benefits: [...pkg.benefits, {}]
 			}))
 		};
-
 	}
 
 	function removeService(serviceIndex: number): void {
 		$formData = {
 			...$formData,
-			services: $formData.services.filter((service, index) => index !== serviceIndex),
-			packages: $formData.packages.map((pkg) => ({
+			services: $formData.services?.filter((service, index) => index !== serviceIndex),
+			packages: $formData.packages?.map((pkg) => ({
 				...pkg,
 				benefits: pkg.benefits.filter((value, index) => index !== serviceIndex)
 			}))
@@ -121,13 +128,13 @@
 	function moveService(serviceIndex: number, direction: 'up' | 'down'): void {
 		if (
 			(direction === 'up' && serviceIndex === 0) ||
-			(direction === 'down' && serviceIndex === $formData.services.length - 1)
+			(direction === 'down' && serviceIndex === Number($formData.services?.length) - 1)
 		) {
 			return;
 		}
 
 		const newIndex = direction === 'up' ? serviceIndex - 1 : serviceIndex + 1;
-		const newServices = [...$formData.services];
+		const newServices = [...($formData.services ?? [])];
 		const [movedService] = newServices.splice(serviceIndex, 1);
 		newServices.splice(newIndex, 0, movedService);
 
@@ -137,44 +144,45 @@
 		};
 	}
 
-
 	// Package management
 	function addPackage(): void {
 		const newPackage: Package = {
 			name: 'New Package',
 			price: 0,
-			benefits: $formData.services.map(() => ({}))
+			benefits: $formData.services?.map(() => ({})) ?? []
 		};
 
 		$formData = {
 			...$formData,
-			packages: [...$formData.packages, newPackage]
+			packages: [...($formData.packages ?? []), newPackage]
 		};
 	}
 
-
 	// Calculate capacity percentage
 	function calculateCapacityPercentage(day: EventDay): number {
-		return Math.round(((day.totalCapacity - day.remainingCapacity) / day.totalCapacity) * 100);
+		return Math.round(
+			((Number(day.totalCapacity) - Number(day.remainingCapacity)) / Number(day.totalCapacity)) *
+				100
+		);
 	}
 
 	function removePackage(packageIndex: number): void {
 		$formData = {
 			...$formData,
-			packages: $formData.packages.filter((pkg, index) => index !== packageIndex)
+			packages: $formData.packages?.filter((pkg, index) => index !== packageIndex)
 		};
 	}
 
 	function movePackage(packageIndex: number, direction: 'left' | 'right'): void {
 		if (
 			(direction === 'left' && packageIndex === 0) ||
-			(direction === 'right' && packageIndex === $formData.packages.length - 1)
+			(direction === 'right' && packageIndex === Number($formData.packages?.length) - 1)
 		) {
 			return;
 		}
 
 		const newIndex = direction === 'left' ? packageIndex - 1 : packageIndex + 1;
-		const newPackages = [...$formData.packages];
+		const newPackages = [...($formData.packages ?? [])];
 		const [movedPackage] = newPackages.splice(packageIndex, 1);
 		newPackages.splice(newIndex, 0, movedPackage);
 
@@ -189,56 +197,64 @@
 	<div class="space-y-6 pb-6">
 		<div class="flex justify-between items-center">
 			<div>
-				<h2 class="text-2xl font-semibold">{$_("components.editBuyOptions.buyOptionEditor")}</h2>
-				<p class="text-muted-foreground">{$_("components.editBuyOptions.editorDescription")}</p>
+				<h2 class="text-2xl font-semibold">{$_('components.editBuyOptions.buyOptionEditor')}</h2>
+				<p class="text-muted-foreground">{$_('components.editBuyOptions.editorDescription')}</p>
 			</div>
 			<div class="flex gap-2">
-				<Button type="submit" disabled={!isTainted($tainted)} class={cn(isTainted($tainted) ? "animate-pulse":null)}>
+				<Button
+					type="submit"
+					disabled={!isTainted($tainted)}
+					class={cn(isTainted($tainted) ? 'animate-pulse' : null)}
+				>
 					<Save class="mr-2 size-4" />
-					{$_("components.editBuyOptions.saveBuyOption")}
+					{$_('components.editBuyOptions.saveBuyOption')}
 				</Button>
 			</div>
 		</div>
 
-		<Tabs value={activeTab} onValueChange={(value) => {if (value) activeTab = value}}>
+		<Tabs
+			value={activeTab}
+			onValueChange={(value) => {
+				if (value) activeTab = value;
+			}}
+			class="space-y-4"
+		>
 			<TabsList>
-				<TabsTrigger value="editor">{$_("components.editBuyOptions.editor")}</TabsTrigger>
-				<TabsTrigger value="preview">{$_("components.editBuyOptions.preview")}</TabsTrigger>
+				<TabsTrigger value="editor">{$_('components.editBuyOptions.editor')}</TabsTrigger>
+				<TabsTrigger value="preview">{$_('components.editBuyOptions.preview')}</TabsTrigger>
 			</TabsList>
 
 			<TabsContent value="editor" class="space-y-6">
 				<Card>
 					<CardHeader>
-						<CardTitle>{$_("components.editBuyOptions.generalInformation")}</CardTitle>
+						<CardTitle>{$_('components.editBuyOptions.generalInformation')}</CardTitle>
 					</CardHeader>
 					<CardContent>
 						<div class="grid gap-4">
 							<div class="grid gap-2">
-								<Label for="buyOptionName">{$_("components.editBuyOptions.buyOptionName")}</Label>
-								<Input
-									id="buyOptionName"
-									name="buyOptionName"
-									bind:value={$formData.name}
-								/>
+								<Label for="buyOptionName">{$_('components.editBuyOptions.buyOptionName')}</Label>
+								<Input id="buyOptionName" name="buyOptionName" bind:value={$formData.name} />
 							</div>
 						</div>
 						<section class="py-4 space-y-4">
 							<div class="flex flex-nowrap justify-between gap-4 items-center">
-								<h3 class="font-semibold text-lg grow">{$_("components.editBuyOptions.eventDays.header")}</h3>
+								<h3 class="font-semibold text-lg grow">
+									{$_('components.editBuyOptions.eventDays.header')}
+								</h3>
 								<Button onclick={handleCreateEventDay}>
 									<Plus class="mr-2 size-4" />
 									Add event day
 								</Button>
 							</div>
 							<div class="space-y-4">
-								{#if $formData.eventDays.length === 0}
+								{#if $formData.eventDays?.length === 0}
 									<div class="text-center py-4 text-muted-foreground">
-										No event days added yet. Add days to allow organizations to select their preferred participation
-										day.
+										No event days added yet. Add days to allow organizations to select their
+										preferred participation day.
 									</div>
 								{:else}
 									<div class="grid gap-4">
-										{#each $formData.eventDays as day, index}
+										{#each $formData.eventDays ?? [] as day, index}
 											<div class="flex items-center justify-between p-4 border rounded-md">
 												<div class="flex-1">
 													<div class="flex items-center gap-2">
@@ -248,20 +264,27 @@
 													<div class="mt-2 space-y-1">
 														<div class="flex justify-between text-sm">
 															<span>Capacity: {day.totalCapacity} spots</span>
-															<span class="text-muted-foreground">{day.remainingCapacity} remaining</span>
+															<span class="text-muted-foreground"
+																>{day.remainingCapacity} remaining</span
+															>
 														</div>
 														<Progress value={calculateCapacityPercentage(day)} class="h-2" />
 													</div>
 												</div>
 												<div class="flex gap-2 ml-4">
 													<Dialog>
-														<DialogTrigger class={cn(buttonVariants({variant: 'ghost', size: 'icon'}))}>
+														<DialogTrigger
+															class={cn(buttonVariants({ variant: 'ghost', size: 'icon' }))}
+															type="button"
+														>
 															<Eye class="size-4" />
 														</DialogTrigger>
 														<DialogContent class="sm:max-w-[500px]">
 															<DialogHeader>
 																<DialogTitle>Edit Event Day</DialogTitle>
-																<DialogDescription>Configure the event day details and capacity.</DialogDescription>
+																<DialogDescription
+																	>Configure the event day details and capacity.</DialogDescription
+																>
 															</DialogHeader>
 															<div class="grid gap-4 py-4">
 																<div class="grid gap-2">
@@ -280,8 +303,9 @@
 																		min="1"
 																		bind:value={$formData.eventDays[index].totalCapacity}
 																	/>
-																	<p class="text-sm text-muted-foreground">Maximum number of organizations that can
-																		participate on this day</p>
+																	<p class="text-sm text-muted-foreground">
+																		Maximum number of organizations that can participate on this day
+																	</p>
 																</div>
 																<div class="grid gap-2">
 																	<Label for="remainingCapacity">Remaining Capacity</Label>
@@ -289,32 +313,46 @@
 																		id="remainingCapacity"
 																		type="number"
 																		min="0"
-																		max={$formData.eventDays[index].totalCapacity}
+																		max={$formData.eventDays?.[index].totalCapacity}
 																		bind:value={$formData.eventDays[index].remainingCapacity}
 																	/>
-																	<p class="text-sm text-muted-foreground">Number of spots still available for
-																		booking</p>
+																	<p class="text-sm text-muted-foreground">
+																		Number of spots still available for booking
+																	</p>
 																</div>
 																<div class="mt-2">
 																	<div class="text-sm mb-2">Capacity Usage</div>
-																	<Progress value={calculateCapacityPercentage($formData.eventDays[index])}
-																						class="h-2" />
+																	<Progress
+																		value={calculateCapacityPercentage(
+																			$formData.eventDays?.[index]
+																		)}
+																		class="h-2"
+																	/>
 																	<div class="flex justify-between text-sm mt-1">
-																				<span>{$formData.eventDays[index].totalCapacity - $formData.eventDays[index].remainingCapacity}
-																					booked</span>
-																		<span class="text-muted-foreground">{$formData.eventDays[index].remainingCapacity}
-																			remaining</span>
+																		<span
+																			>{Number($formData.eventDays?.[index].totalCapacity) -
+																				Number($formData.eventDays?.[index].remainingCapacity)}
+																			booked</span
+																		>
+																		<span class="text-muted-foreground"
+																			>{$formData.eventDays?.[index].remainingCapacity}
+																			remaining</span
+																		>
 																	</div>
 																</div>
 															</div>
 															<DialogFooter>
-																<DialogClose class={buttonVariants({variant: "outline-solid"})}>
-																	{$_("common.confirm")}
+																<DialogClose class={buttonVariants({ variant: 'outline' })}>
+																	{$_('common.confirm')}
 																</DialogClose>
 															</DialogFooter>
 														</DialogContent>
 													</Dialog>
-													<Button variant="ghost" size="icon" onclick={(e) => handleDeleteEventDay(e, index)}>
+													<Button
+														variant="ghost"
+														size="icon"
+														onclick={(e) => handleDeleteEventDay(e, index)}
+													>
 														<Trash2 class="size-4 text-destructive" />
 													</Button>
 												</div>
@@ -324,17 +362,19 @@
 								{/if}
 							</div>
 						</section>
-						{#if $formData.eventDays.length > 1}
+						{#if Number($formData.eventDays?.length) > 1}
 							<section class="py-4 space-y-4">
-								<h3
-									class="font-semibold text-lg grow">{$_("components.editBuyOptions.eventDays.signUpDays.header")}</h3>
+								<h3 class="font-semibold text-lg grow">
+									{$_('components.editBuyOptions.eventDays.signUpDays.header')}
+								</h3>
 								<Tabs bind:value={$signUpDaysProxy}>
 									<TabsList>
-										{#each $formData.eventDays as _someDay, dayIndex}
-											<TabsTrigger
-												value={(dayIndex + 1).toString()}>{$_('components.editBuyOptions.eventDays.signUpDays.days', {
-												values: { days: (dayIndex + 1).toString() }
-											})}</TabsTrigger>
+										{#each $formData.eventDays ?? [] as _someDay, dayIndex}
+											<TabsTrigger value={(dayIndex + 1).toString()}
+												>{$_('components.editBuyOptions.eventDays.signUpDays.days', {
+													values: { days: (dayIndex + 1).toString() }
+												})}</TabsTrigger
+											>
 										{/each}
 									</TabsList>
 								</Tabs>
@@ -347,47 +387,58 @@
 					<!-- Services Management -->
 					<Card>
 						<CardHeader class="flex flex-row items-center justify-between space-y-0 pb-2">
-							<CardTitle>{$_("components.editBuyOptions.services")}</CardTitle>
+							<CardTitle>{$_('components.editBuyOptions.services')}</CardTitle>
 							<Button size="sm" onclick={addService}>
 								<Plus class="mr-2 size-4" />
-								{$_("components.editBuyOptions.addService")}
+								{$_('components.editBuyOptions.addService')}
 							</Button>
 						</CardHeader>
 						<CardContent>
 							<div class="space-y-4">
-								{#each $formData.services as service, index}
+								{#each $formData.services ?? [] as service, index}
 									<div class="flex items-center justify-between p-2 border rounded-md">
 										<div>
 											<p class="font-medium">{service.name}</p>
 											<p class="text-sm text-muted-foreground">{service.valueType.valueOf()}</p>
 										</div>
 										<div class="flex gap-1">
-											<Button variant="ghost" size="icon" onclick={() => moveService(index, "up")}>
+											<Button variant="ghost" size="icon" onclick={() => moveService(index, 'up')}>
 												<ArrowUp class="size-4" />
 											</Button>
-											<Button variant="ghost" size="icon" onclick={() => moveService(index, "down")}>
+											<Button
+												variant="ghost"
+												size="icon"
+												onclick={() => moveService(index, 'down')}
+											>
 												<ArrowDown class="size-4" />
 											</Button>
 											<Dialog>
-												<DialogTrigger class={cn(buttonVariants({variant: 'ghost', size: 'icon'}))}>
+												<DialogTrigger
+													class={cn(buttonVariants({ variant: 'ghost', size: 'icon' }))}
+													type="button"
+												>
 													<Eye class="size-4" />
 												</DialogTrigger>
 												<DialogContent class="sm:max-w-[500px]">
 													<DialogHeader>
-														<DialogTitle>{$_("components.editBuyOptions.editService")}</DialogTitle>
-														<DialogDescription>{$_("components.editBuyOptions.serviceDescription")}</DialogDescription>
+														<DialogTitle>{$_('components.editBuyOptions.editService')}</DialogTitle>
+														<DialogDescription
+															>{$_(
+																'components.editBuyOptions.serviceDescription'
+															)}</DialogDescription
+														>
 													</DialogHeader>
 													<div class="grid gap-4 py-4">
 														<div class="grid gap-2">
-															<Label for="serviceName">{$_("components.editBuyOptions.serviceName")}</Label>
-															<Input
-																id="serviceName"
-																bind:value={$formData.services[index].name}
-															/>
+															<Label for="serviceName"
+																>{$_('components.editBuyOptions.serviceName')}</Label
+															>
+															<Input id="serviceName" bind:value={$formData.services[index].name} />
 														</div>
 														<div class="grid gap-2">
-															<Label
-																for="serviceDescription">{$_("components.editBuyOptions.serviceDescription")}</Label>
+															<Label for="serviceDescription"
+																>{$_('components.editBuyOptions.serviceDescription')}</Label
+															>
 															<Textarea
 																id="serviceDescription"
 																bind:value={$formData.services[index].description}
@@ -398,44 +449,54 @@
 															form={superform}
 															name={`services[${index}].valueType`}
 														>
-															<Control >
+															<Control>
 																{#snippet children({ props })}
-																																<FormLabel>{$_("components.editBuyOptions.type")}</FormLabel>
+																	<FormLabel>{$_('components.editBuyOptions.type')}</FormLabel>
 																	<DropdownMenu.Root>
 																		<DropdownMenu.Trigger>
 																			{#snippet child({ props })}
-																																				<Button class="my-2! p-2" variant="outline" {...props}>
-																					{#if $formData.services[index].valueType === 'STRING'}
+																				<Button class="my-2! p-2" variant="outline" {...props}>
+																					{#if $formData.services?.[index].valueType === 'STRING'}
 																						Textfeld für generische Werte
-																					{:else if $formData.services[index].valueType === 'BOOLEAN'}
+																					{:else if $formData.services?.[index].valueType === 'BOOLEAN'}
 																						Enthalten (ja/nein)
-																					{:else if $formData.services[index].valueType === 'INTEGER'}
+																					{:else if $formData.services?.[index].valueType === 'INTEGER'}
 																						Anzahl (z. B. 2 Stühle)
 																					{/if}
 																				</Button>
-																																																						{/snippet}
-																																		</DropdownMenu.Trigger>
+																			{/snippet}
+																		</DropdownMenu.Trigger>
 																		<DropdownMenu.Content>
 																			<DropdownMenu.RadioGroup
 																				{...props}
 																				bind:value={$formData.services[index].valueType}
 																			>
-																				<DropdownMenu.RadioItem
-																					value="STRING">{$_("components.editBuyOptions.typeText")}</DropdownMenu.RadioItem>
-																				<DropdownMenu.RadioItem
-																					value="BOOLEAN">{$_("components.editBuyOptions.typeBoolean")}</DropdownMenu.RadioItem>
-																				<DropdownMenu.RadioItem
-																					value="INTEGER">{$_("components.editBuyOptions.typeNumeric")}</DropdownMenu.RadioItem>
+																				<DropdownMenu.RadioItem value="STRING"
+																					>{$_(
+																						'components.editBuyOptions.typeText'
+																					)}</DropdownMenu.RadioItem
+																				>
+																				<DropdownMenu.RadioItem value="BOOLEAN"
+																					>{$_(
+																						'components.editBuyOptions.typeBoolean'
+																					)}</DropdownMenu.RadioItem
+																				>
+																				<DropdownMenu.RadioItem value="INTEGER"
+																					>{$_(
+																						'components.editBuyOptions.typeNumeric'
+																					)}</DropdownMenu.RadioItem
+																				>
 																			</DropdownMenu.RadioGroup>
 																		</DropdownMenu.Content>
 																	</DropdownMenu.Root>
-																																															{/snippet}
-																														</Control>
+																{/snippet}
+															</Control>
 														</Field>
 													</div>
 													<DialogFooter>
-														<DialogClose
-															class={buttonVariants({variant: "outline-solid"})}>{$_("common.confirm")}</DialogClose>
+														<DialogClose class={buttonVariants({ variant: 'outline' })}
+															>{$_('common.confirm')}</DialogClose
+														>
 													</DialogFooter>
 												</DialogContent>
 											</Dialog>
@@ -453,50 +514,68 @@
 					<!-- Packages Management -->
 					<Card>
 						<CardHeader class="flex flex-row items-center justify-between space-y-0 pb-2">
-							<CardTitle>{$_("components.editBuyOptions.packages")}</CardTitle>
+							<CardTitle>{$_('components.editBuyOptions.packages')}</CardTitle>
 							<Button size="sm" onclick={addPackage}>
 								<Plus class="mr-2 size-4" />
-								{$_("components.editBuyOptions.addPackage")}
+								{$_('components.editBuyOptions.addPackage')}
 							</Button>
 						</CardHeader>
 						<CardContent>
 							<div class="space-y-4">
-								{#each $formData.packages as pkg, index}
+								{#each $formData.packages ?? [] as pkg, index}
 									<div class="flex items-center justify-between p-2 border rounded-md">
 										<div>
 											<p class="font-medium">{pkg.name}</p>
-											<p class="text-sm text-muted-foreground">{$number((pkg.price ?? 0) / 100, {
-												style: 'currency',
-												currency: 'EUR',
-												currencyDisplay: 'code'
-											})}</p>
+											<p class="text-sm text-muted-foreground">
+												{$number((pkg.price ?? 0) / 100, {
+													style: 'currency',
+													currency: 'EUR',
+													currencyDisplay: 'code'
+												})}
+											</p>
 										</div>
 										<div class="flex gap-1">
-											<Button variant="ghost" size="icon" onclick={() => movePackage(index, "left")}>
+											<Button
+												variant="ghost"
+												size="icon"
+												onclick={() => movePackage(index, 'left')}
+											>
 												<ArrowUp class="size-4" />
 											</Button>
-											<Button variant="ghost" size="icon" onclick={() => movePackage(index, "right")}>
+											<Button
+												variant="ghost"
+												size="icon"
+												onclick={() => movePackage(index, 'right')}
+											>
 												<ArrowDown class="size-4" />
 											</Button>
 											<Dialog>
-												<DialogTrigger class={cn(buttonVariants({variant: 'ghost', size: 'icon'}))}>
+												<DialogTrigger
+													class={cn(buttonVariants({ variant: 'ghost', size: 'icon' }))}
+													type="button"
+												>
 													<Eye class="size-4" />
 												</DialogTrigger>
 												<DialogContent class="sm:max-w-[500px]">
 													<DialogHeader>
-														<DialogTitle>{$_("components.editBuyOptions.editPackage")}</DialogTitle>
-														<DialogDescription>{$_("components.editBuyOptions.editPackageDescription")}</DialogDescription>
+														<DialogTitle>{$_('components.editBuyOptions.editPackage')}</DialogTitle>
+														<DialogDescription
+															>{$_(
+																'components.editBuyOptions.editPackageDescription'
+															)}</DialogDescription
+														>
 													</DialogHeader>
 													<div class="grid gap-4 py-4">
 														<div class="grid gap-2">
-															<Label for="packageName">{$_("components.editBuyOptions.packageName")}</Label>
-															<Input
-																id="packageName"
-																bind:value={$formData.packages[index].name}
-															/>
+															<Label for="packageName"
+																>{$_('components.editBuyOptions.packageName')}</Label
+															>
+															<Input id="packageName" bind:value={$formData.packages[index].name} />
 														</div>
 														<div class="grid gap-2">
-															<Label for="packagePrice">{$_("components.editBuyOptions.packagePrice")}</Label>
+															<Label for="packagePrice"
+																>{$_('components.editBuyOptions.packagePrice')}</Label
+															>
 															<Input
 																id="packagePrice"
 																type="number"
@@ -505,8 +584,9 @@
 														</div>
 													</div>
 													<DialogFooter>
-														<DialogClose
-															class={buttonVariants({variant: "outline-solid"})}>{$_("common.confirm")}</DialogClose>
+														<DialogClose class={buttonVariants({ variant: 'outline' })}
+															>{$_('common.confirm')}</DialogClose
+														>
 													</DialogFooter>
 												</DialogContent>
 											</Dialog>
@@ -524,49 +604,65 @@
 				<!-- Package Values Matrix -->
 				<Card>
 					<CardHeader>
-						<CardTitle>{$_("components.editBuyOptions.packageBenefitConfiguration")}</CardTitle>
+						<CardTitle>{$_('components.editBuyOptions.packageBenefitConfiguration')}</CardTitle>
 					</CardHeader>
 					<CardContent>
 						<div class="overflow-x-auto">
 							<Table>
 								<TableHeader>
 									<TableRow>
-										<TableHead class="w-[200px]">{$_("components.editBuyOptions.service")}</TableHead>
-										<TableHead class="w-[150px]">{$_("components.editBuyOptions.type")}</TableHead>
-										{#each $formData.packages as pkg, index}
+										<TableHead class="w-[200px]"
+											>{$_('components.editBuyOptions.service')}</TableHead
+										>
+										<TableHead class="w-[150px]">{$_('components.editBuyOptions.type')}</TableHead>
+										{#each $formData.packages ?? [] as pkg, index}
 											<TableHead class="text-center">
 												{pkg.name} ({$number((pkg.price ?? 0) / 100, {
-												style: 'currency',
-												currency: 'EUR',
-												currencyDisplay: 'code'
-											})})
+													style: 'currency',
+													currency: 'EUR',
+													currencyDisplay: 'code'
+												})})
 											</TableHead>
 										{/each}
 									</TableRow>
 								</TableHeader>
 								<TableBody>
-									{#each $formData.services as service, serviceIndex}
+									{#each $formData.services ?? [] as service, serviceIndex}
 										<TableRow>
 											<TableCell class="font-medium">{service.name}</TableCell>
 											<TableCell>{service.valueType}</TableCell>
-											{#each $formData.packages as pkg, index}
+											{#each $formData.packages ?? [] as _pkg, index}
+												{@const benefit =
+													$formData.packages?.[index].benefits[serviceIndex] ??
+													({} as PackageBenefit)}
 												<TableCell>
 													{#if service.valueType === ValueType.Boolean}
 														<div class="flex justify-center">
 															<Switch
-																bind:checked={$formData.packages[index].benefits[serviceIndex].booleanValue}
+																bind:checked={
+																	() => benefit.booleanValue ?? false,
+																	(value) =>
+																		($formData.packages[index].benefits[serviceIndex] = {
+																			...benefit,
+																			booleanValue: value
+																		})
+																}
 															/>
 														</div>
 													{:else if service.valueType === ValueType.Integer}
 														<Input
 															type="number"
-															bind:value={$formData.packages[index].benefits[serviceIndex].numericValue}
+															bind:value={
+																$formData.packages[index].benefits[serviceIndex].numericValue
+															}
 															class="w-20 mx-auto"
 														/>
 													{:else}
 														<Input
 															type="text"
-															bind:value={$formData.packages[index].benefits[serviceIndex].stringValue}
+															bind:value={
+																$formData.packages[index].benefits[serviceIndex].stringValue
+															}
 															class="w-full"
 														/>
 													{/if}
@@ -585,6 +681,5 @@
 				<BuyOptionPreview buyOption={$formData} />
 			</TabsContent>
 		</Tabs>
-
 	</div>
 </form>

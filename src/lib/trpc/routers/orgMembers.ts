@@ -1,5 +1,5 @@
 import { authorizedOrgMemberProcedure, router } from '@/trpc/server';
-import { object, optional, parse, string, union } from 'valibot';
+import { object, optional, parse, record, string, union, unknown } from 'valibot';
 import { TRPCError } from '@trpc/server';
 import { clerkClient } from 'svelte-clerk/server';
 import { makeSerializable } from '@/utils/serializable';
@@ -126,7 +126,7 @@ export const orgMembersRouter = router({
 		.input((input) => parse(
 			object({
 				orgId: string(),
-				data: object({}) // TODO: Add proper schema validation
+				data: record(string(), unknown())
 			}),
 			input
 		))

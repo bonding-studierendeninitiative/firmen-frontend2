@@ -27,7 +27,7 @@
 	}: Props = $props();
 
 	let selectedValue = $derived(
-		buyOptions.find((f) => f.value === value)?.label ?? 'Select a framework...'
+		buyOptions.find((f) => f.value === value)?.label ?? $_('modules.buy-option-selector.select')
 	);
 
 	let triggerRef = $state<HTMLButtonElement>(null!);
@@ -75,9 +75,7 @@
 									onSelect(value);
 								}}
 							>
-								<Check
-									class={cn('mr-2 size-4', value !== buyOption.value && 'text-transparent')}
-								/>
+								<Check class={cn('mr-2 size-4', value !== buyOption.value && 'text-transparent')} />
 								<span class="grow">{buyOption.label}</span>
 								{#if buyOption.active}
 									<Badge variant="outline">{$_('modules.buy-option-selector.active')}</Badge>

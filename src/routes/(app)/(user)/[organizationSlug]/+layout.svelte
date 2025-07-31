@@ -3,7 +3,6 @@
 	import { OrganizationSwitcher } from 'svelte-clerk';
 	import { USER_SIDEBAR_LINKS } from '@constant';
 	import { page } from '$app/state';
-	import { LoaderCircle } from '@lucide/svelte';
 
 	let activeUrl = $derived(page.url.pathname);
 	let { data, children } = $props();
@@ -17,9 +16,6 @@
 
 <div class=" lg:flex w-full">
 	<Sidebar>
-		{#await data.organization}
-			<LoaderCircle class="size-10 mx-auto animate-spin text-white" />
-		{:then organization}
 			<OrganizationSwitcher
 				createOrganizationMode="navigation"
 				createOrganizationUrl="/create-org/"
@@ -38,16 +34,13 @@
 			<div>
 				{#each USER_SIDEBAR_LINKS as { label, route, Icon }}
 					<SidebarItem
-						href={`/${organization.slug}${route}`}
+						href={`/${data.organization.slug}${route}`}
 						{label}
 						icon={Icon}
 						active={activeUrl.includes(route)}
 					/>
 				{/each}
 			</div>
-		{:catch error}
-			<p>Error occured {error}</p>
-		{/await}
 	</Sidebar>
 
 	<div class="h-dvh w-full overflow-y-scroll @container">

@@ -8,16 +8,14 @@ export const load = async (event) => {
 
 	const {organization} = await event.parent()
 
-	const org = await organization;
-
 	return {
-		orgId: org.id,
+		orgId: organization.id,
 		events: api.events.unregisteredEvents({
 			cursor: '0',
 			limit: '10'
 		}),
 		eventRegistrations: api.eventRegistrations.forOrganization({
-			orgId: org.id,
+			orgId: organization.id,
 			cursor: 0,
 			limit: 10
 		})

@@ -59,6 +59,18 @@
 		| null
 		| undefined = $state(null);
 
+	function reset() {
+		$userFilters.query = '';
+		$userFilters.limit = 10;
+		$userFilters.page = 0;
+		$userFilters.includeMembersCount = false;
+		$userFilters.orderBy = '-created_at' as const;
+		$selectedUser.id = "";
+		isUsersOpen = false;
+		user = null;
+		sendNotification = false;
+	}
+
 	let sendNotification = $state(false);
 
 	// We want to refocus the trigger button when the user selects
@@ -178,27 +190,36 @@
 			<Dialog.Close class={buttonVariants({ variant: 'outline' })}
 				>{$_('common.cancel')}</Dialog.Close
 			>
-			<Button
-				onclick={() => {
-					$addMember.mutate(
-						{ userId: $selectedUser.id, organizationId: orgId, sendNotification },
-						{
-							onError: (error) => {
-								toast.error(error.message);
-							},
-							onSuccess: () => {
-								toast.success($_('modules.add-member-dialog.success'));
-								utils.admin.orgs.members.getAll.invalidate();
-								open = false;
+			{#if $addMember.isPending}
+				<Button disabled variant="default">
+					<Plus class="mr-2 size-5" />
+
+					<LoaderCircle class="size-3 animate-spin mx-6" />
+				</Button>
+			{:else}
+				<Button
+					onclick={() => {
+						$addMember.mutate(
+							{ userId: $selectedUser.id, organizationId: orgId, sendNotification },
+							{
+								onError: (error) => {
+									toast.error(error.message);
+								},
+								onSuccess: () => {
+									toast.success($_('modules.add-member-dialog.success'));
+									utils.admin.orgs.members.getAll.invalidate();
+									open = false;
+									reset();
+								}
 							}
-						}
-					);
-				}}
-				variant="default"
-			>
-				<Plus class="mr-2 size-5" />
-				{$_('common.add')}
-			</Button>
+						);
+					}}
+					variant="default"
+				>
+					<Plus class="mr-2 size-5" />
+					{$_('common.add')}
+				</Button>
+			{/if}
 		</Dialog.Footer>
 	</Dialog.Content>
 </Dialog.Root>

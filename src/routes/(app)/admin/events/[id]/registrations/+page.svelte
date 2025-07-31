@@ -21,7 +21,8 @@
 			{
 				getNextPageParam: (lastPage) =>
 					Math.max(Number(lastPage.pageNumber) + 1, Number(lastPage.totalPages) - 1),
-				lazy: true
+				lazy: true,
+				
 			}
 		);
 

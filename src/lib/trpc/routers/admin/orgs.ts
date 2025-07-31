@@ -8,6 +8,26 @@ import { makeSerializable } from '@/utils';
 import { PUBLIC_APP_URL } from '$env/static/public';
 import { TRPCError } from '@trpc/server';
 
+const keys = [
+	'phone_number',
+	'email_address',
+	'created_at',
+	'first_name',
+	'last_name',
+	'username',
+] as const;
+
+const OrderBySchema = union(
+	keys.flatMap((key) => [
+		// without sign
+		literal(key),
+		// with plus
+		literal((`+${key}`) as `+${typeof key}`),
+		// with minus
+		literal((`-${key}`) as `-${typeof key}`),
+	]),
+);
+
 export const adminOrgsRouter = router({
 	members: router({
 		getAll: adminProcedure
@@ -17,7 +37,7 @@ export const adminOrgsRouter = router({
 						organizationId: string(),
 						limit: nullish(number(), 10),
 						page: nullish(number(), 0),
-						sort: nullish(string(), "+first_name")
+						sort: nullish(OrderBySchema, "+first_name")
 					}),
 					input
 				)
@@ -55,12 +75,33 @@ export const adminOrgsRouter = router({
 		remove: adminProcedure
 			.input((input) => parse(object({
 				organizationId: string(),
-				userId: string()
+				userId: string(),
+				sendNotification: optional(boolean(), false)
 			}), input))
 			.mutation(
-				async ({ input }) => {
-					await clerkClient.organizations.deleteOrganizationMembership(input)
+				async ({ input, ctx }) => {
+					const createdOrgMembership = await clerkClient.organizations.deleteOrganizationMembership(input)
+
+					if (input.sendNotification && createdOrgMembership.publicUserData?.identifier) {
+						const remover = await clerkClient.users.getUser(ctx.session.userId);
+
+						const result = await ctx.api.request("post", "/api/v2/notifications/org-member-removal", {
+							body: {
+								adminId: remover.id,
+								organizationId: createdOrgMembership.organization.id,
+								recipientEmail: createdOrgMembership.publicUserData?.identifier,
+								userId: createdOrgMembership.publicUserData.userId,
+								locale: "en"
+							}
+						})
+
+						if (result.status !== 204) {
+							throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "The user could not be notified" })
+						}
+					}
 				}
+
+
 			),
 		addMember: adminProcedure
 			.input((input) => parse(object({
@@ -81,10 +122,11 @@ export const adminOrgsRouter = router({
 
 						const result = await ctx.api.request("post", "/api/v2/notifications/org-member", {
 							body: {
-								adminName: inviter.fullName ?? "Unbekannter Nutzer:in",
-								organizationName: createdOrgMembership.organization.name,
+								adminId: inviter.id,
+								organizationId: createdOrgMembership.organization.id,
 								recipientEmail: createdOrgMembership.publicUserData?.identifier,
-								userName: createdOrgMembership.publicUserData.firstName + " " + createdOrgMembership.publicUserData.lastName
+								userId: createdOrgMembership.publicUserData.userId,
+								locale: "en"
 							}
 						})
 

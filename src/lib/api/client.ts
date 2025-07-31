@@ -72,9 +72,9 @@ export const Problem = v.object({
   parameters: v.optional(v.record(v.string(), v.unknown())),
   instance: v.optional(v.string()),
   type: v.optional(v.string()),
-  detail: v.optional(v.string()),
   title: v.optional(v.string()),
   status: v.optional(StatusType),
+  detail: v.optional(v.string()),
 });
 
 export type BillingAddressTemplateResponse = v.InferOutput<typeof BillingAddressTemplateResponse>;
@@ -129,9 +129,10 @@ export const AddBillingAddressTemplateInput = v.object({
 export type OrgMemberNotificationRequest = v.InferOutput<typeof OrgMemberNotificationRequest>;
 export const OrgMemberNotificationRequest = v.object({
   recipientEmail: v.string(),
-  userName: v.string(),
-  organizationName: v.string(),
-  adminName: v.string(),
+  userId: v.string(),
+  organizationId: v.string(),
+  adminId: v.string(),
+  locale: v.optional(v.union([v.string(), v.undefined()])),
 });
 
 export type RegisterOrganizationToEventOutput = v.InferOutput<typeof RegisterOrganizationToEventOutput>;
@@ -260,35 +261,40 @@ export const UnknownContentTypeDocumentVersionOutput = v.object({
 
 export type BaseDocumentOutput = v.InferOutput<typeof BaseDocumentOutput>;
 export const BaseDocumentOutput = v.object({
-  id: v.optional(v.string()),
-  title: v.optional(v.string()),
-  documentType: v.optional(v.union([v.literal("portrait"), v.literal("logo"), v.literal("advert")])),
-  organizationId: v.optional(v.string()),
+  id: v.string(),
+  title: v.optional(v.union([v.string(), v.undefined()])),
+  documentType: v.optional(
+    v.union([v.union([v.literal("portrait"), v.literal("logo"), v.literal("advert")]), v.undefined()]),
+  ),
+  organizationId: v.optional(v.union([v.string(), v.undefined()])),
 });
 
 export type DetailedDocumentVersionOutput = v.InferOutput<typeof DetailedDocumentVersionOutput>;
 export const DetailedDocumentVersionOutput = v.object({
-  versionId: v.optional(v.string()),
-  size: v.optional(v.number()),
-  contentType: v.optional(v.string()),
-  isLatest: v.optional(v.boolean()),
+  versionId: v.optional(v.union([v.string(), v.undefined()])),
+  size: v.optional(v.union([v.number(), v.undefined()])),
+  contentType: v.optional(v.union([v.string(), v.undefined()])),
+  isLatest: v.optional(v.union([v.boolean(), v.undefined()])),
   uploadStatus: v.optional(
     v.union([
-      v.literal("PENDING_METADATA"),
-      v.literal("PENDING_UPLOAD"),
-      v.literal("UPLOADED"),
-      v.literal("PROCESSING_DERIVATIVES"),
-      v.literal("COMPLETED"),
-      v.literal("ERROR_UPLOAD"),
-      v.literal("ERROR_PROCESSING"),
-      v.literal("ARCHIVED"),
-      v.literal("DELETED"),
+      v.union([
+        v.literal("PENDING_METADATA"),
+        v.literal("PENDING_UPLOAD"),
+        v.literal("UPLOADED"),
+        v.literal("PROCESSING_DERIVATIVES"),
+        v.literal("COMPLETED"),
+        v.literal("ERROR_UPLOAD"),
+        v.literal("ERROR_PROCESSING"),
+        v.literal("ARCHIVED"),
+        v.literal("DELETED"),
+      ]),
+      v.undefined(),
     ]),
   ),
-  document: v.optional(BaseDocumentOutput),
-  createdAt: v.optional(v.string()),
-  modifiedAt: v.optional(v.string()),
-  history: v.optional(v.array(DocumentFeedbackOutput)),
+  document: BaseDocumentOutput,
+  createdAt: v.optional(v.union([v.string(), v.undefined()])),
+  modifiedAt: v.optional(v.union([v.string(), v.undefined()])),
+  history: v.optional(v.union([v.array(DocumentFeedbackOutput), v.undefined()])),
 });
 
 export type DocumentVersionDescription = v.InferOutput<typeof DocumentVersionDescription>;
@@ -302,11 +308,13 @@ export const DocumentVersionDescription = v.object({
 
 export type SimpleDocumentOutput = v.InferOutput<typeof SimpleDocumentOutput>;
 export const SimpleDocumentOutput = v.object({
-  id: v.optional(v.string()),
-  title: v.optional(v.string()),
-  documentType: v.optional(v.union([v.literal("portrait"), v.literal("logo"), v.literal("advert")])),
-  activeVersion: v.optional(SimpleDocumentVersionOutput),
-  organizationId: v.optional(v.string()),
+  id: v.string(),
+  title: v.optional(v.union([v.string(), v.undefined()])),
+  documentType: v.optional(
+    v.union([v.union([v.literal("portrait"), v.literal("logo"), v.literal("advert")]), v.undefined()]),
+  ),
+  activeVersion: v.optional(v.union([SimpleDocumentVersionOutput, v.undefined()])),
+  organizationId: v.optional(v.union([v.string(), v.undefined()])),
 });
 
 export type GetAllDocumentsForOrganizationOutput = v.InferOutput<typeof GetAllDocumentsForOrganizationOutput>;
@@ -396,14 +404,17 @@ export const SimpleEventResponse = v.object({
 
 export type RegistrationDocumentOutput = v.InferOutput<typeof RegistrationDocumentOutput>;
 export const RegistrationDocumentOutput = v.object({
-  documentVersion: v.optional(DetailedDocumentVersionOutput),
+  documentVersion: DetailedDocumentVersionOutput,
   status: v.optional(
-    v.union([v.literal("unreviewed"), v.literal("changes-requested"), v.literal("rejected"), v.literal("confirmed")]),
+    v.union([
+      v.union([v.literal("unreviewed"), v.literal("changes-requested"), v.literal("rejected"), v.literal("confirmed")]),
+      v.undefined(),
+    ]),
   ),
-  documentType: v.optional(v.union([v.literal("portrait"), v.literal("logo"), v.literal("advert")])),
-  reviewer: v.optional(v.string()),
-  reviewComments: v.optional(v.string()),
-  requestedChanges: v.optional(v.string()),
+  documentType: v.union([v.literal("portrait"), v.literal("logo"), v.literal("advert")]),
+  reviewer: v.optional(v.union([v.string(), v.undefined()])),
+  reviewComments: v.optional(v.union([v.string(), v.undefined()])),
+  requestedChanges: v.optional(v.union([v.string(), v.undefined()])),
 });
 
 export type GetEventRegistrationForOrganizationOutput = v.InferOutput<typeof GetEventRegistrationForOrganizationOutput>;
@@ -773,6 +784,17 @@ export type post_SendOrgMemberNotification = v.InferOutput<typeof post_SendOrgMe
 export const post_SendOrgMemberNotification = v.object({
   method: v.literal("POST"),
   path: v.literal("/api/v2/notifications/org-member"),
+  requestFormat: v.literal("json"),
+  parameters: v.object({
+    body: OrgMemberNotificationRequest,
+  }),
+  response: v.unknown(),
+});
+
+export type post_SendOrgMemberRemovalNotification = v.InferOutput<typeof post_SendOrgMemberRemovalNotification>;
+export const post_SendOrgMemberRemovalNotification = v.object({
+  method: v.literal("POST"),
+  path: v.literal("/api/v2/notifications/org-member-removal"),
   requestFormat: v.literal("json"),
   parameters: v.object({
     body: OrgMemberNotificationRequest,
@@ -1158,6 +1180,7 @@ export const EndpointByMethod = {
     "/api/v2/organization/{organizationId}/catalogue-data/request-upload-url": post_RequestUploadUrl,
     "/api/v2/organization/{organizationId}/billing-address-template": post_AddBillingAddressTemplate,
     "/api/v2/notifications/org-member": post_SendOrgMemberNotification,
+    "/api/v2/notifications/org-member-removal": post_SendOrgMemberRemovalNotification,
     "/api/v2/event-registration": post_RegisterOrganizationToEvent,
     "/api/v2/event-registration/{eventRegistrationId}/withdraw": post_Withdraw,
     "/api/v2/event-registration/{eventRegistrationId}/portrait/submit": post_SubmitPortrait,

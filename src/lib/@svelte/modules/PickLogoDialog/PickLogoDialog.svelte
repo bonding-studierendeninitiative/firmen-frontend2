@@ -35,7 +35,7 @@
 </script>
 
 <Dialog.Root bind:open>
-	<Dialog.Content class="max-w-[80dvw] max-h-[80dvh] @container/pick-logo">
+	<Dialog.Content class="max-w-[80dvw] max-h-[80dvh] @container/pick-logo" preventScroll={false}>
 		<Dialog.Header>
 			<Dialog.Title>{$_('modules.pick-logo-dialog.title')}</Dialog.Title>
 			<Dialog.Description>{$_('modules.pick-logo-dialog.description')}</Dialog.Description>
@@ -57,7 +57,7 @@
 					>
 						{#each $logos.data?.documents ?? [] as logo}
 							<Label
-								class="p-4 rounded-xl hover:bg-muted cursor-pointer [&:has([data-state=checked])]:bg-muted [&:has([data-state=checked])]:border [&:has([data-state=checked])]:border-dashed flex flex-col items-end gap-2"
+								class="p-4 rounded-xl hover:bg-muted cursor-pointer border-transparent border [&:has([data-state=checked])]:bg-muted [&:has([data-state=checked])]:border-border flex flex-col items-end gap-2"
 								for={'logo-' + logo.id}
 							>
 								<RadioGroup.Item id={'logo-' + logo.id} value={logo.id} class="sr-only" />
@@ -66,7 +66,7 @@
 								{:else}
 									<CircleDashed class="size-5 text-gray-500" />
 								{/if}
-								<LogoItem {logo} />
+								<LogoItem onViewDetails={async (logoId) => await goto(`/${orgId}/catalogue-data/logos/${logoId}`)} {logo} />
 							</Label>
 						{/each}
 					</div>

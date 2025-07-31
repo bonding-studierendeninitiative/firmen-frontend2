@@ -79,18 +79,18 @@ export const UpdateEventBuyOptionInput = v.object({
 
 export type StatusType = v.InferOutput<typeof StatusType>;
 export const StatusType = v.object({
-  reasonPhrase: v.optional(v.string()),
   statusCode: v.optional(v.number()),
+  reasonPhrase: v.optional(v.string()),
 });
 
 export type Problem = v.InferOutput<typeof Problem>;
 export const Problem = v.object({
-  parameters: v.optional(v.record(v.string(), v.unknown())),
   instance: v.optional(v.string()),
   type: v.optional(v.string()),
-  detail: v.optional(v.string()),
+  parameters: v.optional(v.record(v.string(), v.unknown())),
   title: v.optional(v.string()),
   status: v.optional(StatusType),
+  detail: v.optional(v.string()),
 });
 
 export type AddonOutput = v.InferOutput<typeof AddonOutput>;
@@ -152,10 +152,12 @@ export const ReviewCatalogueDataInput = v.object({
 
 export type BaseDocumentOutput = v.InferOutput<typeof BaseDocumentOutput>;
 export const BaseDocumentOutput = v.object({
-  id: v.optional(v.string()),
-  title: v.optional(v.string()),
-  documentType: v.optional(v.union([v.literal("portrait"), v.literal("logo"), v.literal("advert")])),
-  organizationId: v.optional(v.string()),
+  id: v.string(),
+  title: v.optional(v.union([v.string(), v.undefined()])),
+  documentType: v.optional(
+    v.union([v.union([v.literal("portrait"), v.literal("logo"), v.literal("advert")]), v.undefined()]),
+  ),
+  organizationId: v.optional(v.union([v.string(), v.undefined()])),
 });
 
 export type DocumentFeedbackOutput = v.InferOutput<typeof DocumentFeedbackOutput>;
@@ -167,27 +169,30 @@ export const DocumentFeedbackOutput = v.object({
 
 export type DetailedDocumentVersionOutput = v.InferOutput<typeof DetailedDocumentVersionOutput>;
 export const DetailedDocumentVersionOutput = v.object({
-  versionId: v.optional(v.string()),
-  size: v.optional(v.number()),
-  contentType: v.optional(v.string()),
-  isLatest: v.optional(v.boolean()),
+  versionId: v.optional(v.union([v.string(), v.undefined()])),
+  size: v.optional(v.union([v.number(), v.undefined()])),
+  contentType: v.optional(v.union([v.string(), v.undefined()])),
+  isLatest: v.optional(v.union([v.boolean(), v.undefined()])),
   uploadStatus: v.optional(
     v.union([
-      v.literal("PENDING_METADATA"),
-      v.literal("PENDING_UPLOAD"),
-      v.literal("UPLOADED"),
-      v.literal("PROCESSING_DERIVATIVES"),
-      v.literal("COMPLETED"),
-      v.literal("ERROR_UPLOAD"),
-      v.literal("ERROR_PROCESSING"),
-      v.literal("ARCHIVED"),
-      v.literal("DELETED"),
+      v.union([
+        v.literal("PENDING_METADATA"),
+        v.literal("PENDING_UPLOAD"),
+        v.literal("UPLOADED"),
+        v.literal("PROCESSING_DERIVATIVES"),
+        v.literal("COMPLETED"),
+        v.literal("ERROR_UPLOAD"),
+        v.literal("ERROR_PROCESSING"),
+        v.literal("ARCHIVED"),
+        v.literal("DELETED"),
+      ]),
+      v.undefined(),
     ]),
   ),
-  document: v.optional(BaseDocumentOutput),
-  createdAt: v.optional(v.string()),
-  modifiedAt: v.optional(v.string()),
-  history: v.optional(v.array(DocumentFeedbackOutput)),
+  document: BaseDocumentOutput,
+  createdAt: v.optional(v.union([v.string(), v.undefined()])),
+  modifiedAt: v.optional(v.union([v.string(), v.undefined()])),
+  history: v.optional(v.union([v.array(DocumentFeedbackOutput), v.undefined()])),
 });
 
 export type AdminRegistrationDocumentOutput = v.InferOutput<typeof AdminRegistrationDocumentOutput>;
@@ -232,10 +237,23 @@ export const TimeoutHandler = v.unknown();
 
 export type AsyncResponse = v.InferOutput<typeof AsyncResponse>;
 export const AsyncResponse = v.object({
-  suspended: v.optional(v.boolean()),
   done: v.optional(v.boolean()),
+  suspended: v.optional(v.boolean()),
   cancelled: v.optional(v.boolean()),
   timeoutHandler: v.optional(TimeoutHandler),
+});
+
+export type ExportPortraitsEnqueuedResponse = v.InferOutput<typeof ExportPortraitsEnqueuedResponse>;
+export const ExportPortraitsEnqueuedResponse = v.object({
+  status: v.optional(v.string()),
+  jobId: v.optional(v.string()),
+  exportId: v.optional(v.string()),
+  message: v.optional(v.string()),
+});
+
+export type ExportPortraitsEnqueuedRequest = v.InferOutput<typeof ExportPortraitsEnqueuedRequest>;
+export const ExportPortraitsEnqueuedRequest = v.object({
+  eventRegistrationIds: v.optional(v.array(v.string())),
 });
 
 export type ExportLogosEnqueuedRequest = v.InferOutput<typeof ExportLogosEnqueuedRequest>;
@@ -247,6 +265,7 @@ export type ExportLogosEnqueuedResponse = v.InferOutput<typeof ExportLogosEnqueu
 export const ExportLogosEnqueuedResponse = v.object({
   status: v.optional(v.string()),
   jobId: v.optional(v.string()),
+  exportId: v.optional(v.string()),
   message: v.optional(v.string()),
 });
 
@@ -254,6 +273,7 @@ export type ExportAdvertisementsEnqueuedResponse = v.InferOutput<typeof ExportAd
 export const ExportAdvertisementsEnqueuedResponse = v.object({
   status: v.optional(v.string()),
   jobId: v.optional(v.string()),
+  exportId: v.optional(v.string()),
   message: v.optional(v.string()),
 });
 
@@ -381,6 +401,27 @@ export const PagedJobOutput = v.object({
   limit: v.optional(v.number()),
 });
 
+export type ExportForEventOutput = v.InferOutput<typeof ExportForEventOutput>;
+export const ExportForEventOutput = v.object({
+  id: v.optional(v.string()),
+  objectKey: v.optional(v.string()),
+  type: v.optional(v.union([v.literal("portrait"), v.literal("logo"), v.literal("advert")])),
+  size: v.optional(v.number()),
+  files: v.optional(v.number()),
+  createdAt: v.optional(v.string()),
+  updatedAt: v.optional(v.string()),
+  status: v.optional(v.union([v.literal("pending"), v.literal("completed"), v.literal("failed")])),
+});
+
+export type PagedExportsForEventOutput = v.InferOutput<typeof PagedExportsForEventOutput>;
+export const PagedExportsForEventOutput = v.object({
+  exports: v.optional(v.array(ExportForEventOutput)),
+  totalElements: v.optional(v.number()),
+  totalPages: v.optional(v.number()),
+  page: v.optional(v.number()),
+  limit: v.optional(v.number()),
+});
+
 export type SimpleEventResponse = v.InferOutput<typeof SimpleEventResponse>;
 export const SimpleEventResponse = v.object({
   id: v.optional(v.string()),
@@ -389,23 +430,6 @@ export const SimpleEventResponse = v.object({
   projectHSG: v.optional(v.string()),
   dateFrom: v.optional(v.string()),
   dateTo: v.optional(v.string()),
-});
-
-export type ExportOutput = v.InferOutput<typeof ExportOutput>;
-export const ExportOutput = v.object({
-  id: v.optional(v.string()),
-  objectKey: v.optional(v.string()),
-  type: v.optional(v.union([v.literal("portrait"), v.literal("logo"), v.literal("advert")])),
-  event: v.optional(SimpleEventResponse),
-  size: v.optional(v.number()),
-  files: v.optional(v.number()),
-  createdAt: v.optional(v.string()),
-  updatedAt: v.optional(v.string()),
-});
-
-export type PagedExportsOutput = v.InferOutput<typeof PagedExportsOutput>;
-export const PagedExportsOutput = v.object({
-  exports: v.optional(v.array(ExportOutput)),
 });
 
 export type AllEventsOutput = v.InferOutput<typeof AllEventsOutput>;
@@ -642,8 +666,8 @@ export const post_RestartJob = v.object({
   parameters: v.object({
     query: v.object({
       asyncResponse: v.object({
-        suspended: v.optional(v.boolean()),
         done: v.optional(v.boolean()),
+        suspended: v.optional(v.boolean()),
         cancelled: v.optional(v.boolean()),
         timeoutHandler: v.optional(TimeoutHandler),
       }),
@@ -663,14 +687,25 @@ export const post_ImportEvents = v.object({
   parameters: v.object({
     query: v.object({
       asyncResponse: v.object({
-        suspended: v.optional(v.boolean()),
         done: v.optional(v.boolean()),
+        suspended: v.optional(v.boolean()),
         cancelled: v.optional(v.boolean()),
         timeoutHandler: v.optional(TimeoutHandler),
       }),
     }),
   }),
   response: v.unknown(),
+});
+
+export type post_ExportPortraits = v.InferOutput<typeof post_ExportPortraits>;
+export const post_ExportPortraits = v.object({
+  method: v.literal("POST"),
+  path: v.literal("/api/v2/admin/jobs/export/portraits"),
+  requestFormat: v.literal("json"),
+  parameters: v.object({
+    body: ExportPortraitsEnqueuedRequest,
+  }),
+  response: ExportPortraitsEnqueuedResponse,
 });
 
 export type post_ExportLogos = v.InferOutput<typeof post_ExportLogos>;
@@ -889,11 +924,15 @@ export const get_GetExports = v.object({
   path: v.literal("/api/v2/admin/events/{eventId}/exports"),
   requestFormat: v.literal("json"),
   parameters: v.object({
+    query: v.object({
+      page: v.optional(v.number()),
+      limit: v.optional(v.number()),
+    }),
     path: v.object({
       eventId: v.string(),
     }),
   }),
-  response: PagedExportsOutput,
+  response: PagedExportsForEventOutput,
 });
 
 export type get_GetDownloadUrl = v.InferOutput<typeof get_GetDownloadUrl>;
@@ -948,6 +987,20 @@ export const get_LoadEventRegistrationsForEvent = v.object({
   response: GetEventRegistrationsForEventOutput,
 });
 
+export type delete_DeleteExport = v.InferOutput<typeof delete_DeleteExport>;
+export const delete_DeleteExport = v.object({
+  method: v.literal("DELETE"),
+  path: v.literal("/api/v2/admin/events/{eventId}/exports/{exportId}"),
+  requestFormat: v.literal("json"),
+  parameters: v.object({
+    path: v.object({
+      eventId: v.string(),
+      exportId: v.string(),
+    }),
+  }),
+  response: v.unknown(),
+});
+
 export type delete_DeleteEventRegistration = v.InferOutput<typeof delete_DeleteEventRegistration>;
 export const delete_DeleteEventRegistration = v.object({
   method: v.literal("DELETE"),
@@ -987,6 +1040,7 @@ export const EndpointByMethod = {
   delete: {
     "/api/v2/admin/event/{eventId}/buy-option/{buyOptionId}": delete_DeleteEventBuyOption,
     "/api/v2/admin/event/{eventId}/buy-option/{buyOptionId}/addon-package/{addonPackageId}": delete_DeleteAddonPackage,
+    "/api/v2/admin/events/{eventId}/exports/{exportId}": delete_DeleteExport,
     "/api/v2/admin/event-registration/{eventRegistrationId}": delete_DeleteEventRegistration,
   },
   post: {
@@ -994,6 +1048,7 @@ export const EndpointByMethod = {
     "/api/v2/admin/organization/{id}/import": post_ImportLegacyOrganization,
     "/api/v2/admin/jobs/{jobId}/restart": post_RestartJob,
     "/api/v2/admin/jobs/import/events": post_ImportEvents,
+    "/api/v2/admin/jobs/export/portraits": post_ExportPortraits,
     "/api/v2/admin/jobs/export/logos": post_ExportLogos,
     "/api/v2/admin/jobs/export/advertisements": post_ExportAdvertisements,
     "/api/v2/admin/event/{eventId}/publish": post_PublishEvent,

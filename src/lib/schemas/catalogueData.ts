@@ -14,7 +14,7 @@ import {
 } from 'valibot';
 
 export const ExportCatalogueDataRequest = object({
-	documentType: union([literal('advert'), literal('logo')]),
+	documentType: union([literal('advert'), literal('logo'), literal('portrait')]),
 	eventRegistrationIds: array(string())
 });
 

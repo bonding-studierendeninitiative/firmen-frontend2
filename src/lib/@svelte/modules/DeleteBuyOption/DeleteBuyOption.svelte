@@ -8,10 +8,13 @@
 	import { buttonVariants } from '@/components/ui/button';
 	import { trpc } from '@/trpc/client';
 	import { goto } from '$app/navigation';
+	import { toast } from 'svelte-sonner';
 
 	let isOpen = $state(false);
 
 	const api = trpc(page);
+
+	const utils = api.createUtils();
 
 	const deleteBuyOption = api.admin.events.buyOptions.delete.createMutation();
 </script>
@@ -19,10 +22,10 @@
 <Dialog.Root bind:open={isOpen}>
 	<Dialog.Overlay />
 	<Dialog.Trigger
-		disabled={page.params.buyOptionId === null}
+		disabled={!page.params.buyOptionId}
 		class={[buttonVariants({ variant: 'ghost', size: 'icon' }), 'text-red-500 hover:text-red-700']}
 	>
-		<TrashIcon classes="size-6" />
+		<TrashIcon class="size-6" />
 	</Dialog.Trigger>
 	<Dialog.Content>
 		<Dialog.Header>
@@ -47,15 +50,26 @@
 					disabled={$deleteBuyOption.isPending}
 					variant="destructive"
 					onclick={() => {
-						$deleteBuyOption.mutate({
-							buyOptionId: page.params.buyOptionId,
-							eventId: page.params.id
-						}, {
-							onSuccess(data, variables, context) {
-								goto(`/admin/events/${page.params.id}/buy-options`)
-								isOpen = false
+						$deleteBuyOption.mutate(
+							{
+								buyOptionId: page.params.buyOptionId,
+								eventId: page.params.id
 							},
-						});
+							{
+								onSuccess(data, variables, context) {
+									goto(`/admin/events/${page.params.id}/buy-options`);
+									toast.success($_('modules.delete-buy-option.success'));
+									utils.admin.events.buyOptions.getAll.invalidate({
+										eventId: page.params.id,
+										page: '0',
+										limit: '10',
+										sortBy: 'creationDate',
+										sortDirection: 'desc'
+									});
+									isOpen = false;
+								}
+							}
+						);
 					}}
 				>
 					{#if $deleteBuyOption.isPending}

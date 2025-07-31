@@ -10,14 +10,14 @@ export async function load({ params, parent }) {
 	const data = await buyOptionData;
 
 	if (data && Number(data?.totalElements) > 0) {
-		redirect(302, `/admin/events/${params.id}/buy-options/${data?.buyOptions[0].id}`);
+		redirect(302, `/admin/events/${params.id}/buy-options/${data?.buyOptions?.[0].id}`);
 	}
 }
 
 export const actions = {
 	createBuyOption: async (event) => {
 		const form = await superValidate(event.request, valibot(SimpleCreateBuyOptionRequestSchema));
-		
+
 		if (!form.valid) {
 			return fail(400, { form });
 		}
@@ -27,7 +27,7 @@ export const actions = {
 		const response = await api.admin.events.buyOptions.create({
 			data: form.data,
 			eventId: event.params.id
-		})
+		});
 
 		if (response.id) {
 			redirect(302, `/admin/events/${event.params.id}/buy-options/${response.id}`);

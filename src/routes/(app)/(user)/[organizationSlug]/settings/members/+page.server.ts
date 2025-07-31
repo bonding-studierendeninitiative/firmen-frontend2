@@ -11,8 +11,6 @@ export const load = async (event) => {
 	const { initialState, organization } = await event.parent();
 	if (!initialState.sessionId) return;
 
-	const organizationData = await organization;
-
 	const api = await createCaller(event)
 
 	const createInviteForm = await superValidate(valibot(CreateOrgInviteRequestSchema));
@@ -23,7 +21,7 @@ export const load = async (event) => {
 		createInviteForm,
 		organization: organizationData,
 		organizationMembers: await api.organizations.getMembers({
-			slug: organizationData.id
+			slug: organization.id
 		})
 	};
 };

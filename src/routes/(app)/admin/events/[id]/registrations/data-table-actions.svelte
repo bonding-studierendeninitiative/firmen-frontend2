@@ -21,7 +21,7 @@
 	let isDeleteOpen = $state(false);
 </script>
 
-<ConfirmEventRegistration {eventRegistration} {id} bind:isOpen={isConfirmOpen} />
+<ConfirmEventRegistration {eventRegistration} bind:isOpen={isConfirmOpen} />
 <RejectEventRegistration {id} bind:isOpen={isRejectOpen} />
 <DeleteEventRegistrationForm eventRegistrationId={id} bind:open={isDeleteOpen} />
 

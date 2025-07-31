@@ -17,9 +17,9 @@ export const load = async (event) => {
 
 	async function loadPageData() {
 		if (!initialState.sessionId) return;
-		const org = await organization;
+
 		const response = await api.billingAddressTemplates.getAll({
-			organizationId: org.id
+			organizationId: organization.id
 		})
 
 		const createBillingAddressTemplateForm = await superValidate(

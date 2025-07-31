@@ -5,22 +5,22 @@
 	import { LocalizedDate } from '@/@svelte/components';
 	import { page } from '$app/state';
 	import { trpc } from '@/trpc/client';
-	import type { InferOutput } from 'valibot';
-	import type { Export } from '@schema';
 	import { Image } from '@lucide/svelte';
 	import { _ } from '@services';
+	import type { ExportForEventOutput } from '@api/admin-client';
 
 	const download = trpc(page).admin.export.generateDownloadLink.createMutation();
 	interface Props {
-		_export: InferOutput<Export>;
+		_export: ExportForEventOutput;
+		eventId: string;
 	}
 
-	let { _export }: Props = $props();
+	let { _export, eventId }: Props = $props();
 
 	function handleDownload() {
 		$download.mutate(
 			{
-				eventId: _export.event.id,
+				eventId,
 				exportId: _export.id
 			},
 			{
@@ -41,16 +41,16 @@
 </script>
 
 <div class="flex justify-between p-6 border-b border-gray-200">
-	{#if _export.type === 'ADVERT'}
+	{#if _export.type === 'advert'}
 		<DocumentIcon />
-	{:else if _export.type === 'LOGO'}
+	{:else if _export.type === 'logo'}
 		<Image />
 	{/if}
 	{#if _export.size}
 		<p>{getHumanReadableFileSize(_export.size)}</p>
 	{/if}
 	{#if _export.files}
-		<p>{_export.files} Dateien</p>
+		<p>{ $_('components.export-item.entries', {values: {entries: _export.files}}) }</p>
 	{/if}
 	<LocalizedDate date={_export.createdAt} />
 	<Button disabled={$download.isPending} onclick={handleDownload}>{$_('common.download')}</Button>

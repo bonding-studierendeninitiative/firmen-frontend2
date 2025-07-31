@@ -13,8 +13,8 @@ export const adminLogosRouter = router({
             input
         ))
         .mutation(async ({ ctx, input }) => {
-            const response = await ctx.adminApi.request("post", "/api/v2/admin/logo/{logoId}/review", {
-                path: { logoId: input.logoId },
+            const response = await ctx.adminApi.request("post", "/api/v2/admin/registration-document/{registrationDocumentId}/review", {
+                path: { registrationDocumentId: input.logoId },
                 body: input.data
             });
 

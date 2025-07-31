@@ -10,10 +10,9 @@ export const load = async ({ parent }) => {
 	if (!initialState.sessionId) return;
 
 	async function loadPageData() {
-		const org = await organization;
 
 		const editOrganizationDetailsForm = await superValidate(
-			org.publicMetadata,
+			organization.publicMetadata,
 			valibot(SetOrgDetailsRequestSchema),
 			{
 				errors: false

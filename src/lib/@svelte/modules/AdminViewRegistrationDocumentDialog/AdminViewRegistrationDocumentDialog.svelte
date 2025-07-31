@@ -47,7 +47,7 @@
 
 <Dialog.Root>
 	{#if logo?.documentVersion}
-		<Dialog.Trigger>
+		<Dialog.Trigger class="cursor-pointer">
 			<LogoStatusIcon title={$_('status-text.' + logo.status)} variant={{variant: logo.status ?? 'missing'}} />
 		</Dialog.Trigger>
 	{:else}

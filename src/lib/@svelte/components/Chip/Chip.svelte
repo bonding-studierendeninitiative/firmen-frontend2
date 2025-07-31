@@ -13,7 +13,7 @@
 	type ChipVariant = VariantProps<typeof chipVariants>['variant'];
 
 	const chipVariants = tv({
-		base: 'rounded-custom w-auto px-[10px] py-[2px] text-sm font-normal text-center',
+		base: 'rounded-full w-auto px-[10px] py-[2px] text-sm font-normal text-center',
 		variants: {
 			variant: {
 				success: 'text-green-600 bg-green-50',

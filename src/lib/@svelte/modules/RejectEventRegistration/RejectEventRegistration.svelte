@@ -53,7 +53,7 @@
 							}
 						}
 					);
-				}}>{$_('admin-pages.events.event-registrations.reject-event-registration.proceed')}</Button
+				}} variant="destructive">{$_('admin-pages.events.event-registrations.reject-event-registration.proceed')}</Button
 			>
 		</Dialog.Footer>
 	</Dialog.Content>

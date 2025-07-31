@@ -3,11 +3,14 @@ import { createCaller } from '@/trpc/router.js';
 export const load = async (event) => {
 	const api = await createCaller(event)
 
-	const exports = await api.admin.export.getAll({
-		eventId: event.params.id
+	const exports = api.admin.export.getAll({
+		eventId: event.params.id,
+		page: Number(event.url.searchParams.get("page") ?? 0),
+		limit: Number(event.url.searchParams.get("limit") ?? 10)
 	});
 
 	return {
-		exports: exports.exports ?? []
+		exports,
+		eventId: event.params.id
 	};
 }

@@ -122,6 +122,11 @@ export const organizationsRouter = router({
                 });
                 return makeSerializable(org);
             } catch (e) {
+                if (e instanceof Error) {
+                    if (e?.status === 404) {
+                        return null
+                    }
+                }
                 throw new TRPCError({
                     code: 'INTERNAL_SERVER_ERROR',
                     message: e instanceof Error ? e.message : 'Failed to get organization details'

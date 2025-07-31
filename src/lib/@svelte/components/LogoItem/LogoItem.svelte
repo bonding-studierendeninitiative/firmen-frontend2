@@ -1,6 +1,5 @@
 <script lang="ts">
 	import * as Card from '@/components/ui/card';
-	import { StatusBadge } from '@/@svelte/components';
 	import { _ } from '@services';
 	import { cn } from '@/utils';
 	import { Button } from '@/components/ui/button';
@@ -9,13 +8,15 @@
 	import { page } from '$app/state';
 	import { trpc } from '@/trpc/client';
 	import { LoaderCircle } from '@lucide/svelte';
+	import { goto } from '$app/navigation';
 
 	interface Props {
 		logo: SimpleDocumentOutput;
 		class?: string;
+		onViewDetails: (logoId: string) => void
 	}
 
-	let { logo, class: className = '' }: Props = $props();
+	let { logo, class: className = '', onViewDetails }: Props = $props();
 
 	const thumbnail = trpc(page).catalogueData.generateThumbnailLink.createQuery(
 		{
@@ -43,9 +44,9 @@
 				class="aspect-video bg-gray-100 dark:bg-gray-700 rounded-md flex items-center justify-center overflow-hidden relative"
 			>
 				<div
-					class="absolute inset-0 flex items-center transition-opacity duration-300 justify-center opacity-0 hover:opacity-100 bg-gray-900/60"
+					class="absolute inset-0 flex items-center transition-opacity duration-300 justify-center opacity-0 focus-within:opacity-100 hover:opacity-100 bg-gray-900/60"
 				>
-					<Button variant="outline" onclick={() => (showDialog = true)}
+					<Button variant="outline" onclick={() => onViewDetails(logo.id)}
 						>{$_('common.view-details')}</Button
 					>
 				</div>
@@ -63,10 +64,6 @@
 		<Card.Content class="p-4 pt-0">
 			<div class="flex justify-between items-center gap-2 @container">
 				<h3 title={logo.title} class="font-semibold text-lg truncate">{logo.title}</h3>
-				<StatusBadge
-					variant={logo.activeVersion?.reviewStatus}
-					label={$_('status-text.' + logo.activeVersion?.reviewStatus)}
-				/>
 			</div>
 		</Card.Content>
 	</Card.Root>

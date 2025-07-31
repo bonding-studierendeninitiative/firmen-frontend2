@@ -1,4 +1,7 @@
 <script lang="ts" module>
+	import type { EventRegistrationsForOrganizationOutput } from '@/trpc/client';
+	import { tv } from 'tailwind-variants';
+
 	import {
 		Calendar,
 		CheckCircle2,
@@ -11,20 +14,14 @@
 		Users
 	} from '@lucide/svelte';
 
-	// Status mapping for visual indicators
-	const catalogueDataStatusConfig = {
-		'changes-requested': { color: 'text-yellow-500', label: 'New' },
-		created: { color: 'text-blue-500', label: 'Created' },
-		confirmed: { color: 'text-green-500', label: 'Confirmed' },
-		rejected: { color: 'text-red-500', label: 'Rejected' },
-		missing: { color: 'text-red-500', label: 'Rejected' },
-		uploaded: { color: 'text-blue-500', label: 'Pending' }
-	};
+	interface Props {
+		registration: EventRegistrationsForOrganizationOutput['eventRegistrations'][number];
+	}
 
 	// Calculate the completion percentage for catalogue data
-	const calculateCatalogueCompletion = (
+	function calculateCatalogueCompletion(
 		data: EventRegistrationsForOrganizationOutput['eventRegistrations'][number]
-	): number => {
+	): number {
 		function getSingleCompletion(status: string): number {
 			switch (status) {
 				case 'confirmed':
@@ -64,7 +61,32 @@
 			.filter(Boolean)
 			.reduce((sum, current) => sum + current, 0);
 		return completed / total;
-	};
+	}
+
+	const statusVariants = tv({
+		variants: {
+			status: {
+				created: 'bg-blue-500',
+				confirmed: 'bg-green-500',
+				rejected: 'bg-red-500',
+				withdrawn: 'bg-gray-500'
+			}
+		}
+	});
+
+	const catalogueDataStatusVariants = tv({
+		variants: {
+			status: {
+				'changes-requested': 'text-blue-500',
+				unreviewed: 'text-yellow-800 data-[state=active]:bg-yellow-300',
+				confirmed: 'text-green-600 data-[state=active]:bg-green-500 data-[state=active]:text-white',
+				rejected: 'text-red-500 data-[state=active]:bg-red-500 data-[state=active]:text-white',
+				missing: 'text-red-500 data-[state=active]:bg-red-500 data-[state=active]:text-white',
+				draft: 'text-yellow-500',
+				submitted: ''
+			}
+		}
+	});
 </script>
 
 <script lang="ts">
@@ -95,18 +117,11 @@
 	} from '@/@svelte/modules';
 	import { PickAdvertisementDialog } from '@/@svelte/modules/PickAdvertisementDialog';
 	import { PenLine, Plus } from '@lucide/svelte';
-	import type { EventRegistrationsForOrganizationOutput } from '@/trpc/client';
 	import QueryWrappedViewLogoDialog from '@/@svelte/modules/ViewLogoDialog/QueryWrappedViewLogoDialog.svelte';
-	import PortraitMissing from './portrait-missing.svelte';
 	import RegistrationDocumentPreview from './registration-document-preview.svelte';
 	import RegistrationDocumentMissing from './registration-document-missing.svelte';
-	import { crossfade } from 'svelte/transition';
-	import { tv } from 'tailwind-variants';
 
 	let isAddonsOpen = $state(false);
-	interface Props {
-		registration: EventRegistrationsForOrganizationOutput['eventRegistrations'][number];
-	}
 
 	let { registration }: Props = $props();
 
@@ -114,31 +129,6 @@
 	let advertisement = $derived(
 		registration.registrationDocuments?.find((d) => d.documentType === 'advert')
 	);
-
-	const statusVariants = tv({
-		variants: {
-			status: {
-				created: 'bg-blue-500',
-				confirmed: 'bg-green-500',
-				rejected: 'bg-red-500',
-				withdrawn: 'bg-gray-500'
-			}
-		}
-	});
-
-	const catalogueDataStatusVariants = tv({
-		variants: {
-			status: {
-				'changes-requested': 'text-blue-500',
-				unreviewed: 'text-yellow-800 data-[state=active]:bg-yellow-300',
-				confirmed: 'text-green-600 data-[state=active]:bg-green-500 data-[state=active]:text-white',
-				rejected: 'text-red-500 data-[state=active]:bg-red-500 data-[state=active]:text-white',
-				missing: 'text-red-500 data-[state=active]:bg-red-500 data-[state=active]:text-white',
-				draft: 'text-yellow-500',
-				submitted: ""
-			}
-		}
-	});
 
 	let pickAdvertisementOpen = $state(false);
 	let viewAdvertisementOpen = $state(false);
@@ -336,6 +326,7 @@
 					{/if}
 					<Tabs.Content value="portrait">
 						{#if registration.portraitStatus !== 'missing'}
+							<!-- TODO: Portrait preview -->
 							<LogoPreview class="max-w-64" {logo} />
 						{:else}
 							<RegistrationDocumentMissing

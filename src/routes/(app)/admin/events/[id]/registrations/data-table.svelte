@@ -13,7 +13,10 @@
 	import ExportCatalogueDataDialog from './export-catalogue-data-form.svelte';
 	import SimpleEventRegistrationOrganization from './simple-event-registration-organization.svelte';
 	import CreateEventRegistrationForm from './create-event-registration-form.svelte';
-	import { AdminViewAdvertisementDialog, AdminViewRegistrationDocumentDialog } from '@/@svelte/modules';
+	import {
+		AdminViewAdvertisementDialog,
+		AdminViewRegistrationDocumentDialog
+	} from '@/@svelte/modules';
 	import type { EventRegistrationsForEventOutput } from '@/trpc/client';
 	import {
 		createColumnHelper,
@@ -21,10 +24,10 @@
 		getCoreRowModel,
 		getFilteredRowModel,
 		type TableOptions,
-		type ColumnDef
+		type ColumnDef,
 	} from '@tanstack/svelte-table';
 	import { renderComponent } from '@/@svelte/components/QueryDataTable/render-helpers';
-	import { queryParameters } from 'sveltekit-search-params';
+	import { queryParameters, ssp } from 'sveltekit-search-params';
 	import FlexRender from '@/@svelte/components/QueryDataTable/flex-render.svelte';
 	import { Skeleton } from '@/components/ui/skeleton';
 	import SuperDebug from 'sveltekit-superforms';
@@ -62,10 +65,15 @@
 		)
 	]);
 
+	let selectedStatusValues = $state<string[]>([]);
+	let selectedPackageValues = $state<string[]>([]);
+	let selectedAddonPackageValues = $state<string[]>([]);
+	let selectedAddonValues = $state<string[]>([]);
+
 	let params = queryParameters({
 		sort: false,
 		page: false,
-		limit: false
+		limit: ssp.number(10)
 	});
 
 	type Data = EventRegistrationsForEventOutput['eventRegistrations'][number];
@@ -134,9 +142,11 @@
 					variant: getValue()
 				});
 			},
+			enableColumnFilter: true,
 			filterFn: (row, id, filterValue: string[]) => {
 				if (filterValue.length === 0) return true;
 				const value = row.getValue(id);
+				console.log(value);
 				return filterValue.includes(value);
 			}
 		}),
@@ -146,31 +156,43 @@
 				return renderComponent(PortraitStatusIcon, { variant: getValue() ?? '' });
 			}
 		}),
-		columnHelper.accessor(({registrationDocuments}) => {
-			const logo = registrationDocuments?.find((document) => document.documentType === 'logo');
-			return logo ?? {
-				id: '',
-				status: 'missing',
-			};
-		}, {
-			id: 'logo',
-			header: $_('admin-pages.events.event-registrations.data-table.headers.logo-status'),
-			cell({ getValue }) {
-				return renderComponent(AdminViewRegistrationDocumentDialog, { logo: getValue() });
+		columnHelper.accessor(
+			({ registrationDocuments }) => {
+				const logo = registrationDocuments?.find((document) => document.documentType === 'logo');
+				return (
+					logo ?? {
+						id: '',
+						status: 'missing'
+					}
+				);
+			},
+			{
+				id: 'logo',
+				header: $_('admin-pages.events.event-registrations.data-table.headers.logo-status'),
+				cell({ getValue }) {
+					return renderComponent(AdminViewRegistrationDocumentDialog, { logo: getValue() });
+				}
 			}
-		}),
-		columnHelper.accessor(({registrationDocuments}) => {
-			const advert = registrationDocuments?.find((document) => document.documentType === 'advert');
-			return advert ?? {
-				id: '',
-				status: 'missing',
-			};
-		}, {
-			header: $_('admin-pages.events.event-registrations.data-table.headers.advert-status'),
-			cell({ getValue }) {
-				return renderComponent(AdminViewAdvertisementDialog, { advertisement: getValue() });
+		),
+		columnHelper.accessor(
+			({ registrationDocuments }) => {
+				const advert = registrationDocuments?.find(
+					(document) => document.documentType === 'advert'
+				);
+				return (
+					advert ?? {
+						id: '',
+						status: 'missing'
+					}
+				);
+			},
+			{
+				header: $_('admin-pages.events.event-registrations.data-table.headers.advert-status'),
+				cell({ getValue }) {
+					return renderComponent(AdminViewAdvertisementDialog, { advertisement: getValue() });
+				}
 			}
-		}),
+		),
 		columnHelper.accessor('id', {
 			id: 'actions',
 			header: '',
@@ -195,7 +217,9 @@
 		),
 		columnHelper.accessor(
 			({ addonPackages }) =>
-				addonPackages?.flatMap((addonPackage) => addonPackage.addons?.map((addon) => addon.title) ?? []) ?? [],
+				addonPackages?.flatMap(
+					(addonPackage) => addonPackage.addons?.map((addon) => addon.title) ?? []
+				) ?? [],
 			{
 				id: 'addons',
 				header: $_('admin-pages.events.event-registrations.data-table.headers.addons'),
@@ -208,7 +232,7 @@
 		)
 	]);
 
-	let rowSelection = $state({})
+	let rowSelection = $state({});
 
 	let options: TableOptions<Data> = $derived({
 		data,
@@ -217,20 +241,25 @@
 		columns,
 		getRowId: (original) => original.id,
 		state: {
-			columnFilters: [],
+			columnFilters: [
+				...selectedStatusValues.map((value) => ({ id: 'status', value })),
+				...selectedPackageValues.map((value) => ({ id: 'package', value })),
+				...selectedAddonPackageValues.map((value) => ({ id: 'addon-packages', value })),
+				...selectedAddonValues.map((value) => ({ id: 'addons', value }))
+			],
 			rowSelection
 		},
 		onRowSelectionChange: (updater) => {
 			if (updater instanceof Function) {
-				rowSelection = updater(rowSelection)
+				rowSelection = updater(rowSelection);
 			} else {
-				rowSelection = updater
+				rowSelection = updater;
 			}
 		},
 		initialState: {
 			columnVisibility: {
 				addons: false,
-				"addon-packages": false
+				'addon-packages': false
 			}
 		}
 	});
@@ -240,52 +269,65 @@
 	let open = $state(false);
 
 	const counts = $derived({
-		package: data.reduce((acc, { purchasedPackage }) => {
-			if (purchasedPackage?.name) {
-				acc[purchasedPackage.name] = (acc[purchasedPackage.name] || 0) + 1;
-			}
-			return acc;
-		}, {} as Record<string, number>),
-		status: data.reduce((acc, { status }) => {
-			if (status) {
-				acc[status] = (acc[status] || 0) + 1;
-			}
-			return acc;
-		}, {} as Record<string, number>),
-		addonPackages: data.reduce((acc, { addonPackages }) => {
-			if (addonPackages) {
-				addonPackages
-					.filter((addonPackage) => addonPackage.title)
-					.forEach((addonPackage) => {
-						acc[addonPackage.title] = (acc[addonPackage.title] || 0) + 1;
+		package: data.reduce(
+			(acc, { purchasedPackage }) => {
+				if (purchasedPackage?.name) {
+					acc[purchasedPackage.name] = (acc[purchasedPackage.name] || 0) + 1;
+				}
+				return acc;
+			},
+			{} as Record<string, number>
+		),
+		status: data.reduce(
+			(acc, { status }) => {
+				if (status) {
+					acc[status] = (acc[status] || 0) + 1;
+				}
+				return acc;
+			},
+			{} as Record<string, number>
+		),
+		addonPackages: data.reduce(
+			(acc, { addonPackages }) => {
+				if (addonPackages) {
+					addonPackages
+						.filter((addonPackage) => addonPackage.title)
+						.forEach((addonPackage) => {
+							acc[addonPackage.title] = (acc[addonPackage.title] || 0) + 1;
+						});
+				}
+				return acc;
+			},
+			{} as Record<string, number>
+		),
+		addons: data.reduce(
+			(acc, { addonPackages }) => {
+				if (addonPackages) {
+					addonPackages.forEach((addonPackage) => {
+						addonPackage.addons?.forEach((addon) => {
+							if (addon.title) {
+								acc[addon.title] = (acc[addon.title] || 0) + 1;
+							}
+						});
 					});
-			}
-			return acc;
-		}, {} as Record<string, number>),
-		addons: data.reduce((acc, { addonPackages }) => {
-			if (addonPackages) {
-				addonPackages.forEach((addonPackage) => {
-					addonPackage.addons?.forEach((addon) => {
-						if (addon.title) {
-							acc[addon.title] = (acc[addon.title] || 0) + 1;
-						}
-					});
-				});
-			}
-			return acc;
-		}, {} as Record<string, number>)
+				}
+				return acc;
+			},
+			{} as Record<string, number>
+		)
 	});
 
 	let enableExport = $derived($table.getIsAllRowsSelected() || $table.getIsSomeRowsSelected());
 	let selectedEventRegistrationIds = $derived(
 		$table.getSelectedRowModel().rows.map((row) => row.original.id)
+		.filter(Boolean) as string[]
 	);
 </script>
 
 <section class="flex gap-4 flex-wrap justify-end">
-	<SearchInput 
-		placeholder={$_('common.search')} 
-		oninput={(e) => $table.setGlobalFilter(e.currentTarget.value)} 
+	<SearchInput
+		placeholder={$_('common.search')}
+		oninput={(e) => $table.setGlobalFilter(e.currentTarget.value)}
 	/>
 	<div class="grow"></div>
 	<DataTableFacetedFilter
@@ -294,9 +336,7 @@
 			label: $_('common.event-registration-status.' + status),
 			value: status
 		}))}
-		on:filterChange={(e) => {
-			$table.getColumn('status')?.setFilterValue(e.detail);
-		}}
+		bind:selectedValues={selectedStatusValues}
 		counts={counts.status}
 	/>
 	<DataTableFacetedFilter
@@ -305,9 +345,7 @@
 			label: _package,
 			value: _package
 		}))}
-		on:filterChange={(e) => {
-			$table.getColumn('package')?.setFilterValue(e.detail);
-		}}
+		bind:selectedValues={selectedPackageValues}
 		counts={counts.package}
 	/>
 	<DataTableFacetedFilter
@@ -316,9 +354,7 @@
 			label: addonPackage,
 			value: addonPackage
 		}))}
-		on:filterChange={(e) => {
-			$table.getColumn('addon-packages')?.setFilterValue(e.detail);
-		}}
+		bind:selectedValues={selectedAddonPackageValues}
 		title={$_('admin-pages.events.event-registrations.data-table.filters.addon-packages')}
 	/>
 	<DataTableFacetedFilter
@@ -326,9 +362,7 @@
 			label: addon,
 			value: addon
 		}))}
-		on:filterChange={(e) => {
-			$table.getColumn('addons')?.setFilterValue(e.detail);
-		}}
+		bind:selectedValues={selectedAddonValues}
 		title={$_('admin-pages.events.event-registrations.data-table.filters.addons')}
 		counts={counts.addons}
 	/>
@@ -373,11 +407,11 @@
 						</Table.Row>
 					{/each}
 				{:else}
-					{#each { length: Number($params.limit) || 10 } as _, i}
+					{#each { length: $params.limit } as _, i}
 						<Table.Row>
 							{#each columns as column}
 								<Table.Cell>
-									<Skeleton class="w-full min-size-6" />
+									<Skeleton class="w-full min-h-6" />
 								</Table.Cell>
 							{/each}
 						</Table.Row>
@@ -386,5 +420,4 @@
 			</Table.Body>
 		</Table.Root>
 	</div>
-	<SuperDebug data={data} />
 </section>

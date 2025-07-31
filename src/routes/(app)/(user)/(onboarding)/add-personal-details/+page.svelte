@@ -1,14 +1,10 @@
 <script lang="ts">
-	import type { PageData } from './$types';
 	import { UpdateUserDetails } from '@/@svelte/modules';
 
 	import { _ } from '@services';
 	import * as Card from '@/components/ui/card';
-	interface Props {
-		data: PageData;
-	}
 
-	let { data }: Props = $props();
+	let { data } = $props();
 </script>
 
 

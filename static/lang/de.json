@@ -79,7 +79,7 @@
     "reject": "Ablehnen",
     "create": "Erstellen",
     "view-details": "Details anzeigen",
-    "export": "Export…",
+    "export": "Katalogdaten exportieren…",
     "add": "Hinzufügen"
   },
   "components": {
@@ -204,6 +204,9 @@
         "description": "Es wurde noch kein Portrait für diese Veranstaltung ausgewählt",
         "title": "Portrait fehlt"
       }
+    },
+    "export-item": {
+      "entries": "{ entries, plural, =0 {Keine Einträge} one {Ein Eintrag} other {{entries, number} Einträge} }"
     }
   },
   "modules": {
@@ -214,21 +217,26 @@
       "no-buy-options": "Es wurden keine Kaufoptionen gefunden.",
       "active": "aktiv",
       "search-placeholder": "Nach einer Kaufoption suchen…",
-      "create-new": "Erstelle eine neue Kaufoption…"
+      "create-new": "Erstelle eine neue Kaufoption…",
+      "select": "Wähle eine Kaufoption aus..."
     },
     "contact-person": {
       "full-name": "Ansprechperson:"
     },
     "create-buy-option": {
-      "title": "Kaufoption",
+      "title": "Kaufoption erstellen",
       "description": "Lege die Daten dieser Kaufoption fest",
       "name": "Name der Kaufoption",
       "package-count": "Anzahl der Pakete",
-      "service-count": "Anzahl der maximalen Leistungen pro Paket"
+      "service-count": "Anzahl der maximalen Leistungen pro Paket",
+      "error": "Beim Laden dieses Formulars is ein Fehler aufgetreten: {error}",
+      "package-count-description": "Das kann später noch geändert werden",
+      "service-count-description": "Das kann später noch geändert werden"
     },
     "delete-buy-option": {
       "title": "Kaufoption löschen",
-      "description": "Möchtest du wirklich diese Kaufoption löschen?"
+      "description": "Möchtest du wirklich diese Kaufoption löschen?",
+      "success": "Die Kaufoption wurde erfolgreich gelöscht"
     },
     "organization": {
       "name": "Organisation:"
@@ -430,6 +438,10 @@
     },
     "review-event-registration": {
       "description": "Hier kannst du die Veranstlatungsanmeldund ablehnen oder bestätigen"
+    },
+    "remove-member-dialog": {
+      "title": "Nutzer aus Organisation entfernen",
+      "description": "Möchtest du den:die Nutzer:in benachrichtigen?"
     }
   },
   "sidebar": {
@@ -1014,7 +1026,9 @@
           "title": "Katalogdaten exportieren",
           "description": "Exporte werden im Hintergrund erstellt und können in den Details der Veranstaltung gefunden werden",
           "advertisements": "Image-Anzeigen",
-          "logos": "Logos"
+          "logos": "Logos",
+          "action": "Export einreihen",
+          "portraits": "Portraits"
         },
         "review-event-registration": {
           "title": "Veranstaltungsanmeldung überprüfen",
@@ -1025,6 +1039,34 @@
       "feedback": {
         "placeholders": {
           "feedback": "Feedback"
+        }
+      },
+      "exports": {
+        "table": "Tabelle",
+        "grid": "Raster",
+        "summary": "{ exports, plural, =0 {Keine Exporte} one {Ein Export} other {Insgesamt {exports, number} Exporte} }",
+        "no-exports-found": {
+          "title": "Keine Exporte gefunden",
+          "description": "Deine exportierten Dokumente tauchen hier auf, sobald ein Export erstellt wurde."
+        },
+        "headers": {
+          "entries": "Einträge",
+          "file-size": "Dateigröße",
+          "created": "Erstellt",
+          "actions": "Aktionen",
+          "content-type": "Dateityp",
+          "document-type": "Dokumentart",
+          "status": "Status"
+        },
+        "status": {
+          "completed": "Abgeschlossen",
+          "failed": "Fehlerhaft",
+          "pending": "In Bearbeitung"
+        },
+        "delete": {
+          "title": "Export löschen",
+          "description": "Bist du sicher, dass du diesen Export löschen möchtest?",
+          "success": "Export erfolgreich gelöscht"
         }
       }
     },
