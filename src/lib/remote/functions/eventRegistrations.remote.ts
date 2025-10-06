@@ -1,5 +1,5 @@
 import { query, command, form } from '$app/server';
-import { array, nullish, number, object, string, safeParse, record, unknown } from 'valibot';
+import { array, nullish, number, object, string, safeParse } from 'valibot';
 import { error } from '@sveltejs/kit';
 import { createOrgMemberContext } from '@/remote/context';
 import {
@@ -9,6 +9,7 @@ import {
 import { superValidate } from 'sveltekit-superforms';
 import { valibot } from 'sveltekit-superforms/adapters';
 import { SubmitPortraitRequest } from '@schema';
+import { orgMemberQuery } from '../auth-guards';
 
 export const changeContactPeople = command(
 	object({ eventRegistrationId: string(), contactPeople: array(string()) }),
@@ -27,11 +28,9 @@ export const changeContactPeople = command(
 	}
 );
 
-export const forOrganization = query(
+export const forOrganization = orgMemberQuery(
 	object({ orgId: string(), cursor: nullish(number(), 0), limit: nullish(number(), 10) }),
-	async (input) => {
-		const ctx = await createOrgMemberContext();
-
+	async ({ input, ctx }) => {
 		const response = await ctx.api.get('/api/v2/event-registration', {
 			query: { organizationId: input.orgId, limit: input.limit, page: input.cursor }
 		});

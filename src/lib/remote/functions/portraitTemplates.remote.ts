@@ -1,4 +1,4 @@
-import { query, command } from '$app/server';
+import { command } from '$app/server';
 import { object, string, number, partial } from 'valibot';
 import { superValidate } from 'sveltekit-superforms';
 import { valibot } from 'sveltekit-superforms/adapters';
@@ -6,13 +6,12 @@ import { PortraitTemplateSchema, UpdatePortraitTemplateRequestSchema } from '@sc
 import { error } from '@sveltejs/kit';
 import { createOrgMemberContext } from '@/remote/context';
 import type { Problem } from '@api/client';
+import { orgMemberQuery } from '../auth-guards';
 
-export const getAllPortraitTemplates = query(
+export const getAllPortraitTemplates = orgMemberQuery(
 	object({ page: number(), query: string() }),
-	async (input) => {
+	async ({ input, ctx }) => {
 		try {
-			const ctx = await createOrgMemberContext();
-
 			const organizationId = ctx.session.activeOrganizationId;
 			const response = await ctx.api.get('/api/v2/portrait-template', {
 				query: { organizationId, page: input.page, limit: 9 }
@@ -25,26 +24,29 @@ export const getAllPortraitTemplates = query(
 	}
 );
 
-export const getPortraitTemplate = query(string(), async (portraitTemplateId) => {
-	const ctx = await createOrgMemberContext();
-
-	const response = await ctx.api.get('/api/v2/portrait-template/{portraitTemplateId}', {
-		path: { portraitTemplateId },
-		query: { organizationId: ctx.session.activeOrganizationId }
-	});
-	return response;
-});
+export const getPortraitTemplate = orgMemberQuery(
+	string(),
+	async ({ input: portraitTemplateId, ctx }) => {
+		const response = await ctx.api.get('/api/v2/portrait-template/{portraitTemplateId}', {
+			path: { portraitTemplateId },
+			query: { organizationId: ctx.session.activeOrganizationId }
+		});
+		return response;
+	}
+);
 
 export type GetPortraitTemplateSchema = Awaited<ReturnType<typeof getPortraitTemplate>>;
 
-export const editPortraitTemplateForm = query(string(), async (portraitTemplateId) => {
-	const ctx = await createOrgMemberContext();
-	const response = await ctx.api.get('/api/v2/portrait-template/{portraitTemplateId}', {
-		path: { portraitTemplateId },
-		query: { organizationId: ctx.session.activeOrganizationId }
-	});
-	return await superValidate(response, valibot(UpdatePortraitTemplateRequestSchema));
-});
+export const editPortraitTemplateForm = orgMemberQuery(
+	string(),
+	async ({ input: portraitTemplateId, ctx }) => {
+		const response = await ctx.api.get('/api/v2/portrait-template/{portraitTemplateId}', {
+			path: { portraitTemplateId },
+			query: { organizationId: ctx.session.activeOrganizationId }
+		});
+		return await superValidate(response, valibot(UpdatePortraitTemplateRequestSchema));
+	}
+);
 
 export const createPortraitTemplate = command(PortraitTemplateSchema, async (input) => {
 	const ctx = await createOrgMemberContext();

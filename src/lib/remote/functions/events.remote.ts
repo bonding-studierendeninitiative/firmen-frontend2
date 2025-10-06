@@ -1,12 +1,10 @@
-import { query } from '$app/server';
 import { object, string, nullish } from 'valibot';
-import { createOrgMemberContext } from '@/remote/context';
+import { orgMemberQuery } from '../auth-guards';
 
-export const unregisteredEvents = query(
+export const unregisteredEvents = orgMemberQuery(
 	object({ cursor: string(), limit: string() }),
-	async ({ cursor, limit }) => {
+	async ({ input: { cursor, limit }, ctx }) => {
 		try {
-			const ctx = await createOrgMemberContext();
 			const response = await ctx.api.get('/api/v2/event/unregistered', {
 				query: {
 					organizationId: ctx.session.activeOrganizationId,
@@ -21,12 +19,10 @@ export const unregisteredEvents = query(
 	}
 );
 
-export const getPublished = query(
+export const getPublished = orgMemberQuery(
 	object({ page: nullish(string(), '0'), limit: nullish(string(), '4') }),
-	async (input) => {
+	async ({ input, ctx }) => {
 		try {
-			const ctx = await createOrgMemberContext();
-
 			const response = await ctx.api.get('/api/v2/event/published', {
 				query: { page: Number(input.page), size: Number(input.limit) }
 			});
@@ -38,15 +34,11 @@ export const getPublished = query(
 	}
 );
 
-export const getEventDetails = query(string(), async (eventId) => {
-	const ctx = await createOrgMemberContext();
-	const response = await ctx.api.get('/api/v2/event/{eventId}', { path: { eventId } });
-	return response;
+export const getEventDetails = orgMemberQuery(string(), async ({ input: eventId, ctx }) => {
+	return await ctx.api.get('/api/v2/event/{eventId}', { path: { eventId } });
 });
 
-export const getActiveBuyOption = query(string(), async (eventId) => {
-	const ctx = await createOrgMemberContext();
-
+export const getActiveBuyOption = orgMemberQuery(string(), async ({ input: eventId, ctx }) => {
 	const response = await ctx.api.request('get', '/api/v2/event/{eventId}/active-buy-option', {
 		path: { eventId }
 	});
@@ -54,9 +46,7 @@ export const getActiveBuyOption = query(string(), async (eventId) => {
 	return await response.json();
 });
 
-export const isOrgRegistered = query(string(), async (eventId) => {
-	const ctx = await createOrgMemberContext();
-
+export const isOrgRegistered = orgMemberQuery(string(), async ({ input: eventId, ctx }) => {
 	const response = await ctx.api.get('/api/v2/event/{eventId}/is-registered', {
 		path: { eventId },
 		query: { organizationId: ctx.session.activeOrganizationId }

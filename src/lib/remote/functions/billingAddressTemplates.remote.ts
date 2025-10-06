@@ -9,15 +9,14 @@ import {
 	DeleteBillingAddressTemplateForm as DeleteBillingFormSchema,
 	MakeBillingAddressTemplateDefaultForm as MakeDefaultBillingFormSchema
 } from '@schema';
+import { orgMemberQuery } from '../auth-guards';
 
-export const getBillingAddressTemplates = query(
+export const getBillingAddressTemplates = orgMemberQuery(
 	object({
 		page: nullish(string(), '0'),
 		limit: nullish(string(), '10')
 	}),
-	async (input) => {
-		const ctx = await createOrgMemberContext();
-
+	async ({ input, ctx }) => {
 		const response = await ctx.api.request(
 			'get',
 			'/api/v2/organization/{organizationId}/billing-address-template',

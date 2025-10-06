@@ -2,13 +2,13 @@ import { command, query } from '$app/server';
 import { object, string } from 'valibot';
 import { makeSerializable } from '@/utils';
 import { error } from '@sveltejs/kit';
-import { createAuthorizedContext } from '@/remote/context';
+import { createAuthenticatedContext } from '@/remote/context';
 
 const updateUserDetailsSchema = object({ phone: string(), title: string(), position: string() });
 
 export const updateMetadata = command(updateUserDetailsSchema, async (input) => {
 	try {
-		const ctx = await createAuthorizedContext();
+		const ctx = await createAuthenticatedContext();
 		await ctx.auth.updateUser({
 			body: {
 				metadata: JSON.stringify({
@@ -26,7 +26,7 @@ export const updateMetadata = command(updateUserDetailsSchema, async (input) => 
 
 export const getUser = query(object({}), async () => {
 	try {
-		const ctx = await createAuthorizedContext();
+		const ctx = await createAuthenticatedContext();
 		const user = await ctx.db.user.findFirst({ where: { id: ctx.session.userId } });
 		return makeSerializable(user);
 	} catch (error) {

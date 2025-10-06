@@ -1,13 +1,9 @@
 import { createOrgMemberContext } from '@/remote/context';
 import { orgSseControllers } from '@api/broadcaster';
-import { error } from '@sveltejs/kit';
 
-export async function POST({ locals }) {
+export async function POST() {
 	const ctx = await createOrgMemberContext();
 
-	if (!ctx.session.activeOrganizationId) {
-		error(400, 'Organization ID is required');
-	}
 	const orgId = ctx.session.activeOrganizationId;
 	const stream = new ReadableStream({
 		start(controller) {

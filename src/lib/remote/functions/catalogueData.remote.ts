@@ -1,11 +1,12 @@
 import { query, command, form } from '$app/server';
-import { file, literal, nullish, object, safeParseAsync, string, union } from 'valibot';
+import { file, literal, nullish, object, string, union } from 'valibot';
 import { Problem } from '@api/client';
 import { error } from '@sveltejs/kit';
 import { createOrgMemberContext } from '@/remote/context';
 import { superValidate } from 'sveltekit-superforms';
 import { valibot } from 'sveltekit-superforms/adapters';
 import { UploadCatalogueDataForm } from '@schema';
+import { orgMemberQuery } from '../auth-guards';
 
 export const uploadCatalogueData = form(
 	object({
@@ -74,15 +75,13 @@ export const uploadForm = query('unchecked', async () => {
 	);
 });
 
-export const getCatalogueByType = query(
+export const getCatalogueByType = orgMemberQuery(
 	object({
 		documentType: union([literal('logo'), literal('advert')]),
 		limit: nullish(string(), '10'),
 		cursor: nullish(string(), '0')
 	}),
-	async (input) => {
-		const ctx = await createOrgMemberContext();
-
+	async ({ input, ctx }) => {
 		const response = await ctx.api.get(
 			'/api/v2/organization/{organizationId}/catalogue-data/by-document-type/{documentType}',
 			{
@@ -130,14 +129,12 @@ export const generateDownloadLink = command(
 	}
 );
 
-export const generateThumbnailLink = query(
+export const generateThumbnailLink = orgMemberQuery(
 	object({
 		documentId: string(),
 		resolution: union([literal('small'), literal('medium'), literal('large')])
 	}),
-	async (input) => {
-		const ctx = await createOrgMemberContext();
-
+	async ({ input, ctx }) => {
 		const response = await ctx.api.request(
 			'get',
 			'/api/v2/organization/{organizationId}/catalogue-data/{documentId}/thumbnail',
@@ -175,13 +172,15 @@ export const deleteDocument = command(object({ documentId: string() }), async ({
 	}
 });
 
-export const getDocument = query(object({ documentId: string() }), async ({ documentId }) => {
-	const ctx = await createOrgMemberContext();
-	const response = await ctx.api.get(
-		'/api/v2/organization/{organizationId}/catalogue-data/{documentId}',
-		{
-			path: { organizationId: ctx.session.activeOrganizationId, documentId }
-		}
-	);
-	return response;
-});
+export const getDocument = orgMemberQuery(
+	object({ documentId: string() }),
+	async ({ input: { documentId }, ctx }) => {
+		const response = await ctx.api.get(
+			'/api/v2/organization/{organizationId}/catalogue-data/{documentId}',
+			{
+				path: { organizationId: ctx.session.activeOrganizationId, documentId }
+			}
+		);
+		return response;
+	}
+);

@@ -3,9 +3,10 @@ import { object, string, number, union, literal, optional } from 'valibot';
 import { error } from '@sveltejs/kit';
 import { makeSerializable } from '@/utils/serializable';
 import { SetOrgDetailsRequestSchema } from '@schema';
-import { createAuthorizedContext, createOrgMemberContext } from '@/remote/context';
+import { createAuthenticatedContext, createOrgMemberContext } from '@/remote/context';
 import { superValidate } from 'sveltekit-superforms';
 import { valibot } from 'sveltekit-superforms/adapters';
+import { authenticatedQuery } from '../auth-guards';
 
 export const generateInvite = command(
 	object({
@@ -14,7 +15,7 @@ export const generateInvite = command(
 		role: union([literal('admin'), literal('member')])
 	}),
 	async (input) => {
-		const ctx = await createAuthorizedContext();
+		const ctx = await createAuthenticatedContext();
 		if (!ctx.session) error(401, 'Unauthorized');
 		try {
 			const orgInvite = await ctx.auth.createInvitation({
@@ -57,7 +58,7 @@ export const createInvite = form(
 );
 
 export const createOrganization = command(object({ name: string() }), async (input) => {
-	const ctx = await createAuthorizedContext();
+	const ctx = await createAuthenticatedContext();
 	if (!ctx.session) error(401, 'Unauthorized');
 	try {
 		const organization = await ctx.auth.createOrganization({
@@ -77,36 +78,8 @@ export const createOrganization = command(object({ name: string() }), async (inp
 	}
 });
 
-export const getMembers = query(
-	object({
-		id: string(),
-		limit: number(),
-		offset: number(),
-		query: string(),
-		orderBy: optional(string(), 'first_name'),
-		orderDirection: optional(union([literal('asc'), literal('desc')]), 'asc')
-	}),
-	async (input) => {
-		const ctx = await createAuthorizedContext();
-		try {
-			const orgMemberships = await ctx.auth.listMembers({
-				query: {
-					organizationId: input.id,
-					limit: input.limit,
-					offset: input.offset,
-					sortBy: input.orderBy,
-					sortDirection: input.orderDirection
-				}
-			});
-			return makeSerializable(orgMemberships);
-		} catch (e) {
-			error(500, e instanceof Error ? e.message : 'Failed to get organization members');
-		}
-	}
-);
-
 export const getUserMemberships = query(object({}), async () => {
-	const ctx = await createAuthorizedContext();
+	const ctx = await createAuthenticatedContext();
 	if (!ctx.session) error(401, 'Unauthorized');
 	try {
 		const memberships = await ctx.auth.listOrganizations({
@@ -119,7 +92,7 @@ export const getUserMemberships = query(object({}), async () => {
 });
 
 export const getDetails = query(object({ slug: string() }), async (input) => {
-	const ctx = await createAuthorizedContext();
+	const ctx = await createAuthenticatedContext();
 	try {
 		const org = await ctx.db.organization.findFirst({
 			where: { slug: input.slug },
@@ -132,7 +105,7 @@ export const getDetails = query(object({ slug: string() }), async (input) => {
 });
 
 export const getDetailsById = query(object({ id: string() }), async (input) => {
-	const ctx = await createAuthorizedContext();
+	const ctx = await createAuthenticatedContext();
 	try {
 		const org = await ctx.db.organization.findFirst({
 			where: { id: input.id },
@@ -147,7 +120,7 @@ export const getDetailsById = query(object({ id: string() }), async (input) => {
 export const setDetails = command(
 	object({ orgId: string(), data: SetOrgDetailsRequestSchema }),
 	async ({ orgId, data }) => {
-		const ctx = await createAuthorizedContext();
+		const ctx = await createAuthenticatedContext();
 		if (!ctx.session) error(401, 'Unauthorized');
 		try {
 			await ctx.auth.updateOrganization({

@@ -39,7 +39,7 @@
     "bits-ui": "1.8.0",
     "eslint": "^9.9.0",
     "eslint-config-prettier": "^10.1.5",
-    "eslint-plugin-svelte": "^3.11.0",
+    "eslint-plugin-svelte": "^3.12.4",
     "formsnap": "^2.0.1",
     "happy-dom": "^18.0.1",
     "mode-watcher": "^1.0.8",

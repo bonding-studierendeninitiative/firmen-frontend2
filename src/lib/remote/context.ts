@@ -31,7 +31,7 @@ export async function createPublicContext({ request }: { request?: Request }) {
 	};
 }
 
-export async function createAuthorizedContext() {
+export async function createAuthenticatedContext() {
 	const ctx = await createContext(getRequestEvent());
 	if (!ctx.session || !ctx.session.id) {
 		error(401, 'Invalid Session. You are not signed in!');
@@ -62,7 +62,7 @@ export async function createAuthorizedContext() {
 }
 
 export async function createOrgMemberContext() {
-	const ctx = await createAuthorizedContext();
+	const ctx = await createAuthenticatedContext();
 	if (ctx.session?.activeOrganizationId == null || ctx.session?.activeOrganizationId == undefined) {
 		error(401, { message: 'You are not part of an organization!' });
 	}

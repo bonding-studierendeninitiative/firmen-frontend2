@@ -47,3 +47,4 @@ Thumbs.db
 .env.sentry-build-plugin
 
 /generated/prisma
+prisma/db-dev.sqlite3
