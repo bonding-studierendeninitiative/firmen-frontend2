@@ -6,8 +6,7 @@
 	import { ViewAdvertisementDialog } from '@/@svelte/modules';
 	import { Button } from '@/components/ui/button';
 	import type { DetailedDocumentOutput } from '@api/client';
-	import { trpc } from '@/trpc/client';
-	import { page } from '$app/state';
+	import { generateThumbnailLink as getThumbnail } from '@/remote/functions';
 	import { LoaderCircle } from '@lucide/svelte';
 	interface Props {
 		advertisement: DetailedDocumentOutput;
@@ -15,18 +14,11 @@
 	}
 
 	let { advertisement, class: className = '' }: Props = $props();
-	
 
-	const thumbnail = trpc(page).catalogueData.generateThumbnailLink.createQuery(
-		{
-			documentId: advertisement.id ?? '',
-			organizationId: advertisement.organizationId ?? '',
-			resolution: 'medium'
-		},
-		{
-			enabled: advertisement.activeVersion?.uploadStatus === 'COMPLETED'
-		}
-	);
+	const thumbnail = getThumbnail({
+		documentId: advertisement.id ?? '',
+		resolution: 'medium'
+	});
 
 	let showDialog = $state(false);
 </script>
@@ -49,11 +41,11 @@
 						>{$_('common.view-details')}</Button
 					>
 				</div>
-				{#if advertisement.activeVersion?.uploadStatus === 'UPLOADED' || $thumbnail.isLoading}
+				{#if advertisement.activeVersion?.uploadStatus === 'UPLOADED' || thumbnail.loading}
 					<LoaderCircle class="mx-auto animate-spin size-5" />
-				{:else if $thumbnail.data}
+				{:else if thumbnail.current}
 					<img
-						src={$thumbnail.data || '/placeholder.svg'}
+						src={thumbnail.current || '/placeholder.svg'}
 						alt={advertisement.title}
 						class="object-contain size-full"
 					/>

@@ -2,7 +2,7 @@ import { superValidate } from 'sveltekit-superforms';
 import { valibot } from 'sveltekit-superforms/adapters';
 import { UpdateUserDetailsRequest } from '@schema';
 import { fail, redirect } from '@sveltejs/kit';
-import { createCaller } from '@/trpc/router';
+import { updateMetadata } from '@/remote/functions';
 
 export const load = async ({ parent }) => {
 	const { session } = await parent();
@@ -23,9 +23,7 @@ export const actions = {
 			return fail(400, { form });
 		}
 
-		const api = await createCaller(event);
-
-		await api.user.updateMetadata({
+		await updateMetadata({
 			...form.data
 		});
 

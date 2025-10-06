@@ -11,7 +11,7 @@
 	import { tick } from 'svelte';
 	import { cn } from '@/utils';
 	import { Switch } from '@/components/ui/switch';
-	import { getUsers } from '@/trpc/routers/admin';
+	import { getUsers } from '@/remote/functions/admin';
 
 	interface Props {
 		orgId: string;

@@ -51,9 +51,9 @@
 			eventDays: [
 				...oldForm.eventDays,
 				{
-					dayName: '',
 					dayDate: new Date().toISOString().split('T')[0] ?? '2025-01-01',
-					capacity: 0
+					remainingCapacity: 0,
+					totalCapacity: 0
 				}
 			]
 		}));
@@ -516,7 +516,7 @@
 						{#each $formData.packages as _package, packageIndex}
 							<td class="text-center">
 								<Button variant="link" onclick={(e) => removePackage(e, packageIndex)}>
-									<TrashIcon classes="text-red-400" />
+									<TrashIcon class="text-red-400" />
 								</Button>
 							</td>
 						{/each}

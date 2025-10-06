@@ -1,7 +1,6 @@
 <script lang="ts">
-	import { trpc } from '@/trpc/client';
+	import { getDocument } from '@/remote/functions';
 	import ViewLogoDialog from './ViewLogoDialog.svelte';
-	import { page } from '$app/state';
 
 	interface Props {
 		open?: boolean;
@@ -10,11 +9,9 @@
 
 	let { open = $bindable(false), documentId }: Props = $props();
 
-	const documentQuery = trpc(page).catalogueData.getDocument.createQuery({
-		documentId
-	});
+	let documentQuery = getDocument({ documentId });
 </script>
 
-{#if !$documentQuery.isLoading}
-	<ViewLogoDialog bind:open logo={$documentQuery.data} />
+{#if documentQuery.ready}
+	<ViewLogoDialog bind:open logo={documentQuery.current} />
 {/if}

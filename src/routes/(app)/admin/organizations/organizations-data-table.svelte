@@ -3,11 +3,11 @@
 	import { LocalizedDate, QueryDataTable } from '@/@svelte/components';
 	import DataTableActions from './data-table-actions.svelte';
 	import { Checkbox } from '@/components/ui/checkbox';
-	import { createColumnHelper, type Column, type ColumnDef } from '@tanstack/table-core';
+	import { createColumnHelper, type Column } from '@tanstack/table-core';
 	import DataTableSortToggle from './data-table-sort-toggle.svelte';
 	import * as Avatar from '@/components/ui/avatar';
 	import { renderSnippet } from '@/@svelte/components/QueryDataTable/render-helpers';
-	import type { OrganizationsResponse } from '@/trpc/routers/admin';
+	import type { OrganizationsResponse } from '@/remote/functions/admin';
 
 	let {
 		organizations,
@@ -134,12 +134,12 @@
 {/snippet}
 {#snippet orgLinkSnippet({
 	slug,
-	name,
+	name = '',
 	imageUrl
 }: {
-	slug: string;
-	name: string;
-	imageUrl: string;
+	slug: string | null;
+	name: string | undefined | null;
+	imageUrl: string | null | undefined;
 })}
 	<a
 		href="/admin/organizations/{slug}"
@@ -149,7 +149,7 @@
 			<Avatar.Image src={imageUrl} alt={name} />
 			<Avatar.Fallback
 				>{name
-					.split(' ')
+					?.split(' ')
 					.slice(0, 2)
 					.map((word) => word[0].toUpperCase())
 					.join('')}</Avatar.Fallback

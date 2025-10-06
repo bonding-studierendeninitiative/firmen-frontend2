@@ -11,7 +11,7 @@
 		deleteEventRegistration,
 		getEventRegistrations,
 		rejectEventRegistration
-	} from '@/trpc/routers/admin';
+	} from '@/remote/functions/admin';
 	import { toast } from 'svelte-sonner';
 
 	let eventRegistrationFilters = $derived({

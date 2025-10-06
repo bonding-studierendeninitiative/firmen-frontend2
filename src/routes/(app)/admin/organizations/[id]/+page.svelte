@@ -18,7 +18,7 @@
 		getSsoProviders,
 		removeMember,
 		updateRole
-	} from '@/trpc/routers/admin';
+	} from '@/remote/functions/admin/index.js';
 	import SuperDebug from 'sveltekit-superforms';
 
 	let { data } = $props();

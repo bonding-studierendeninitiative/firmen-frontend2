@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { derived, type Readable } from 'svelte/store';
 	import DataTableActions from './data-table-actions.svelte';
 	import DataTableUserIcon from './data-table-user-icon.svelte';
 	import { _ } from '@services';
@@ -9,6 +8,8 @@
 	import DataTableRoleSwitcher from './data-table-role-switcher.svelte';
 	import { createColumnHelper } from '@tanstack/table-core';
 	import { renderSnippet } from '@/@svelte/components/QueryDataTable/render-helpers';
+	import type { GetOrgMembersResponse } from '@/remote/functions';
+	import type { RemoteQuery } from '@sveltejs/kit';
 
 	type Data = {
 		user: {
@@ -24,7 +25,7 @@
 		organizationId: string;
 	};
 	interface Props {
-		memberResponse: Readable<Data[]>;
+		membersResponse: RemoteQuery<GetOrgMembersResponse>;
 		organizationId: string;
 		class?: string;
 		onChangeUserRole?: (
@@ -34,18 +35,25 @@
 		) => void;
 		[key: string]: any;
 		onRemoveMember?: (userId: string, organizationId: string) => void;
+		onInviteMemberSuccess?: () => Promise<void>;
 	}
 
 	let {
-		memberResponse,
+		membersResponse,
 		organizationId,
 		class: className = '',
 		onChangeUserRole,
 		onRemoveMember,
+		onInviteMemberSuccess,
 		...rest
 	}: Props = $props();
 
-	let data = derived([memberResponse], ([memberResponse]) => memberResponse);
+	let { members: data, total: totalCount } = $derived.by(() => {
+		if (membersResponse.loading || membersResponse.error || !membersResponse.current) {
+			return { members: [], total: 0 };
+		}
+		return membersResponse.current;
+	});
 
 	let columnHelper = createColumnHelper<Data>();
 
@@ -115,8 +123,14 @@
 	<div class={cn(`flex items-center justify-between gap-4`)}>
 		<SearchInput class="max-w-sm" placeholder={$_('common.search')} type="text" />
 		<div class="flex items-center gap-4">
-			<CreateOrgInviteDialog {organizationId} />
+			<CreateOrgInviteDialog {onInviteMemberSuccess} />
 		</div>
 	</div>
-	<QueryDataTable {columns} totalCount={$memberResponse.length} data={$data} {onChangeUserRole} />
+	<QueryDataTable
+		isLoading={membersResponse.loading}
+		{columns}
+		{totalCount}
+		{data}
+		{onChangeUserRole}
+	/>
 </div>

@@ -7,6 +7,7 @@
 	import { useId } from 'bits-ui';
 
 	let session = authClient.useSession();
+	let sessions = authClient.listSessions();
 
 	const nameId = useId('settings-account-name');
 	const emailId = useId('settings-account-email');
@@ -52,5 +53,18 @@
 				Save
 			</Button>
 		</form>
+	</section>
+	<section>
+		<h3 class="text-stone-800 text-lg font-bold">
+			{$_('user-pages.settings.account.sessions.title')}
+		</h3>
+		<ul>
+			{#each (await sessions).data ?? [] as session (session.id)}
+				<li>
+					<p>{session.userAgent}</p>
+					<p>{session.createdAt}</p>
+				</li>
+			{/each}
+		</ul>
 	</section>
 </div>

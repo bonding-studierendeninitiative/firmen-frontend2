@@ -13,7 +13,7 @@
 	import EventStatusFilter from './event-status-filter.svelte';
 	import { queryParameters, ssp } from 'sveltekit-search-params';
 	import { fade } from 'svelte/transition';
-	import { getEvents } from '@/trpc/routers/admin';
+	import { getEvents } from '@/remote/functions/admin';
 
 	const mapEvent = (event: {
 		id: string;

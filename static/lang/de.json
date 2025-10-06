@@ -3,6 +3,23 @@
     "footer": {
       "privacyPolicy": "Datenschutzrichtlinie",
       "imprint": "Impressum"
+    },
+    "signIn": {
+      "fieldsRequired": "E-Mail ist erforderlich",
+      "emailSent": "Überprüfen Sie Ihr E-Mail-Postfach!",
+      "emailSentMessage": "Ein Anmelde-Link wurde gesendet an {email}. Sie können diesen Tab schließen.",
+      "changeEmail": "E-Mail ändern",
+      "signInWithMicrosoft": "Mit Microsoft anmelden",
+      "signInWithGithub": "Mit GitHub anmelden",
+      "signInWithLinkedin": "Mit LinkedIn anmelden",
+      "or": "Oder",
+      "email": "E-Mail-Adresse",
+      "emailPlaceholder": "Geben Sie Ihre E-Mail-Adresse ein",
+      "rememberMe": "Angemeldet bleiben",
+      "sending": "Wird gesendet...",
+      "sendMagicLink": "Weiter",
+      "adminSignIn": "Admin-Anmeldung",
+      "backToRegular": "Zurück zur normalen Anmeldung"
     }
   },
   "common": {

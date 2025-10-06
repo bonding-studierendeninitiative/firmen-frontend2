@@ -35,12 +35,12 @@
 				class="mr-2"
 				{checked}
 				onCheckedChange={(v) => {
-						if (v) {
-							addItem(city);
-						} else {
-							removeItem(city);
-						}
-					}}
+					if (v) {
+						addItem(city);
+					} else {
+						removeItem(city);
+					}
+				}}
 			/>
 			{city}
 		</Label>
@@ -54,7 +54,7 @@
 					heading={name}
 					subHeading={location}
 					date={dateFrom}
-					href={`/${orgSlug}/events/${id}`}
+					href={`/${orgSlug}/events/${id}/details`}
 				/>
 			{/if}
 		{/each}

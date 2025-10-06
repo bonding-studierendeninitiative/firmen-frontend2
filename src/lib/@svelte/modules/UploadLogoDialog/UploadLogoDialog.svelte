@@ -2,39 +2,36 @@
 	import { Button, buttonVariants } from '@/components/ui/button';
 	import * as Dialog from '@/components/ui/dialog';
 	import { fileProxy, type Infer, superForm, type SuperValidated } from 'sveltekit-superforms';
-	import { type UploadLogoRequest } from '@schema';
-	import { toast } from 'svelte-sonner';
+	import { UploadCatalogueDataRequest, type UploadLogoRequest } from '@schema';
 	import { Control, Description, Field, FieldErrors, Label } from '@/components/ui/form';
 	import { _ } from '@services';
 	import { Input } from '@/components/ui/input';
 	import { Plus } from '@lucide/svelte';
 	import { cn } from '@/utils';
-	import { trpc } from '@/trpc/client';
-	import { page } from '$app/state';
+	import { uploadCatalogueData } from '@/remote/functions';
+	import type { RemoteQuery, RemoteQueryOverride } from '@sveltejs/kit';
+	import { valibotClient } from 'sveltekit-superforms/adapters';
 
 	interface Props {
 		open: boolean;
 		logoUploadForm: SuperValidated<Infer<UploadLogoRequest>>;
+		onUpload?: (args: {
+			submit: () => Promise<void> & {
+				updates: (...queries: Array<RemoteQuery<any> | RemoteQueryOverride>) => Promise<void>;
+			};
+			form: HTMLFormElement;
+			data: FormData;
+		}) => Promise<void>;
 	}
 
-	let { open = $bindable(), logoUploadForm }: Props = $props();
-	const utils = trpc(page).createUtils();
+	let { open = $bindable(), logoUploadForm, onUpload }: Props = $props();
 
 	const superform = superForm(logoUploadForm, {
-		// validators: valibotClient(UploadCatalogueDataRequest),
-		async onResult({ result }) {
-			if (result.type === 'success') {
-				open = false;
-				toast.success('Logo uploaded successfully');
-				await utils.catalogueData.uploadForm.invalidate();
-			} else {
-				toast.error(`Error: ${result.status}`);
-			}
-		}
+		validators: valibotClient(UploadCatalogueDataRequest)
 	});
-	const { enhance, form: formData, submitting, tainted, isTainted } = superform;
+	const { form: formData, submitting, tainted, isTainted } = superform;
 
-	let file = fileProxy(formData, "file")
+	let file = fileProxy(formData, 'file');
 </script>
 
 <Dialog.Root bind:open>
@@ -44,10 +41,15 @@
 	</Dialog.Trigger>
 	<Dialog.Content>
 		<form
-			action="?/uploadLogo"
+			{...uploadCatalogueData.enhance(async ({ submit, form, data }) => {
+				try {
+					await onUpload?.({ submit, form, data });
+					open = false;
+				} catch (error) {
+					console.error('Error uploading logo:', error);
+				}
+			})}
 			enctype="multipart/form-data"
-			method="post"
-			use:enhance
 			class="space-y-4"
 		>
 			<Dialog.Header class="space-y-4">
@@ -70,21 +72,28 @@
 						<Label>{$_('modules.upload-logo.file')}</Label>
 						<!-- Due to some weird bug, we can't use Input here! (02.07.2025) -->
 						<input
-						class="focus-within:ring-2 focus-within:ring-offset-2 text-sm font-medium ring-offset-background border-input focus-visible:outline-hidden h-10 bg-gray-50  border rounded-md px-3 py-2 placeholder-gray-400 w-full"
-						accept="image/*, application/pdf"
+							class="focus-within:ring-2 focus-within:ring-offset-2 text-sm font-medium ring-offset-background border-input focus-visible:outline-hidden h-10 bg-gray-50 border rounded-md px-3 py-2 placeholder-gray-400 w-full"
+							accept="image/*, application/pdf"
 							{...props}
 							type="file"
 							bind:files={$file}
 						/>
 					{/snippet}
 				</Control>
-				<Description>{$_("modules.upload-logo.file-description")}</Description>
+				<Description>{$_('modules.upload-logo.file-description')}</Description>
 				<FieldErrors />
 			</Field>
 			<Field form={superform} name="orgId">
 				<Control>
 					{#snippet children({ props })}
 						<input type="hidden" value={$formData.orgId} name={props.name} />
+					{/snippet}
+				</Control>
+			</Field>
+			<Field form={superform} name="documentType">
+				<Control>
+					{#snippet children({ props })}
+						<input type="hidden" value="logo" {...props} />
 					{/snippet}
 				</Control>
 			</Field>

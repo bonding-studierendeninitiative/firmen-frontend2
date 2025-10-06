@@ -2,7 +2,7 @@ import { ReviewDocumentRequest } from '@schema';
 import { valibot } from 'sveltekit-superforms/adapters';
 import { superValidate } from 'sveltekit-superforms';
 import { fail } from '@sveltejs/kit';
-import { reviewDocument } from '@/trpc/routers/admin';
+import { reviewDocument } from '@/remote/functions/admin';
 
 export const actions = {
 	reviewDocument: async ({ request }) => {

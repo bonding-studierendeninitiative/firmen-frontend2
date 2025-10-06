@@ -4,7 +4,7 @@
 	import CreateOrgInviteForm from './create-org-invite-form.svelte';
 	import { cn } from '@/utils';
 	import { buttonVariants } from '@/components/ui/button';
-	import { createInviteForm } from '@/trpc/routers/admin';
+	import { createInviteForm } from '@/remote/functions/admin';
 
 	let inviteMemberDialogOpen = $state(false);
 	interface Props {

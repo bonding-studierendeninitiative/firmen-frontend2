@@ -21,7 +21,6 @@ const config = {
 		},
 		adapter: adapter({}),
 		csrf: {
-			checkOrigin: false,
 			trustedOrigins: [process.env.PUBLIC_BACKEND_HOST ?? '', process.env.PUBLIC_APP_URL ?? '']
 		},
 		experimental: {

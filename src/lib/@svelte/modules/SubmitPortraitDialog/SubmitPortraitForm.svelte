@@ -4,8 +4,8 @@
 	import { Button } from '@/components/ui/form';
 	import { _ } from '@services';
 	import { page } from '$app/state';
-	import { trpc } from '@/trpc/client';
 	import { toast } from 'svelte-sonner';
+	import { submitPortraitAction } from '@/remote/functions';
 
 	import {
 		Field,
@@ -38,15 +38,21 @@
 
 	let {
 		id,
-		submitPortraitForm
+		orgId,
+		submitPortraitForm,
+		onSubmitPortrait
 	}: {
-		open: boolean;
 		id: string;
 		orgId: string;
 		submitPortraitForm: SuperValidated<Infer<SubmitPortraitRequest>>;
+		onSubmitPortrait?: (args: {
+			submit: () => Promise<void> & {
+				updates: (...queries: Array<RemoteQuery<any> | RemoteQueryOverride>) => Promise<void>;
+			};
+			form: HTMLFormElement;
+			data: FormData;
+		}) => Promise<void>;
 	} = $props();
-
-	const api = trpc(page);
 
 	const firstStepSchema = v.pick(SubmitPortraitRequest, [
 		'title',
@@ -107,10 +113,10 @@
 		}
 	});
 
-	const portraitTemplatesQuery = api.portraitTemplates.getAll.createQuery({
-		page: 0,
-		query: ''
-	});
+	import { getAllPortraitTemplates as getPortraitTemplates } from '@/remote/functions';
+	import type { RemoteQuery, RemoteQueryOverride } from '@sveltejs/kit';
+
+	const portraitTemplatesQuery = getPortraitTemplates({ page: 0, query: '' });
 
 	// Step titles and icons for the wizard
 	const steps = [
@@ -131,7 +137,7 @@
 	$effect(() => {
 		if (startOption === 'template') {
 			if (selectedTemplate) {
-				const template = $portraitTemplatesQuery.data?.portraitTemplates?.find(
+				const template = portraitTemplatesQuery.current?.portraitTemplates?.find(
 					(p) => p.id === selectedTemplate
 				);
 				if (template) {
@@ -227,7 +233,12 @@
 		</div>
 	{/if}
 
-	<form action="?/submitPortrait" method="post" use:enhance class="flex flex-col justify-between">
+	<form
+		class="flex flex-col justify-between"
+		{...submitPortraitAction.enhance(async ({ submit, form, data }) => {
+			await onSubmitPortrait?.({ submit, form, data });
+		})}
+	>
 		<div class="overflow-scroll">
 			<!-- Step 0: Choose to start from scratch or use a template -->
 			{#if currentStep === 0}
@@ -300,10 +311,10 @@
 							</h3>
 							<RadioGroup.Root bind:value={selectedTemplate}>
 								<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-									{#if $portraitTemplatesQuery.isLoading}
+									{#if portraitTemplatesQuery.loading}
 										<LoaderCircle class="size-6 mx-auto animate-spin" />
 									{:else}
-										{#each $portraitTemplatesQuery.data?.portraitTemplates ?? [] as template (template.id)}
+										{#each portraitTemplatesQuery.current?.portraitTemplates ?? [] as template (template.id)}
 											<Label for={`portrait-template-${template.id}`}>
 												<RadioGroup.Item
 													value={template.id}

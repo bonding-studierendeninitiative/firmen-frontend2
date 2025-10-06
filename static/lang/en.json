@@ -3,6 +3,23 @@
     "footer": {
       "privacyPolicy": "Privacy Policy",
       "imprint": "Imprint"
+    },
+    "signIn": {
+      "fieldsRequired": "Email is required",
+      "emailSent": "Check your email inbox!",
+      "emailSentMessage": "A magic link has been sent to {email}. You can close this tab.",
+      "changeEmail": "Change Email",
+      "signInWithMicrosoft": "Sign in with Microsoft",
+      "signInWithGithub": "Sign in with GitHub",
+      "signInWithLinkedin": "Sign in with LinkedIn",
+      "or": "Or",
+      "email": "Email",
+      "emailPlaceholder": "Enter your email",
+      "rememberMe": "Remember me",
+      "sending": "Sending...",
+      "sendMagicLink": "Continue",
+      "adminSignIn": "Admin sign in",
+      "backToRegular": "Back to regular sign in"
     }
   },
   "common": {

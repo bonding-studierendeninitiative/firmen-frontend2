@@ -9,6 +9,8 @@
 	import ChevronLeft from '@lucide/svelte/icons/chevron-left';
 	import ChevronRight from '@lucide/svelte/icons/chevron-right';
 	import { queryParameters } from 'sveltekit-search-params';
+	import { deletePortraitTemplate, getAllPortraitTemplates } from '@/remote/functions/index.js';
+	import { toast } from 'svelte-sonner';
 
 	let { data, children } = $props();
 
@@ -20,31 +22,39 @@
 		filter: false,
 		create: false,
 		page: false
-	})
+	});
 
 	$effect(() => {
-		if (!(searchValue === '' && $params.filter === null)) {
+		if (!(searchValue === '' && params.filter === null)) {
 			if (timeout) clearTimeout(timeout);
 			timeout = setTimeout(async () => {
-				$params.filter = searchValue
+				params.filter = searchValue;
 			}, 600);
 		}
 	});
 
-	let isDrawerOpen = $derived($params.create !== null);
+	let isDrawerOpen = $derived(params.create !== null);
 
 	const createNewDialog = () => {
-		$params.create = 'true'
+		params.create = 'true';
 	};
 
 	const handleDialogChange = (open: boolean) => {
 		if (open) return;
 
-		console.log("Protrait closed in Layout");
-		
+		console.log('Protrait closed in Layout');
 
-		$params.create = null
+		params.create = null;
 	};
+
+	let portraitTemplatesFilter = $derived.by(() => {
+		return {
+			page: Number(params.page) ?? 0,
+			query: params.filter ?? ''
+		};
+	});
+
+	let portraitTemplatesQuery = $derived(getAllPortraitTemplates(portraitTemplatesFilter));
 </script>
 
 <div class="flex justify-between items-center gap-4">
@@ -53,29 +63,44 @@
 		>{$_('user-pages.portraits.newPortrait')}</Button
 	>
 </div>
-{#await data.portraitTemplateData}
+{#if portraitTemplatesQuery.loading}
 	<LoaderCircle class="size-10 mx-auto animate-spin my-6" />
-{:then portraitTemplateData}
+{:else if portraitTemplatesQuery.error}
+	<p>{portraitTemplatesQuery.error.message}</p>
+{:else if portraitTemplatesQuery.ready}
 	<section in:fade class="mt-4 flex flex-col gap-y-4 @container/portraits">
-		{#if (portraitTemplateData?.portraitTemplates?.length ?? 0) < 1}
+		{#if (portraitTemplatesQuery.current?.portraitTemplates?.length ?? 0) < 1}
 			<NoDataFound
 				heading={$_('user-pages.portraits.noPortraitsFound')}
 				subHeading={$_('user-pages.portraits.noPortraitsFoundDescription')}
 				buttonText={$_('user-pages.portraits.newPortrait')}
-				onButtonClick={() => ($params.create = 'true')}
+				onButtonClick={() => (params.create = 'true')}
 			/>
 		{:else}
-			<div class="grid grid-cols-1 @3xl/portraits:grid-cols-2 @5xl/portraits:grid-cols-3 @7xl/portraits:grid-cols-4 gap-6">
-				{#each portraitTemplateData?.portraitTemplates ?? [] as portrait}
-					<PortraitCard {portrait} />
+			<div
+				class="grid grid-cols-1 @3xl/portraits:grid-cols-2 @5xl/portraits:grid-cols-3 @7xl/portraits:grid-cols-4 gap-6"
+			>
+				{#each portraitTemplatesQuery.current?.portraitTemplates ?? [] as portrait (portrait.id)}
+					<PortraitCard
+						{portrait}
+						onDelete={async ({ portraitTemplateId }) => {
+							try {
+								await deletePortraitTemplate(portraitTemplateId).updates(portraitTemplatesQuery);
+								toast.success($_('user-pages.portraits.deletePortraitSuccess'));
+							} catch (error) {
+								toast.error('Error deleting portrait');
+								throw error;
+							}
+						}}
+					/>
 				{/each}
 			</div>
 			<Pagination.Root
 				perPage={10}
-				page={(portraitTemplateData?.pageNumber ?? 0) + 1}
-				count={portraitTemplateData?.totalElements}
+				page={(portraitTemplatesQuery.current?.pageNumber ?? 0) + 1}
+				count={portraitTemplatesQuery.current?.totalElements ?? 0}
 				onPageChange={(pageNumber) => {
-					$params.page = String(pageNumber - 1)
+					params.page = String(pageNumber - 1);
 				}}
 			>
 				{#snippet children({ pages, currentPage })}
@@ -108,18 +133,12 @@
 			</Pagination.Root>
 		{/if}
 	</section>
-{:catch error}
-	<p>{error.message}</p>
-{/await}
+{/if}
 
 {@render children?.()}
 
 {#await data.createForm then createForm}
-	<PortraitForm
-		validated={createForm}
-		isOpen={isDrawerOpen}
-		onDialogChange={handleDialogChange}
-	/>
+	<PortraitForm validated={createForm} isOpen={isDrawerOpen} onDialogChange={handleDialogChange} />
 {:catch error}
 	<p>{error.message}</p>
 {/await}

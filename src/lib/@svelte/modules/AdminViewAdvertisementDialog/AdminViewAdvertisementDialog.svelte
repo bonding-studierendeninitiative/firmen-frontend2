@@ -1,21 +1,18 @@
 <script lang="ts">
 	import * as Dialog from '@/components/ui/dialog';
-	import {
-		AdvertStatusIcon,
-		StatusBadge
-	} from '@/@svelte/components';
+	import { AdvertStatusIcon, StatusBadge } from '@/@svelte/components';
 	import { _ } from '@services';
 	import {
 		DeleteAdvertisementDialog,
 		FileHistory,
 		FileInformation,
-
 		ReviewRegistrationDocumentDialog
-
 	} from '@/@svelte/modules';
 	import { Button } from '@/components/ui/button';
-	import { trpc } from '@/trpc/client';
-	import { page } from '$app/state';
+	import {
+		generateDocumentDownloadLink as getDownload,
+		generateThumbnailLink as getThumbnail
+	} from '@/remote/functions/admin';
 	import type { AdminRegistrationDocumentOutput } from '@api/admin-client';
 
 	interface Props {
@@ -24,13 +21,13 @@
 
 	let { advertisement }: Props = $props();
 
-	const download = trpc(page).catalogueData.generateDownloadLink.createQuery({
-		documentId: advertisement.documentVersion?.document?.id,
-		organizationId: advertisement.documentVersion?.document?.organizationId
+	const download = getDownload({
+		documentId: advertisement.documentVersion?.document?.id!,
+		organizationId: advertisement.documentVersion?.document?.organizationId!
 	});
 
 	function handleDownload() {
-		const url = $download.data;
+		const url = download.current;
 		if (url) {
 			const a = document.createElement('a');
 			a.href = url;
@@ -41,13 +38,10 @@
 			document.body.removeChild(a);
 		}
 	}
-	
-	const thumbnail = trpc(page).catalogueData.generateThumbnailLink.createQuery({
+
+	const thumbnail = getThumbnail({
 		documentId: advertisement?.documentVersion?.document?.id ?? '',
-		organizationId: "random",
-		resolution: "large"
-	}, {
-		enabled: advertisement?.documentVersion?.uploadStatus === "COMPLETED"
+		resolution: 'large'
 	});
 </script>
 

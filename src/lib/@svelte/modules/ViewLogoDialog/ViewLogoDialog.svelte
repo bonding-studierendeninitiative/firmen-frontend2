@@ -4,8 +4,10 @@
 	import { _ } from '@services';
 	import { DeleteLogoDialog, FileHistory, FileInformation } from '@/@svelte/modules';
 	import { Button } from '@/components/ui/button';
-	import { trpc } from '@/trpc/client';
-	import { page } from '$app/state';
+	import {
+		generateDownloadLink as getDownload,
+		generateThumbnailLink as getThumbnail
+	} from '@/remote/functions';
 	import { DetailedDocumentOutput } from '@api/client';
 	import { LoaderCircle } from '@lucide/svelte';
 
@@ -16,31 +18,12 @@
 
 	let { open = $bindable(false), logo }: Props = $props();
 
-	const download = trpc(page).catalogueData.generateDownloadLink.createQuery(
-		{
-			documentId: logo.id,
-			organizationId: logo.organizationId
-		},
-		{
-			staleTime: 15 * 60 * 1000
-		}
-	);
+	const download = getDownload({ documentId: logo.id, organizationId: logo.organizationId });
 
-	const thumbnail = trpc(page).catalogueData.generateThumbnailLink.createQuery(
-		{
-			documentId: logo.id,
-			organizationId: logo.organizationId,
-			resolution: 'large'
-		},
-		{
-			enabled: logo.activeVersion?.uploadStatus === 'COMPLETED',
-			staleTime: 60 * 60 * 1000,
-			refetchOnWindowFocus: false
-		}
-	);
+	const thumbnail = getThumbnail({ documentId: logo.id, resolution: 'large' });
 
 	async function handleDownload() {
-		const url = $download.data;
+		const url = download.current;
 		if (url && url.length > 0) {
 			const a = document.createElement('a');
 			a.href = url;

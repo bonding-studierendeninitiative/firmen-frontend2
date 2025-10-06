@@ -63,8 +63,8 @@ export const PortraitTemplateInput = v.object({
 
 export type StatusType = v.InferOutput<typeof StatusType>;
 export const StatusType = v.object({
-  statusCode: v.optional(v.number()),
   reasonPhrase: v.optional(v.string()),
+  statusCode: v.optional(v.number()),
 });
 
 export type Problem = v.InferOutput<typeof Problem>;
@@ -72,8 +72,8 @@ export const Problem = v.object({
   instance: v.optional(v.string()),
   type: v.optional(v.string()),
   parameters: v.optional(v.record(v.string(), v.unknown())),
-  status: v.optional(StatusType),
   title: v.optional(v.string()),
+  status: v.optional(StatusType),
   detail: v.optional(v.string()),
 });
 
@@ -108,6 +108,7 @@ export const CreateDocumentRequest = v.object({
   mimeType: v.optional(v.string()),
   type: v.optional(v.union([v.literal("portrait"), v.literal("logo"), v.literal("advert")])),
   title: v.optional(v.string()),
+  uploaderId: v.optional(v.string()),
 });
 
 export type UploadUrlResponse = v.InferOutput<typeof UploadUrlResponse>;
@@ -200,6 +201,13 @@ export const SubmitPortraitInput = v.object({
 export type ChangeContactPeopleInput = v.InferOutput<typeof ChangeContactPeopleInput>;
 export const ChangeContactPeopleInput = v.object({
   contactPeople: v.optional(v.array(v.string())),
+});
+
+export type SendMagicLinkRequest = v.InferOutput<typeof SendMagicLinkRequest>;
+export const SendMagicLinkRequest = v.object({
+  email: v.string(),
+  link: v.string(),
+  locale: v.optional(v.union([v.string(), v.undefined()])),
 });
 
 export type GetPortraitTemplatesByOrganizationOutput = v.InferOutput<typeof GetPortraitTemplatesByOrganizationOutput>;
@@ -902,6 +910,17 @@ export const post_ChangeContactPeople = v.object({
   response: v.unknown(),
 });
 
+export type post_SendMagicLink = v.InferOutput<typeof post_SendMagicLink>;
+export const post_SendMagicLink = v.object({
+  method: v.literal("POST"),
+  path: v.literal("/api/auth/magic_link"),
+  requestFormat: v.literal("json"),
+  parameters: v.object({
+    body: SendMagicLinkRequest,
+  }),
+  response: v.unknown(),
+});
+
 export type get_GetDocument = v.InferOutput<typeof get_GetDocument>;
 export const get_GetDocument = v.object({
   method: v.literal("GET"),
@@ -1203,6 +1222,7 @@ export const EndpointByMethod = {
     "/api/v2/event-registration/{eventRegistrationId}/pick-document/{documentId}/{versionId}":
       post_PickDocumentForEventRegistration,
     "/api/v2/event-registration/{eventRegistrationId}/change-contact-people": post_ChangeContactPeople,
+    "/api/auth/magic_link": post_SendMagicLink,
   },
 };
 export type EndpointByMethod = typeof EndpointByMethod;
@@ -1231,6 +1251,7 @@ type RequestFormat = "json" | "form-data" | "form-url" | "binary" | "text";
 export type DefaultEndpoint = {
   parameters?: EndpointParameters | undefined;
   response: unknown;
+  responseHeaders?: Record<string, unknown>;
 };
 
 export type Endpoint<TConfig extends DefaultEndpoint = DefaultEndpoint> = {
@@ -1245,6 +1266,7 @@ export type Endpoint<TConfig extends DefaultEndpoint = DefaultEndpoint> = {
     areParametersRequired: boolean;
   };
   response: TConfig["response"];
+  responseHeaders?: TConfig["responseHeaders"];
 };
 
 export type Fetcher = (method: Method, url: string, parameters?: EndpointParameters | undefined) => Promise<Response>;

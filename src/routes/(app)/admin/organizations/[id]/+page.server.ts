@@ -3,7 +3,7 @@ import { valibot } from 'sveltekit-superforms/adapters';
 import { CreateOrgInviteRequestSchema } from '@schema';
 import { fail } from '@sveltejs/kit';
 import { PUBLIC_BONDING_ORG_ID } from '$env/static/public';
-import { identifyOrg, generateInvite } from '@/trpc/routers/admin';
+import { identifyOrg, generateInvite } from '@/remote/functions/admin';
 
 export async function load(event) {
 	const { session } = await event.parent();

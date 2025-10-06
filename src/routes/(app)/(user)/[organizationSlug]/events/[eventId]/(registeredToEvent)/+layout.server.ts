@@ -1,9 +1,7 @@
-import { createCaller } from '@/trpc/router';
+import { isOrgRegistered } from '@/remote/functions/events.remote.js';
 
 export const load = async (event) => {
-	const api = await createCaller(event);
-
-	const eventRegistration = await api.events.isOrgRegistered(event.params.eventId);
+	const eventRegistration = await isOrgRegistered(event.params.eventId);
 
 	return {
 		eventRegistration

@@ -8,7 +8,7 @@
 	import { Control, Description, Field, FieldErrors, Label } from '@/components/ui/form';
 	import { Input } from '@/components/ui/input';
 	import { page } from '$app/state';
-	import { createBuyOption } from '@/trpc/routers/admin';
+	import { createBuyOption } from '@/remote/functions/admin';
 	import { valibotClient } from 'sveltekit-superforms/adapters';
 	import type { RemoteQuery, RemoteQueryOverride } from '@sveltejs/kit';
 

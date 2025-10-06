@@ -4,8 +4,17 @@
 	import { AddBillingAddressTemplate } from '@/@svelte/modules';
 	import { LoaderCircle } from '@lucide/svelte';
 	import { fade } from 'svelte/transition';
+	import {
+		createBillingAddressTemplateForm,
+		deleteBillingAddressTemplateForm,
+		getBillingAddressTemplates,
+		makeBillingAddressTemplateDefaultForm
+	} from '@/remote/functions';
 
-	let { data } = $props();
+	let billingAddressTemplatesQuery = getBillingAddressTemplates({
+		page: '0',
+		limit: '10'
+	});
 </script>
 
 <div>
@@ -16,22 +25,27 @@
 			</h2>
 			<h4 class=" text-stone-500 text-sm">{$_('user-pages.settings.billingsSubHeading')}</h4>
 		</section>
-		{#await data.pageData}
+		{#if billingAddressTemplatesQuery.loading}
 			<LoaderCircle class="size-10 mx-auto animate-spin" />
-		{:then {makeBillingAddressTemplateDefaultForm, deleteBillingAddressTemplateForm, createBillingAddressTemplateForm, billingAddressTemplates, organization }}
+		{:else if billingAddressTemplatesQuery.ready}
 			<section in:fade class="flex flex-col @3xl:col-span-2 col-span-3">
-				{#each (billingAddressTemplates ?? []).filter(Boolean) as billingAddress, index (index)}
-					<BillingAddressCard {makeBillingAddressTemplateDefaultForm}
-															{deleteBillingAddressTemplateForm}
-															{billingAddress}
-															isDefault={billingAddress.id === organization?.publicMetadata?.defaultBillingAddressTemplateId} />
+				{#each (billingAddressTemplatesQuery.current ?? []).filter(Boolean) as billingAddress, index (index)}
+					<BillingAddressCard
+						{billingAddress}
+						isDefault={billingAddress.id ===
+							organization?.publicMetadata?.defaultBillingAddressTemplateId}
+					/>
 				{/each}
 				<div class=" flex justify-between items-center my-6 pb-6">
-					<AddBillingAddressTemplate {createBillingAddressTemplateForm} />
+					{#if createBillingAddressTemplateForm({}).ready}
+						<AddBillingAddressTemplate
+							createBillingAddressTemplateForm={createBillingAddressTemplateForm({}).current!}
+						/>
+					{/if}
 				</div>
 			</section>
-		{:catch error}
+		{:else if billingAddressTemplatesQuery.error}
 			<div class="text-red-500">{error}</div>
-		{/await}
+		{/if}
 	</div>
 </div>

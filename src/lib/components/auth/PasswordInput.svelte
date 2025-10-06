@@ -4,6 +4,7 @@
 	import { Input } from '@/components/ui/input';
 	import { Label } from '@/components/ui/label';
 	import { Eye, EyeOff, CheckCircle, X } from '@lucide/svelte';
+	import type { HTMLAttributes, HTMLInputAttributes } from 'svelte/elements';
 
 	interface Props {
 		id?: string;
@@ -43,8 +44,9 @@
 		classNames = {},
 		localization = {},
 		onInput,
-		onChange
-	}: Props = $props();
+		onChange,
+		...rest
+	}: Props & HTMLInputAttributes = $props();
 
 	let showPassword = $state(false);
 
@@ -124,6 +126,7 @@
 			{placeholder}
 			{disabled}
 			{required}
+			{...rest}
 			oninput={handleInput}
 			onchange={handleChange}
 			class={cn('pr-10', className, classNames?.input)}

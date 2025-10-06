@@ -13,6 +13,7 @@ import { prismaAdapter } from 'better-auth/adapters/prisma';
 // If your Prisma file is located elsewhere, you can change the path
 import { PrismaClient } from '@prisma-app/client'; // Adjust the import path if necessary
 import { sso } from '@better-auth/sso';
+import { createPublicContext } from './remote/context';
 
 const prisma = new PrismaClient();
 export const auth = betterAuth({
@@ -59,6 +60,10 @@ export const auth = betterAuth({
 			clientSecret: process.env.GITHUB_CLIENT_SECRET || '',
 			scope: ['read:user', 'user:email', 'read:org']
 			// Optional: specify the scopes you need
+		},
+		linkedin: {
+			clientId: process.env.LINKEDIN_CLIENT_ID || '',
+			clientSecret: process.env.LINKEDIN_CLIENT_SECRET || ''
 		}
 	},
 
@@ -90,8 +95,20 @@ export const auth = betterAuth({
 		}),
 		magicLink({
 			// Optional: specify the magic link settings
-			sendMagicLink: async ({ email, token, url }) => {
+			sendMagicLink: async ({ email, token, url }, request) => {
 				// Implement your email sending logic here
+				const context = await createPublicContext({ request });
+				const result = await context.api.request('post', '/api/auth/magic_link', {
+					body: { email, link: url, locale: 'de' }
+				});
+
+				if (!result.ok) {
+					console.error('Error sending magic link notification:', await result.text());
+				} else {
+					console.log(`Sent magic link notification to ${email}`);
+				}
+
+				// For demonstration purposes, we'll just log the magic link details
 				console.log(`Sending magic link to ${email} with token ${token} to url ${url}`);
 			}
 		}),

@@ -2,7 +2,7 @@
 	import { page } from '$app/state';
 	import { LocalizedDate, StatusBadge } from '@/@svelte/components';
 	import { Button } from '@/components/ui/button';
-	import { trpc } from '@/trpc/client';
+	import { generateThumbnailLink as getThumbnail } from '@/remote/functions';
 	import { cn, getHumanReadableFileSize } from '@/utils';
 	import type { RegistrationDocumentOutput } from '@api/client';
 	import { Replace } from '@lucide/svelte';
@@ -19,15 +19,10 @@
 
 	let { registrationDocument, class: className = '', pickNewDocument }: Props = $props();
 
-	const thumbnail = trpc(page).catalogueData.generateThumbnailLink.createQuery(
-		{
-			documentId: registrationDocument?.documentVersion?.document?.id ?? '',
-			resolution: 'small'
-		},
-		{
-			enabled: registrationDocument?.documentVersion?.uploadStatus === 'COMPLETED'
-		}
-	);
+	const thumbnail = getThumbnail({
+		documentId: registrationDocument?.documentVersion?.document?.id ?? '',
+		resolution: 'small'
+	});
 
 	const previewVariants = tv({
 		variants: {
@@ -41,9 +36,12 @@
 </script>
 
 <section
-	class={cn('p-4 flex flex-col gap-4 w-full bg-muted rounded-xl border border-border @md/preview:flex-row', className)}
+	class={cn(
+		'p-4 flex flex-col gap-4 w-full bg-muted rounded-xl border border-border @md/preview:flex-row',
+		className
+	)}
 >
-	{#if !$thumbnail.isLoading}
+	{#if thumbnail.ready}
 		<div
 			class={cn(
 				previewVariants({ documentType: registrationDocument.documentType }),
@@ -51,7 +49,7 @@
 			)}
 		>
 			<Image
-				src={$thumbnail.data || '/placeholder.svg'}
+				src={thumbnail.current || '/placeholder.svg'}
 				alt={registrationDocument.status}
 				aspectRatio={16 / 9}
 			/>

@@ -5,7 +5,7 @@
 	import { Button } from '@/components/ui/button';
 	import { ConfirmEventRegistration, RejectEventRegistration } from '@/@svelte/modules';
 	import { _ } from '@services';
-	import type { GetEventRegistrationsOutput } from '@/trpc/routers/admin';
+	import type { GetEventRegistrationsOutput } from '@/remote/functions/admin';
 
 	interface Props {
 		id: string | null | undefined;

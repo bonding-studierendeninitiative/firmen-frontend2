@@ -1,7 +1,9 @@
 <script lang="ts">
-	import SuperDebug from "sveltekit-superforms";
+	import { page } from '$app/state';
+	import { isOrgRegistered } from '@/remote/functions/events.remote.js';
+	import SuperDebug from 'sveltekit-superforms';
 
-    let {data} = $props()
+	let isOrgRegisteredQuery = isOrgRegistered(page.params.eventId!);
 </script>
 
-<SuperDebug data={data.eventRegistration} />
+<SuperDebug data={isOrgRegisteredQuery.current} />

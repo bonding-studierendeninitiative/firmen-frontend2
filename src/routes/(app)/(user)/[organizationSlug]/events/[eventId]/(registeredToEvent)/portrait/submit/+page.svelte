@@ -32,8 +32,8 @@
 	import { SubmitPortraitRequest } from '@schema';
 	import { valibot } from 'sveltekit-superforms/adapters';
 	import { Label } from '@/components/ui/label';
-	import { trpc } from '@/trpc/client';
 	import { page } from '$app/state';
+	import { getAllPortraitTemplates as getPortraitTemplates } from '@/remote/functions/index.js';
 	import { toast } from 'svelte-sonner';
 
 	const firstStepSchema = v.pick(SubmitPortraitRequest, [
@@ -99,12 +99,9 @@
 		}
 	});
 
-	const api = trpc(page);
+	// TODO: Switch to remote function and page level callbacks instead of using data from the load function & trpc
 
-	const portraitTemplatesQuery = api.portraitTemplates.getAll.createQuery({
-		page: 0,
-		query: ''
-	});
+	const portraitTemplatesQuery = getPortraitTemplates({ page: 0, query: '' });
 
 	// Step titles and icons for the wizard
 	const steps = [
@@ -124,7 +121,7 @@
 	// Load template data when selected
 	$effect(() => {
 		if (selectedTemplate) {
-			const template = $portraitTemplatesQuery.data?.portraitTemplates?.find(
+			const template = portraitTemplatesQuery.current?.portraitTemplates?.find(
 				(p) => p.id === selectedTemplate
 			);
 			if (template) {

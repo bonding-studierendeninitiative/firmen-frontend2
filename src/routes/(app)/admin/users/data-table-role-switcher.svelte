@@ -3,8 +3,6 @@
 	import { Button } from '@/components/ui/button';
 	import * as Command from '@/components/ui/command';
 	import { Check, ChevronsUpDown } from '@lucide/svelte';
-	import { trpc } from '@/trpc/client';
-	import { page } from '$app/state';
 	import { _ } from '@services';
 	import { tick } from 'svelte';
 	import { cn } from '@/utils';
@@ -18,9 +16,6 @@
 	}
 
 	let { value = $bindable(), userId, onChangeUserRole }: Props = $props();
-
-	const api = trpc(page);
-	// const updateRole = api.admin.users.updateRole.createMutation();
 
 	const roles = [
 		{

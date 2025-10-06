@@ -6,6 +6,7 @@
 	import { Input } from '../ui/input';
 	import OrganizationLogo from './OrganizationLogo.svelte';
 	import authClient from '@/auth-client';
+	import { useId } from 'bits-ui';
 
 	interface Props {
 		className?: string;
@@ -30,6 +31,8 @@
 	let isSubmitting = $state(false);
 	let error: string | null = $state(null);
 	let fileInput: HTMLInputElement | null = $state(null);
+	let orgNameId = useId();
+	let orgSlugId = useId();
 
 	function validateSlug(slug: string) {
 		return /^[a-z0-9-]+$/.test(slug);
@@ -117,7 +120,7 @@
 
 			<!-- Name input -->
 			<div>
-				<label class="block text-sm font-medium mb-1"
+				<label class="block text-sm font-medium mb-1" for={orgNameId}
 					>{localization?.ORGANIZATION_NAME ?? 'Name'}</label
 				>
 				<Input
@@ -125,12 +128,13 @@
 					bind:value={name}
 					placeholder={localization?.ORGANIZATION_NAME_PLACEHOLDER ?? 'Organization name'}
 					required
+					id={orgNameId}
 				/>
 			</div>
 
 			<!-- Slug input -->
 			<div>
-				<label class="block text-sm font-medium mb-1"
+				<label class="block text-sm font-medium mb-1" for={orgSlugId}
 					>{localization?.ORGANIZATION_SLUG ?? 'Slug'}</label
 				>
 				<Input
@@ -138,6 +142,7 @@
 					bind:value={slug}
 					placeholder={localization?.ORGANIZATION_SLUG_PLACEHOLDER ?? 'organization-slug'}
 					required
+					id={orgSlugId}
 				/>
 				{#if slug && !validateSlug(slug)}
 					<div class="text-red-500 text-xs">

@@ -5,7 +5,7 @@
 	import { fade } from 'svelte/transition';
 	import { Skeleton } from '@/components/ui/skeleton';
 	import { Link } from '@/@svelte/components';
-	import { getEvents } from '@/trpc/routers/admin';
+	import { getEvents } from '@/remote/functions/admin';
 </script>
 
 <h1 class=" text-stone-950 text-3xl font-extrabold">{$_('admin-pages.dashboard.dashboard')}</h1>

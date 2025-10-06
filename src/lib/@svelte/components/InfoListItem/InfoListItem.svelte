@@ -5,23 +5,23 @@
 	import * as DropdownMenu from '@/components/ui/dropdown-menu';
 	import { _ } from '@services';
 
-	interface Props {
-		showButton?: boolean;
+	type Props = {
 		heading: string;
 		subHeading: string | undefined;
 		date: string | null;
-		buttonText: string;
-		onRegisterClick?: (() => void) | undefined;
 		onBuyOptionsClick?: (() => void) | undefined;
-	}
+	} & (
+		| { showButton: true; buttonText: string; onRegisterClick: () => void }
+		| { showButton: false; buttonText?: undefined; onRegisterClick?: undefined }
+	);
 
 	let {
-		showButton = true,
+		showButton,
 		heading,
 		subHeading,
 		date,
 		buttonText,
-		onRegisterClick = undefined,
+		onRegisterClick,
 		onBuyOptionsClick = undefined
 	}: Props = $props();
 </script>
@@ -36,9 +36,9 @@
 			</Button>
 			<DropdownMenu.Root>
 				<DropdownMenu.Trigger>
-					{#snippet child({props})}
+					{#snippet child({ props })}
 						<Button variant="ghost" size="icon" class="relative size-8 p-0" {...props}>
-							<span class="sr-only">{$_("common.open-menu")}</span>
+							<span class="sr-only">{$_('common.open-menu')}</span>
 							<Ellipsis class="size-4" />
 						</Button>
 					{/snippet}
@@ -47,7 +47,7 @@
 					<DropdownMenu.Group>
 						<DropdownMenu.Label>{heading}</DropdownMenu.Label>
 						<DropdownMenu.Item onclick={() => onBuyOptionsClick?.()}>
-							{$_("admin-pages.events.show-buy-options")}
+							{$_('admin-pages.events.show-buy-options')}
 						</DropdownMenu.Item>
 					</DropdownMenu.Group>
 				</DropdownMenu.Content>

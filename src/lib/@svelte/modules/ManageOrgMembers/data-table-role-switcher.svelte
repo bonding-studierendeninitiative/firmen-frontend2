@@ -3,8 +3,6 @@
 	import { Button } from '@/components/ui/button';
 	import * as Command from '@/components/ui/command';
 	import { Check, ChevronsUpDown } from '@lucide/svelte';
-	import { trpc } from '@/trpc/client';
-	import { page } from '$app/state';
 	import { _ } from '@services';
 	import { tick } from 'svelte';
 	import { cn } from '@/utils';
@@ -23,9 +21,6 @@
 	}
 
 	let { value = $bindable(), organizationId, userId, onChangeUserRole }: Props = $props();
-
-	const api = trpc(page);
-	const updateRole = api.orgMembers.updateRole.createMutation();
 
 	const roles = [
 		{
@@ -61,7 +56,7 @@
 		<Popover.Trigger>
 			{#snippet child({ props })}
 				<Button
-					disabled={$updateRole.isPending}
+					disabled={!!$effect.pending()}
 					{...props}
 					variant="outline"
 					role="combobox"

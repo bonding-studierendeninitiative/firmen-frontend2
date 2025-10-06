@@ -10,13 +10,22 @@
 	import { UploadAdvertisementRequest } from '@schema';
 	import { cn } from '@/utils';
 	import { Plus } from '@lucide/svelte';
+	import { uploadCatalogueData } from '@/remote/functions';
+	import type { RemoteQuery, RemoteQueryOverride } from '@sveltejs/kit';
 
 	interface Props {
 		open: boolean;
 		advertisementUploadForm: SuperValidated<Infer<UploadAdvertisementRequest>>;
+		onUpload?: (args: {
+			submit: () => Promise<void> & {
+				updates: (...queries: Array<RemoteQuery<any> | RemoteQueryOverride>) => Promise<void>;
+			};
+			form: HTMLFormElement;
+			data: FormData;
+		}) => Promise<void>;
 	}
 
-	let { open = $bindable(), advertisementUploadForm }: Props = $props();
+	let { open = $bindable(), advertisementUploadForm, onUpload }: Props = $props();
 
 	const superform = superForm(advertisementUploadForm, {
 		validators: valibotClient(UploadAdvertisementRequest),
@@ -43,10 +52,15 @@
 	</Dialog.Trigger>
 	<Dialog.Content>
 		<form
-			action="?/uploadAdvertisement"
+			{...uploadCatalogueData.enhance(async ({ submit, form, data }) => {
+				try {
+					await onUpload?.({ submit, form, data });
+					open = false;
+				} catch (error) {
+					console.error('Error uploading logo:', error);
+				}
+			})}
 			enctype="multipart/form-data"
-			method="post"
-			use:enhance
 			class="space-y-4"
 		>
 			<Dialog.Header class="space-y-4">

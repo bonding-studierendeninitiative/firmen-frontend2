@@ -15,7 +15,7 @@
 	import { _ } from '@services';
 	import { Switch } from '@/components/ui/switch';
 	import { Label } from '@/components/ui/label';
-	import { getOrgs, getOrgMembers } from '@/trpc/routers/admin';
+	import { getOrgs, getOrgMembers } from '@/remote/functions/admin';
 
 	let orgFilters = $state({
 		query: '',

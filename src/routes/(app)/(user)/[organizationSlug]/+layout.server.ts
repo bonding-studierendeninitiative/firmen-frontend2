@@ -1,12 +1,15 @@
 import { redirect } from '@sveltejs/kit';
 import { createLogger } from 'vite';
 import { PUBLIC_BONDING_ORG_ID } from '$env/static/public';
-import { createCaller } from '@/trpc/router';
+import { getDetails } from '@/remote/functions/organizations.remote.js';
 
 const logger = createLogger();
 
-export const load = async (event) => {
+export async function load(event) {
 	const { session, user } = await event.parent();
+	if (user?.banned) {
+		redirect(302, '/banned');
+	}
 	if (!session?.activeOrganizationId) {
 		redirect(302, '/select-org');
 	} else if (session?.activeOrganizationId === PUBLIC_BONDING_ORG_ID) {
@@ -23,10 +26,8 @@ export const load = async (event) => {
 
 	event.depends('organization');
 
-	const api = await createCaller(event);
-
-	const organization = await api.organizations.getDetails({
-		slug: event.params.organizationSlug
+	const organization = await getDetails({
+		slug: event.params.organizationSlug!
 	});
 
 	if (!organization) {
@@ -36,4 +37,4 @@ export const load = async (event) => {
 	return {
 		organization
 	};
-};
+}

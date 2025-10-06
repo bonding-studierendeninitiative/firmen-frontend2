@@ -5,7 +5,7 @@
 	import { toast } from 'svelte-sonner';
 	import { LoaderCircle } from '@lucide/svelte';
 	import { _ } from '@services';
-	import { createOrg } from '@/trpc/routers/admin';
+	import { createOrg } from '@/remote/functions/admin';
 
 	let request = $state({
 		name: '',

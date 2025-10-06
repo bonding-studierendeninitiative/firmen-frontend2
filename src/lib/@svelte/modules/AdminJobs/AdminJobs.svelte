@@ -5,7 +5,7 @@
 	import { ClipboardList, LoaderCircle } from '@lucide/svelte';
 	import { cn } from '@/utils';
 	import { buttonVariants } from '@/components/ui/button';
-	import { getJobs } from '@/trpc/routers/admin';
+	import { getJobs } from '@/remote/functions/admin';
 
 	let stateName: 'SUCCEEDED' | 'FAILED' | 'PROCESSING' | 'ENQUEUED' | 'SCHEDULED' | 'DELETED' =
 		$state('SUCCEEDED');

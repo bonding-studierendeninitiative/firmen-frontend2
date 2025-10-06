@@ -9,8 +9,7 @@
 		ReviewRegistrationDocumentDialog
 	} from '@/@svelte/modules';
 	import { Button } from '@/components/ui/button';
-	import { trpc } from '@/trpc/client';
-	import { page } from '$app/state';
+	import { generateThumbnailLink as getThumbnail } from '@/remote/functions/admin';
 	import type { RegistrationDocumentOutput } from '@api/client';
 	import { FileHistory } from '@/@svelte/modules';
 
@@ -20,28 +19,20 @@
 
 	let { logo }: Props = $props();
 
-	const download = trpc(page).catalogueData.generateDownloadLink.createQuery(
-		{
-			documentId: logo?.documentVersion?.document?.id ?? '',
-			organizationId: 'random'
-		},
-		{
-			enabled: !!logo?.documentVersion?.document?.id
-		}
-	);
+	import { generateDownloadLink as getDownload } from '@/remote/functions/admin';
+	const download = getDownload({
+		documentId: logo?.documentVersion?.document?.id ?? '',
+		organizationId: logo?.documentVersion?.document?.organizationId ?? ''
+	});
 
-	const thumbnail = trpc(page).catalogueData.generateThumbnailLink.createQuery(
-		{
-			documentId: logo?.documentVersion?.document?.id ?? '',
-			resolution: 'large'
-		},
-		{
-			enabled: logo?.documentVersion?.uploadStatus === 'COMPLETED'
-		}
-	);
+	const thumbnail = getThumbnail({
+		documentId: logo?.documentVersion?.document?.id ?? '',
+		organizationId: logo?.documentVersion?.document?.organizationId ?? '',
+		resolution: 'large'
+	});
 
 	function handleDownload() {
-		const url = $download.data;
+		const url = download.current;
 		if (url) {
 			const a = document.createElement('a');
 			a.href = url;
@@ -81,9 +72,9 @@
 				<div
 					class="aspect-video bg-gray-100 dark:bg-gray-700 rounded-md flex items-center justify-center overflow-hidden"
 				>
-					{#if $thumbnail.data}
+					{#if thumbnail.current}
 						<img
-							src={$thumbnail.data || '/placeholder.svg'}
+							src={thumbnail.current || '/placeholder.svg'}
 							alt={logo?.documentVersion?.document?.title}
 							class="object-contain size-full"
 						/>
@@ -98,9 +89,7 @@
 			</div>
 			<Dialog.Footer class="flex justify-end">
 				<ReviewRegistrationDocumentDialog document={logo} />
-				<Button disabled={$download.isPending} onclick={handleDownload}
-					>{$_('common.download')}
-				</Button>
+				<Button onclick={handleDownload}>{$_('common.download')}</Button>
 				<DeleteLogoDialog {logo} />
 			</Dialog.Footer>
 		{/if}

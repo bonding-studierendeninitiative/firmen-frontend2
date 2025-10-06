@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { _ } from '@services';
-	import type { AdminUsersOutput } from '@/trpc/client';
 	import { LocalizedDate, QueryDataTable } from '@/@svelte/components';
 	import DataTableActions from './data-table-actions.svelte';
 	import { Checkbox } from '@/components/ui/checkbox';
@@ -9,7 +8,7 @@
 	import * as Avatar from '@/components/ui/avatar';
 	import DataTableRoleSwitcher from './data-table-role-switcher.svelte';
 	import { ShieldBan } from '@lucide/svelte';
-	import type { UsersResponse } from '@/trpc/routers/admin';
+	import type { UsersResponse } from '@/remote/functions/admin';
 	import {
 		renderComponent,
 		renderSnippet
@@ -134,7 +133,7 @@
 	state
 }: {
 	column: { header: string; id: string };
-	state: Column<AdminUsersOutput['users'][0]>;
+	state: Column<UsersResponse['data'][0]>;
 })}
 	<DataTableSortToggle {column} {state} />
 {/snippet}

@@ -16,7 +16,7 @@
 		createBuyOptionForm,
 		deleteBuyOption,
 		getBuyOptions
-	} from '@/trpc/routers/admin';
+	} from '@/remote/functions/admin';
 
 	let { children } = $props();
 
@@ -85,10 +85,23 @@
 			<Button
 				onclick={async () => {
 					try {
+						console.log('Activating buy option', page.params.buyOptionId);
+
 						await activateBuyOption({
 							buyOptionId: page.params.buyOptionId!,
-							eventId: page.params.eventId!
-						});
+							eventId: page.params.id!
+						}).updates(
+							getBuyOptions(buyOptionsFilter).withOverride((data) => {
+								return {
+									...data,
+									buyOptions: data.buyOptions?.map((option) => ({
+										...option,
+										active: option.id === page.params.buyOptionId
+									}))
+								};
+							})
+						);
+						toast.success($_('modules.activate-buy-option.success'));
 					} catch (e) {
 						toast.error(e?.body?.message || $_('modules.activate-buy-option.error'));
 					}

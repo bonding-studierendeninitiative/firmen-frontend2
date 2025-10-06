@@ -1,33 +1,19 @@
 <script lang="ts">
-	import type { PageData } from './$types';
 	import { PortraitForm } from '@/@svelte/modules';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
-	import { trpc } from '@/trpc/client';
+	import { editPortraitTemplateForm } from '@/remote/functions';
 
-	interface Props {
-		data: PageData;
-	}
-
-	let { data }: Props = $props();
-
-	let [editFormQuery, resolveForm] = trpc(page).portraitTemplates.editForm.createQuery(
-		page.params.portraitTemplateId,
-		{
-			lazy: true
-		}
-	);
+	let editFormQuery = editPortraitTemplateForm(page.params.portraitTemplateId!);
 </script>
 
-{#await resolveForm(data.editForm) then editForm}
+{#if editFormQuery.ready}
 	<PortraitForm
-		validated={$editFormQuery.data}
+		validated={editFormQuery.current}
 		isOpen={true}
 		onDialogChange={() => {
-			console.log("Protrait closed in Page");
+			console.log('Protrait closed in Page');
 			goto('..');
 		}}
 	/>
-{:catch error}
-	<p>{error.message}</p>
-{/await}
+{/if}

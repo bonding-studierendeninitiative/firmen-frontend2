@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { page } from '$app/state';
 	import * as Dialog from '@/components/ui/dialog';
 	import * as RadioGroup from '@/components/ui/radio-group';
 	import { AdvertisementItem, NoDataFound } from '@/@svelte/components';
@@ -8,29 +7,25 @@
 	import { ScrollArea } from '@/components/ui/scroll-area';
 	import { Button } from '@/components/ui/form';
 	import { _ } from '@services';
-	import { trpc } from '@/trpc/client';
 	import { goto } from '$app/navigation';
-	import {toast} from 'svelte-sonner';
+	import { toast } from 'svelte-sonner';
+	import { getCatalogueByType } from '@/remote/functions';
 
 	interface Props {
 		open?: boolean;
 		id: string;
 		orgId: string;
+		onPick?: (eventRegistrationId: string, documentId: string, versionId: string) => Promise<void>;
 	}
 
-	let { open = $bindable(false), id, orgId }: Props = $props();
+	let { open = $bindable(false), id, orgId, onPick }: Props = $props();
 
 	let selectedAdvertisement = $state('');
-
-	const api = trpc(page);
-
-	const utils = api.createUtils();
-	let advertisements = api.catalogueData.getAll.createQuery({
-		cursor: "0",
-		limit: "10",
-		documentType: "advert"
+	let advertisementsQuery = getCatalogueByType({
+		cursor: '0',
+		limit: '10',
+		documentType: 'advert'
 	});
-	let pickAdvertisement = api.catalogueData.pickDocument.createMutation();
 </script>
 
 <Dialog.Root bind:open>
@@ -40,9 +35,9 @@
 			<Dialog.Description>{$_('modules.pick-advertisement-dialog.description')}</Dialog.Description>
 		</Dialog.Header>
 		<ScrollArea class="max-h-[70dvh]">
-			{#if $advertisements.isLoading}
+			{#if advertisementsQuery.loading}
 				<LoaderCircle class="size-10 mx-auto animate-spin" />
-			{:else if $advertisements.data?.documents?.length === 0}
+			{:else if advertisementsQuery.ready}
 				<NoDataFound
 					heading={$_('modules.pick-advertisement-dialog.no-data')}
 					subHeading={$_('modules.pick-advertisement-dialog.no-data-sub-heading')}
@@ -54,7 +49,7 @@
 					<div
 						class="grid grid-cols-1 gap-4 @sm/pick-advertisement:grid-cols-2 @xl/pick-advertisement:grid-cols-4"
 					>
-						{#each $advertisements.data?.documents ?? [] as advertisement}
+						{#each advertisementsQuery.current?.documents ?? [] as advertisement}
 							<Label
 								class="p-4 rounded-xl hover:bg-muted cursor-pointer [&:has([data-state=checked])]:bg-muted [&:has([data-state=checked])]:border [&:has([data-state=checked])]:border-dashed flex flex-col items-end gap-2"
 								for={'advertisement-' + advertisement.id}
@@ -78,25 +73,21 @@
 		</ScrollArea>
 		<Dialog.Footer>
 			<Button
-				disabled={!selectedAdvertisement || $pickAdvertisement.isPending}
+				disabled={!selectedAdvertisement || !!$effect.pending()}
 				onclick={() => {
-					$pickAdvertisement.mutate(
-						{
-							documentId: selectedAdvertisement,
-							eventRegistrationId: id,
-							versionId: $advertisements.data?.documents?.find(document => document.id === selectedAdvertisement)?.activeVersion?.versionId
-						},
-						{
-							onError(error, variables, context) {
-								toast.error(error.message);
-							},
-							async onSuccess(data, variables, context) {
-								open = false;
-								toast.success('Imageanzeige ausgewählt!');
-								await utils.eventRegistrations.forOrganization.invalidate();
-							}
-						}
-					);
+					onPick?.(
+						id,
+						selectedAdvertisement,
+						advertisementsQuery.current?.documents?.find((doc) => doc.id === selectedAdvertisement)
+							?.activeVersion?.versionId ?? ''
+					)
+						.then(() => {
+							toast.success($_('modules.pick-advertisement-dialog.success-toast'));
+							open = false;
+						})
+						.catch(() => {
+							toast.error($_('modules.pick-advertisement-dialog.error-toast'));
+						});
 				}}>{$_('common.select')}</Button
 			>
 		</Dialog.Footer>

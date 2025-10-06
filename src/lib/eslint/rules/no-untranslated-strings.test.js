@@ -1,6 +1,6 @@
 'use strict';
 
-import rule from './no-untranslated-strings';
+import rule from './no-untranslated-strings.mjs';
 
 import { RuleTester } from 'eslint';
 import parser from 'svelte-eslint-parser';

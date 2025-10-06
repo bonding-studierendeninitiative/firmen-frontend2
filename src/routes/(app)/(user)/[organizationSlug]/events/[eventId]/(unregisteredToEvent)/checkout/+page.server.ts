@@ -2,8 +2,8 @@ import { superValidate } from 'sveltekit-superforms';
 import { valibot } from 'sveltekit-superforms/adapters';
 import { fail } from '@sveltejs/kit';
 import { ConfirmEventRegistrationSchema, CreateEventRegistrationSchema } from '@schema';
-import { createCaller } from '@/trpc/router';
 import { RegisterOrganizationToEventInput } from '@api/client';
+import { registerOrganizationToEvent } from '@/remote/functions';
 
 export const load = async ({ parent, url, isDataRequest }) => {
 	const selectedPackage = url.searchParams.has('selectedPackage')
@@ -29,8 +29,8 @@ export const load = async ({ parent, url, isDataRequest }) => {
 		: [];
 
 	async function loadEventRegistrationData() {
-		const { initialState, organization, eventDetails } = await parent();
-		if (!initialState.sessionId) return;
+		const { session, organization, eventDetails } = await parent();
+		if (!session?.id) return;
 
 		const { event, buyOption } = await eventDetails;
 
@@ -38,7 +38,7 @@ export const load = async ({ parent, url, isDataRequest }) => {
 			{
 				eventId: event.id,
 				organizationId: organization.id,
-				contactPersonId: initialState.userId,
+				contactPersonId: session.userId,
 				packageId: selectedPackage,
 				selectedAddons,
 				selectedAddonPackages,
@@ -78,9 +78,7 @@ export const actions = {
 			return fail(400, { form });
 		}
 
-		const api = await createCaller(event);
-
-		await api.eventRegistrations.registerContactPersonToEvent(form.data);
+		await registerOrganizationToEvent(form.data);
 		return { form };
 	}
 };

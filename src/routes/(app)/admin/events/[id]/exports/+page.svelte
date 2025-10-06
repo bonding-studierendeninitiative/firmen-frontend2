@@ -17,7 +17,7 @@
 	import { cn } from '@/utils';
 	import { toast } from 'svelte-sonner';
 	import { queryParameters, ssp } from 'sveltekit-search-params';
-	import { deleteExport, generateDownloadLink, getAllExports } from '@/trpc/routers/admin';
+	import { deleteExport, generateDownloadLink, getAllExports } from '@/remote/functions/admin';
 	import type { ExportForEventOutput } from '@api/admin-client';
 
 	const params = queryParameters(
@@ -39,13 +39,11 @@
 	async function onDelete({ eventId, exportId }: { eventId: string; exportId: string }) {
 		try {
 			await deleteExport({ eventId, exportId }).updates(
-				getAllExports(exportFilters).withOverride(
-					(old: { exports: { id: string }[]; totalElements: any }) => ({
-						...old,
-						exports: old.exports?.filter((exp) => exp.id !== exportId),
-						totalElements: Number(old.totalElements) - 1
-					})
-				)
+				getAllExports(exportFilters).withOverride((old) => ({
+					...old,
+					exports: old.exports?.filter((exp) => exp.id !== exportId) ?? [],
+					totalElements: Number(old.totalElements) - 1
+				}))
 			);
 			toast.success('Der Export wurde gelöscht');
 		} catch (error) {

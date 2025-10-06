@@ -7,7 +7,7 @@
 	import { page } from '$app/state';
 	import { _ } from '@services';
 	import { goto } from '$app/navigation';
-	import { exportCatalogueData } from '@/trpc/routers/admin';
+	import { exportCatalogueData } from '@/remote/functions/admin';
 
 	interface Props {
 		selectedEventRegistrations: string[];

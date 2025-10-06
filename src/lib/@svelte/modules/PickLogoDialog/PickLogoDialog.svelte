@@ -8,28 +8,22 @@
 	import { Button } from '@/components/ui/form';
 	import { _ } from '@services';
 	import { goto } from '$app/navigation';
-	import { page } from '$app/state';
-	import { trpc } from '@/trpc/client';
-	import {toast} from 'svelte-sonner';
+	import { getCatalogueByType } from '@/remote/functions';
 
 	interface Props {
 		open?: boolean;
 		id: string;
 		orgId: string;
+		onPick?: (eventRegistrationId: string, documentId: string, versionId: string) => Promise<void>;
 	}
 
-	let { open = $bindable(false), id, orgId }: Props = $props();
+	let { open = $bindable(false), id, orgId, onPick }: Props = $props();
 
-	const api = trpc(page);
-
-	const utils = api.createUtils();
-
-	let logos = api.catalogueData.getAll.createQuery({
+	let logosQuery = getCatalogueByType({
 		limit: '10',
 		cursor: '0',
-		documentType: "logo"
+		documentType: 'logo'
 	});
-	let pickLogo = api.catalogueData.pickDocument.createMutation();
 
 	let selectedLogo = $state('');
 </script>
@@ -41,9 +35,9 @@
 			<Dialog.Description>{$_('modules.pick-logo-dialog.description')}</Dialog.Description>
 		</Dialog.Header>
 		<ScrollArea class="max-h-[65dvh]">
-			{#if $logos.isLoading}
+			{#if logosQuery.loading}
 				<LoaderCircle class="size-10 mx-auto animate-spin" />
-			{:else if $logos.data?.documents?.length === 0}
+			{:else if logosQuery.ready}
 				<NoDataFound
 					heading={$_('modules.pick-logo-dialog.no-data')}
 					subHeading={$_('modules.pick-logo-dialog.no-data-sub-heading')}
@@ -55,7 +49,7 @@
 					<div
 						class="grid grid-cols-1 gap-4 @sm/pick-logo:grid-cols-2 @lg/pick-logo:grid-cols-3 @4xl/pick-logo:grid-cols-4"
 					>
-						{#each $logos.data?.documents ?? [] as logo}
+						{#each logosQuery.current?.documents ?? [] as logo}
 							<Label
 								class="p-4 rounded-xl hover:bg-muted cursor-pointer border-transparent border [&:has([data-state=checked])]:bg-muted [&:has([data-state=checked])]:border-border flex flex-col items-end gap-2"
 								for={'logo-' + logo.id}
@@ -66,7 +60,11 @@
 								{:else}
 									<CircleDashed class="size-5 text-gray-500" />
 								{/if}
-								<LogoItem onViewDetails={async (logoId) => await goto(`/${orgId}/catalogue-data/logos/${logoId}`)} {logo} />
+								<LogoItem
+									onViewDetails={async (logoId) =>
+										await goto(`/${orgId}/catalogue-data/logos/${logoId}`)}
+									{logo}
+								/>
 							</Label>
 						{/each}
 					</div>
@@ -75,20 +73,13 @@
 		</ScrollArea>
 		<Dialog.Footer>
 			<Button
-				disabled={!selectedLogo || $pickLogo.isPending}
+				disabled={!selectedLogo || !!$effect.pending()}
 				onclick={() => {
-					$pickLogo.mutate(
-						{ documentId: selectedLogo, eventRegistrationId: id, versionId: $logos.data?.documents?.find(document => document.id === selectedLogo)?.activeVersion?.versionId },
-						{
-							onError(error, variables, context) {
-								toast.error(error.message);
-							},
-							async onSuccess(data, variables, context) {
-								open = false;
-								toast.success('Logo ausgewählt!');
-								await utils.eventRegistrations.forOrganization.invalidate();
-							}
-						}
+					onPick?.(
+						id,
+						selectedLogo,
+						logosQuery.current?.documents?.find((document) => document.id === selectedLogo)
+							?.activeVersion?.versionId!
 					);
 				}}>{$_('common.select')}</Button
 			>

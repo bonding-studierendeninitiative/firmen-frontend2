@@ -15,7 +15,7 @@ export function validateRequestSignature(event: RequestEvent) {
 
 	searchParams.sort(); // Ensure consistent order of parameters
 
-	const canonicalString = 'GET' + event.url.pathname + searchParams.toString();
+	const canonicalString = event.request.method + event.url.pathname + searchParams.toString();
 	const expectedSignature = createHmac('sha256', secret).update(canonicalString).digest('base64');
 
 	// console.log(`Canonical String: ${canonicalString}`);

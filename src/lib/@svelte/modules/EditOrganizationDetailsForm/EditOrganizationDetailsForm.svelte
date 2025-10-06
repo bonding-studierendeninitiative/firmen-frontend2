@@ -10,8 +10,6 @@
 	import { _ } from '@services';
 	import * as Card from '@/components/ui/card';
 	import { invalidate } from '$app/navigation';
-	import { page } from '$app/state';
-	import { trpc } from '@/trpc/client';
 
 	interface Props {
 		editOrganizationDetailsForm: SuperValidated<Infer<SetOrgDetailsRequest>>;
@@ -19,17 +17,15 @@
 
 	let { editOrganizationDetailsForm }: Props = $props();
 
-	let utils = trpc(page).createUtils();
-
 	const superform = superForm<Infer<SetOrgDetailsRequest>>(editOrganizationDetailsForm, {
 		validators: valibotClient(SetOrgDetailsRequestSchema),
 		dataType: 'json',
 		async onResult({ result }) {
 			if (result.type === 'success') {
 				toast.success($_('common.saved'));
-				await utils.organizations.getDetails.invalidate({
+				/*await utils.organizations.getDetails.invalidate({
 					slug: page.params.organizationSlug
-				});
+				});*/
 				await invalidate('organization');
 			} else if (result.type === 'error') {
 				toast.error(result.error.message);
@@ -40,6 +36,7 @@
 	const { form: formData, enhance, submitting } = superform;
 </script>
 
+<!-- TODO: Replace this with sveltekit remote form functions -->
 <form class="space-y-12" action="?/updateOrg" method="post" use:enhance>
 	<section class="grid gap-x-8 grid-cols-3 @container gap-y-8">
 		<div class="@3xl:col-span-1 col-span-3">

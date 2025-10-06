@@ -85,12 +85,12 @@ export const StatusType = v.object({
 
 export type Problem = v.InferOutput<typeof Problem>;
 export const Problem = v.object({
-  instance: v.optional(v.string()),
-  type: v.optional(v.string()),
-  parameters: v.optional(v.record(v.string(), v.unknown())),
   status: v.optional(StatusType),
   title: v.optional(v.string()),
   detail: v.optional(v.string()),
+  instance: v.optional(v.string()),
+  type: v.optional(v.string()),
+  parameters: v.optional(v.record(v.string(), v.unknown())),
 });
 
 export type AddonOutput = v.InferOutput<typeof AddonOutput>;
@@ -219,9 +219,9 @@ export const TimeoutHandler = v.unknown();
 export type AsyncResponse = v.InferOutput<typeof AsyncResponse>;
 export const AsyncResponse = v.object({
   suspended: v.optional(v.boolean()),
+  timeoutHandler: v.optional(TimeoutHandler),
   done: v.optional(v.boolean()),
   cancelled: v.optional(v.boolean()),
-  timeoutHandler: v.optional(TimeoutHandler),
 });
 
 export type ExportPortraitsEnqueuedResponse = v.InferOutput<typeof ExportPortraitsEnqueuedResponse>;
@@ -644,9 +644,9 @@ export const post_RestartJob = v.object({
     query: v.object({
       asyncResponse: v.object({
         suspended: v.optional(v.boolean()),
+        timeoutHandler: v.optional(TimeoutHandler),
         done: v.optional(v.boolean()),
         cancelled: v.optional(v.boolean()),
-        timeoutHandler: v.optional(TimeoutHandler),
       }),
     }),
     path: v.object({
@@ -665,9 +665,9 @@ export const post_ImportEvents = v.object({
     query: v.object({
       asyncResponse: v.object({
         suspended: v.optional(v.boolean()),
+        timeoutHandler: v.optional(TimeoutHandler),
         done: v.optional(v.boolean()),
         cancelled: v.optional(v.boolean()),
-        timeoutHandler: v.optional(TimeoutHandler),
       }),
     }),
   }),
@@ -1062,6 +1062,7 @@ type RequestFormat = "json" | "form-data" | "form-url" | "binary" | "text";
 export type DefaultEndpoint = {
   parameters?: EndpointParameters | undefined;
   response: unknown;
+  responseHeaders?: Record<string, unknown>;
 };
 
 export type Endpoint<TConfig extends DefaultEndpoint = DefaultEndpoint> = {
@@ -1076,6 +1077,7 @@ export type Endpoint<TConfig extends DefaultEndpoint = DefaultEndpoint> = {
     areParametersRequired: boolean;
   };
   response: TConfig["response"];
+  responseHeaders?: TConfig["responseHeaders"];
 };
 
 export type Fetcher = (method: Method, url: string, parameters?: EndpointParameters | undefined) => Promise<Response>;

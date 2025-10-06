@@ -2,103 +2,163 @@
 	import { Button } from '../ui/button';
 	import { Input } from '../ui/input';
 	import { Label } from '../ui/label';
-	import { Checkbox } from '../ui/checkbox';
+	import { Separator } from '../ui/separator';
 	import authClient from '@/auth-client';
-	import { Github } from '@lucide/svelte';
 	import { PUBLIC_APP_URL } from '$env/static/public';
+	import { GithubIcon, LinkedinIcon, MicrosoftEntraIcon } from '@/@svelte/icons';
+	import { _ } from '@services';
 
 	interface Props {
 		className?: string;
 		classNames?: any;
-		localization?: any;
 		redirectTo?: string;
 		isSubmitting?: boolean;
 	}
 
-	let {
-		className = '',
-		classNames = {},
-		localization = {},
-		redirectTo = '',
-		isSubmitting = false
-	}: Props = $props();
+	let { className = '', classNames = {}, redirectTo = '', isSubmitting = false }: Props = $props();
 
 	let email = $state('');
 	let rememberMe = $state(false);
 	let error: string | null = $state(null);
+	let emailSent = $state(false);
+	let showAdmin = $state(false);
 
-	async function handleSubmit(e: Event) {
-		e.preventDefault();
+	async function handleMagicLink() {
 		error = null;
 		if (!email) {
-			error = localization?.FIELDS_REQUIRED ?? 'Email is required';
+			error = $_('auth.signIn.fieldsRequired');
 			return;
 		}
 
-		if (email.includes('@bonding.de')) {
-			const res = await authClient.signIn.sso({
-				email,
-				providerId: 'entra',
-				callbackURL: `${PUBLIC_APP_URL}/dashboard`
-			});
-		} else {
+		try {
+			isSubmitting = true;
 			const res = await authClient.signIn.magicLink({
 				email,
-				callbackURL: `${PUBLIC_APP_URL}/dashboard`
+				callbackURL: `${PUBLIC_APP_URL}${redirectTo || '/dashboard'}`
 			});
+			emailSent = true;
+		} catch (err) {
+			error = 'Failed to send magic link';
+		} finally {
+			isSubmitting = false;
 		}
+	}
+
+	async function handleSSO(provider: 'entra' | 'github' | 'linkedin') {
+		try {
+			isSubmitting = true;
+			const res = await authClient.signIn.social({
+				provider,
+				callbackURL: `${PUBLIC_APP_URL}${redirectTo || '/dashboard'}`
+			});
+		} catch (err) {
+			error = `Failed to sign in with ${provider}`;
+		} finally {
+			isSubmitting = false;
+		}
+	}
+
+	function resetEmail() {
+		emailSent = false;
+		email = '';
 	}
 </script>
 
-<form onsubmit={handleSubmit} class={`grid w-full gap-6 ${className} ${classNames?.base ?? ''}`}>
-	{#if error}
-		<div class="text-red-500 text-sm">{error}</div>
-	{/if}
+<form class={`grid w-full gap-6 ${className} ${classNames?.base ?? ''}`}>
+	{#if emailSent}
+		<div class="text-center space-y-4">
+			<div class="text-green-600 text-lg font-semibold">
+				{$_('auth.signIn.emailSent')}
+			</div>
+			<p class="text-sm text-muted-foreground">
+				{$_('auth.signIn.emailSentMessage', { values: { email } })}
+			</p>
+			<Button variant="outline" onclick={resetEmail} class="w-full">
+				{$_('auth.signIn.changeEmail')}
+			</Button>
+		</div>
+	{:else if showAdmin}
+		<!-- Admin sign in options -->
+		<Button
+			type="button"
+			variant="secondary"
+			class={`w-full ${classNames?.button ?? ''}`}
+			onclick={() => handleSSO('entra')}
+		>
+			<MicrosoftEntraIcon class="mr-2" />
+			{$_('auth.signIn.signInWithMicrosoft')}
+		</Button>
+		<Button
+			type="button"
+			variant="secondary"
+			class={`w-full ${classNames?.button ?? ''}`}
+			onclick={() => handleSSO('github')}
+		>
+			<GithubIcon class="mr-2" />
+			{$_('auth.signIn.signInWithGithub')}
+		</Button>
+		<Button variant="link" onclick={() => (showAdmin = false)} class="text-sm">
+			{$_('auth.signIn.backToRegular')}
+		</Button>
+	{:else}
+		<!-- Regular user sign in -->
+		<Button
+			type="button"
+			variant="secondary"
+			class={`w-full ${classNames?.button ?? ''}`}
+			onclick={() => handleSSO('linkedin')}
+		>
+			<LinkedinIcon class="mr-2" />
+			{$_('auth.signIn.signInWithLinkedin')}
+		</Button>
 
-	<!-- Email/Username input -->
-	<div class="grid gap-2">
-		<Label for="email">{localization?.EMAIL ?? 'Email'}</Label>
-		<Input
-			id="email"
-			type="email"
-			required
-			name="email"
-			bind:value={email}
-			placeholder={localization?.EMAIL_PLACEHOLDER ?? 'Enter your email'}
+		<div class="relative">
+			<div class="absolute inset-0 flex items-center">
+				<Separator class="w-full" />
+			</div>
+			<div class="relative flex justify-center text-xs uppercase">
+				<span class="bg-background px-2 text-muted-foreground">
+					{$_('auth.signIn.or')}
+				</span>
+			</div>
+		</div>
+
+		<!-- Email/Username input -->
+		<div class="grid gap-2">
+			<Label for="email">{$_('auth.signIn.email')}</Label>
+			<Input
+				id="email"
+				type="email"
+				required
+				name="email"
+				bind:value={email}
+				placeholder={$_('auth.signIn.emailPlaceholder')}
+				disabled={isSubmitting}
+				class={classNames?.input ?? ''}
+			/>
+			{#if error}
+				<div class="text-red-500 text-sm">{error}</div>
+			{/if}
+		</div>
+
+		<!-- Remember me checkbox 
+		<div class="flex items-center space-x-2">
+			<Checkbox id="remember" bind:checked={rememberMe} disabled={isSubmitting} />
+			<Label for="remember" class="text-sm">{localization?.REMEMBER_ME ?? 'Remember me'}</Label>
+		</div>-->
+
+		<Button
+			type="button"
+			variant="default"
+			class={`w-full ${classNames?.button ?? ''}`}
+			onclick={handleMagicLink}
 			disabled={isSubmitting}
-			class={classNames?.input ?? ''}
-		/>
-	</div>
+		>
+			{isSubmitting ? $_('auth.signIn.sending') : $_('auth.signIn.sendMagicLink')}
+		</Button>
 
-	<!-- Remember me checkbox -->
-	<div class="flex items-center space-x-2">
-		<Checkbox id="remember" bind:checked={rememberMe} disabled={isSubmitting} />
-		<Label for="remember" class="text-sm">{localization?.REMEMBER_ME ?? 'Remember me'}</Label>
-	</div>
-
-	<!-- Submit button -->
-	<Button type="submit" disabled={isSubmitting} class={`w-full ${classNames?.button ?? ''}`}>
-		{isSubmitting
-			? (localization?.SIGNING_IN ?? 'Signing in...')
-			: (localization?.SIGN_IN_ACTION ?? 'Sign in')}
-	</Button>
-
-	<Button
-		type="button"
-		variant="secondary"
-		class={`w-full ${classNames?.button ?? ''}`}
-		onclick={async () => {
-			// Handle forgot password logic here
-			await authClient.signIn.social({
-				provider: 'github'
-			});
-		}}
-	>
-		<Github class="mr-2" />
-		{localization?.SIGN_IN_WITH_GITHUB ?? 'Sign in with GitHub'}
-	</Button>
+		<Button variant="link" onclick={() => (showAdmin = true)} class="text-sm">
+			{$_('auth.signIn.adminSignIn')}
+		</Button>
+	{/if}
 </form>
-
-<style>
-	/* Add any scoped styles here if needed */
-</style>

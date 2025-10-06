@@ -12,7 +12,7 @@
 	import { _ } from '@services';
 	import { Label } from '@/components/ui/label';
 	import LegacyOrgDetailsCard from './legacy-org-details-card.svelte';
-	import { getLegacyOrgs, importLegacyOrg } from '@/trpc/routers/admin';
+	import { getLegacyOrgs, importLegacyOrg } from '@/remote/functions/admin';
 
 	let orgFilters = $state({
 		query: '',
@@ -109,7 +109,7 @@
 													<Command.Item
 														value={organization.id}
 														onSelect={() => {
-															handleOrgSelect(organization.id);
+															handleOrgSelect(organization.id!);
 														}}
 													>
 														<Check

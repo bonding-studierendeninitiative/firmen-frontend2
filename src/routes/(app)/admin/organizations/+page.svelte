@@ -5,7 +5,7 @@
 	import OrganizationsDataTable from './organizations-data-table.svelte';
 	import ImportLegacyOrgDialog from './import-legacy-org-dialog.svelte';
 	import { fade } from 'svelte/transition';
-	import { getOrgs } from '@/trpc/routers/admin';
+	import { getOrgs } from '@/remote/functions/admin';
 	import { queryParameters, ssp } from 'sveltekit-search-params';
 	import SuperDebug from 'sveltekit-superforms';
 

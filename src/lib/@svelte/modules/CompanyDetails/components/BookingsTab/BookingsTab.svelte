@@ -17,8 +17,11 @@
 			{#each eventRegistrations as { event: { name, location, dateFrom }, id } (id)}
 				<InfoListItem heading={name} subHeading={location} date={dateFrom} showButton={false} />
 			{/each}
-		{:else }
-			<NoDataFound heading={$_("admin-pages.organizations.eventRegistrations.none-found")} />
+		{:else}
+			<NoDataFound
+				onButtonClick={() => {}}
+				heading={$_('admin-pages.organizations.eventRegistrations.none-found')}
+			/>
 		{/if}
 	</div>
 </section>

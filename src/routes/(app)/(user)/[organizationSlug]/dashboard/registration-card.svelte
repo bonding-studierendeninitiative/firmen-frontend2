@@ -1,5 +1,5 @@
 <script lang="ts" module>
-	import type { EventRegistrationsForOrganizationOutput } from '@/trpc/client';
+	import { type EventRegistrationsOutput } from '@/remote/functions';
 	import { tv } from 'tailwind-variants';
 
 	import {
@@ -15,12 +15,12 @@
 	} from '@lucide/svelte';
 
 	interface Props {
-		registration: EventRegistrationsForOrganizationOutput['eventRegistrations'][number];
+		registration: EventRegistrationsOutput['eventRegistrations'][number];
 	}
 
 	// Calculate the completion percentage for catalogue data
 	function calculateCatalogueCompletion(
-		data: EventRegistrationsForOrganizationOutput['eventRegistrations'][number]
+		data: EventRegistrationsOutput['eventRegistrations'][number]
 	): number {
 		function getSingleCompletion(status: string): number {
 			switch (status) {
@@ -120,6 +120,7 @@
 	import QueryWrappedViewLogoDialog from '@/@svelte/modules/ViewLogoDialog/QueryWrappedViewLogoDialog.svelte';
 	import RegistrationDocumentPreview from './registration-document-preview.svelte';
 	import RegistrationDocumentMissing from './registration-document-missing.svelte';
+	import { forOrganization as getEventRegistrations } from '@/remote/functions';
 
 	let isAddonsOpen = $state(false);
 
@@ -167,6 +168,23 @@
 		id={registration.id ?? ''}
 		orgId={registration.organizationId ?? ''}
 		bind:open={submitPortraitOpen}
+		onSubmitPortrait={async ({ submit }) => {
+			await submit().updates(
+				getEventRegistrations({
+					orgId: registration.organizationId ?? '',
+					cursor: 0,
+					limit: 10
+				}).withOverride((prev) => {
+					return {
+						...prev,
+						eventRegistrations: (prev.eventRegistrations ?? []).map((er) =>
+							er.id === registration.id ? { ...er, portraitStatus: 'submitted' } : er
+						)
+					};
+				})
+			);
+			submitPortraitOpen = false;
+		}}
 	/>
 	<CardHeader class="pb-2">
 		<div class="flex justify-between items-start">

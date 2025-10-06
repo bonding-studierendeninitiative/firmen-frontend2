@@ -1,15 +1,15 @@
 <script lang="ts">
-    import { _ } from "@services";
-	import type { DetailedDocumentVersionOutput } from "@api/client";
-	import { LocalizedDate } from "@/@svelte/components";
-	import { getHumanReadableFileSize } from "@/utils";
-    import type { HTMLAttributes } from "svelte/elements";
+	import { _ } from '@services';
+	import type { DetailedDocumentVersionOutput, SimpleDocumentVersionOutput } from '@api/client';
+	import { LocalizedDate } from '@/@svelte/components';
+	import { getHumanReadableFileSize } from '@/utils';
+	import type { HTMLAttributes } from 'svelte/elements';
 
-    interface Props {
-        documentVersion: DetailedDocumentVersionOutput;
-    } 
+	interface Props {
+		documentVersion: SimpleDocumentVersionOutput;
+	}
 
-    let { documentVersion, ...rest }: Props & HTMLAttributes<HTMLDivElement> = $props();
+	let { documentVersion, ...rest }: Props & HTMLAttributes<HTMLDivElement> = $props();
 </script>
 
 <div {...rest}>

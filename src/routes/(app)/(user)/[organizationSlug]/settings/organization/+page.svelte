@@ -2,38 +2,25 @@
 	import { EditOrganizationDetailsForm, ManageOrgMembers } from '@/@svelte/modules';
 	import { LoaderCircle } from '@lucide/svelte';
 	import { fade } from 'svelte/transition';
-	import { trpc } from '@/trpc/client';
-	import { derived } from 'svelte/store';
-	import { page } from '$app/state';
 	import authClient from '@/auth-client';
 	import { _ } from '@services/i18n';
-	import * as Card from '@/components/ui/card';
 	import { DeleteOrganizationCard, LeaveOrganizationCard } from '@/components/organization';
 
 	let { data } = $props();
 
-	let api = trpc(page);
+	// TODO: Switch to remote function and page level callbacks instead of using data from the load function & trpc
 
-	let utils = api.createUtils();
+	import { getAll as getAllOrgMembers } from '@/remote/functions/orgMembers.remote.js';
+	import { editOrganizationDetailsForm } from '@/remote/functions/organizations.remote.js';
 
-	let membersQuery = api.orgMembers.getAll.createQuery(
-		{
-			offset: '0',
-			limit: '10',
-			sortBy: 'createdAt',
-			sortDirection: 'desc'
-		},
-		{
-			initialData: data.orgMembers,
-			staleTime: 0
-		}
-	);
-
-	let memberResponse = derived(membersQuery, ($membersQuery) => {
-		if ($membersQuery.isLoading) return [];
-		if ($membersQuery.isError) return [];
-		return $membersQuery.data?.members || [];
+	let membersResponse = getAllOrgMembers({
+		offset: '0',
+		limit: '10',
+		sortBy: 'createdAt',
+		sortDirection: 'desc'
 	});
+
+	let editOrganizationDetailsFormQuery = editOrganizationDetailsForm();
 </script>
 
 <div in:fade class="space-y-8">
@@ -48,18 +35,13 @@
 		</div>
 		<ManageOrgMembers
 			organizationId={data.organization?.id || ''}
-			{memberResponse}
+			membersResponse={membersResponse.current}
 			onChangeUserRole={async (userId, role, organizationId) => {
 				await authClient.organization.updateMemberRole(
 					{ memberId: userId, role, organizationId },
 					{
 						onSuccess: () => {
-							utils.orgMembers.getAll.invalidate({
-								offset: '0',
-								limit: '10',
-								sortBy: 'createdAt',
-								sortDirection: 'desc'
-							});
+							membersResponse.refresh();
 						},
 						onError: (error) => {
 							console.error('Failed to update user role:', error);
@@ -69,13 +51,13 @@
 			}}
 		/>
 	</section>
-	{#await data.editOrganizationDetailsForm}
+	{#if editOrganizationDetailsFormQuery.loading}
 		<LoaderCircle class="size-10 mx-auto animate-spin" />
-	{:then editOrganizationDetailsForm}
-		<EditOrganizationDetailsForm {editOrganizationDetailsForm} />
-	{:catch error}
-		<p>{error}</p>
-	{/await}
+	{:else if editOrganizationDetailsFormQuery.ready}
+		<EditOrganizationDetailsForm
+			editOrganizationDetailsForm={editOrganizationDetailsFormQuery.current}
+		/>
+	{/if}
 	<LeaveOrganizationCard
 		className="w-full"
 		classNames={{}}

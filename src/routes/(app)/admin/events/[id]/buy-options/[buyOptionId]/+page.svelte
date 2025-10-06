@@ -10,13 +10,13 @@
 		createAddonPackageForm,
 		deleteAddonPackage,
 		getAddonPackages,
-		getBuyOption,
 		updateBuyOption,
 		updateBuyOptionForm
-	} from '@/trpc/routers/admin';
+	} from '@/remote/functions/admin';
 	import { page } from '$app/state';
 	import { toast } from 'svelte-sonner';
 	import { goto } from '$app/navigation';
+	import { Button } from '@/components/ui/button';
 
 	let addonPackageFilter = $derived({
 		eventId: page.params.id!,
@@ -24,35 +24,45 @@
 		page: 0,
 		limit: 6
 	});
+
+	let createAddonPackageFormQuery = $derived(createAddonPackageForm(addonPackageFilter));
+	let updateBuyOptionFormQuery = $derived(updateBuyOptionForm(addonPackageFilter));
+	let getAddonPackagesQuery = $derived(getAddonPackages(addonPackageFilter));
 </script>
 
 <div class="flex flex-col gap-y-2 justify-center @container p-6 rounded-xl border">
-	{#if updateBuyOptionForm(addonPackageFilter).loading}
+	{#if updateBuyOptionFormQuery.loading}
 		<LoaderCircle class="size-12 animate-spin mx-auto" />
-	{:else if updateBuyOptionForm(addonPackageFilter).ready}
+	{:else if updateBuyOptionFormQuery.ready}
 		<EditBuyOptionsV2
-			form={updateBuyOptionForm(addonPackageFilter).current!}
-			onUpdateBuyOption={async ({ submit }) => {
-				await submit().updates(getBuyOption(addonPackageFilter));
+			form={updateBuyOptionFormQuery.current!}
+			onUpdateBuyOption={async (input) => {
+				try {
+					await updateBuyOption(input).updates(updateBuyOptionFormQuery);
+					toast.success($_('admin-pages.events.buy-options.update.success'));
+				} catch (error) {
+					toast.error($_('admin-pages.events.buy-options.update.error'));
+					console.error(error);
+				}
 			}}
 		/>
 	{/if}
 	<Separator class="-mx-6 w-auto" />
 	<div class="py-6 space-y-6 w-full">
 		<h3 class="font-semibold text-lg">{$_('admin-pages.events.buy-options.addons')}</h3>
-		{#if getAddonPackages(addonPackageFilter).loading}
+		{#if getAddonPackagesQuery.loading}
 			<LoaderCircle class="size-12 animate-spin mx-auto" />
-		{:else if getAddonPackages(addonPackageFilter).ready}
-			{#if Number(getAddonPackages(addonPackageFilter).current?.addonPackages?.length) > 0}
+		{:else if getAddonPackagesQuery.ready}
+			{#if Number(getAddonPackagesQuery.current?.addonPackages?.length) > 0}
 				<div class="grid grid-cols-1 @2xl:grid-cols-2 @4xl:grid-cols-3 gap-4 w-full">
-					{#each getAddonPackages(addonPackageFilter).current?.addonPackages ?? [] as addonPackage (addonPackage.id)}
+					{#each getAddonPackagesQuery.current?.addonPackages ?? [] as addonPackage (addonPackage.id)}
 						<AddonPackage
 							{addonPackage}
 							onDelete={async () => {
 								await deleteAddonPackage({
 									addonPackageId: addonPackage.id
 								}).updates(
-									getAddonPackages(addonPackageFilter).withOverride((prev) => {
+									getAddonPackagesQuery.withOverride((prev) => {
 										return {
 											...prev,
 											addonPackages: prev.addonPackages?.filter((ap) => ap.id !== addonPackage.id),
@@ -68,38 +78,55 @@
 				<p>{$_('admin-pages.events.buy-options.no-addon-packages')}</p>
 			{/if}
 		{/if}
-		{#if createAddonPackageForm(addonPackageFilter).loading}
-			<LoaderCircle class="size-12 animate-spin mx-auto" />
-		{:else if createAddonPackageForm(addonPackageFilter).ready}
+		<svelte:boundary
+			onerror={(e) => {
+				toast.error(e?.message);
+				console.error(e);
+			}}
+		>
+			{#snippet failed(error, reset)}
+				<Button variant="outline" onclick={reset} class="mx-auto">
+					{$_('common.retry')}
+				</Button>
+			{/snippet}
 			<CreateAddonPackage
-				createAddonPackageForm={createAddonPackageForm(addonPackageFilter).current!}
 				onCreateAddonPackage={async ({ submit, form, data }) => {
 					await submit().updates(
-						getAddonPackages(addonPackageFilter).withOverride((prev) => {
+						getAddonPackagesQuery.withOverride((prev) => {
 							return {
 								...prev,
 								addonPackages: [
-									createAddonPackage.result?.data?.savedAddonPackage!,
+									{
+										...data.addonPackage,
+										id: 'temp-id',
+										purchasable: data.addonPackage.purchasable === 'true' ? true : false,
+										price:
+											data.addonPackage.purchasable === 'true'
+												? Number(data.addonPackage.price)
+												: 0,
+										addons: data.addonPackage.addons?.map((addon) => ({
+											...addon,
+											id: 'temp-id-' + Math.random().toString(36).substring(2, 15),
+											price: Number(addon.price)
+										}))
+									},
 									...(prev.addonPackages ?? [])
 								],
 								totalElements: Number(prev.totalElements) + 1
 							};
 						})
 					);
-					const result = createAddonPackage.result;
-					if (result?.success !== undefined && result.success && result?.data !== undefined) {
-						toast.success($_('modules.create-buy-option.success'));
-						await goto(
-							`/admin/events/${page.params.id!}/buy-options/${result.data.savedAddonPackage?.id}`
-						);
-						form.reset();
-						await createAddonPackageForm(addonPackageFilter).refresh();
-					} else {
-						toast.error($_('modules.create-buy-option.error'));
-						throw new Error('Could not create buy option');
-					}
+					/*const result = createAddonPackage.result;
+						if (result?.data !== undefined) {
+							toast.success($_('modules.create-buy-option.success'));
+							form.reset();
+						} else {
+							toast.error($_('modules.create-buy-option.error'));
+							console.error(result);
+							throw new Error('Could not create addon package');
+						}*/
 				}}
 			/>
-		{/if}
+		</svelte:boundary>
 	</div>
 </div>

@@ -7,7 +7,6 @@
 	let { data } = $props();
 </script>
 
-
 <main class="container mt-8">
 	<Card.Root>
 		<Card.Header>
@@ -15,9 +14,12 @@
 			<Card.Description>{$_('user-pages.contactPersons.signUp.description')}</Card.Description>
 		</Card.Header>
 		<Card.Content>
-			<UpdateUserDetails validated={data.form} />
+			<UpdateUserDetails
+				validated={data.form}
+				onUpdate={({}) => {
+					// Handle the updated data
+				}}
+			/>
 		</Card.Content>
 	</Card.Root>
-
 </main>
-

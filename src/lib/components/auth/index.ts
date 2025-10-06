@@ -32,7 +32,6 @@ export { default as PasskeySignInCard } from './PasskeySignInCard.svelte';
 export { default as ChangePasswordDialog } from './ChangePasswordDialog.svelte';
 // export { default as AccountSwitcher } from './AccountSwitcher.svelte';
 export { default as TwoFactorSetup } from './TwoFactorSetup.svelte';
-export { default as PasskeyManager } from './PasskeyManager.svelte';
 export { default as SessionManager } from './SessionManager.svelte';
 
 // Organization components

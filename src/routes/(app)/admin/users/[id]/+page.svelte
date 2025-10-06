@@ -7,28 +7,29 @@
 	import * as Table from '@/components/ui/table';
 	import { Button } from '@/components/ui/button';
 	import authClient from '@/auth-client';
-	import { invalidate } from '$app/navigation';
 	import BanUserDialog from '@/components/auth/admin/ban-user-dialog.svelte';
 	import { page } from '$app/state';
 	import UserOrgsDataTable from './user-orgs-data-table.svelte';
 	import { fade } from 'svelte/transition';
 	import SessionRow from './session-row.svelte';
 	import { toast } from 'svelte-sonner';
-	import { getOrgMemberships, getUser, updateRole } from '@/trpc/routers/admin';
+	import { getOrgMemberships, getUser, updateRole } from '@/remote/functions/admin';
 
-	let user = $derived(await getUser(page.params.id!));
+	let userQuery = $derived(getUser(page.params.id!));
 
 	let abc = $derived(
 		authClient.admin.listUserSessions({
-			userId: user?.id
+			userId: userQuery.current?.id!
 		})
 	);
 
 	function refetchSessions() {
 		abc = authClient.admin.listUserSessions({
-			userId: user?.id
+			userId: userQuery.current?.id!
 		});
 	}
+
+	let unbanLoading = $state(false);
 
 	function onChangeUserRole(
 		orgId: string,
@@ -64,13 +65,13 @@
 	<div>
 		<Link href="/admin/users">{$_('admin-pages.users.back-to-overview')}</Link>
 	</div>
-	{#if user}
+	{#if userQuery.ready}
 		<header class="bg-card shadow border shadow-card p-4 rounded-lg border-card">
 			<div class="flex gap-4 items-center">
 				<Avatar.Root class="size-20">
-					<Avatar.Image src={user.image} alt={user.name} />
+					<Avatar.Image src={userQuery.current?.image} alt={userQuery.current?.name} />
 					<Avatar.Fallback class="text-3xl font-medium"
-						>{user.name
+						>{userQuery.current?.name
 							?.split(' ')
 							.slice(0, 2)
 							.map((word) => word.charAt(0))
@@ -79,50 +80,55 @@
 				</Avatar.Root>
 				<div class="flex flex-col">
 					<h1 class=" text-stone-950 text-3xl font-extrabold">
-						{user.name}
+						{userQuery.current?.name}
 					</h1>
-					<p class="text-sm">{user.email}</p>
+					<p class="text-sm">{userQuery.current?.email}</p>
 					<div class="text-sm flex gap-2 mt-4">
-						{#if user.role}
+						{#if userQuery.current?.role}
 							<p>
-								{$_('admin-pages.users.roles.label')}: {$_(`admin-pages.users.roles.${user.role}`)}
+								{$_('admin-pages.users.roles.label')}: {$_(
+									`admin-pages.users.roles.${userQuery.current?.role}`
+								)}
 							</p>
 							<span class="font-bold">&middot;</span>
 						{/if}
 						<p class=" text-gray-700">
-							Joined on {new Date(user.createdAt).toLocaleDateString()}
+							Joined on {new Date(userQuery.current?.createdAt!).toLocaleDateString()}
 						</p>
 					</div>
 				</div>
 				<div class="grow"></div>
-				{#if !user.banned}
-					<BanUserDialog {user} />
+				{#if !userQuery.current?.banned}
+					<BanUserDialog user={userQuery.current} />
 				{/if}
 			</div>
 		</header>
-		{#if user.banned}
+		{#if userQuery.current?.banned}
 			<Alert.Root class="bg-destructive w-auto min-w-[30ch] text-destructive-foreground">
 				<TriangleAlert class="size-5 text-current!" />
 				<Alert.Title>{$_('admin-pages.users.overview.banned')}</Alert.Title>
 				<Alert.Description>
-					{#if user.banReason}
+					{#if userQuery.current?.banReason}
 						<br />
-						{$_('admin-pages.users.overview.banReason')}: {user.banReason}
+						{$_('admin-pages.users.overview.banReason')}: {userQuery.current?.banReason}
 					{/if}
-					{#if user.banExpires}
+					{#if userQuery.current?.banExpires}
 						<br />
 						{$_('admin-pages.users.overview.banExpires')}: {new Date(
-							user.banExpires
+							userQuery.current?.banExpires
 						).toLocaleDateString()}
 					{/if}
 					<div class="pt-4">
 						<Button
 							variant="ghost"
+							disabled={unbanLoading}
 							onclick={async () => {
+								unbanLoading = true;
 								await authClient.admin.unbanUser({
-									userId: user?.id
+									userId: userQuery.current?.id
 								});
-								await invalidate('trpc:admin.users.getDetails');
+								unbanLoading = false;
+								userQuery.refresh();
 							}}>Unban User</Button
 						>
 					</div>
@@ -196,7 +202,7 @@
 						toast.promise(
 							authClient.admin
 								.revokeUserSessions({
-									userId: user?.id
+									userId: userQuery.current?.id
 								})
 								.then(() => {
 									refetchSessions();
@@ -211,7 +217,7 @@
 			</div>
 		{:catch error}
 			<p class="text-red-500">
-				{$_('admin-pages.users.sessions.error', { error: error.message })}
+				{$_('admin-pages.users.sessions.error', { values: { error: error.message } })}
 			</p>
 		{/await}
 	</section>

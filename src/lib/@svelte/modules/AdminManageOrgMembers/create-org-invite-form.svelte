@@ -34,6 +34,7 @@
 	let { form: formData, enhance, submitting } = superform;
 </script>
 
+<!-- TODO: Replace with sveltekit remote form function -->
 <form action="?/createInvite" method="POST" use:enhance>
 	<div class=" flex flex-col gap-1">
 		<Field form={superform} name="userMail">
@@ -60,9 +61,7 @@
 			>
 			{#if $submitting}
 				<Button disabled>
-					<LoaderCircle class="mr-2 size-4 animate-spin" />{$_(
-						'modules.manage-org-members.invite'
-					)}
+					<LoaderCircle class="mr-2 size-4 animate-spin" />{$_('modules.manage-org-members.invite')}
 				</Button>
 			{:else}
 				<Button type="submit">{$_('modules.manage-org-members.invite')}</Button>

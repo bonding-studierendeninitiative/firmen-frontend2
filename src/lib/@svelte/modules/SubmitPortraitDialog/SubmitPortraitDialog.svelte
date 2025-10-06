@@ -1,22 +1,27 @@
 <script lang="ts">
 	import * as Dialog from '@/components/ui/dialog';
 	import { _ } from '@services';
-	import { page } from '$app/state';
-	import { trpc } from '@/trpc/client';
 	import SubmitPortraitForm from './SubmitPortraitForm.svelte';
-	import { ScrollArea } from '@/components/ui/scroll-area';
+	import { submitPortraitForm } from '@/remote/functions';
+	import type { RemoteQuery, RemoteQueryOverride } from '@sveltejs/kit';
 
 	let {
 		open = $bindable(false),
 		id,
-		orgId
-	}: { open: boolean; id: string; orgId: string } = $props();
-
-	const api = trpc(page);
-
-	let submitFormQuery = api.eventRegistrations.submitPortraitForm.createQuery({
-		eventRegistrationId: id
-	});
+		orgId,
+		onSubmitPortrait
+	}: {
+		open: boolean;
+		id: string;
+		orgId: string;
+		onSubmitPortrait?: (args: {
+			submit: () => Promise<void> & {
+				updates: (...queries: Array<RemoteQuery<any> | RemoteQueryOverride>) => Promise<void>;
+			};
+			form: HTMLFormElement;
+			data: FormData;
+		}) => Promise<void>;
+	} = $props();
 </script>
 
 <Dialog.Root bind:open>
@@ -26,8 +31,13 @@
 			<Dialog.Description>{$_('modules.submit-portrait-dialog.description')}</Dialog.Description>
 		</Dialog.Header>
 
-		{#if $submitFormQuery.data}
-				<SubmitPortraitForm {id} {orgId} submitPortraitForm={$submitFormQuery.data} />
+		{#if submitPortraitForm({ eventRegistrationId: id }).ready}
+			<SubmitPortraitForm
+				{id}
+				{orgId}
+				submitPortraitForm={submitPortraitForm({ eventRegistrationId: id }).current!}
+				{onSubmitPortrait}
+			/>
 		{/if}
 
 		<Dialog.Footer>

@@ -4,7 +4,7 @@ declare global {
 	namespace App {
 		// interface Error {}
 		interface Locals {
-			auth: AuthObject;
+			session: import('@prisma-app/auth-client').Session | null;
 		}
 		// interface PageData {}
 		// interface PageState {}

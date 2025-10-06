@@ -2,7 +2,7 @@ import { type Actions, fail } from '@sveltejs/kit';
 import { superValidate } from 'sveltekit-superforms';
 import { valibot } from 'sveltekit-superforms/adapters';
 import { PortraitTemplateSchema } from '@schema';
-import { createCaller } from '@/trpc/router';
+import { createPortraitTemplate } from '@/remote/functions';
 
 export const actions: Actions = {
 	createPortrait: async (event) => {
@@ -10,11 +10,9 @@ export const actions: Actions = {
 		if (!form.valid) {
 			return fail(400, { form });
 		}
-		
-		const api = await createCaller(event);
-		
-		await api.portraitTemplates.create(form.data);
-		
+
+		await createPortraitTemplate(form.data);
+
 		return {
 			form
 		};

@@ -6,7 +6,7 @@
 	import { Button } from '@/components/ui/button';
 	import { SimpleDocumentOutput } from '@api/client';
 	import { page } from '$app/state';
-	import { trpc } from '@/trpc/client';
+	import { generateThumbnailLink as getThumbnail } from '@/remote/functions';
 	import { LoaderCircle } from '@lucide/svelte';
 
 	interface Props {
@@ -15,16 +15,11 @@
 	}
 
 	let { advert, class: className = '' }: Props = $props();
-	
 
-	const thumbnail = trpc(page).catalogueData.generateThumbnailLink.createQuery({
+	const thumbnail = getThumbnail({
 		documentId: advert.id ?? '',
-		organizationId: advert.organizationId ?? '',
-		resolution: "medium"
-	}, {
-		enabled: advert.activeVersion?.uploadStatus === "COMPLETED"
+		resolution: 'medium'
 	});
-
 </script>
 
 <section>
@@ -41,18 +36,18 @@
 				<div
 					class="absolute inset-0 flex items-center transition-opacity duration-300 justify-center opacity-0 hover:opacity-100 bg-gray-900/60"
 				>
-					<Button variant="outline" href={"./adverts/"+advert.id}
+					<Button variant="outline" href={'./adverts/' + advert.id}
 						>{$_('common.view-details')}</Button
 					>
 				</div>
-				{#if advert.activeVersion?.uploadStatus==="UPLOADED" || $thumbnail.isLoading}
-				<LoaderCircle class="mx-auto animate-spin w-5" />
-				{:else if $thumbnail.data}
+				{#if advert.activeVersion?.uploadStatus === 'UPLOADED' || thumbnail.loading}
+					<LoaderCircle class="mx-auto animate-spin w-5" />
+				{:else if thumbnail.current}
 					<img
-							src={$thumbnail.data || '/placeholder.svg'}
-							alt={advert.title}
-							class="object-contain size-full"
-						/>
+						src={thumbnail.current || '/placeholder.svg'}
+						alt={advert.title}
+						class="object-contain size-full"
+					/>
 				{/if}
 			</div>
 		</Card.Header>

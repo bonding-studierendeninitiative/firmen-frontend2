@@ -5,8 +5,7 @@
 	import { cn } from '@/utils';
 	import { Button } from '@/components/ui/button';
 	import { SimpleDocumentOutput } from '@api/client';
-	import { page } from '$app/state';
-	import { trpc } from '@/trpc/client';
+	import { generateThumbnailLink as getThumbnail } from '@/remote/functions';
 	import { LoaderCircle } from '@lucide/svelte';
 
 	interface Props {
@@ -15,16 +14,11 @@
 	}
 
 	let { logo, class: className = '' }: Props = $props();
-	
 
-	const thumbnail = trpc(page).catalogueData.generateThumbnailLink.createQuery({
+	let thumbnailFilter = $derived({
 		documentId: logo.id ?? '',
-		organizationId: logo.organizationId ?? '',
-		resolution: "small"
-	}, {
-		enabled: logo.activeVersion?.uploadStatus === "COMPLETED"
+		resolution: 'small' as const
 	});
-
 </script>
 
 <section>
@@ -41,18 +35,16 @@
 				<div
 					class="absolute inset-0 flex items-center transition-opacity duration-300 justify-center opacity-0 hover:opacity-100 bg-gray-900/60"
 				>
-					<Button variant="outline" href={"./logos/"+logo.id}
-						>{$_('common.view-details')}</Button
-					>
+					<Button variant="outline" href={'./logos/' + logo.id}>{$_('common.view-details')}</Button>
 				</div>
-				{#if logo.activeVersion?.uploadStatus==="UPLOADED" || $thumbnail.isLoading}
-				<LoaderCircle class="mx-auto animate-spin w-5" />
-				{:else if $thumbnail.data}
+				{#if logo.activeVersion?.uploadStatus === 'UPLOADED' || getThumbnail(thumbnailFilter).loading}
+					<LoaderCircle class="mx-auto animate-spin w-5" />
+				{:else if getThumbnail(thumbnailFilter).current}
 					<img
-							src={$thumbnail.data || '/placeholder.svg'}
-							alt={logo.title}
-							class="object-contain size-full"
-						/>
+						src={getThumbnail(thumbnailFilter).current || '/placeholder.svg'}
+						alt={logo.title}
+						class="object-contain size-full"
+					/>
 				{/if}
 			</div>
 		</Card.Header>

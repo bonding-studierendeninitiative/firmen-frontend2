@@ -3,7 +3,7 @@
 	import * as Dialog from '@/components/ui/dialog';
 	import CreateBuyOptionForm from './create-buy-option-form.svelte';
 	import { LoaderCircle } from '@lucide/svelte';
-	import { createBuyOptionForm } from '@/trpc/routers/admin';
+	import { createBuyOptionForm } from '@/remote/functions/admin';
 	import type { RemoteQuery, RemoteQueryOverride } from '@sveltejs/kit';
 
 	interface Props {

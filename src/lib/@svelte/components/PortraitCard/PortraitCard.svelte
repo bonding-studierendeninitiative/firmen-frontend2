@@ -1,27 +1,21 @@
 <script lang="ts">
-	import { type GetPortraitTemplatesResponse } from '@schema';
-	import type { InferOutput } from 'valibot';
 	import { Link } from '@/@svelte/components';
 	import * as Card from '@/components/ui/card';
 	import { Button } from '@/components/ui/button';
 	import { FileText, LoaderCircle, Trash2 } from '@lucide/svelte';
 	import * as Dialog from '@/components/ui/dialog';
 	import { _ } from '@services';
-	import { page } from '$app/state';
-	import { toast } from 'svelte-sonner';
-	import { trpc } from '@/trpc/client';
+	import type { GetPortraitTemplateSchema } from '@/remote/functions';
 
 	interface Props {
-		portrait: InferOutput<GetPortraitTemplatesResponse>['portraitTemplates'][number];
+		portrait: GetPortraitTemplateSchema;
+		onDelete?: ({ portraitTemplateId }: { portraitTemplateId: string }) => Promise<void>;
 	}
 
-	let { portrait }: Props = $props();
-
-	const api = trpc(page);
-
-	const deletePortrait = api.portraitTemplates.delete.createMutation();
+	let { portrait, onDelete }: Props = $props();
 
 	let deleteDialogOpen = $state(false);
+	let pending = $state(false);
 </script>
 
 <Card.Root class="h-full transition-all hover:shadow-md cursor-pointer relative group ">
@@ -38,16 +32,16 @@
 		href={`portraits/${portrait.id}`}
 		class="size-full hover:no-underline"
 	>
-			<Card.Header class="flex-row gap-4">
-				<div
-					class="shrink-0 size-12 rounded-full bg-primary/10 inline-flex justify-center items-center"
-				>
-					<FileText />
-				</div>
-				<Card.Title class="text-secondary-foreground font-medium text-base mb-1"
-					>{portrait.title}</Card.Title
-				>
-			</Card.Header>
+		<Card.Header class="flex-row gap-4">
+			<div
+				class="shrink-0 size-12 rounded-full bg-primary/10 inline-flex justify-center items-center"
+			>
+				<FileText />
+			</div>
+			<Card.Title class="text-secondary-foreground font-medium text-base mb-1"
+				>{portrait.title}</Card.Title
+			>
+		</Card.Header>
 	</Link>
 	<Card.Footer></Card.Footer>
 </Card.Root>
@@ -64,22 +58,22 @@
 			<Button variant="secondary" onclick={() => (deleteDialogOpen = false)}
 				>{$_('common.cancel')}</Button
 			>
-			{#if $deletePortrait.isPending}
+			{#if pending}
 				<Button form={`delete-portrait-form-${portrait.id}`} disabled variant="destructive">
 					<LoaderCircle class="mr-2 size-4 animate-spin" />{$_('common.delete')}
 				</Button>
 			{:else}
 				<Button
-					onclick={() => {
-						$deletePortrait.mutate(portrait.id, {
-							onError: (error) => {
-								toast.error(error.message);
-							},
-							onSuccess: () => {
-								toast.success($_('user-pages.portraits.portraitDeletedSuccessMessage'));
-								deleteDialogOpen = false;
-							}
-						});
+					onclick={async () => {
+						try {
+							pending = true;
+							await onDelete?.({ portraitTemplateId: portrait.id! });
+							deleteDialogOpen = false;
+						} catch (error) {
+							console.error('Error in onDelete callback:', error);
+						} finally {
+							pending = false;
+						}
 					}}
 					variant="destructive">{$_('common.delete')}</Button
 				>

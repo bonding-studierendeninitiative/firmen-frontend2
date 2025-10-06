@@ -4,7 +4,7 @@
 	import { cn } from '@/utils';
 	import ReviewRegistrationDocumentForm from './review-registration-document-form.svelte';
 	import type { AdminRegistrationDocumentOutput } from '@api/admin-client';
-	import { reviewDocumentForm } from '@/trpc/routers/admin';
+	import { reviewDocumentForm } from '@/remote/functions/admin';
 
 	let open: boolean = $state(false);
 

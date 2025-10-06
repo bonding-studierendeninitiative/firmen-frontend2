@@ -1,5 +1,5 @@
 import { redirect } from '@sveltejs/kit';
-import { getBuyOptions } from '@/trpc/routers/admin';
+import { getBuyOptions } from '@/remote/functions/admin';
 
 export async function load({ params, parent }) {
 	await parent();

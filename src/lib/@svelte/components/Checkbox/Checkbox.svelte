@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { type ClassValue } from 'clsx';
 	import { cn } from '@/utils/ui';
+	import type { HTMLAttributes } from 'svelte/elements';
+	import { useId } from 'bits-ui';
 
 	interface Props {
 		checked?: boolean;
@@ -10,7 +12,6 @@
 		labelClasses?: string;
 		description?: import('svelte').Snippet;
 		children?: import('svelte').Snippet;
-		[key: string]: any
 	}
 
 	let {
@@ -22,21 +23,22 @@
 		description,
 		children,
 		...rest
-	}: Props = $props();
+	}: Props & HTMLAttributes<HTMLInputElement> = $props();
+	let id = useId();
 </script>
 
 <div class={cn('grid gap-x-4 gap-y-2 grid-cols-[auto_1fr_1fr]', containerClass)}>
 	<input
 		bind:checked
 		{...rest}
-		id={name}
+		{id}
 		{name}
 		type="checkbox"
 		class="size-4 text-brand bg-gray-100 border-gray-300 rounded cursor-pointer col-span-1"
 	/>
 	{#if label}
 		<label
-			for={name}
+			for={id}
 			class={cn(
 				'text-sm font-medium text-stone-800 cursor-pointer justify-self-start col-span-2',
 				labelClasses

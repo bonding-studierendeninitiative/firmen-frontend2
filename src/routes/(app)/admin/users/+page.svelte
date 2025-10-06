@@ -3,7 +3,7 @@
 	import { queryParameters, ssp } from 'sveltekit-search-params';
 	import { _ } from '@services';
 	import { fade } from 'svelte/transition';
-	import { getUsers } from '@/trpc/routers/admin';
+	import { getUsers } from '@/remote/functions/admin';
 
 	let params = queryParameters(
 		{

@@ -1,19 +1,34 @@
 import * as v from 'valibot';
 
 const EventAddonPackageSchema = v.object({
-	purchasable: v.nullable(v.boolean(), false),
+	purchasable: v.pipe(
+		v.optional(v.string(), 'false'),
+		v.transform((val) => val === 'true'),
+		v.boolean()
+	),
 	title: v.pipe(v.string(), v.maxLength(50), v.minLength(1)),
-	price: v.nullable(v.number()),
-	description: v.nullable(v.pipe(v.string(), v.maxLength(255)), ''),
+	price: v.pipe(
+		v.optional(v.string(), '0'),
+		v.transform((val) => Number(val)),
+		v.number()
+	),
+	description: v.optional(v.pipe(v.string(), v.maxLength(255))),
 	label: v.string(),
-	addons: v.array(
-		v.object({
-			id: v.nullish(v.string()),
-			title: v.pipe(v.string(), v.maxLength(50), v.minLength(1)),
-			label: v.string(),
-			description: v.optional(v.pipe(v.string(), v.maxLength(255))),
-			price: v.optional(v.number())
-		})
+	addons: v.optional(
+		v.array(
+			v.object({
+				id: v.optional(v.string(), ''),
+				title: v.pipe(v.string(), v.maxLength(50), v.minLength(1)),
+				label: v.string(),
+				description: v.optional(v.pipe(v.string(), v.maxLength(255)), ''),
+				price: v.pipe(
+					v.optional(v.string(), '0'),
+					v.transform((val) => Number(val)),
+					v.number()
+				)
+			})
+		),
+		[]
 	)
 });
 export const CreateEventAddonPackageSchema = v.pipe(
@@ -25,7 +40,10 @@ export const CreateEventAddonPackageSchema = v.pipe(
 	v.transform((data) => {
 		return {
 			...data,
-			price: data.addonPackage.purchasable ? data.addonPackage.price : null
+			addonPackage: {
+				...data.addonPackage,
+				price: data.addonPackage.purchasable ? Number(data.addonPackage.price) : 0
+			}
 		};
 	})
 );

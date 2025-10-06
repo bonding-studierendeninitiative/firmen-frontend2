@@ -21,7 +21,7 @@
 	import { _ } from '@services';
 	import type { DetailedLegacyOrganization } from '@api/admin-client';
 	import { Input } from '@/components/ui/input';
-	import { getLegacyOrgDetails } from '@/trpc/routers/admin';
+	import { getLegacyOrgDetails } from '@/remote/functions/admin';
 
 	let {
 		orgId,

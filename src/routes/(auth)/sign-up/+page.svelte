@@ -1,6 +1,5 @@
 <script lang="ts">
 	import AuthCard from '@/components/auth/AuthCard.svelte';
-	import { derived } from 'svelte/store';
 	import { queryParameters, ssp } from 'sveltekit-search-params';
 
 	const params = queryParameters({ redirectTo: ssp.string('/') });

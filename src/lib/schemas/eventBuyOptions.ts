@@ -177,25 +177,31 @@ export type CreateBuyOptionRequest = typeof CreateBuyOptionRequestSchema;
 
 export const UpdateBuyOptionRequestSchema = v.object({
 	name: v.string(),
-	packages: v.array(
-		v.object({
-			name: v.string(),
-			price: v.nullable(v.number()),
-			benefits: v.array(
-				v.object({
-					numericValue: v.nullish(v.number()),
-					stringValue: v.nullish(v.string()),
-					booleanValue: v.nullish(v.boolean())
-				})
-			)
-		})
+	packages: v.nullish(
+		v.array(
+			v.object({
+				name: v.string(),
+				price: v.nullable(v.number()),
+				benefits: v.array(
+					v.object({
+						numericValue: v.nullish(v.number()),
+						stringValue: v.nullish(v.string()),
+						booleanValue: v.nullish(v.boolean())
+					})
+				)
+			})
+		),
+		[]
 	),
-	services: v.array(
-		v.object({
-			name: v.string(),
-			description: v.nullable(v.string(), ''),
-			valueType: v.enum(ValueType)
-		})
+	services: v.nullish(
+		v.array(
+			v.object({
+				name: v.string(),
+				description: v.nullable(v.string(), ''),
+				valueType: v.enum(ValueType)
+			})
+		),
+		[]
 	),
 	eventDays: v.array(
 		v.object({

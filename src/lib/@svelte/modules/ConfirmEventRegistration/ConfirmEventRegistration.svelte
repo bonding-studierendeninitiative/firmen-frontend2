@@ -3,7 +3,7 @@
 	import * as Dialog from '@/components/ui/dialog';
 	import { EventRegistration } from '@/@svelte/modules';
 	import { _ } from '@services';
-	import type { GetEventRegistrationsOutput } from '@/trpc/routers/admin';
+	import type { GetEventRegistrationsOutput } from '@/remote/functions/admin';
 
 	interface Props {
 		isOpen: boolean;

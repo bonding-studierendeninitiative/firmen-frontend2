@@ -8,7 +8,7 @@
 	import * as Avatar from '@/components/ui/avatar';
 	import { renderSnippet } from '@/@svelte/components/QueryDataTable/render-helpers';
 	import DataTableRoleSwitcher from './data-table-role-switcher.svelte';
-	import type { GetOrgMembershipsResponse } from '@/trpc/routers/admin';
+	import type { GetOrgMembershipsResponse } from '@/remote/functions/admin';
 
 	let {
 		memberships,
@@ -24,7 +24,7 @@
 
 	const columnHelper = createColumnHelper<GetOrgMembershipsResponse[0]>();
 
-	const columns: ColumnDef<GetOrgMembershipsResponse[0]>[] = $derived([
+	const columns = $derived([
 		columnHelper.accessor('id', {
 			id: 'checkboxes',
 			header: ({ table }) =>
@@ -61,7 +61,7 @@
 			cell: ({ row }) =>
 				renderSnippet(orgLinkSnippet, {
 					name: row.original.organization.name,
-					imageUrl: row.original.organization.logo
+					imageUrl: row.original.organization.logo!
 				})
 		}),
 		columnHelper.accessor('role', {
@@ -101,7 +101,7 @@
 			header: '',
 			cell: ({ row }) =>
 				renderSnippet(actionsSnippet, {
-					slug: row.original.organization.slug
+					slug: row.original.organization.slug!
 				}),
 			enableSorting: false
 		})

@@ -9,21 +9,26 @@
 	import { LoaderCircle } from '@lucide/svelte';
 	import { toast } from 'svelte-sonner';
 	import { cn } from '@/utils';
-	import { getEventDetails, publishEvent } from '@/trpc/routers/admin';
+	import { getEventDetails, publishEvent } from '@/remote/functions/admin/index.js';
 
 	let { data, children } = $props();
 
-	function getTabs(event: { id: string }) {
+	function getTabs(event: { id?: string | undefined }) {
+		const eventId = event.id;
+		if (eventId === undefined) {
+			return [];
+		}
 		return [
-			{ href: `/admin/events/${event?.id}/registrations`, name: 'registrations' },
-			{ name: 'buy-options', href: `/admin/events/${event?.id}/buy-options` },
-			{ name: 'exports', href: `/admin/events/${event?.id}/exports` }
+			{ href: `/admin/events/${eventId}/registrations`, name: 'registrations' },
+			{ name: 'buy-options', href: `/admin/events/${eventId}/buy-options` },
+			{ name: 'exports', href: `/admin/events/${eventId}/exports` }
 		];
 	}
 
 	let eventFilter = $derived({
 		eventId: page.params.id!
 	});
+	let pending = $state(false);
 </script>
 
 <div>
@@ -41,15 +46,18 @@
 			<div class="grow"></div>
 			{#if getEventDetails(eventFilter).current?.status === 'UNPUBLISHED'}
 				<Button
-					class={cn($effect.pending() && 'animate-pulse')}
-					disabled={!!$effect.pending()}
+					class={cn(pending && 'animate-pulse')}
+					disabled={pending}
 					onclick={async () => {
 						try {
+							pending = true;
 							await publishEvent(eventFilter);
 							toast.success('Event published successfully');
-						} catch (error) {
-							toast.error(error.message);
+						} catch (error: unknown) {
+							toast.error(error.body.message);
 							throw error;
+						} finally {
+							pending = false;
 						}
 					}}>{$_('common.publish')}</Button
 				>

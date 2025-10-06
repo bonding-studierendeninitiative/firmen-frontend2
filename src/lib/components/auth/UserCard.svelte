@@ -182,7 +182,8 @@
 							class={cn('text-xs', classNames?.badge)}
 						>
 							{#if getRoleIcon(displayUser.role)}
-								<svelte:component this={getRoleIcon(displayUser.role)} class="mr-1 size-3" />
+								{@const RoleIcon = getRoleIcon(displayUser.role)}
+								<RoleIcon class="mr-1 size-3" />
 							{/if}
 							{getRoleLabel(displayUser.role)}
 						</Badge>

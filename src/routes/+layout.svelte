@@ -5,9 +5,6 @@
 	import { setupI18n, isLocaleLoading, dir } from '@services';
 
 	import { blur } from 'svelte/transition';
-	import { browser } from '$app/environment';
-	import { QueryClient, QueryClientProvider } from '@tanstack/svelte-query';
-	import { SvelteQueryDevtools } from '@tanstack/svelte-query-devtools';
 	import { RenderScan } from 'svelte-render-scan';
 	import { PUBLIC_APP_ENVIRONMENT } from '$env/static/public';
 	interface Props {
@@ -16,14 +13,6 @@
 
 	let { children }: Props = $props();
 
-	const queryClient = new QueryClient({
-		defaultOptions: {
-			queries: {
-				enabled: browser,
-				staleTime: 1000 * 60 // * 60 * 24 * 7,
-			}
-		}
-	});
 	onMount(() => {
 		document.dir = $dir;
 		setupI18n();
@@ -44,20 +33,17 @@
 	</div>
 {:else}
 	<div in:blur>
-		<QueryClientProvider client={queryClient}>
-			<SvelteQueryDevtools />
-			<svelte:boundary
-				onerror={(e) => {
-					console.error(e);
-				}}
-			>
-				{@render children()}
+		<svelte:boundary
+			onerror={(e) => {
+				console.error(e);
+			}}
+		>
+			{@render children()}
 
-				{#snippet pending()}
-					<p>loading...</p>
-				{/snippet}
-			</svelte:boundary>
-		</QueryClientProvider>
+			{#snippet pending()}
+				<p>loading...</p>
+			{/snippet}
+		</svelte:boundary>
 	</div>
 {/if}
 <Toaster position="bottom-right" {toastOptions} />

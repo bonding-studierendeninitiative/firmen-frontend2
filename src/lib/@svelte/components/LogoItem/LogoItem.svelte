@@ -6,28 +6,22 @@
 	import { ViewLogoDialog } from '@/@svelte/modules';
 	import { SimpleDocumentOutput } from '@api/client';
 	import { page } from '$app/state';
-	import { trpc } from '@/trpc/client';
+	import { generateThumbnailLink as getThumbnail } from '@/remote/functions';
 	import { LoaderCircle } from '@lucide/svelte';
 	import { goto } from '$app/navigation';
 
 	interface Props {
 		logo: SimpleDocumentOutput;
 		class?: string;
-		onViewDetails: (logoId: string) => void
+		onViewDetails: (logoId: string) => void;
 	}
 
 	let { logo, class: className = '', onViewDetails }: Props = $props();
 
-	const thumbnail = trpc(page).catalogueData.generateThumbnailLink.createQuery(
-		{
-			documentId: logo.id,
-			organizationId: logo.organizationId,
-			resolution: 'small'
-		},
-		{
-			enabled: logo.activeVersion?.uploadStatus === 'COMPLETED'
-		}
-	);
+	const thumbnail = getThumbnail({
+		documentId: logo.id,
+		resolution: 'small'
+	});
 
 	let showDialog = $state(false);
 </script>
@@ -50,11 +44,11 @@
 						>{$_('common.view-details')}</Button
 					>
 				</div>
-				{#if logo.activeVersion?.uploadStatus === 'UPLOADED' || $thumbnail.isLoading}
+				{#if logo.activeVersion?.uploadStatus === 'UPLOADED' || thumbnail.loading}
 					<LoaderCircle class="mx-auto animate-spin w-5" />
-				{:else if $thumbnail.data}
+				{:else if thumbnail.current}
 					<img
-						src={$thumbnail.data || '/placeholder.svg'}
+						src={thumbnail.current || '/placeholder.svg'}
 						alt={logo.title}
 						class="object-contain size-full"
 					/>

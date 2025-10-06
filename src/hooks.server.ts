@@ -6,15 +6,20 @@ import { building } from '$app/environment';
 import { PUBLIC_BONDING_ORG_ID } from '$env/static/public';
 
 // hooks.server.ts
-import { createContext } from '$lib/trpc/context';
-import { createTRPCHandle } from 'trpc-sveltekit';
-import { mainRouter } from '@/trpc/router';
+import type { Handle } from '@sveltejs/kit';
 
 Sentry.init({
 	dsn: 'https://f1933902b8f781edc8b707ee9d75ea53@o4508733953540096.ingest.de.sentry.io/4508733955571792',
 	tracesSampleRate: 1,
 	environment: process.env.NODE_ENV
 });
+
+const handleSession: Handle = async ({ event, resolve }) => {
+	event.locals.session = await auth.api.getSession({
+		headers: event.request.headers
+	});
+	return resolve(event);
+};
 
 // Custom hook to handle GitHub users and make them admins
 async function handleGitHubAdmin({ event, resolve }: { event: any; resolve: any }) {
@@ -27,9 +32,7 @@ async function handleGitHubAdmin({ event, resolve }: { event: any; resolve: any 
 
 		// After the auth callback is processed, check if the user signed in with GitHub
 		try {
-			const session = await auth.api.getSession({
-				headers: event.request.headers
-			});
+			const session = event.locals.session;
 
 			if (session?.user) {
 				// Check if this user has GitHub as a provider
@@ -84,18 +87,10 @@ async function handleGitHubAdmin({ event, resolve }: { event: any; resolve: any 
 
 export const handle = sequence(
 	Sentry.sentryHandle(),
+	handleSession,
 	handleGitHubAdmin,
 	({ event, resolve }) => {
 		return svelteKitHandler({ event, resolve, auth, building });
-	},
-	createTRPCHandle({
-		router: mainRouter,
-		createContext,
-		onError: (error) =>
-			console.error(
-				`Encountered error while trying to process ${error.type} @ ${error.path}:`,
-				error
-			)
-	})
+	}
 );
 export const handleError = Sentry.handleErrorWithSentry();

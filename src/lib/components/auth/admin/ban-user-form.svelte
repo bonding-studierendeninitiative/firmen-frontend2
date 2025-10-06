@@ -57,6 +57,7 @@
 			banReason,
 			banExpiresIn: banExpiryType === 'permanent' ? undefined : calculateBanDurationInSeconds()
 		});
+		// TODO: Replace with callback from page
 		await invalidate('trpc:admin.users.getDetails');
 	}
 </script>

@@ -41,7 +41,7 @@
 	import SuperDebug from 'sveltekit-superforms';
 	import { createSvelteTable } from '@/@svelte/components/QueryDataTable/data-table.svelte';
 	import { Checkbox } from '@/components/ui/checkbox';
-	import type { GetEventRegistrationsOutput } from '@/trpc/routers/admin';
+	import type { GetEventRegistrationsOutput } from '@/remote/functions/admin';
 
 	let {
 		data,
