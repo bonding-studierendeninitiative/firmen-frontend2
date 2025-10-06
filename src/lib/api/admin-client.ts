@@ -88,8 +88,8 @@ export const Problem = v.object({
   instance: v.optional(v.string()),
   type: v.optional(v.string()),
   parameters: v.optional(v.record(v.string(), v.unknown())),
-  title: v.optional(v.string()),
   status: v.optional(StatusType),
+  title: v.optional(v.string()),
   detail: v.optional(v.string()),
 });
 
@@ -213,32 +213,13 @@ export const ReviewDocumentOutput = v.object({
   documentOutput: v.optional(AdminRegistrationDocumentOutput),
 });
 
-export type BillingAddressTemplateInput = v.InferOutput<typeof BillingAddressTemplateInput>;
-export const BillingAddressTemplateInput = v.object({
-  street: v.string(),
-  country: v.string(),
-  zipCode: v.string(),
-  city: v.string(),
-  vat: v.string(),
-  billingReference: v.string(),
-});
-
-export type ImportLegacyOrganizationRequest = v.InferOutput<typeof ImportLegacyOrganizationRequest>;
-export const ImportLegacyOrganizationRequest = v.object({
-  organizationName: v.optional(v.string()),
-  contactPeople: v.optional(v.array(v.string())),
-  adminContactPerson: v.optional(v.string()),
-  createAddress: v.optional(v.boolean()),
-  billingAddress: v.optional(BillingAddressTemplateInput),
-});
-
 export type TimeoutHandler = v.InferOutput<typeof TimeoutHandler>;
 export const TimeoutHandler = v.unknown();
 
 export type AsyncResponse = v.InferOutput<typeof AsyncResponse>;
 export const AsyncResponse = v.object({
-  done: v.optional(v.boolean()),
   suspended: v.optional(v.boolean()),
+  done: v.optional(v.boolean()),
   cancelled: v.optional(v.boolean()),
   timeoutHandler: v.optional(TimeoutHandler),
 });
@@ -483,6 +464,16 @@ export const GetEventRegistrationForEventOutput = v.object({
   purchasedPackage: v.optional(PurchasedPackageOutput),
   addonPackages: v.optional(v.array(EventRegistrationAddonPackageOutput)),
   registrationDocuments: v.optional(v.array(AdminRegistrationDocumentOutput)),
+  portraitStatus: v.optional(
+    v.union([
+      v.literal("missing"),
+      v.literal("draft"),
+      v.literal("submitted"),
+      v.literal("changes-requested"),
+      v.literal("rejected"),
+      v.literal("confirmed"),
+    ]),
+  ),
   desiredEventRegistrationDays: v.optional(v.array(v.string())),
   organizationId: v.optional(v.string()),
   contactPeople: v.optional(v.array(v.string())),
@@ -644,20 +635,6 @@ export const post_ReviewDocument = v.object({
   response: ReviewDocumentOutput,
 });
 
-export type post_ImportLegacyOrganization = v.InferOutput<typeof post_ImportLegacyOrganization>;
-export const post_ImportLegacyOrganization = v.object({
-  method: v.literal("POST"),
-  path: v.literal("/api/v2/admin/organization/{id}/import"),
-  requestFormat: v.literal("json"),
-  parameters: v.object({
-    path: v.object({
-      id: v.string(),
-    }),
-    body: ImportLegacyOrganizationRequest,
-  }),
-  response: v.unknown(),
-});
-
 export type post_RestartJob = v.InferOutput<typeof post_RestartJob>;
 export const post_RestartJob = v.object({
   method: v.literal("POST"),
@@ -666,8 +643,8 @@ export const post_RestartJob = v.object({
   parameters: v.object({
     query: v.object({
       asyncResponse: v.object({
-        done: v.optional(v.boolean()),
         suspended: v.optional(v.boolean()),
+        done: v.optional(v.boolean()),
         cancelled: v.optional(v.boolean()),
         timeoutHandler: v.optional(TimeoutHandler),
       }),
@@ -687,8 +664,8 @@ export const post_ImportEvents = v.object({
   parameters: v.object({
     query: v.object({
       asyncResponse: v.object({
-        done: v.optional(v.boolean()),
         suspended: v.optional(v.boolean()),
+        done: v.optional(v.boolean()),
         cancelled: v.optional(v.boolean()),
         timeoutHandler: v.optional(TimeoutHandler),
       }),
@@ -1045,7 +1022,6 @@ export const EndpointByMethod = {
   },
   post: {
     "/api/v2/admin/registration-document/{registrationDocumentId}/review": post_ReviewDocument,
-    "/api/v2/admin/organization/{id}/import": post_ImportLegacyOrganization,
     "/api/v2/admin/jobs/{jobId}/restart": post_RestartJob,
     "/api/v2/admin/jobs/import/events": post_ImportEvents,
     "/api/v2/admin/jobs/export/portraits": post_ExportPortraits,

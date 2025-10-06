@@ -9,7 +9,6 @@
 		SearchInput
 	} from '@/@svelte/components';
 	import DataTableActions from './data-table-actions.svelte';
-	import DataTableCheckbox from './data-table-checkbox.svelte';
 	import ExportCatalogueDataDialog from './export-catalogue-data-form.svelte';
 	import SimpleEventRegistrationOrganization from './simple-event-registration-organization.svelte';
 	import CreateEventRegistrationForm from './create-event-registration-form.svelte';
@@ -17,26 +16,60 @@
 		AdminViewAdvertisementDialog,
 		AdminViewRegistrationDocumentDialog
 	} from '@/@svelte/modules';
-	import type { EventRegistrationsForEventOutput } from '@/trpc/client';
 	import {
 		createColumnHelper,
-		createSvelteTable,
 		getCoreRowModel,
 		getFilteredRowModel,
-		type TableOptions,
-		type ColumnDef,
-	} from '@tanstack/svelte-table';
-	import { renderComponent } from '@/@svelte/components/QueryDataTable/render-helpers';
+		type RowSelectionState,
+		type VisibilityState,
+		type ColumnFiltersState,
+		type SortingState,
+		type PaginationState,
+		type OnChangeFn,
+		getPaginationRowModel,
+		getSortedRowModel,
+		getFacetedRowModel,
+		getFacetedUniqueValues
+	} from '@tanstack/table-core';
+	import {
+		renderComponent,
+		renderSnippet
+	} from '@/@svelte/components/QueryDataTable/render-helpers';
 	import { queryParameters, ssp } from 'sveltekit-search-params';
 	import FlexRender from '@/@svelte/components/QueryDataTable/flex-render.svelte';
 	import { Skeleton } from '@/components/ui/skeleton';
 	import SuperDebug from 'sveltekit-superforms';
+	import { createSvelteTable } from '@/@svelte/components/QueryDataTable/data-table.svelte';
+	import { Checkbox } from '@/components/ui/checkbox';
+	import type { GetEventRegistrationsOutput } from '@/trpc/routers/admin';
 
 	let {
 		data,
-		isLoading
-	}: { data: EventRegistrationsForEventOutput['eventRegistrations']; isLoading: boolean } =
-		$props();
+		isLoading,
+		onDelete,
+		onReject,
+		onConfirm,
+		onCreateEventRegistration
+	}: {
+		data: GetEventRegistrationsOutput['eventRegistrations'];
+		isLoading: boolean;
+		onDelete: ({ eventRegistrationId }: { eventRegistrationId: string }) => Promise<void>;
+		onReject: ({ eventRegistrationId }: { eventRegistrationId: string }) => Promise<void>;
+		onConfirm: ({ eventRegistrationId }: { eventRegistrationId: string }) => Promise<void>;
+		onCreateEventRegistration: ({
+			eventId,
+			organizationId,
+			contactPeople,
+			canUploadAdvertisement,
+			confirmedRegistration
+		}: {
+			eventId: string;
+			organizationId: string;
+			contactPeople: string[];
+			canUploadAdvertisement: boolean;
+			confirmedRegistration: boolean;
+		}) => Promise<void>;
+	} = $props();
 
 	let packages = $derived([
 		...new Set(
@@ -70,36 +103,85 @@
 	let selectedAddonPackageValues = $state<string[]>([]);
 	let selectedAddonValues = $state<string[]>([]);
 
-	let params = queryParameters({
-		sort: false,
-		page: false,
-		limit: ssp.number(10)
-	});
+	let params = queryParameters(
+		{
+			sort: false,
+			page: false,
+			limit: ssp.number(10)
+		},
+		{
+			showDefaults: false
+		}
+	);
 
-	type Data = EventRegistrationsForEventOutput['eventRegistrations'][number];
+	type Data = GetEventRegistrationsOutput['eventRegistrations'][number];
 
 	let columnHelper = createColumnHelper<Data>();
 
-	let columns: ColumnDef<Data>[] = $derived([
+	let rowSelection = $state<RowSelectionState>({});
+	let columnVisibility = $state<VisibilityState>({
+		addons: false,
+		'addon-packages': false
+	});
+	let columnFilters = $state<ColumnFiltersState>([]);
+	let sorting = $state<SortingState>([]);
+	let pagination = $state<PaginationState>({ pageIndex: 0, pageSize: 10 });
+
+	// Build columnFilters once into state to keep a stable reference for TanStack memos
+	let computedColumnFilters = $state<ColumnFiltersState>([]);
+	$effect(() => {
+		const next: ColumnFiltersState = [
+			...selectedStatusValues.map((value) => ({ id: 'status', value })),
+			...selectedPackageValues.map((value) => ({ id: 'package', value })),
+			...selectedAddonPackageValues.map((value) => ({ id: 'addon-packages', value })),
+			...selectedAddonValues.map((value) => ({ id: 'addons', value }))
+		];
+		// Only assign when changed to preserve referential equality
+		const sameLength = computedColumnFilters.length === next.length;
+		const same =
+			sameLength &&
+			computedColumnFilters.every((f, i) => f.id === next[i].id && f.value === next[i].value);
+		if (!same) computedColumnFilters = next;
+	});
+
+	const setSorting: OnChangeFn<SortingState> = (updater) => {
+		console.log('Setting sorting:', updater);
+		if (updater instanceof Function) {
+			sorting = updater(sorting);
+		} else {
+			sorting = updater;
+		}
+
+		if (sorting.length > 0) {
+			let firstSort = sorting[0];
+
+			params.sortBy = firstSort.id;
+			params.sortDirection = firstSort.desc ? 'desc' : 'asc';
+		} else {
+			params.sortBy = null;
+			params.sortDirection = null;
+		}
+	};
+
+	let columns = [
 		columnHelper.accessor('id', {
-			header({ table }) {
-				return renderComponent(DataTableCheckbox, {
-					checked: table.getIsAllPageRowsSelected()
-						? true
-						: table.getIsSomePageRowsSelected()
-							? 'indeterminate'
-							: false,
-					onCheckedChange: () => table.toggleAllPageRowsSelected()
-				});
-			},
-			cell({ row }) {
-				return renderComponent(DataTableCheckbox, {
+			header: ({ table }) =>
+				renderSnippet(checkBoxSnippet, {
+					checked: table.getIsAllPageRowsSelected(),
+					onCheckedChange: (value) => table.toggleAllPageRowsSelected(value),
+					indeterminate: table.getIsSomePageRowsSelected() && !table.getIsAllPageRowsSelected(),
+					'aria-label': 'Select all'
+				}),
+			cell: ({ row }) =>
+				renderSnippet(checkBoxSnippet, {
 					checked: row.getIsSelected(),
-					onCheckedChange: () => row.toggleSelected()
-				});
-			},
-			enableColumnFilter: false,
-			enableGlobalFilter: false
+					onCheckedChange: (value) => {
+						row.toggleSelected(value);
+					},
+					'aria-label': 'Select row'
+				}),
+			enableSorting: false,
+			enableHiding: false
 		}),
 		columnHelper.accessor('organization', {
 			header() {
@@ -120,7 +202,10 @@
 				header: $_('admin-pages.events.event-registrations.data-table.headers.package'),
 				filterFn: (row, id, filterValue: string[]) => {
 					if (filterValue.length === 0) return true;
-					const value = row.getValue(id);
+					const value = row.getValue<string | null | undefined>(id);
+					if (!value) {
+						return true;
+					}
 					return filterValue.includes(value);
 				}
 			}
@@ -145,15 +230,19 @@
 			enableColumnFilter: true,
 			filterFn: (row, id, filterValue: string[]) => {
 				if (filterValue.length === 0) return true;
-				const value = row.getValue(id);
-				console.log(value);
+				const value = row.getValue<string | null | undefined>(id);
+				if (!value) {
+					return true;
+				}
 				return filterValue.includes(value);
 			}
 		}),
 		columnHelper.accessor('portraitStatus', {
 			header: $_('admin-pages.events.event-registrations.data-table.headers.portrait-status'),
 			cell({ getValue }) {
-				return renderComponent(PortraitStatusIcon, { variant: getValue() ?? '' });
+				return renderComponent(PortraitStatusIcon, {
+					variant: { variant: getValue() ?? 'missing' }
+				});
 			}
 		}),
 		columnHelper.accessor(
@@ -162,7 +251,7 @@
 				return (
 					logo ?? {
 						id: '',
-						status: 'missing'
+						status: 'unreviewed' as const
 					}
 				);
 			},
@@ -182,7 +271,7 @@
 				return (
 					advert ?? {
 						id: '',
-						status: 'missing'
+						status: 'unreviewed' as const
 					}
 				);
 			},
@@ -199,7 +288,10 @@
 			cell({ row }) {
 				return renderComponent(DataTableActions, {
 					id: row.original.id,
-					eventRegistration: row.original
+					eventRegistration: row.original,
+					onDelete,
+					onReject,
+					onConfirm
 				});
 			}
 		}),
@@ -210,7 +302,10 @@
 				header: $_('admin-pages.events.event-registrations.data-table.headers.addon-packages'),
 				filterFn: (row, id, filterValue: string[]) => {
 					if (filterValue.length === 0) return true;
-					const value = row.getValue(id);
+					const value = row.getValue<string | null | undefined>(id);
+					if (!value) {
+						return true;
+					}
 					return filterValue.some((filter) => value.includes(filter));
 				}
 			}
@@ -225,46 +320,78 @@
 				header: $_('admin-pages.events.event-registrations.data-table.headers.addons'),
 				filterFn: (row, id, filterValue: string[]) => {
 					if (filterValue.length === 0) return true;
-					const value = row.getValue(id);
+					const value = row.getValue<string | null | undefined>(id);
+					if (!value) {
+						return true;
+					}
 					return filterValue.some((filter) => value.includes(filter));
 				}
 			}
 		)
-	]);
+	];
 
-	let rowSelection = $state({});
-
-	let options: TableOptions<Data> = $derived({
-		data,
-		getCoreRowModel: getCoreRowModel(),
-		getFilteredRowModel: getFilteredRowModel(),
-		columns,
-		getRowId: (original) => original.id,
-		state: {
-			columnFilters: [
-				...selectedStatusValues.map((value) => ({ id: 'status', value })),
-				...selectedPackageValues.map((value) => ({ id: 'package', value })),
-				...selectedAddonPackageValues.map((value) => ({ id: 'addon-packages', value })),
-				...selectedAddonValues.map((value) => ({ id: 'addons', value }))
-			],
-			rowSelection
+	const table = createSvelteTable({
+		get data() {
+			return data;
 		},
+		get columns() {
+			return columns;
+		},
+		state: {
+			get sorting() {
+				return sorting;
+			},
+			get columnVisibility() {
+				return columnVisibility;
+			},
+			get rowSelection() {
+				return rowSelection;
+			},
+			get columnFilters() {
+				return computedColumnFilters;
+			},
+			get pagination() {
+				return pagination;
+			}
+		},
+		manualSorting: true,
+		enableRowSelection: true,
 		onRowSelectionChange: (updater) => {
-			if (updater instanceof Function) {
+			if (typeof updater === 'function') {
 				rowSelection = updater(rowSelection);
 			} else {
 				rowSelection = updater;
 			}
 		},
-		initialState: {
-			columnVisibility: {
-				addons: false,
-				'addon-packages': false
+		onSortingChange: setSorting,
+		onColumnFiltersChange: (updater) => {
+			if (typeof updater === 'function') {
+				columnFilters = updater(columnFilters);
+			} else {
+				columnFilters = updater;
 			}
-		}
+		},
+		onColumnVisibilityChange: (updater) => {
+			if (typeof updater === 'function') {
+				columnVisibility = updater(columnVisibility);
+			} else {
+				columnVisibility = updater;
+			}
+		},
+		onPaginationChange: (updater) => {
+			if (typeof updater === 'function') {
+				pagination = updater(pagination);
+			} else {
+				pagination = updater;
+			}
+		},
+		getCoreRowModel: getCoreRowModel(),
+		getFilteredRowModel: getFilteredRowModel(),
+		getPaginationRowModel: getPaginationRowModel(),
+		getSortedRowModel: getSortedRowModel(),
+		getFacetedRowModel: getFacetedRowModel(),
+		getFacetedUniqueValues: getFacetedUniqueValues()
 	});
-
-	let table = $derived(createSvelteTable(options));
 
 	let open = $state(false);
 
@@ -290,11 +417,11 @@
 		addonPackages: data.reduce(
 			(acc, { addonPackages }) => {
 				if (addonPackages) {
-					addonPackages
-						.filter((addonPackage) => addonPackage.title)
-						.forEach((addonPackage) => {
+					addonPackages.forEach((addonPackage) => {
+						if (addonPackage.title) {
 							acc[addonPackage.title] = (acc[addonPackage.title] || 0) + 1;
-						});
+						}
+					});
 				}
 				return acc;
 			},
@@ -317,17 +444,30 @@
 		)
 	});
 
-	let enableExport = $derived($table.getIsAllRowsSelected() || $table.getIsSomeRowsSelected());
+	let enableExport = $derived(table.getIsAllRowsSelected() || table.getIsSomeRowsSelected());
 	let selectedEventRegistrationIds = $derived(
-		$table.getSelectedRowModel().rows.map((row) => row.original.id)
-		.filter(Boolean) as string[]
+		table
+			.getSelectedRowModel()
+			.rows.map((row) => row.original.id)
+			.filter(Boolean) as string[]
 	);
 </script>
+
+{#snippet checkBoxSnippet({
+	checked,
+	onCheckedChange,
+	...props
+}: {
+	checked: boolean;
+	onCheckedChange: (value: boolean) => void;
+})}
+	<Checkbox {checked} {onCheckedChange} {...props} />
+{/snippet}
 
 <section class="flex gap-4 flex-wrap justify-end">
 	<SearchInput
 		placeholder={$_('common.search')}
-		oninput={(e) => $table.setGlobalFilter(e.currentTarget.value)}
+		oninput={(e) => table.setGlobalFilter(e.currentTarget.value)}
 	/>
 	<div class="grow"></div>
 	<DataTableFacetedFilter
@@ -370,54 +510,58 @@
 		disabled={!enableExport}
 		selectedEventRegistrations={selectedEventRegistrationIds}
 	/>
-	<CreateEventRegistrationForm bind:open />
+	<CreateEventRegistrationForm bind:open {onCreateEventRegistration} />
 </section>
-<section class="mt-10">
-	<div class="rounded-md border">
-		<Table.Root>
-			<Table.Header>
-				{#each $table.getHeaderGroups() as headerGroup (headerGroup.id)}
-					<Table.Row>
-						{#each headerGroup.headers as header (header.id)}
-							<Table.Head>
-								{#if !header.isPlaceholder}
-									<FlexRender
-										content={header.column.columnDef.header}
-										context={header.getContext()}
-									/>
-								{/if}
-							</Table.Head>
+{#if table && table.getAllLeafColumns().length}
+	<section class="mt-10">
+		<div class="rounded-md border bg-card border-card shadow shadow-card">
+			<Table.Root>
+				<Table.Header>
+					{#each table.getHeaderGroups() as headerGroup (headerGroup.id)}
+						<Table.Row>
+							{#each headerGroup.headers as header (header.id)}
+								<Table.Head>
+									{#if !header.isPlaceholder}
+										<FlexRender
+											content={header.column.columnDef.header}
+											context={header.getContext()}
+										/>
+									{/if}
+								</Table.Head>
+							{/each}
+						</Table.Row>
+					{/each}
+				</Table.Header>
+				<Table.Body>
+					{#if !isLoading}
+						{#each table.getRowModel().rows as row (row.id)}
+							<Table.Row data-state={row.getIsSelected() && 'selected'}>
+								{#each row.getVisibleCells() as cell (cell.id)}
+									<Table.Cell>
+										<FlexRender content={cell.column.columnDef.cell} context={cell.getContext()} />
+									</Table.Cell>
+								{/each}
+							</Table.Row>
+						{:else}
+							<Table.Row>
+								<Table.Cell colspan={columns.length} class="h-24 text-center"
+									>No results.</Table.Cell
+								>
+							</Table.Row>
 						{/each}
-					</Table.Row>
-				{/each}
-			</Table.Header>
-			<Table.Body>
-				{#if !isLoading}
-					{#each $table.getRowModel().rows as row (row.id)}
-						<Table.Row data-state={row.getIsSelected() && 'selected'}>
-							{#each row.getVisibleCells() as cell (cell.id)}
-								<Table.Cell>
-									<FlexRender content={cell.column.columnDef.cell} context={cell.getContext()} />
-								</Table.Cell>
-							{/each}
-						</Table.Row>
 					{:else}
-						<Table.Row>
-							<Table.Cell colspan={columns.length} class="h-24 text-center">No results.</Table.Cell>
-						</Table.Row>
-					{/each}
-				{:else}
-					{#each { length: $params.limit } as _, i}
-						<Table.Row>
-							{#each columns as column}
-								<Table.Cell>
-									<Skeleton class="w-full min-h-6" />
-								</Table.Cell>
-							{/each}
-						</Table.Row>
-					{/each}
-				{/if}
-			</Table.Body>
-		</Table.Root>
-	</div>
-</section>
+						{#each { length: params.limit } as _, i}
+							<Table.Row>
+								{#each columns as column}
+									<Table.Cell>
+										<Skeleton class="w-full min-h-6" />
+									</Table.Cell>
+								{/each}
+							</Table.Row>
+						{/each}
+					{/if}
+				</Table.Body>
+			</Table.Root>
+		</div>
+	</section>
+{/if}

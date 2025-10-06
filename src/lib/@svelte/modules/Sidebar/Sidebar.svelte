@@ -3,7 +3,6 @@
 	import { page } from '$app/state';
 	import { cn } from '@/utils/ui';
 	import { _ } from '@services';
-	import { UserButton } from 'svelte-clerk';
 	import { LanguageSelect } from '@/@svelte/components';
 	interface Props {
 		children?: import('svelte').Snippet;
@@ -37,7 +36,12 @@
 		<!-- Mobile Navbar -->
 		<div class="flex justify-between items-center px-9 py-2">
 			<!-- Ícono de Menú -->
-			<button aria-label={$_('common.menu')} id="menu-button" class="lg:hidden" onclick={handleMenuToggler}>
+			<button
+				aria-label={$_('common.menu')}
+				id="menu-button"
+				class="lg:hidden"
+				onclick={handleMenuToggler}
+			>
 				<i class="fas fa-bars text-brand text-lg"></i>
 			</button>
 			<!-- Logo -->
@@ -47,13 +51,13 @@
 
 			<!-- Ícono de Notificación y Perfil -->
 			<div class="space-x-4">
-				<button aria-label={$_('common.notifications')} >
+				<button aria-label={$_('common.notifications')}>
 					<Notification />
 					<i class="fas fa-bell text-cyan-500 text-lg"></i>
 				</button>
 
 				<!-- Botón de Perfil -->
-				<button aria-label={$_('common.user')} >
+				<button aria-label={$_('common.user')}>
 					<i class="fas fa-user text-cyan-500 text-lg"></i>
 				</button>
 			</div>
@@ -62,10 +66,7 @@
 
 	<div
 		id="sidebar"
-		class={cn(
-			'lg:block hidden bg-cover bg-center h-screen w-84 rounded-none border-none z-10',
-			isAdmin() && 'grayscale'
-		)}
+		class={cn('lg:block hidden bg-cover bg-center h-screen w-84 rounded-none border-none z-10')}
 		style={`background-image: url(${getImagePath()});`}
 	>
 		<!-- Items -->
@@ -77,13 +78,13 @@
 				</div>
 			</div>
 			<div class="flex flex-row justify-between">
-			<UserButton showName={true} appearance={{elements: {
+				<!--TODO: <UserButton showName={true} appearance={{elements: {
 				userButtonTrigger: 'text-white! hover:text-white/80!',
 				userButtonBox: 'flex-row-reverse',
-			}}} afterSignOutUrl="/" />
+			}}} afterSignOutUrl="/" />-->
 
-		<LanguageSelect />
-	</div>
+				<LanguageSelect />
+			</div>
 		</div>
 	</div>
 </div>

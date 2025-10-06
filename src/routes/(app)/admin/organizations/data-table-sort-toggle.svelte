@@ -5,13 +5,21 @@
 
 <script lang="ts" generics="TData, TValue">
 	import { Button } from '@/components/ui/button';
-	import type { Column } from '@tanstack/svelte-table';
+	import type { Column } from '@tanstack/table-core';
 	import { ArrowUp, ArrowDown, ArrowUpDown } from '@lucide/svelte';
 
 	let { column, state }: { column: { id: string; header: string }; state: Column<TData, TValue> } =
 		$props();
 
-	let sortDirection = $derived.by(() => state.getIsSorted())
+	let sortDirection = $derived.by(() => {
+		if (state.getCanSort()) {
+			return state.getIsSorted();
+		} else {
+			return null;
+		}
+	});
+
+	$inspect(sortDirection);
 </script>
 
 <Button class="px-0.5" variant="ghost" onclick={() => state.toggleSorting()}>

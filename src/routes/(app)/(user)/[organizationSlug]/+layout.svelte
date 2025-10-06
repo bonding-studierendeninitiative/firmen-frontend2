@@ -1,22 +1,22 @@
 <script lang="ts">
 	import { Sidebar, SidebarItem } from '@/@svelte/modules';
-	import { OrganizationSwitcher } from 'svelte-clerk';
 	import { USER_SIDEBAR_LINKS } from '@constant';
 	import { page } from '$app/state';
+	import { OrganizationSwitcher } from '@/components/organization';
 
 	let activeUrl = $derived(page.url.pathname);
 	let { data, children } = $props();
 
-	type Org = {slug: string | null}
+	type Org = { slug: string | null };
 
 	function getOrgUrl(organization: Org): string {
-		return`/${organization.slug}/dashboard`
+		return `/${organization.slug}/dashboard`;
 	}
 </script>
 
 <div class=" lg:flex w-full">
 	<Sidebar>
-			<OrganizationSwitcher
+		<!--<OrganizationSwitcher
 				createOrganizationMode="navigation"
 				createOrganizationUrl="/create-org/"
 				skipInvitationScreen={true}
@@ -29,18 +29,19 @@
 				}}
 				afterSelectOrganizationUrl={getOrgUrl}
 				hidePersonal={true}
-			/>
+			/>-->
+		<OrganizationSwitcher />
 
-			<div>
-				{#each USER_SIDEBAR_LINKS as { label, route, Icon }}
-					<SidebarItem
-						href={`/${data.organization.slug}${route}`}
-						{label}
-						icon={Icon}
-						active={activeUrl.includes(route)}
-					/>
-				{/each}
-			</div>
+		<div>
+			{#each USER_SIDEBAR_LINKS as { label, route, Icon }}
+				<SidebarItem
+					href={`/${data.organization.slug}${route}`}
+					{label}
+					icon={Icon}
+					active={activeUrl.includes(route)}
+				/>
+			{/each}
+		</div>
 	</Sidebar>
 
 	<div class="h-dvh w-full overflow-y-scroll @container">

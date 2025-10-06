@@ -32,14 +32,22 @@
 	import { type Infer, intProxy, superForm, type SuperValidated } from 'sveltekit-superforms';
 	import { ValueType } from '@schema';
 	import { toast } from 'svelte-sonner';
-	import type { InferOutput } from 'valibot';
 	import { BuyOptionPreview } from '@/@svelte/modules';
 	import { cn } from '@/utils';
 	import { LocalizedDate } from '@/@svelte/components';
 	import type { UpdateEventBuyOptionInput } from '@api/admin-client';
+	import { updateBuyOption } from '@/trpc/routers/admin';
+	import type { RemoteQuery, RemoteQueryOverride } from '@sveltejs/kit';
 
 	interface Props {
 		form: SuperValidated<UpdateEventBuyOptionInput>;
+		onUpdateBuyOption?: (params: {
+			submit: () => Promise<void> & {
+				updates: (...queries: Array<RemoteQuery<any> | RemoteQueryOverride>) => Promise<void>;
+			};
+			form: HTMLFormElement;
+			data: FormData;
+		}) => Promise<void>;
 	}
 
 	let { form }: Props = $props();
@@ -55,7 +63,7 @@
 			}
 		}
 	});
-	let { form: formData, enhance, isTainted, tainted } = superform;
+	let { form: formData, enhance, isTainted, tainted, validateForm } = superform;
 
 	let signUpDaysProxy = intProxy(superform, 'allowedSignUpDays', { empty: 'null' });
 
@@ -193,7 +201,22 @@
 	}
 </script>
 
-<form action="?/updateBuyOption" method="post" use:enhance class="space-y-2">
+<form
+	{...updateBuyOption.enhance(async ({ data, form, submit }) => {
+		// formData.set({ ...$formData, ...Object.fromEntries(data) });
+		const validatedForm = await validateForm({
+			update: true
+		});
+		if (validatedForm.valid) {
+			try {
+				await onUpdateBuyOption?.({ submit, form, data });
+			} catch (error) {
+				console.error(error?.message);
+			}
+		}
+	})}
+	class="space-y-2"
+>
 	<div class="space-y-6 pb-6">
 		<div class="flex justify-between items-center">
 			<div>

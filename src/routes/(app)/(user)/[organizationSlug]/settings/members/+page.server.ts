@@ -11,7 +11,7 @@ export const load = async (event) => {
 	const { initialState, organization } = await event.parent();
 	if (!initialState.sessionId) return;
 
-	const api = await createCaller(event)
+	const api = await createCaller(event);
 
 	const createInviteForm = await superValidate(valibot(CreateOrgInviteRequestSchema));
 	createInviteForm.data.organizationSlug = event.params.organizationSlug;
@@ -33,11 +33,11 @@ export const actions = {
 			return fail(400, { form });
 		}
 
-		const api = await createCaller(event)
+		const api = await createCaller(event);
 
 		await api.organizations.generateInvite({
 			organizationID: form.data.organizationID,
-			role: "org:member",
+			role: 'member',
 			email: form.data.userMail
 		});
 		return { form };

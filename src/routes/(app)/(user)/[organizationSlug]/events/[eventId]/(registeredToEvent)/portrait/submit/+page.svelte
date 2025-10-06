@@ -32,7 +32,7 @@
 	import { SubmitPortraitRequest } from '@schema';
 	import { valibot } from 'sveltekit-superforms/adapters';
 	import { Label } from '@/components/ui/label';
-	import { trpc } from '@/trpc/client.js';
+	import { trpc } from '@/trpc/client';
 	import { page } from '$app/state';
 	import { toast } from 'svelte-sonner';
 

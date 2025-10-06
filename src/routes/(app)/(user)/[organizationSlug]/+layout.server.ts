@@ -6,15 +6,15 @@ import { createCaller } from '@/trpc/router';
 const logger = createLogger();
 
 export const load = async (event) => {
-	const { initialState, user } = await event.parent();
-	if (!initialState?.orgId) {
+	const { session, user } = await event.parent();
+	if (!session?.activeOrganizationId) {
 		redirect(302, '/select-org');
-	} else if (initialState?.orgId === PUBLIC_BONDING_ORG_ID) {
+	} else if (session?.activeOrganizationId === PUBLIC_BONDING_ORG_ID) {
 		logger.info('Member of bonding org detected. Redirecting to admin dashboard');
 		redirect(302, '/admin');
 	}
 
-	const userMetaDataMissing = Object.keys(user?.publicMetadata).length === 0;
+	const userMetaDataMissing = Object.keys(user?.metadata).length === 0;
 	if (userMetaDataMissing) {
 		redirect(302, '/add-personal-details');
 	}
@@ -30,7 +30,7 @@ export const load = async (event) => {
 	});
 
 	if (!organization) {
-		redirect(302, "/select-org")
+		redirect(302, '/select-org');
 	}
 
 	return {

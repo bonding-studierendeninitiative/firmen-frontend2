@@ -1,7 +1,6 @@
 import { createContext } from '$lib/trpc/context';
 import { createCallerFactory, router } from '@/trpc/server';
 import { type RequestEvent } from '@sveltejs/kit';
-import { adminRouter } from '@/trpc/routers/admin';
 import { catalogueDataRouter } from '@/trpc/routers/catalogueData';
 import { orgMembersRouter } from '@/trpc/routers/orgMembers';
 import { eventRegistrationsRouter } from '@/trpc/routers/eventRegistrations';
@@ -10,10 +9,10 @@ import { billingAddressTemplateRouter } from './routers/billingAddressTemplates'
 import { userRouter } from './routers/user';
 import { portraitTemplatesRouter } from './routers/portraitTemplates';
 import { organizationsRouter } from './routers/organizations';
-
+import { authRouter } from './routers/auth';
 
 export const mainRouter = router({
-	admin: adminRouter,
+	auth: authRouter,
 	catalogueData: catalogueDataRouter,
 	orgMembers: orgMembersRouter,
 	eventRegistrations: eventRegistrationsRouter,

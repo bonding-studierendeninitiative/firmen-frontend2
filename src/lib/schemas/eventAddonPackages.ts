@@ -18,7 +18,9 @@ const EventAddonPackageSchema = v.object({
 });
 export const CreateEventAddonPackageSchema = v.pipe(
 	v.object({
-		addonPackage: EventAddonPackageSchema
+		addonPackage: EventAddonPackageSchema,
+		eventId: v.string(),
+		buyOptionId: v.string()
 	}),
 	v.transform((data) => {
 		return {

@@ -19,7 +19,19 @@ const config = {
 			'@constant': './src/lib/constants',
 			'@/*': './src/lib/*'
 		},
-		adapter: adapter({})
+		adapter: adapter({}),
+		csrf: {
+			checkOrigin: false,
+			trustedOrigins: [process.env.PUBLIC_BACKEND_HOST ?? '', process.env.PUBLIC_APP_URL ?? '']
+		},
+		experimental: {
+			remoteFunctions: true
+		}
+	},
+	compilerOptions: {
+		experimental: {
+			async: true
+		}
 	}
 };
 

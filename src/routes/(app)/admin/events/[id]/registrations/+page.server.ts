@@ -2,30 +2,17 @@ import { ReviewDocumentRequest } from '@schema';
 import { valibot } from 'sveltekit-superforms/adapters';
 import { superValidate } from 'sveltekit-superforms';
 import { fail } from '@sveltejs/kit';
-import { createCaller } from '@/trpc/router.js';
-
-export const load = async (event) => {
-	const api = await createCaller(event)
-	return {
-		tableData: api.admin.events.getEventRegistrations({
-			eventId: event.params.id,
-			cursor: 0,
-			limit: 10
-		})
-	};
-};
+import { reviewDocument } from '@/trpc/routers/admin';
 
 export const actions = {
-	reviewDocument: async (event) => {
-		const form = await superValidate(event.request, valibot(ReviewDocumentRequest));
+	reviewDocument: async ({ request }) => {
+		const form = await superValidate(request, valibot(ReviewDocumentRequest));
 
 		if (!form.valid) {
 			return fail(400, { form });
 		}
 
-		const api = await createCaller(event);
-
-		await api.admin.documents.review({
+		await reviewDocument({
 			documentId: form.data.documentId,
 			data: form.data
 		});

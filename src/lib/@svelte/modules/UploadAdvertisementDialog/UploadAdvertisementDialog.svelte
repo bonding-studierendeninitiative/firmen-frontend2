@@ -1,12 +1,7 @@
 <script lang="ts">
 	import { Button, buttonVariants } from '@/components/ui/button';
 	import * as Dialog from '@/components/ui/dialog';
-	import {
-		fileProxy,
-		type Infer,
-		superForm,
-		type SuperValidated
-	} from 'sveltekit-superforms';
+	import { fileProxy, type Infer, superForm, type SuperValidated } from 'sveltekit-superforms';
 	import { toast } from 'svelte-sonner';
 	import { Control, Description, Field, FieldErrors, Label } from '@/components/ui/form';
 	import { _ } from '@services';
@@ -30,6 +25,8 @@
 				open = false;
 				toast.success('Advertisement uploaded successfully');
 			} else {
+				console.log('Upload error:', result);
+
 				toast.error(`Error: ${result.status}`);
 			}
 		}
@@ -72,15 +69,15 @@
 						<Label>{$_('modules.upload-advertisement.file')}</Label>
 						<!-- Due to some weird bug, we can't use Input here! (02.07.2025) -->
 						<input
-						class="focus-within:ring-2 focus-within:ring-offset-2 text-sm font-medium ring-offset-background border-input focus-visible:outline-hidden h-10 bg-background  border rounded-md px-3 py-2"
-						accept="image/*, application/pdf"
+							class="focus-within:ring-2 focus-within:ring-offset-2 text-sm font-medium ring-offset-background border-input focus-visible:outline-hidden h-10 bg-background border rounded-md px-3 py-2"
+							accept="image/*, application/pdf"
 							{...props}
 							type="file"
 							bind:files={$file}
 						/>
 					{/snippet}
 				</Control>
-				<Description>{$_("modules.upload-advertisement.file-description")}</Description>
+				<Description>{$_('modules.upload-advertisement.file-description')}</Description>
 				<FieldErrors />
 			</Field>
 			<Field form={superform} name="orgId">

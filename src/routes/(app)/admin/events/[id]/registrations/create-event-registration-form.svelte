@@ -10,33 +10,27 @@
 	import { page } from '$app/state';
 	import { tick } from 'svelte';
 	import { Button } from '@/components/ui/button';
-	import { writable } from 'svelte/store';
 	import Search from '@lucide/svelte/icons/search';
 	import { toast } from 'svelte-sonner';
 	import { _ } from '@services';
 	import { Switch } from '@/components/ui/switch';
-	import { trpc } from '@/trpc/client';
-	import { debouncer } from '@/stores/debouncer';
 	import { Label } from '@/components/ui/label';
+	import { getOrgs, getOrgMembers } from '@/trpc/routers/admin';
 
-	let orgFilters = writable({
+	let orgFilters = $state({
 		query: '',
 		limit: 10,
 		page: 0,
 		includeMembersCount: false,
-		orderBy: '-created_at' as const
+		orderBy: 'createdAt' as const,
+		sortDirection: 'desc' as const
 	});
-	let selectedOrg = writable({
+	let selectedOrg = $state({
 		organizationId: '',
 		limit: 10,
 		page: 0,
-		sort: '+created_at' as const
+		sort: '+createdAt' as const
 	});
-	const api = trpc(page);
-	const utils = api.createUtils();
-	let organizationMembers = api.admin.orgs.members.getAll.createQuery(selectedOrg);
-	let organizations = api.admin.orgs.list.createQuery(debouncer(orgFilters));
-	const createEventRegistration = api.admin.eventRegistrations.create.createMutation();
 	let isOrgsOpen = $state(false);
 	let contactPeople: string[] = $state([]);
 	let canUploadAdvertisement = $state(false);
@@ -44,9 +38,22 @@
 
 	interface Props {
 		open: boolean;
+		onCreateEventRegistration: ({
+			eventId,
+			organizationId,
+			contactPeople,
+			canUploadAdvertisement,
+			confirmedRegistration
+		}: {
+			eventId: string;
+			organizationId: string;
+			contactPeople: string[];
+			canUploadAdvertisement: boolean;
+			confirmedRegistration: boolean;
+		}) => Promise<void>;
 	}
 
-	let { open = $bindable() }: Props = $props();
+	let { open = $bindable(), onCreateEventRegistration }: Props = $props();
 
 	let orgName = $state('');
 	let triggerRef = $state<HTMLButtonElement>(null!);
@@ -62,21 +69,21 @@
 	}
 
 	function handleOrgSelect(newValue: string) {
-		$selectedOrg.organizationId = newValue;
+		selectedOrg.organizationId = newValue;
 		contactPeople = [];
-		orgName = $organizations.data?.data.find((org) => org.id === newValue)?.name;
+		orgName = getOrgs(orgFilters).current?.data.find((org) => org.id === newValue)?.name ?? '';
 
 		closeAndFocusTrigger();
 	}
 
 	function resetDialog() {
-		$selectedOrg.organizationId = '';
+		selectedOrg.organizationId = '';
 		contactPeople = [];
 		canUploadAdvertisement = false;
 		confirmedRegistration = false;
 		isOrgsOpen = false;
 		orgName = '';
-		$orgFilters.query = '';
+		orgFilters.query = '';
 	}
 </script>
 
@@ -122,19 +129,19 @@
 										<Label class="flex items-center gap-2 py-2">
 											<Search class="size-5 ml-2" />
 											<input
-												bind:value={$orgFilters.query}
+												bind:value={orgFilters.query}
 												class="w-full outline-transparent border-transparent py-2"
 												placeholder="Search orgs..."
 											/>
 										</Label>
 										<Command.Separator />
-										{#if $organizations.isLoading}
+										{#if getOrgs(orgFilters).loading}
 											<Command.Loading class="flex items-center justify-center py-2">
 												<LoaderCircle class="size-6 text-primary animate-spin" />
 											</Command.Loading>
 										{:else}
 											<Command.List>
-												{#each $organizations.data?.data ?? [] as organization}
+												{#each getOrgs(orgFilters).current?.data ?? [] as organization}
 													<Command.Item
 														value={organization.id}
 														onSelect={() => {
@@ -144,8 +151,7 @@
 														<Check
 															class={cn(
 																'mr-2 size-4',
-																$selectedOrg.organizationId !== organization.id &&
-																	'text-transparent'
+																selectedOrg.organizationId !== organization.id && 'text-transparent'
 															)}
 														/>
 														{organization.name}
@@ -163,7 +169,7 @@
 					</div>
 				</Card.Content>
 			</Card.Root>
-			{#if $selectedOrg.organizationId}
+			{#if selectedOrg.organizationId}
 				<Card.Root>
 					<Card.Header class="pb-2">
 						<Card.Title class="text-lg flex items-center">
@@ -173,43 +179,34 @@
 						<Card.Description></Card.Description>
 					</Card.Header>
 					<Card.Content class="space-y-6 pt-2">
-						{#if $organizationMembers.isLoading}
+						{#if getOrgMembers(selectedOrg).loading}
 							<LoaderCircle class="size-5 text-primary animate-spin" />
-						{:else}
+						{:else if getOrgMembers(selectedOrg).ready}
 							<ToggleGroup.Root
 								type="multiple"
 								variant="outline"
 								class="flex flex-wrap gap-2"
 								bind:value={contactPeople}
 							>
-								{#each $organizationMembers.data?.data ?? [] as member}
+								{#each getOrgMembers(selectedOrg).current?.members ?? [] as member}
 									<ToggleGroup.Item
-										value={member.publicUserData?.userId}
+										value={member.userId}
 										class={cn(
 											'flex items-center gap-2 rounded-full px-3 py-1 text-sm',
 											'data-[state=on]:bg-primary data-[state=on]:text-primary-foreground'
 										)}
-										aria-label={`Select ${member.publicUserData?.firstName} ${member.publicUserData?.lastName}`}
+										aria-label={`Select ${member.user.name}`}
 									>
 										<Avatar.Root class="size-6">
-											<Avatar.Image
-												src={member.publicUserData?.imageUrl}
-												alt={member.publicUserData?.firstName +
-													' ' +
-													member.publicUserData?.lastName}
-											/>
+											<Avatar.Image src={member?.user.image} alt={member?.user.name} />
 											<Avatar.Fallback class="text-xs">
-												{[
-													member.publicUserData?.firstName[0],
-													member.publicUserData?.lastName[0]
-												].join('')}
+												{member?.user.name
+													?.split(' ')
+													.map((n) => n[0])
+													.join('')}
 											</Avatar.Fallback>
 										</Avatar.Root>
-										<span
-											>{member.publicUserData?.firstName +
-												' ' +
-												member.publicUserData?.lastName}</span
-										>
+										<span>{member?.user.name}</span>
 									</ToggleGroup.Item>
 								{/each}
 							</ToggleGroup.Root>
@@ -244,7 +241,7 @@
 									)}
 								</p>
 							</div>
-							<Switch includeInput bind:checked={canUploadAdvertisement} />
+							<Switch bind:checked={canUploadAdvertisement} />
 						</div>
 						<div class="flex flex-row items-center justify-between rounded-lg border p-4">
 							<div class="space-y-0.5">
@@ -254,7 +251,7 @@
 									{$_('modules.admin-create-event-registration.confirmed-registration-description')}
 								</p>
 							</div>
-							<Switch includeInput bind:checked={confirmedRegistration} />
+							<Switch bind:checked={confirmedRegistration} />
 						</div>
 					</Card.Content>
 				</Card.Root>
@@ -262,30 +259,20 @@
 		</div>
 		<Dialog.Footer>
 			<Button
-				disabled={!$selectedOrg.organizationId || !contactPeople.length}
-				onclick={() => {
-					$createEventRegistration.mutate(
-						{
-							eventId: page.params.id,
-							organizationId: $selectedOrg.organizationId,
+				disabled={!selectedOrg.organizationId || !contactPeople.length}
+				onclick={async () => {
+					try {
+						await onCreateEventRegistration({
+							eventId: page.params.id!,
+							organizationId: selectedOrg.organizationId,
 							contactPeople,
 							canUploadAdvertisement,
 							confirmedRegistration
-						},
-						{
-							onError: () => {
-								toast.error('Anmeldung konnte nicht erstellt werden');
-							},
-							onSuccess: async () => {
-								open = false;
-								toast.success('Anmeldung erfolgreich erstellt');
-								await utils.admin.events.getEventRegistrations.invalidate({
-									eventId: page.params.id
-								});
-								resetDialog();
-							}
-						}
-					);
+						});
+						open = false;
+					} catch (e) {
+						toast.error('Anmeldung konnte nicht erstellt werden');
+					}
 				}}
 				>{$_('common.submit')}
 			</Button>

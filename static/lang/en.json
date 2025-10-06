@@ -264,7 +264,8 @@
       "invite-dialog-title": "Invite new member",
       "invite-dialog-description": "Send an invitation to add a new member to your organization.",
       "invite": "Invite",
-      "invitationSuccess": "An invitation was sent"
+      "invitationSuccess": "An invitation was sent",
+      "user": ""
     },
     "admin-create-event-registration": {
       "trigger": "New registration",
@@ -424,6 +425,16 @@
     "remove-member-dialog": {
       "title": "Remove user from org",
       "description": "Do you want to notifiy the user?"
+    },
+    "manage-users": {
+      "user": "User",
+      "manager": "Manager",
+      "admin": "Administrator"
+    },
+    "manage-user-orgs": {
+      "member": "Member",
+      "owner": "Owner",
+      "admin": "Admin"
     }
   },
   "sidebar": {
@@ -436,7 +447,8 @@
     "packages": "Packages",
     "addons": "Add-ons",
     "company": "Organizations",
-    "logout": "Logout"
+    "logout": "Logout",
+    "users": "Users"
   },
   "tab-headings": {
     "published": "Published",
@@ -487,7 +499,9 @@
     "role": "Role",
     "joined": "Joined",
     "firstName": "First Name",
-    "lastName": "Last Name"
+    "lastName": "Last Name",
+    "created": "Created",
+    "expires": "Expires"
   },
   "file-types": {
     "application/pdf": "Vector graphic (PDF)",
@@ -854,7 +868,8 @@
           "phone": "Phone",
           "name": "Name",
           "last-modified": "Last modified",
-          "members-count": "Members"
+          "members-count": "Members",
+          "role": "Role"
         },
         "filters": {
           "type": {
@@ -866,7 +881,8 @@
             }
           }
         }
-      }
+      },
+      "membersCount": "{count} members"
     },
     "addons": {
       "title": "Create a new addon package",
@@ -1045,6 +1061,45 @@
     "dashboard": {
       "dashboard": "Dashboard",
       "events": "Events"
+    },
+    "users": {
+      "roles": {
+        "user": "User",
+        "admin": "Admin",
+        "label": "Role"
+      },
+      "back-to-overview": "⮐ Back to all users",
+      "overview": {
+        "banUser": "Ban user",
+        "banUserDescription": "Do you want to ban this user?",
+        "banReason": "Ban reason",
+        "banExpires": "Ban expiry",
+        "banned": "The user is banned",
+        "permanentBan": "permanent",
+        "temporaryBan": "temporary"
+      },
+      "orgs": {
+        "noOrganizations": "The user is not member of an organization",
+        "orgMemberships": "Org memberships"
+      },
+      "allUsers": "All users",
+      "sessions": {
+        "title": "Sessions",
+        "device": "Device",
+        "no-active-sessions": "No active sessions",
+        "revoke-all-sessions": "Revoke All Sessions",
+        "refresh-sessions": "Refresh Sessions",
+        "revoke-session": "Revoke session",
+        "session-revoked-successfully": "Session revoked successfully",
+        "failed-to-revoke-session": "Failed to revoke session",
+        "ip-address": "IP address"
+      },
+      "data-table": {
+        "headers": {
+          "role": "Role",
+          "created-at": "Joined"
+        }
+      }
     }
   }
 }

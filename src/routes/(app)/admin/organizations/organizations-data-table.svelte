@@ -1,20 +1,29 @@
 <script lang="ts">
 	import { _ } from '@services';
-	import type { AdminOrgsOutput } from '@/trpc/client';
 	import { LocalizedDate, QueryDataTable } from '@/@svelte/components';
-	import type { Readable } from 'svelte/store';
 	import DataTableActions from './data-table-actions.svelte';
 	import { Checkbox } from '@/components/ui/checkbox';
-	import { createColumnHelper, type Column, type ColumnDef } from '@tanstack/svelte-table';
+	import { createColumnHelper, type Column, type ColumnDef } from '@tanstack/table-core';
 	import DataTableSortToggle from './data-table-sort-toggle.svelte';
 	import * as Avatar from '@/components/ui/avatar';
 	import { renderSnippet } from '@/@svelte/components/QueryDataTable/render-helpers';
+	import type { OrganizationsResponse } from '@/trpc/routers/admin';
 
-	let { organizations, totalCount, isLoading }: { organizations: AdminOrgsOutput['data']; totalCount: Readable<number>; isLoading: boolean } = $props();
+	let {
+		organizations,
+		totalCount,
+		isLoading,
+		params
+	}: {
+		organizations: OrganizationsResponse['data'];
+		totalCount: number;
+		isLoading: boolean;
+		params: any;
+	} = $props();
 
-	const columnHelper = createColumnHelper<AdminOrgsOutput['data'][0]>();
+	const columnHelper = createColumnHelper<OrganizationsResponse['data'][0]>();
 
-	const columns: ColumnDef<AdminOrgsOutput['data'][0]>[] = $derived([
+	const columns = [
 		columnHelper.accessor('id', {
 			id: 'checkboxes',
 			header: ({ table }) =>
@@ -52,43 +61,38 @@
 				renderSnippet(orgLinkSnippet, {
 					name: row.original.name,
 					slug: row.original.slug,
-					imageUrl: row.original.imageUrl
+					imageUrl: row.original.logo
 				})
 		}),
-		columnHelper.accessor('membersCount', {
-			id: 'members_count',
+		columnHelper.accessor('members', {
+			id: 'members',
 			header: ({ column }) =>
 				renderSnippet(sortSnippet, {
 					column: {
 						header: $_(`admin-pages.organizations.data-table.headers.members-count`),
-						id: 'members_count'
+						id: 'members'
 					},
 					state: column
 				}),
+			cell: ({ getValue }) => {
+				const membersCount = getValue()?.length || 0;
+				return membersCount;
+			}
 		}),
 		columnHelper.accessor('createdAt', {
-			id: 'created_at',
+			id: 'createdAt',
 			header: ({ column }) =>
 				renderSnippet(sortSnippet, {
 					column: {
 						header: $_(`admin-pages.organizations.data-table.headers.last-modified`),
-						id: 'created_at'
+						id: 'createdAt'
 					},
 					state: column
 				}),
 			cell: ({ row }) =>
 				renderSnippet(localizedDateSnippet, {
 					date: row.original.createdAt
-				}),
-		}),
-		columnHelper.accessor('publicMetadata.type', {
-			id: 'organizationType',
-			header: $_(`admin-pages.organizations.data-table.headers.type`),
-			cell: ({ row }) =>
-				renderSnippet(orgTypeSnippet, {
-					type: row.original.publicMetadata?.type ?? ""
-				}),
-			enableSorting: false
+				})
 		}),
 		columnHelper.accessor('id', {
 			id: 'actions',
@@ -96,11 +100,10 @@
 			cell: ({ row }) =>
 				renderSnippet(actionsSnippet, {
 					id: row.original.id
-				}
-			),
+				}),
 			enableSorting: false
 		})
-	]);
+	];
 </script>
 
 {#snippet actionsSnippet({ id }: { id: string })}
@@ -112,7 +115,7 @@
 	state
 }: {
 	column: { header: string; id: string };
-	state: Column<AdminOrgsOutput['data'][0]>
+	state: Column<OrganizationsResponse['data'][0]>;
 })}
 	<DataTableSortToggle {column} {state} />
 {/snippet}
@@ -124,7 +127,7 @@
 	checked: boolean | 'indeterminate';
 	onCheckedChange: () => void;
 })}
-	<Checkbox {checked} {onCheckedChange} />
+	<Checkbox checked={!!checked} indeterminate={checked === 'indeterminate'} {onCheckedChange} />
 {/snippet}
 {#snippet localizedDateSnippet({ date }: { date: any })}
 	<LocalizedDate {date} />
@@ -144,7 +147,13 @@
 	>
 		<Avatar.Root class="size-6">
 			<Avatar.Image src={imageUrl} alt={name} />
-			<Avatar.Fallback>{name}</Avatar.Fallback>
+			<Avatar.Fallback
+				>{name
+					.split(' ')
+					.slice(0, 2)
+					.map((word) => word[0].toUpperCase())
+					.join('')}</Avatar.Fallback
+			>
 		</Avatar.Root>
 		{name}</a
 	>
@@ -157,4 +166,4 @@
 	{/if}
 {/snippet}
 
-<QueryDataTable data={organizations} {totalCount} {isLoading} {columns} />
+<QueryDataTable data={organizations} {totalCount} {isLoading} {columns} {params} />

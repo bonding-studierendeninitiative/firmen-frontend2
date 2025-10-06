@@ -10,8 +10,12 @@ type RouterOutput = inferRouterOutputs<Router>;
 type RouterInput = inferRouterInputs<Router>;
 
 export type AdminOrgsOutput = RouterOutput['admin']['orgs']['list'];
-export type EventRegistrationsForEventOutput = RouterOutput['admin']['events']['getEventRegistrations'];
-export type EventRegistrationsForOrganizationOutput = RouterOutput['eventRegistrations']['forOrganization'];
+export type AdminUsersOutput = RouterOutput['admin']['users']['getAll'];
+export type AdminUserOrgsOutput = RouterOutput['admin']['users']['getOrgMemberships'];
+export type EventRegistrationsForEventOutput =
+	RouterOutput['admin']['events']['getEventRegistrations'];
+export type EventRegistrationsForOrganizationOutput =
+	RouterOutput['eventRegistrations']['forOrganization'];
 export type UnregisteredEventsOutput = RouterOutput['events']['unregisteredEvents'];
 
 export function trpc(init?: TRPCClientInit, queryClient?: QueryClient) {

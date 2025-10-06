@@ -1,11 +1,14 @@
 import { authorizedOrgMemberProcedure, router } from '@/trpc/server';
 import { array, nullish, number, object, parse, safeParse, string } from 'valibot';
 import { TRPCError } from '@trpc/server';
-import { GetEventRegistrationsForOrganizationOutput, RegisterOrganizationToEventInput, SubmitPortraitInput } from '@api/client';
+import {
+	GetEventRegistrationsForOrganizationOutput,
+	RegisterOrganizationToEventInput,
+	SubmitPortraitInput
+} from '@api/client';
 import { CreateEventRegistrationResponse, SubmitPortraitRequest } from '@schema';
-import { clerkClient } from 'svelte-clerk/server';
 import { superValidate, type Infer } from 'sveltekit-superforms';
-import { valibot } from "sveltekit-superforms/adapters";
+import { valibot } from 'sveltekit-superforms/adapters';
 
 export const eventRegistrationsRouter = router({
 	changeContactPeople: authorizedOrgMemberProcedure
@@ -19,14 +22,18 @@ export const eventRegistrationsRouter = router({
 			)
 		)
 		.mutation(async ({ ctx, input }) => {
-			const result = await ctx.api.request("post", "/api/v2/event-registration/{eventRegistrationId}/change-contact-people", {
-				path: {
-					eventRegistrationId: input.eventRegistrationId
-				},
-				body: {
-					contactPeople: input.contactPeople
+			const result = await ctx.api.request(
+				'post',
+				'/api/v2/event-registration/{eventRegistrationId}/change-contact-people',
+				{
+					path: {
+						eventRegistrationId: input.eventRegistrationId
+					},
+					body: {
+						contactPeople: input.contactPeople
+					}
 				}
-			});
+			);
 
 			if (!result.ok) {
 				throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Something went wrong' });
@@ -46,7 +53,7 @@ export const eventRegistrationsRouter = router({
 			)
 		)
 		.query(async ({ ctx, input: { cursor: page, limit, orgId } }) => {
-			const response = await ctx.api.get("/api/v2/event-registration", {
+			const response = await ctx.api.get('/api/v2/event-registration', {
 				query: {
 					organizationId: orgId,
 					limit,
@@ -55,12 +62,12 @@ export const eventRegistrationsRouter = router({
 			});
 			const result = safeParse(GetEventRegistrationsForOrganizationOutput, response);
 			if (!result.success) {
-				console.error(JSON.stringify(result.issues))
+				console.error(JSON.stringify(result.issues));
 				return {
 					eventRegistrations: [],
 					totalElements: 0,
 					totalPagea: 0
-				}
+				};
 			}
 			return {
 				...result,
@@ -70,13 +77,12 @@ export const eventRegistrationsRouter = router({
 							...eventRegistration,
 							contactPeople: await Promise.all(
 								eventRegistration.contactPeople?.map(async (contactPersonId) => {
-									const user = await clerkClient.users.getUser(contactPersonId);
+									const user = await ctx.db.user.findFirstOrThrow({
+										where: { id: contactPersonId }
+									});
 
 									return {
-										id: user.id,
-										name: user.fullName,
-										image: user.imageUrl,
-										email: user.primaryEmailAddress?.emailAddress
+										...user
 									};
 								}) ?? []
 							)
@@ -86,53 +92,72 @@ export const eventRegistrationsRouter = router({
 			};
 		}),
 	submitPortrait: authorizedOrgMemberProcedure
-		.input((input) => parse(
-			object({
-				eventRegistrationId: string(),
-				data: SubmitPortraitInput
-			}),
-			input
-		))
+		.input((input) =>
+			parse(
+				object({
+					eventRegistrationId: string(),
+					data: SubmitPortraitInput
+				}),
+				input
+			)
+		)
 		.mutation(async ({ ctx, input }) => {
-			const response = await ctx.api.request("post", "/api/v2/event-registration/{eventRegistrationId}/portrait/submit", {
-				path: { eventRegistrationId: input.eventRegistrationId },
-				body: input.data
-			});
+			const response = await ctx.api.request(
+				'post',
+				'/api/v2/event-registration/{eventRegistrationId}/portrait/submit',
+				{
+					path: { eventRegistrationId: input.eventRegistrationId },
+					body: input.data
+				}
+			);
 
 			if (response.status !== 204) {
-				throw new TRPCError({ code: "BAD_REQUEST", message: 'The portrait could not be submitted!' });
+				throw new TRPCError({
+					code: 'BAD_REQUEST',
+					message: 'The portrait could not be submitted!'
+				});
 			}
 		}),
 	submitPortraitForm: authorizedOrgMemberProcedure
-		.input((input) => parse(
-			object({
-				eventRegistrationId: string()
-			}), input)
+		.input((input) =>
+			parse(
+				object({
+					eventRegistrationId: string()
+				}),
+				input
+			)
 		)
 		.query(async ({ input }) => {
-			const submitPortraitForm = await superValidate<Infer<SubmitPortraitRequest>>({
-				eventRegistrationId: input.eventRegistrationId
-			}, valibot(SubmitPortraitRequest), {
-				errors: false
-			});
+			const submitPortraitForm = await superValidate<Infer<SubmitPortraitRequest>>(
+				{
+					eventRegistrationId: input.eventRegistrationId
+				},
+				valibot(SubmitPortraitRequest),
+				{
+					errors: false
+				}
+			);
 
 			return submitPortraitForm;
 		}),
 	registerContactPersonToEvent: authorizedOrgMemberProcedure
 		.input((input) => parse(RegisterOrganizationToEventInput, input))
-		.mutation(async ({
-			ctx,
-			input
-		}) => {
-			const response = await ctx.api.request("post", "/api/v2/event-registration", {
+		.mutation(async ({ ctx, input }) => {
+			const response = await ctx.api.request('post', '/api/v2/event-registration', {
 				body: input
 			});
 
 			if (response.status === 409) {
-				throw new TRPCError({ message: 'A registration to this event already exists for your organization!', code: "CONFLICT" });
+				throw new TRPCError({
+					message: 'A registration to this event already exists for your organization!',
+					code: 'CONFLICT'
+				});
 			}
 			if (response.status != 201) {
-				throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: 'The registration could not be completed' });
+				throw new TRPCError({
+					code: 'INTERNAL_SERVER_ERROR',
+					message: 'The registration could not be completed'
+				});
 			}
 
 			const data = await response.json();

@@ -1,18 +1,24 @@
 <script lang="ts">
 	import { preventDefault } from 'svelte/legacy';
 
-	import { Control, Description, Field, FieldErrors, Label } from '@/components/ui/form/index.js';
-	import { Textarea } from '@/components/ui/textarea/index.js';
-	import { Checkbox } from '@/@svelte/components/index.js';
-	import { Separator } from '@/components/ui/separator/index.js';
-	import { Input } from '@/components/ui/input/index.js';
-	import { PlusIcon, TrashIcon } from '@/@svelte/icons/index.js';
+	import { Control, Description, Field, FieldErrors, Label } from '@/components/ui/form';
+	import { Textarea } from '@/components/ui/textarea';
+	import { Checkbox } from '@/@svelte/components';
+	import { Separator } from '@/components/ui/separator';
+	import { Input } from '@/components/ui/input';
+	import { PlusIcon, TrashIcon } from '@/@svelte/icons';
 	import { _ } from '@services/i18n';
 	import { Button } from '@/components/ui/button';
 	import * as Dialog from '@/components/ui/dialog';
 	import { type Infer, intProxy, superForm, type SuperValidated } from 'sveltekit-superforms';
-	import { type CreateEventAddonPackageFormSchema } from '@schema/eventAddonPackages.js';
+	import {
+		CreateEventAddonPackageSchema,
+		type CreateEventAddonPackageFormSchema
+	} from '@schema/eventAddonPackages';
 	import { ScrollArea } from '@/components/ui/scroll-area';
+	import { valibotClient } from 'sveltekit-superforms/adapters';
+	import { createAddonPackage } from '@/trpc/routers/admin';
+	import type { RemoteQuery, RemoteQueryOverride } from '@sveltejs/kit';
 
 	const handleAddSubAddon = (e: Event) => {
 		e.preventDefault();
@@ -48,21 +54,27 @@
 	interface Props {
 		isOpen?: boolean;
 		createAddonPackageForm: SuperValidated<Infer<CreateEventAddonPackageFormSchema>>;
+		onCreateAddonPackage?: ({
+			submit,
+			form,
+			data
+		}: {
+			submit: () => Promise<void> & {
+				updates: (...queries: Array<RemoteQuery<any> | RemoteQueryOverride>) => Promise<void>;
+			};
+			form: HTMLFormElement;
+			data: FormData;
+		}) => Promise<void>;
 	}
 
-	let { isOpen = $bindable(false), createAddonPackageForm }: Props = $props();
+	let { isOpen = $bindable(false), createAddonPackageForm, onCreateAddonPackage }: Props = $props();
 
 	const superform = superForm(createAddonPackageForm, {
-		dataType: 'json',
-		onResult({ result }) {
-			if (result.type === 'success') {
-				isOpen = false;
-			} else {
-				console.log(result);
-			}
-		}
+		SPA: true,
+		validators: valibotClient(CreateEventAddonPackageSchema),
+		dataType: 'json'
 	});
-	const { form, enhance, formId } = superform;
+	const { form, validateForm, formId, enhance } = superform;
 	const priceProxy = intProxy(superform, 'addonPackage.price', { taint: false, empty: 'null' });
 </script>
 
@@ -75,7 +87,25 @@
 			<Dialog.Title>{$_('admin-pages.addons.title')}</Dialog.Title>
 		</Dialog.Header>
 		<Separator />
-		<form id={$formId} class="@container" action="?/createAddonPackage" method="post" use:enhance>
+		<form
+			id={$formId}
+			class="@container"
+			{...createAddonPackage.enhance(async ({ data, form, submit }) => {
+				// formData.set({ ...$formData, ...Object.fromEntries(data) });
+				const validatedForm = await validateForm({
+					update: true
+				});
+				if (validatedForm.valid) {
+					try {
+						await onCreateAddonPackage?.({ submit, form, data });
+						isOpen = false;
+					} catch (error) {
+						console.error(error?.message);
+					}
+				}
+			})}
+			use:enhance
+		>
 			<ScrollArea class="h-[60dvh]">
 				<div class="-m-2 px-4 py-2 h-max flex flex-col gap-4 @lg:grid @lg:grid-cols-3">
 					<Field class="@lg:col-span-2" form={superform} name="addonPackage.title">
@@ -114,7 +144,8 @@
 						bind:checked={$form.addonPackage.purchasable}
 						label={$_('admin-pages.addons.purchasable')}
 					>
-						<Description color="gray">{$_('admin-pages.addons.purchasableDescription')}</Description>
+						<Description color="gray">{$_('admin-pages.addons.purchasableDescription')}</Description
+						>
 						{#snippet description()}
 							<Field form={superform} name="addonPackage.price">
 								<Control>

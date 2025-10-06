@@ -5,29 +5,21 @@
 	import * as Command from '@/components/ui/command';
 	import { cn } from '@/utils';
 	import { Building, Check, ChevronsUpDown, LoaderCircle } from '@lucide/svelte';
-	import { page } from '$app/state';
 	import { tick } from 'svelte';
 	import { Button } from '@/components/ui/button';
-	import { writable } from 'svelte/store';
 	import Search from '@lucide/svelte/icons/search';
 	import { toast } from 'svelte-sonner';
 	import { _ } from '@services';
-	import { trpc } from '@/trpc/client';
-	import { debouncer } from '@/stores/debouncer';
 	import { Label } from '@/components/ui/label';
 	import LegacyOrgDetailsCard from './legacy-org-details-card.svelte';
+	import { getLegacyOrgs, importLegacyOrg } from '@/trpc/routers/admin';
 
-	let orgFilters = writable({
+	let orgFilters = $state({
 		query: '',
 		size: '10',
 		page: '0'
 	});
-	let selectedOrg = writable('');
-	const api = trpc(page);
-	const utils = api.createUtils();
-	// let organizationMembers = api.admin.orgs.members.getAll.createQuery(selectedOrg);
-	let legacyOrgsQuery = api.admin.legacyOrgs.getAll.createQuery(debouncer(orgFilters));
-	let importLegacyOrg = api.admin.legacyOrgs.import.createMutation({});
+	let selectedOrg = $state('');
 	let isOrgsOpen = $state(false);
 	let contactPeople: string[] = $state([]);
 	let adminContactPerson: string | null = $state(null);
@@ -50,10 +42,11 @@
 	let triggerRef = $state<HTMLButtonElement>(null!);
 
 	function handleOrgSelect(newValue: string) {
-		$selectedOrg = newValue;
+		selectedOrg = newValue;
 		contactPeople = [];
 		selectedOrgName =
-			$legacyOrgsQuery.data?.organizations?.find((org) => org.id === newValue)?.name ?? '';
+			getLegacyOrgs(orgFilters).current?.organizations?.find((org) => org.id === newValue)?.name ??
+			'';
 
 		closeAndFocusTrigger();
 	}
@@ -100,19 +93,19 @@
 										<Label class="flex items-center gap-2 py-2">
 											<Search class="size-5 ml-2" />
 											<input
-												bind:value={$orgFilters.query}
+												bind:value={orgFilters.query}
 												class="w-full outline-transparent border-transparent py-2"
 												placeholder="Search orgs..."
 											/>
 										</Label>
 										<Command.Separator />
 										<Command.List>
-											{#if $legacyOrgsQuery.isLoading}
+											{#if getLegacyOrgs(orgFilters).loading}
 												<Command.Loading class="flex items-center justify-center py-2">
 													<LoaderCircle class="size-6 text-primary animate-spin" />
 												</Command.Loading>
 											{:else}
-												{#each $legacyOrgsQuery.data?.organizations ?? [] as organization}
+												{#each (await getLegacyOrgs(orgFilters)).organizations ?? [] as organization (organization.id)}
 													<Command.Item
 														value={organization.id}
 														onSelect={() => {
@@ -122,7 +115,7 @@
 														<Check
 															class={cn(
 																'mr-2 size-4',
-																$selectedOrg !== organization.id && 'text-transparent'
+																selectedOrg !== organization.id && 'text-transparent'
 															)}
 														/>
 														{organization.name}
@@ -140,7 +133,7 @@
 					</div>
 				</Card.Content>
 			</Card.Root>
-			{#if $selectedOrg.length > 0}
+			{#if selectedOrg.length > 0}
 				<LegacyOrgDetailsCard
 					orgId={selectedOrg}
 					bind:selectedContacts={contactPeople}
@@ -151,28 +144,22 @@
 		</div>
 		<Dialog.Footer>
 			<Button
-				disabled={!$selectedOrg || !contactPeople.length}
-				onclick={() => {
-					$importLegacyOrg.mutate(
-						{
-							legacyOrgId: $selectedOrg,
+				disabled={!selectedOrg || !contactPeople.length}
+				onclick={async () => {
+					try {
+						await importLegacyOrg({
+							legacyOrgId: selectedOrg,
 							request: {
 								adminContactPerson: adminContactPerson !== null ? adminContactPerson : undefined,
 								contactPeople,
 								organizationName: orgName
 							}
-						},
-						{
-							onError: () => {
-								toast.error('Organisation konnte nicht importiert werden');
-							},
-							onSuccess: async () => {
-								open = false;
-								toast.success('Organisation erfolgreich importiert');
-								await utils.admin.orgs.list.invalidate();
-							}
-						}
-					);
+						});
+						toast.success('Organisation erfolgreich importiert');
+						open = false;
+					} catch (error) {
+						toast.error('Organisation konnte nicht importiert werden');
+					}
 				}}
 				>{$_('common.submit')}
 			</Button>

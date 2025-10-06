@@ -12,8 +12,8 @@
 	import { blur } from 'svelte/transition';
 	import EventStatusFilter from './event-status-filter.svelte';
 	import { queryParameters, ssp } from 'sveltekit-search-params';
-
-	let { data } = $props();
+	import { fade } from 'svelte/transition';
+	import { getEvents } from '@/trpc/routers/admin';
 
 	const mapEvent = (event: {
 		id: string;
@@ -32,20 +32,25 @@
 	};
 	let isListView = $state(true);
 
-	const Params = queryParameters({
-		status: ssp.array<string>(),
-		page: false,
-		sort: false
-	});
+	const params = queryParameters(
+		{
+			status: ssp.array<string>(),
+			page: ssp.number(),
+			size: ssp.number()
+		},
+		{
+			showDefaults: false
+		}
+	);
 
 	function resetFiltering() {
-		$Params.status = null;
-		$Params.page = null;
-		$Params.sort = null;
+		params.status = null;
+		params.page = null;
+		params.size = null;
 	}
 </script>
 
-<div class="space-y-6">
+<div in:fade class="space-y-6">
 	<div class=" flex justify-between items-end">
 		<div>
 			<h1 class=" text-stone-950 text-3xl font-extrabold">{$_('admin-pages.events.heading')}</h1>
@@ -71,14 +76,14 @@
 			</ButtonIcon>
 		</div>
 	</section>
-	{#await data.events}
+	{#if getEvents(params).loading}
 		<LoaderCircle class=" size-16 mx-auto animate-spin" />
-	{:then events}
+	{:else if getEvents(params).current}
 		<section in:blur class="space-y-6">
-			{#if Number(events?.totalElements) > 0}
+			{#if Number(getEvents(params).current?.totalElements) > 0}
 				<PublishedEventsTab
 					{isListView}
-					publishedEvents={events?.data?.map(mapEvent) ?? []}
+					publishedEvents={getEvents(params).current?.data?.map(mapEvent) ?? []}
 					handleEventRegistration={(id) => goto(`/admin/events/${id}/registrations/`)}
 					handleBuyOptions={(id) => goto(`/admin/events/${id}/buy-options/`)}
 				/>
@@ -89,9 +94,9 @@
 						params.set('page', (pageNumber - 1).toString());
 						await goto(`?${params}`);
 					}}
-					page={Number(events?.page) + 1}
-					count={Number(events?.totalElements)}
-					perPage={events?.size}
+					page={Number(getEvents(params).current?.page) + 1}
+					count={Number(getEvents(params).current?.totalElements)}
+					perPage={getEvents(params).current?.size}
 				>
 					{#snippet children({ pages, currentPage })}
 						<Pagination.Content>
@@ -132,9 +137,5 @@
 				/>
 			{/if}
 		</section>
-	{:catch error}
-		<div class=" text-center text-stone-500">
-			{error.message}
-		</div>
-	{/await}
+	{/if}
 </div>

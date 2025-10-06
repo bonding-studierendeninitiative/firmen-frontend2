@@ -1,10 +1,19 @@
 // lib/trpc/context.ts
+import { auth } from '@/auth';
 import type { RequestEvent } from '@sveltejs/kit';
-import { type AuthObject } from 'svelte-clerk/server';
+import { PrismaClient } from '@prisma-app/client';
 
-export async function createContext({ locals }: RequestEvent) {
+export async function createContext({ request }: RequestEvent) {
+	const authApi = auth.api;
+	const session = await authApi.getSession({
+		headers: request.headers
+	});
+	// Log the session as json for debugging
+	const db = new PrismaClient();
 	return {
-		session: locals.auth() as unknown as AuthObject
+		...session,
+		db,
+		auth: authApi
 	};
 }
 

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import * as Dialog from '@/components/ui/dialog/index.js';
+	import * as Dialog from '@/components/ui/dialog';
 	import { LocalizedDate, StatusBadge } from '@/@svelte/components';
 	import { _ } from '@services';
 	import { Badge } from '@/components/ui/badge';
@@ -76,13 +76,12 @@
 				<div class="flex flex-col gap-4 text-sm">
 					<Dialog.Header class="space-y-4">
 						<Dialog.Title>{advertisement.title}</Dialog.Title>
-						<Dialog.Description class="@container">
-						</Dialog.Description>
+						<Dialog.Description class="@container"></Dialog.Description>
 					</Dialog.Header>
 					<FileInformation documentVersion={advertisement.activeVersion} />
-					
-					<FileHistory history={advertisement.activeVersion?.history??[]} />
-					
+
+					<FileHistory history={advertisement.activeVersion?.history ?? []} />
+
 					<div class="grow"></div>
 					<Dialog.Footer>
 						<Button disabled={$download.isPending} onclick={handleDownload}

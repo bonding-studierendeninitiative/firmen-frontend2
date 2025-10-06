@@ -2,10 +2,10 @@ import { superValidate } from 'sveltekit-superforms';
 import { valibot } from 'sveltekit-superforms/adapters';
 import { fail } from '@sveltejs/kit';
 import { UpdatePortraitTemplateRequestSchema } from '@schema';
-import { createCaller } from '@/trpc/router.js';
+import { createCaller } from '@/trpc/router';
 
 export const load = async (event) => {
-	const api = await createCaller(event)
+	const api = await createCaller(event);
 
 	return {
 		editForm: api.portraitTemplates.editForm(event.params.portraitTemplateId)

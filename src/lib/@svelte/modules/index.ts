@@ -32,4 +32,5 @@ export * from './AdminJobs';
 export * from './EditContactPersons';
 export * from './FileHistory';
 export * from './FileInformation';
+export * from './AdminManageOrgMembers';
 export * from './ReviewRegistrationDocumentDialog';

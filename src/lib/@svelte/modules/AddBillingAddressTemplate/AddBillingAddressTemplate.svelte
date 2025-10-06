@@ -5,9 +5,12 @@
 	import { Input } from '@/components/ui/input';
 	import { _ } from '@services';
 	import * as Dialog from '@/components/ui/dialog';
-	import { CreateBillingAddressTemplateForm as formSchema, type CreateBillingAddressTemplateForm } from '@schema';
+	import {
+		CreateBillingAddressTemplateForm as formSchema,
+		type CreateBillingAddressTemplateForm
+	} from '@schema';
 	import { valibotClient } from 'sveltekit-superforms/adapters';
-	import {toast} from 'svelte-sonner';
+	import { toast } from 'svelte-sonner';
 	import { buttonVariants } from '@/components/ui/button';
 
 	interface Props {
@@ -16,111 +19,117 @@
 
 	let { createBillingAddressTemplateForm }: Props = $props();
 
-	const superform = superForm<Infer<CreateBillingAddressTemplateForm>>(createBillingAddressTemplateForm, {
-		validators: valibotClient(formSchema),
-		dataType: 'json',
-		onResult({ result }) {
-			if (result.type === 'success') {
-				open = false;
-				toast.success($_('modules.add-billing-address-template.billingAddressAddedSuccessfully'));
-			} else if (result.type === 'error') {
-				toast.error(result.error);
+	const superform = superForm<Infer<CreateBillingAddressTemplateForm>>(
+		createBillingAddressTemplateForm,
+		{
+			validators: valibotClient(formSchema),
+			dataType: 'json',
+			onResult({ result }) {
+				if (result.type === 'success') {
+					open = false;
+					toast.success($_('modules.add-billing-address-template.billingAddressAddedSuccessfully'));
+				} else if (result.type === 'error') {
+					toast.error(result.error);
+				}
 			}
 		}
-	});
+	);
 	const { form: formData, enhance } = superform;
 
 	let open: boolean = $state(false);
 </script>
 
-<Dialog.Root bind:open={open}>
-	<Dialog.Trigger class={buttonVariants({ variant: "gradient" })}>
+<Dialog.Root bind:open>
+	<Dialog.Trigger class={buttonVariants({ variant: 'default' })}>
 		{$_('modules.add-billing-address-template.addBillingAddress')}
 	</Dialog.Trigger>
-	<form id="create-billing-address-template-form" action="?/createBillingAddressTemplate" use:enhance
-				method="post">
+	<form
+		id="create-billing-address-template-form"
+		action="?/createBillingAddressTemplate"
+		use:enhance
+		method="post"
+	>
 		<Dialog.Content>
-
 			<Dialog.Header>
 				<Dialog.Title>{$_('modules.add-billing-address-template.newAddress')}</Dialog.Title>
 			</Dialog.Header>
 			<div class=" grid grid-cols-1 gap-6">
 				<Field form={superform} name="organizationName">
-					<Control >
+					<Control>
 						{#snippet children({ props })}
-												<Label>{$_('modules.add-billing-address-template.companyName')}</Label>
+							<Label>{$_('modules.add-billing-address-template.companyName')}</Label>
 							<Input {...props} bind:value={$formData.organizationName} />
-																	{/snippet}
-										</Control>
+						{/snippet}
+					</Control>
 					<FieldErrors />
 				</Field>
 				<Field form={superform} name="street">
-					<Control >
+					<Control>
 						{#snippet children({ props })}
-												<Label>{$_('modules.add-billing-address-template.streetHouseNo')}</Label>
+							<Label>{$_('modules.add-billing-address-template.streetHouseNo')}</Label>
 							<Input {...props} bind:value={$formData.street} />
-																	{/snippet}
-										</Control>
+						{/snippet}
+					</Control>
 					<FieldErrors />
 				</Field>
 				<div class=" grid grid-cols-2 gap-x-4">
 					<Field form={superform} name="zipCode">
-						<Control >
+						<Control>
 							{#snippet children({ props })}
-														<Label>{$_('modules.add-billing-address-template.postalCode')}</Label>
+								<Label>{$_('modules.add-billing-address-template.postalCode')}</Label>
 								<Input {...props} bind:value={$formData.zipCode} />
-																				{/snippet}
-												</Control>
+							{/snippet}
+						</Control>
 						<FieldErrors />
 					</Field>
 					<Field form={superform} name="city">
-						<Control >
+						<Control>
 							{#snippet children({ props })}
-														<Label>{$_('modules.add-billing-address-template.city')}</Label>
+								<Label>{$_('modules.add-billing-address-template.city')}</Label>
 								<Input {...props} bind:value={$formData.city} />
-																				{/snippet}
-												</Control>
+							{/snippet}
+						</Control>
 						<FieldErrors />
 					</Field>
 				</div>
 				<Field form={superform} name="country">
-					<Control >
+					<Control>
 						{#snippet children({ props })}
-												<Label>{$_('modules.add-billing-address-template.country')}</Label>
+							<Label>{$_('modules.add-billing-address-template.country')}</Label>
 							<Input {...props} bind:value={$formData.country} />
-																	{/snippet}
-										</Control>
+						{/snippet}
+					</Control>
 					<FieldErrors />
 				</Field>
 				<Separator />
 				<Field form={superform} name="vat">
-					<Control >
+					<Control>
 						{#snippet children({ props })}
-												<Label>{$_('modules.add-billing-address-template.vat')}</Label>
+							<Label>{$_('modules.add-billing-address-template.vat')}</Label>
 							<Input {...props} bind:value={$formData.vat} />
-																	{/snippet}
-										</Control>
+						{/snippet}
+					</Control>
 					<FieldErrors />
 				</Field>
 				<Field form={superform} name="billingReference">
-					<Control >
+					<Control>
 						{#snippet children({ props })}
-												<Label>{$_('modules.add-billing-address-template.billingReference')}</Label>
+							<Label>{$_('modules.add-billing-address-template.billingReference')}</Label>
 							<Input {...props} bind:value={$formData.billingReference} />
-																	{/snippet}
-										</Control>
+						{/snippet}
+					</Control>
 					<FieldErrors />
 				</Field>
 			</div>
 			<Dialog.Footer>
 				<Button variant="secondary" class="mr-2" onclick={() => (open = false)}
-				>{$_('common.cancel')}</Button
+					>{$_('common.cancel')}</Button
 				>
 				<Button form="create-billing-address-template-form" variant="gradient" type="submit"
-				>{$_('modules.add-billing-address-template.addAddress')}</Button
+					>{$_('modules.add-billing-address-template.addAddress')}</Button
 				>
 			</Dialog.Footer>
-	<SuperDebug data={formData} />
+			<SuperDebug data={formData} />
 		</Dialog.Content>
 	</form>
 </Dialog.Root>

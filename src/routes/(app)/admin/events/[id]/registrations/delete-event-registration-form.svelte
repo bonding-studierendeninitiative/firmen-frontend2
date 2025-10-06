@@ -1,23 +1,15 @@
 <script lang="ts">
 	import * as Dialog from '@/components/ui/dialog';
 	import { Button } from '@/components/ui/button';
-	import { toast } from 'svelte-sonner';
-	import { trpc } from '@/trpc/client';
-	import { page } from '$app/state';
 	import { _ } from '@services';
-
 
 	interface Props {
 		open?: boolean;
 		eventRegistrationId: string;
+		onDelete: ({ eventRegistrationId }: { eventRegistrationId: string }) => Promise<void>;
 	}
 
-	let { open = $bindable(false), eventRegistrationId }: Props = $props();
-
-	const api = trpc(page);
-	const utils = api.createUtils();
-
-	const deleteEventRegistration = api.admin.eventRegistrations.delete.createMutation();
+	let { open = $bindable(false), eventRegistrationId, onDelete }: Props = $props();
 </script>
 
 <Dialog.Root bind:open>
@@ -26,22 +18,13 @@
 		<p>$_('admin-pages.events.event-registrations.delete-dialog.description')</p>
 		<Dialog.Footer>
 			<Button
-				onclick={() => {
-					$deleteEventRegistration.mutate(
-						{
-							eventRegistrationId
-						},
-						{
-							onError: (error) => toast.error(error.message),
-							onSuccess: async () => {
-								open = false;
-								toast.success($_('admin-pages.events.event-registrations.delete-dialog.success'));
-								await utils.admin.events.getEventRegistrations.invalidate({
-									eventId: page.params.id
-								});
-							}
-						}
-					);
+				onclick={async () => {
+					try {
+						await onDelete({ eventRegistrationId });
+						open = false;
+					} catch (error) {
+						console.error('Error deleting event registration:', error);
+					}
 				}}
 				variant="destructive">{$_('common.delete')}</Button
 			>

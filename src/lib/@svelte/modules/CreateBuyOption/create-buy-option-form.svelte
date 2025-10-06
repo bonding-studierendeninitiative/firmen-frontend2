@@ -3,30 +3,38 @@
 	import * as Dialog from '@/components/ui/dialog';
 	import { Button } from '@/components/ui/button';
 	import { Minus, Plus } from '@lucide/svelte';
-	import { type Infer, superForm, type SuperValidated } from 'sveltekit-superforms';
-	import type { CreateBuyOptionRequest } from '@schema';
+	import SuperDebug, { superForm, type Infer, type SuperValidated } from 'sveltekit-superforms';
+	import { type CreateBuyOptionRequest, CreateBuyOptionRequestSchema } from '@schema';
 	import { Control, Description, Field, FieldErrors, Label } from '@/components/ui/form';
 	import { Input } from '@/components/ui/input';
-	import { toast } from 'svelte-sonner';
 	import { page } from '$app/state';
+	import { createBuyOption } from '@/trpc/routers/admin';
+	import { valibotClient } from 'sveltekit-superforms/adapters';
+	import type { RemoteQuery, RemoteQueryOverride } from '@sveltejs/kit';
 
 	interface Props {
 		createForm: SuperValidated<Infer<CreateBuyOptionRequest>>;
 		isDialogOpen?: boolean;
+		onCreateBuyOption?: ({
+			submit,
+			form,
+			data
+		}: {
+			submit: () => Promise<void> & {
+				updates: (...queries: Array<RemoteQuery<any> | RemoteQueryOverride>) => Promise<void>;
+			};
+			form: HTMLFormElement;
+			data: FormData;
+		}) => Promise<void>;
 	}
 
-	let { isDialogOpen = $bindable(false), createForm }: Props = $props();
+	let { isDialogOpen = $bindable(false), createForm, onCreateBuyOption }: Props = $props();
 
 	const superform = superForm(createForm, {
-		onResult({ result }) {
-			if (result.type === 'redirect') {
-				isDialogOpen = false;
-			} else if (result.type === 'error') {
-				toast.error(result.error.message);
-			}
-		}
+		validators: valibotClient(CreateBuyOptionRequestSchema),
+		SPA: true
 	});
-	const { form: formData, enhance, constraints } = superform;
+	const { form: formData, validateForm } = superform;
 
 	function decreaseServicesCount(e: Event) {
 		e.preventDefault();
@@ -63,10 +71,30 @@
 
 <form
 	class="flex flex-col gap-y-4"
-	method="post"
-	action={`/admin/events/${page.params.id}/buy-options/?/createBuyOption`}
-	use:enhance
+	{...createBuyOption.enhance(async ({ data, form, submit }) => {
+		// formData.set({ ...$formData, ...Object.fromEntries(data) });
+		const validatedForm = await validateForm({
+			update: true
+		});
+		if (validatedForm.valid) {
+			try {
+				await onCreateBuyOption?.({ submit, form, data });
+				isDialogOpen = false;
+			} catch (error) {
+				console.error(error?.message);
+			}
+		}
+	})}
 >
+	<Field form={superform} name="eventId">
+		<Control>
+			{#snippet children({ props })}
+				<Input {...props} type="hidden" value={page.params.id!} />
+			{/snippet}
+		</Control>
+		<Description />
+		<FieldErrors />
+	</Field>
 	<Field form={superform} name="name">
 		<Control>
 			{#snippet children({ props })}
@@ -110,11 +138,10 @@
 							<Minus class="size-5" />
 						</Button>
 						<Input
+							{...props}
 							type="number"
 							class="px-3 py-2 text-center w-10 border-none focus-visible:outline-transparent focus-visible:ring-transparent"
 							bind:value={$formData.packageCount}
-							{...props}
-							{...$constraints.packageCount}
 						></Input>
 						<Button
 							variant="ghost"
@@ -153,11 +180,10 @@
 							<Minus class="size-5" />
 						</Button>
 						<Input
+							{...props}
 							type="number"
 							class="px-3 py-2 text-center w-10 border-none focus-visible:outline-transparent focus-visible:ring-transparent"
-							{...props}
 							bind:value={$formData.serviceCount}
-							{...$constraints.serviceCount}
 						></Input>
 						<Button
 							variant="ghost"

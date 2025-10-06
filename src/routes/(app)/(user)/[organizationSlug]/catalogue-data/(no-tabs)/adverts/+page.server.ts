@@ -5,15 +5,15 @@ import { valibot } from 'sveltekit-superforms/adapters';
 import { createCaller } from '@/trpc/router';
 
 export const load: PageServerLoad = async (event) => {
-	const {organization} = await event.parent()
+	const { organization } = await event.parent();
 	const api = await createCaller(event);
 
-	event.depends("orgAdverts")
+	event.depends('orgAdverts');
 
 	return {
 		advertisementData: api.catalogueData.getAll({
 			limit: '10',
-			documentType: "advert",
+			documentType: 'advert',
 			cursor: '0'
 		}),
 		orgSlug: organization.slug
@@ -26,14 +26,15 @@ export const actions = {
 			strict: true
 		});
 		if (!form.valid) {
+			console.log('Form is not valid', form);
 			return fail(400, withFiles({ form }));
 		}
 
-		const api = await createCaller(event)
+		const api = await createCaller(event);
 
 		await api.catalogueData.upload({
 			...form.data,
-			documentType: "advert"
+			documentType: 'advert'
 		});
 
 		return withFiles({ form });

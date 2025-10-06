@@ -17,15 +17,11 @@
 	import * as Card from '$lib/components/ui/card';
 	import * as Avatar from '$lib/components/ui/avatar';
 	import { Badge } from '$lib/components/ui/badge';
-
-	import { page } from '$app/state';
-	import { trpc } from '@/trpc/client';
-	import { derived, type Writable } from 'svelte/store';
 	import { Button } from '@/components/ui/button';
 	import { _ } from '@services';
 	import type { DetailedLegacyOrganization } from '@api/admin-client';
 	import { Input } from '@/components/ui/input';
-
+	import { getLegacyOrgDetails } from '@/trpc/routers/admin';
 
 	let {
 		orgId,
@@ -34,22 +30,14 @@
 		orgName = $bindable()
 	}: Props = $props();
 
-	const api = trpc(page);
-
-	const legacyOrgQuery = api.admin.legacyOrgs.getDetails.createQuery(
-		derived(orgId, (orgId) => ({
-			orgId
-		}))
-	);
-
 	type ContactPerson = Exclude<DetailedLegacyOrganization['contactPeople'], undefined>[number];
 
 	// Derived values with fallbacks
 	// State for contact people accordion
 	let contactsExpanded = $state(false);
-	
+
 	interface Props {
-		orgId: Writable<string>;
+		orgId: string;
 		// State for selected contacts and roles
 		selectedContacts?: string[];
 		adminContact?: string | null;
@@ -57,10 +45,10 @@
 	}
 	run(() => {
 		orgName =
-			$legacyOrgQuery.data?.publicname ||
-			$legacyOrgQuery.data?.fullname ||
-			$legacyOrgQuery.data?.name ||
-			$legacyOrgQuery.data?.shortname ||
+			getLegacyOrgDetails({ orgId }).current?.publicname ||
+			getLegacyOrgDetails({ orgId }).current?.fullname ||
+			getLegacyOrgDetails({ orgId }).current?.name ||
+			getLegacyOrgDetails({ orgId }).current?.shortname ||
 			'Unnamed Organization';
 	});
 
@@ -114,29 +102,30 @@
 </script>
 
 <Card.Root class="w-full max-w-2xl overflow-hidden">
-	{#if $legacyOrgQuery.isLoading || !$legacyOrgQuery.data}
+	{#if getLegacyOrgDetails({ orgId }).loading}
 		<LoaderCircle class="animate-spin mx-auto size-10" />
 	{:else}
-		{@const organization = $legacyOrgQuery?.data}
+		{@const organization = getLegacyOrgDetails({ orgId }).current}
 		{@const hasAddress =
-			organization.address &&
-			(organization.address.street ||
-				organization.address.location ||
-				organization.address.postCode ||
-				organization.address.country)}
-		{@const hasContactPeople = organization.contactPeople && organization.contactPeople.length > 0}
+			organization?.address &&
+			(organization?.address.street ||
+				organization?.address.location ||
+				organization?.address.postCode ||
+				organization?.address.country)}
+		{@const hasContactPeople =
+			organization?.contactPeople && organization?.contactPeople.length > 0}
 
 		<Card.Header class="pb-4">
 			<div class="flex items-start justify-between">
 				<div>
 					<Card.Title class="text-xl font-bold"><Input bind:value={orgName} /></Card.Title>
-					{#if organization.corporation}
-						<Card.Description>{organization.corporation}</Card.Description>
+					{#if organization?.corporation}
+						<Card.Description>{organization?.corporation}</Card.Description>
 					{/if}
 				</div>
-				{#if organization.supplierType}
+				{#if organization?.supplierType}
 					<Badge variant="outline" class="ml-2">
-						{organization.supplierType}
+						{organization?.supplierType}
 					</Badge>
 				{/if}
 			</div>
@@ -145,35 +134,35 @@
 		<Card.Content class="space-y-4">
 			<!-- Contact Information -->
 			<div class="space-y-2">
-				{#if organization.email}
+				{#if organization?.email}
 					<div class="flex items-center gap-2">
 						<Mail class="size-4 text-muted-foreground" />
-						<a href="mailto:{organization.email}" class="text-sm hover:underline"
-							>{organization.email}</a
+						<a href="mailto:{organization?.email}" class="text-sm hover:underline"
+							>{organization?.email}</a
 						>
 					</div>
 				{/if}
 
-				{#if organization.internet}
+				{#if organization?.internet}
 					<div class="flex items-center gap-2">
 						<Globe class="size-4 text-muted-foreground" />
 						<a
-							href={organization.internet.startsWith('http')
-								? organization.internet
-								: 'https://' + organization.internet}
+							href={organization?.internet.startsWith('http')
+								? organization?.internet
+								: 'https://' + organization?.internet}
 							target="_blank"
 							rel="noopener noreferrer"
 							class="text-sm hover:underline"
 						>
-							{organization.internet}
+							{organization?.internet}
 						</a>
 					</div>
 				{/if}
 
-				{#if organization.fax}
+				{#if organization?.fax}
 					<div class="flex items-center gap-2">
 						<File class="size-4 text-muted-foreground" />
-						<span class="text-sm">{organization.fax}</span>
+						<span class="text-sm">{organization?.fax}</span>
 					</div>
 				{/if}
 			</div>
@@ -186,28 +175,28 @@
 						<span class="font-medium text-sm">{$_('modules.admin-import-legacy-org.address')}</span>
 					</div>
 
-					{#if organization.address?.street}
-						<p class="text-sm">{organization.address.street}</p>
+					{#if organization?.address?.street}
+						<p class="text-sm">{organization?.address.street}</p>
 					{/if}
 
 					<p class="text-sm">
-						{#if organization.address?.location}{organization.address.location}{/if}
-						{#if organization.address?.postCode}
-							{#if organization.address?.location},
+						{#if organization?.address?.location}{organization?.address.location}{/if}
+						{#if organization?.address?.postCode}
+							{#if organization?.address?.location},
 							{/if}
-							{organization.address.postCode}
+							{organization?.address.postCode}
 						{/if}
 					</p>
 
-					{#if organization.address?.country}
-						<p class="text-sm">{organization.address.country}</p>
+					{#if organization?.address?.country}
+						<p class="text-sm">{organization?.address.country}</p>
 					{/if}
 
-					{#if organization.address?.phone}
+					{#if organization?.address?.phone}
 						<div class="flex items-center gap-2 mt-2">
 							<Phone class="size-4 text-muted-foreground" />
-							<a href="tel:{organization.address.phone}" class="text-sm hover:underline"
-								>{organization.address.phone}</a
+							<a href="tel:{organization?.address.phone}" class="text-sm hover:underline"
+								>{organization?.address.phone}</a
 							>
 						</div>
 					{/if}
@@ -224,7 +213,7 @@
 						<div class="flex items-center gap-2">
 							<User class="size-4 text-muted-foreground" />
 							<span
-								>{`${$_('modules.admin-import-legacy-org.contact-people')} (${selectedContacts.length}/${organization.contactPeople?.length || 0})`}</span
+								>{`${$_('modules.admin-import-legacy-org.contact-people')} (${selectedContacts.length}/${organization?.contactPeople?.length || 0})`}</span
 							>
 						</div>
 						{#if contactsExpanded}
@@ -236,7 +225,7 @@
 
 					{#if contactsExpanded}
 						<div class="mt-2 space-y-3 pl-2">
-							{#each organization.contactPeople || [] as contact}
+							{#each organization?.contactPeople || [] as contact}
 								<div class="rounded-md border p-3">
 									<div class="flex items-start gap-3">
 										<!-- Selectable Avatar -->

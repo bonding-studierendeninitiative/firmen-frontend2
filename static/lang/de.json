@@ -442,6 +442,16 @@
     "remove-member-dialog": {
       "title": "Nutzer aus Organisation entfernen",
       "description": "Möchtest du den:die Nutzer:in benachrichtigen?"
+    },
+    "manage-users": {
+      "user": "Nutzer:in",
+      "manager": "Verwalter:in",
+      "admin": "Admininstrator:in"
+    },
+    "manage-user-orgs": {
+      "member": "Mitglied",
+      "owner": "Besitzer:in",
+      "admin": "Administrator:in"
     }
   },
   "sidebar": {
@@ -455,7 +465,8 @@
     "packages": "Pakete",
     "addons": "Add-ons",
     "company": "Organisationen",
-    "logout": "Abmelden"
+    "logout": "Abmelden",
+    "users": "Nutzer:innen"
   },
   "tab-headings": {
     "published": "Veröffentlicht",
@@ -506,7 +517,9 @@
     "role": "Rolle",
     "joined": "Trat bei",
     "firstName": "Vorname",
-    "lastName": "Nachname"
+    "lastName": "Nachname",
+    "created": "Erstellt",
+    "expires": "Läuft ab"
   },
   "file-types": {
     "application/pdf": "Vektorgrafik (PDF)",
@@ -873,11 +886,12 @@
         },
         "headers": {
           "type": "Typ",
-          "email": "E-Mail-Addresse",
+          "email": "E-Mail-Adresse",
           "phone": "Telefonnummer",
           "name": "Name",
           "last-modified": "Zuletzt bearbeitet",
-          "members-count": "Mitglieder"
+          "members-count": "Mitglieder",
+          "role": "Rolle"
         },
         "filters": {
           "type": {
@@ -889,7 +903,8 @@
             }
           }
         }
-      }
+      },
+      "membersCount": "{count} Mitglieder"
     },
     "addons": {
       "title": "Erstelle ein neues Zusatzleistungspaket",
@@ -1073,6 +1088,51 @@
     "dashboard": {
       "dashboard": "Dashboard",
       "events": "Veranstaltungen"
+    },
+    "users": {
+      "roles": {
+        "user": "Nutzer:in",
+        "admin": "Administrator:in",
+        "label": "Rolle"
+      },
+      "back-to-overview": "⮐ Zurück zu allen Nutzern",
+      "overview": {
+        "banUser": "Nutzer:in sperren",
+        "banUserDescription": "Möchtest du diese Nutzer:in sperren?",
+        "banReason": "Sperrgrund",
+        "banExpires": "Sperrdauer",
+        "banned": "Nutzer:in gesperrt",
+        "permanentBan": "dauerhaft",
+        "temporaryBan": "temporär",
+        "banExpiresDescription": "Wie lange soll der Nutzer/die Nutzerin gesperrt werden?",
+        "hours": "Stunden",
+        "days": "Tage",
+        "weeks": "Wochen",
+        "months": "Monate",
+        "years": "Jahre"
+      },
+      "orgs": {
+        "noOrganizations": "Der Nutzer/die Nutzerin ist kein Mitglied einer Organisation",
+        "orgMemberships": "Organisationsmitgliedschaften"
+      },
+      "allUsers": "Alle Nutzer:innen",
+      "sessions": {
+        "title": "Sitzungen",
+        "device": "Gerät",
+        "no-active-sessions": "Keine aktiven Sitzungen",
+        "revoke-all-sessions": "Alle Sitzungen widerrufen",
+        "revoke-session": "Sitzung widerrufen",
+        "refresh-sessions": "Sitzungen aktualisieren",
+        "session-revoked-successfully": "Die Sizung wurde erfolgreich widerrufen",
+        "failed-to-revoke-session": "Die Sitzung konnte nicht widerrufen werden",
+        "ip-address": "IP-Adresse"
+      },
+      "data-table": {
+        "headers": {
+          "role": "Rolle",
+          "created-at": "Beigetreten"
+        }
+      }
     }
   }
 }

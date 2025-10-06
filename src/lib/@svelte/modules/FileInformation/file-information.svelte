@@ -3,7 +3,7 @@
 	import type { DetailedDocumentVersionOutput } from "@api/client";
 	import { LocalizedDate } from "@/@svelte/components";
 	import { getHumanReadableFileSize } from "@/utils";
-    import {type HTMLAttributes} from "svelte/elements"
+    import type { HTMLAttributes } from "svelte/elements";
 
     interface Props {
         documentVersion: DetailedDocumentVersionOutput;

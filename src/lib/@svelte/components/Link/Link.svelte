@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { cn } from '@/utils/ui.js';
-	import { type Props, linkVariants } from './index.js';
+	import { cn } from '@/utils/ui';
+	import { type Props, linkVariants } from '.';
 
 	let {
 		href = '#',
@@ -11,6 +11,6 @@
 	}: Props = $props();
 </script>
 
-<a {href} class={cn(linkVariants({ variant, className }))} {...rest}>
+<a {href} class={cn(linkVariants({ variant }), className)} {...rest}>
 	{@render children?.()}
 </a>

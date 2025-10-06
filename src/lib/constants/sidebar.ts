@@ -35,17 +35,17 @@ export const USER_SIDEBAR_LINKS: SidebarLinkTypes[] = [
 		label: 'catalogue-data',
 		route: '/catalogue-data',
 		Icon: 'PortraitIcon'
-	}
+	},
 	/*{
 		label: 'notifications',
 		route: '/notifications',
 		Icon: 'NotificationIcon'
-	},
+	},*/
 	{
 		label: 'settings',
 		route: '/settings',
 		Icon: 'SettingsIcon'
-	}*/
+	}
 ];
 
 export const ADMIN_SIDEBAR_LINKS: SidebarLinkTypes[] = [
@@ -63,5 +63,10 @@ export const ADMIN_SIDEBAR_LINKS: SidebarLinkTypes[] = [
 		label: 'company',
 		route: '/admin/organizations',
 		Icon: 'CompanyIcon'
+	},
+	{
+		label: 'users',
+		route: '/admin/users',
+		Icon: 'AccountIcon'
 	}
 ];

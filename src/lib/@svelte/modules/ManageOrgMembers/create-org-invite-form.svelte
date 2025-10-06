@@ -9,6 +9,7 @@
 	import { toast } from 'svelte-sonner';
 	import type { InferOutput } from 'valibot';
 	import { Input } from '@/components/ui/input';
+	import authClient from '@/auth-client';
 
 	interface Props {
 		inviteMemberDialogOpen?: boolean;
@@ -22,6 +23,14 @@
 		applyAction: true,
 		dataType: 'json',
 		invalidateAll: 'force',
+		async onSubmit(input) {
+			const res = await authClient.organization.inviteMember({
+				organizationId: input.formData.get('organizationId') as string,
+				email: input.formData.get('userMail') as string,
+				role: 'member',
+				resend: true
+			});
+		},
 		onResult({ result }) {
 			if (result.type === 'success') {
 				inviteMemberDialogOpen = false;
@@ -60,9 +69,7 @@
 			>
 			{#if $submitting}
 				<Button disabled>
-					<LoaderCircle class="mr-2 size-4 animate-spin" />{$_(
-						'modules.manage-org-members.invite'
-					)}
+					<LoaderCircle class="mr-2 size-4 animate-spin" />{$_('modules.manage-org-members.invite')}
 				</Button>
 			{:else}
 				<Button type="submit">{$_('modules.manage-org-members.invite')}</Button>

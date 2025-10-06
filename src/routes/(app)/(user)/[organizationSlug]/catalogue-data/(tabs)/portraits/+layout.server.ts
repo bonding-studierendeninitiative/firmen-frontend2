@@ -1,14 +1,14 @@
 import { superValidate } from 'sveltekit-superforms';
 import { valibot } from 'sveltekit-superforms/adapters';
 import { PortraitTemplateSchema } from '@schema';
-import { createCaller } from '@/trpc/router.js';
+import { createCaller } from '@/trpc/router';
 
 export const load = async (event) => {
 	const page = Number(event.url.searchParams.get('page')) || 0;
 	const filter = event.url.searchParams.get('filter') || '';
 	const portraitId = event.url.searchParams.get('edit');
 
-	const api = await createCaller(event)
+	const api = await createCaller(event);
 
 	async function loadPortraitTemplateData() {
 		return await api.portraitTemplates.getAll({

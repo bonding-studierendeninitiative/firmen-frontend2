@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { _ } from '@services';
-	import { Table } from '@/@svelte/components';
-	import Button from '../../../../../../lib/@svelte/components/Button/Button.svelte';
+	import { Table, Button } from '@/@svelte/components';
 
 	const columns = ['event', 'location', 'date', ''];
 	interface EventListType {

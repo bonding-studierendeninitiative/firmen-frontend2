@@ -2,8 +2,8 @@ import { superValidate } from 'sveltekit-superforms';
 import { valibot } from 'sveltekit-superforms/adapters';
 import { fail } from '@sveltejs/kit';
 import { ConfirmEventRegistrationSchema, CreateEventRegistrationSchema } from '@schema';
-import { createCaller } from '@/trpc/router.js';
-import { RegisterOrganizationToEventInput } from '@api/client.js';
+import { createCaller } from '@/trpc/router';
+import { RegisterOrganizationToEventInput } from '@api/client';
 
 export const load = async ({ parent, url, isDataRequest }) => {
 	const selectedPackage = url.searchParams.has('selectedPackage')
@@ -78,7 +78,7 @@ export const actions = {
 			return fail(400, { form });
 		}
 
-		const api = await createCaller(event)
+		const api = await createCaller(event);
 
 		await api.eventRegistrations.registerContactPersonToEvent(form.data);
 		return { form };

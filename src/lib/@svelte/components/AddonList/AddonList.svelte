@@ -1,10 +1,10 @@
 <script lang="ts">
 	import Chip from '../Chip/Chip.svelte';
-	import { Checkbox } from '@/components/ui/checkbox/index.js';
-	import { Label } from '@/components/ui/label/index.js';
+	import { Checkbox } from '@/components/ui/checkbox';
+	import { Label } from '@/components/ui/label';
 	import { CircleCheck } from '@lucide/svelte';
 	import type { GetAddonPackageTemplateResponse } from '@schema';
-	import * as HoverCard from '$lib/components/ui/hover-card/index.js';
+	import * as HoverCard from '@/components/ui/hover-card';
 	import type { InferOutput } from 'valibot';
 	import { number, _ } from '@services/i18n';
 	import { onMount } from 'svelte';
@@ -15,7 +15,11 @@
 		selectedAddons?: string[];
 	}
 
-	let { addons = [], selectedAddonPackages = $bindable([]), selectedAddons = $bindable([]) }: Props = $props();
+	let {
+		addons = [],
+		selectedAddonPackages = $bindable([]),
+		selectedAddons = $bindable([])
+	}: Props = $props();
 
 	onMount(async () => {
 		for (const addonPackage of addons) {
@@ -73,7 +77,7 @@
 </script>
 
 <div class=" border border-stone-200 w-full rounded-lg mt-6 p-4 space-y-4">
-	<span>{$_("admin-pages.events.event-registrations.purchased-addons")}</span>
+	<span>{$_('admin-pages.events.event-registrations.purchased-addons')}</span>
 	<!-- marketingServices -->
 	{#each addons as addonPackage}
 		{@const checkedPKG = selectedAddonPackages.includes(addonPackage.id)}
@@ -87,8 +91,8 @@
 								aria-labelledby="terms-label"
 								checked={checkedPKG}
 								onCheckedChange={() => {
-											handleAddonPackageChecked(addonPackage.id);
-										}}
+									handleAddonPackageChecked(addonPackage.id);
+								}}
 							/>
 						{/if}
 						<Label
@@ -114,7 +118,7 @@
 				</div>
 				{#if addonPackage.purchasable}
 					<p class=" text-sm font-stone-800 font-extrabold">
-						{$number((checkedPKG? addonPackage.price ?? 0 : 0) / 100, {
+						{$number((checkedPKG ? (addonPackage.price ?? 0) : 0) / 100, {
 							style: 'currency',
 							currency: 'EUR',
 							currencyDisplay: 'code'
@@ -134,8 +138,8 @@
 								aria-labelledby="terms-label"
 								checked={checkedAddon}
 								onCheckedChange={() => {
-											handleAddonCheck(addon.id);
-										}}
+									handleAddonCheck(addon.id);
+								}}
 							/>
 						{/if}
 						<Label
@@ -157,11 +161,11 @@
 					<p class=" text-sm font-stone-800 font-medium">
 						{checkedPKG
 							? 'included'
-							: $number((checkedAddon ? addon.price ?? 0 : 0) / 100, {
-								style: 'currency',
-								currency: 'EUR',
-								currencyDisplay: 'code'
-							})}
+							: $number((checkedAddon ? (addon.price ?? 0) : 0) / 100, {
+									style: 'currency',
+									currency: 'EUR',
+									currencyDisplay: 'code'
+								})}
 					</p>
 				</div>
 			{/each}

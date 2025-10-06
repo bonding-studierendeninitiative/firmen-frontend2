@@ -15,21 +15,30 @@
 		value: string;
 		organizationId: string;
 		userId: string;
+		onChangeUserRole?: (
+			userId: string,
+			role: 'admin' | 'member' | 'owner',
+			organizationId: string
+		) => void;
 	}
 
-	let { value = $bindable(), organizationId, userId }: Props = $props();
+	let { value = $bindable(), organizationId, userId, onChangeUserRole }: Props = $props();
 
 	const api = trpc(page);
-	const updateRole = api.admin.orgs.members.updateRole.createMutation();
+	const updateRole = api.orgMembers.updateRole.createMutation();
 
 	const roles = [
 		{
-			value: 'org:member',
+			value: 'member',
 			label: $_('modules.manage-org-members.member')
 		},
 		{
-			value: 'org:admin',
+			value: 'admin',
 			label: $_('modules.manage-org-members.admin')
+		},
+		{
+			value: 'owner',
+			label: $_('modules.manage-org-members.owner')
 		}
 	] as const;
 	let valueLabel = $state(roles.find((row) => row.value === value)?.label);
@@ -71,19 +80,7 @@
 						<Command.Item
 							value={role.value}
 							onSelect={() => {
-								$updateRole.mutate(
-									{
-										organizationId,
-										userId,
-										role: role.value
-									},
-									{
-										onSuccess(data, variables, context) {
-											value = role.value;
-											valueLabel = roles.find((row) => row.value === role.value)?.label;
-										}
-									}
-								);
+								onChangeUserRole?.(userId, role.value, organizationId);
 								closeAndFocusTrigger();
 							}}
 						>

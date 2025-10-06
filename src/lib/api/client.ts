@@ -63,17 +63,17 @@ export const PortraitTemplateInput = v.object({
 
 export type StatusType = v.InferOutput<typeof StatusType>;
 export const StatusType = v.object({
-  reasonPhrase: v.optional(v.string()),
   statusCode: v.optional(v.number()),
+  reasonPhrase: v.optional(v.string()),
 });
 
 export type Problem = v.InferOutput<typeof Problem>;
 export const Problem = v.object({
-  parameters: v.optional(v.record(v.string(), v.unknown())),
   instance: v.optional(v.string()),
   type: v.optional(v.string()),
-  title: v.optional(v.string()),
+  parameters: v.optional(v.record(v.string(), v.unknown())),
   status: v.optional(StatusType),
+  title: v.optional(v.string()),
   detail: v.optional(v.string()),
 });
 
@@ -555,6 +555,16 @@ export const GetEventRegistrationForEventOutput = v.object({
   purchasedPackage: v.optional(PurchasedPackageOutput),
   addonPackages: v.optional(v.array(EventRegistrationAddonPackageOutput)),
   registrationDocuments: v.optional(v.array(AdminRegistrationDocumentOutput)),
+  portraitStatus: v.optional(
+    v.union([
+      v.literal("missing"),
+      v.literal("draft"),
+      v.literal("submitted"),
+      v.literal("changes-requested"),
+      v.literal("rejected"),
+      v.literal("confirmed"),
+    ]),
+  ),
   desiredEventRegistrationDays: v.optional(v.array(v.string())),
   organizationId: v.optional(v.string()),
   contactPeople: v.optional(v.array(v.string())),
@@ -608,6 +618,9 @@ export const get_Load = v.object({
   path: v.literal("/api/v2/portrait-template/{portraitTemplateId}"),
   requestFormat: v.literal("json"),
   parameters: v.object({
+    query: v.object({
+      organizationId: v.string(),
+    }),
     path: v.object({
       portraitTemplateId: v.string(),
     }),
@@ -635,6 +648,9 @@ export const delete_DeletePortraitTemplate = v.object({
   path: v.literal("/api/v2/portrait-template/{portraitTemplateId}"),
   requestFormat: v.literal("json"),
   parameters: v.object({
+    query: v.object({
+      organizationId: v.string(),
+    }),
     path: v.object({
       portraitTemplateId: v.string(),
     }),

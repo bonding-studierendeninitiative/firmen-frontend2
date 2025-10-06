@@ -3,13 +3,13 @@
 	import { LocalizedDate } from '@/@svelte/components';
 
 	interface Props {
-		event: 
-		| {
-		name: string;
-		dateFrom: string | null;
-		location?: string;
-	}
-		| undefined;
+		event:
+			| {
+					name?: string | undefined;
+					dateFrom?: string | null;
+					location?: string;
+			  }
+			| undefined;
 	}
 
 	let { event }: Props = $props();
@@ -20,14 +20,18 @@
 	<div class=" flex mt-2">
 		<div class=" flex items-center mr-2">
 			<CalenderIcon />
-			<LocalizedDate date={event?.dateFrom}
-										 format="medium"
-										 hoverFormat="relative"
-										 class=" ml-2 text-sm text-stone-800 font-medium" />
+			<LocalizedDate
+				date={event?.dateFrom}
+				format="medium"
+				hoverFormat="relative"
+				class=" ml-2 text-sm text-stone-800 font-medium"
+			/>
 		</div>
-		<div class=" flex items-center">
-			<LocationIcon />
-			<p class=" ml-2 text-sm text-stone-800 font-medium">{event?.location}</p>
-		</div>
+		{#if event?.location}
+			<div class=" flex items-center">
+				<LocationIcon />
+				<p class=" ml-2 text-sm text-stone-800 font-medium">{event?.location}</p>
+			</div>
+		{/if}
 	</div>
 </div>

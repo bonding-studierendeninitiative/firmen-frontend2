@@ -3,7 +3,11 @@
 	import { LocalizedDate, LogoStatusIcon, StatusBadge } from '@/@svelte/components';
 	import { _ } from '@services';
 	import { getHumanReadableFileSize } from '@/utils';
-	import { DeleteLogoDialog, FileInformation, ReviewRegistrationDocumentDialog } from '@/@svelte/modules';
+	import {
+		DeleteLogoDialog,
+		FileInformation,
+		ReviewRegistrationDocumentDialog
+	} from '@/@svelte/modules';
 	import { Button } from '@/components/ui/button';
 	import { trpc } from '@/trpc/client';
 	import { page } from '$app/state';
@@ -11,28 +15,33 @@
 	import { FileHistory } from '@/@svelte/modules';
 
 	interface Props {
-		logo: RegistrationDocumentOutput;
+		logo: Partial<RegistrationDocumentOutput>;
 	}
 
 	let { logo }: Props = $props();
 
-	const download = trpc(page).catalogueData.generateDownloadLink.createQuery({
-		documentId: logo?.documentVersion?.document?.id ?? '',
-		organizationId: "random"
-	}, {
-		enabled: !!logo?.documentVersion?.document?.id
-	});
-	
-	const thumbnail = trpc(page).catalogueData.generateThumbnailLink.createQuery({
-		documentId: logo?.documentVersion?.document?.id ?? '',
-		organizationId: "random",
-		resolution: "large"
-	}, {
-		enabled: logo?.documentVersion?.uploadStatus === "COMPLETED"
-	});
+	const download = trpc(page).catalogueData.generateDownloadLink.createQuery(
+		{
+			documentId: logo?.documentVersion?.document?.id ?? '',
+			organizationId: 'random'
+		},
+		{
+			enabled: !!logo?.documentVersion?.document?.id
+		}
+	);
+
+	const thumbnail = trpc(page).catalogueData.generateThumbnailLink.createQuery(
+		{
+			documentId: logo?.documentVersion?.document?.id ?? '',
+			resolution: 'large'
+		},
+		{
+			enabled: logo?.documentVersion?.uploadStatus === 'COMPLETED'
+		}
+	);
 
 	function handleDownload() {
-		const url = $download.data
+		const url = $download.data;
 		if (url) {
 			const a = document.createElement('a');
 			a.href = url;
@@ -48,17 +57,23 @@
 <Dialog.Root>
 	{#if logo?.documentVersion}
 		<Dialog.Trigger class="cursor-pointer">
-			<LogoStatusIcon title={$_('status-text.' + logo.status)} variant={{variant: logo.status ?? 'missing'}} />
+			<LogoStatusIcon
+				title={$_('status-text.' + logo.status)}
+				variant={{ variant: logo.status ?? 'missing' }}
+			/>
 		</Dialog.Trigger>
 	{:else}
-		<LogoStatusIcon title={$_('status-text.missing')} variant={{variant: 'missing'}} />
+		<LogoStatusIcon title={$_('status-text.missing')} variant={{ variant: 'missing' }} />
 	{/if}
 	<Dialog.Content class="sm:max-w-4xl">
 		{#if logo.documentVersion}
 			<Dialog.Header>
 				<Dialog.Title>{logo?.documentVersion?.document?.title}</Dialog.Title>
 				<Dialog.Description class="@container">
-					<StatusBadge variant={(logo.status ?? 'missing')} label={$_('status-text.' + logo.status)} />
+					<StatusBadge
+						variant={logo.status ?? 'missing'}
+						label={$_('status-text.' + logo.status)}
+					/>
 				</Dialog.Description>
 			</Dialog.Header>
 

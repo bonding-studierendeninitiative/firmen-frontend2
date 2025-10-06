@@ -1,14 +1,11 @@
+import { createCaller } from '@/trpc/router';
 
-import { createCaller } from '@/trpc/router.js';
+export const load = async (event) => {
+	const api = await createCaller(event);
 
+	const eventRegistration = await api.events.isOrgRegistered(event.params.eventId);
 
-export const load = async(event) => {
-
-    const api = await createCaller(event)
-
-    const eventRegistration = await api.events.isOrgRegistered(event.params.eventId)
-
-    return {
-        eventRegistration
-    }
-}
+	return {
+		eventRegistration
+	};
+};

@@ -4,13 +4,12 @@
 	import { type SuperValidated } from 'sveltekit-superforms';
 	import type { InferOutput } from 'valibot';
 	import { ManageOrgMembers } from '@/@svelte/modules';
-	import type { OrganizationMembership } from 'svelte-clerk/server';
 	import { LoaderCircle } from '@lucide/svelte';
 
 	interface Props {
 		// organizationInfo: { label: string; value: string }[]; {Object.entries(orgData?.organization || {}).filter(filterOrgEntries).map(([key, value]) => ({ label: key, value }))}
 		createInviteForm: SuperValidated<InferOutput<CreateOrgInviteRequest>>;
-		orgMembers: { data: OrganizationMembership[]; totalCount: number };
+		orgMembers: { data: unknown[]; totalCount: number };
 		organizationDetails: any;
 	}
 

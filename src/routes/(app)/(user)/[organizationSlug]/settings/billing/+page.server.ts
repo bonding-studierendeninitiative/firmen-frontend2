@@ -10,17 +10,17 @@ import { fail } from '@sveltejs/kit';
 import { createCaller } from '@/trpc/router';
 
 export const load = async (event) => {
-	const { initialState, organization } = await event.parent();
-	if (!initialState.sessionId || !initialState.orgId) return;
+	const { session, organization } = await event.parent();
+	if (!session?.id || !organization.id) return;
 
-	const api = await createCaller(event)
+	const api = await createCaller(event);
 
 	async function loadPageData() {
-		if (!initialState.sessionId) return;
+		if (!session?.id) return;
 
 		const response = await api.billingAddressTemplates.getAll({
 			organizationId: organization.id
-		})
+		});
 
 		const createBillingAddressTemplateForm = await superValidate(
 			valibot(CreateBillingAddressTemplateForm)
@@ -56,12 +56,12 @@ export const actions = {
 			return fail(400, { form });
 		}
 
-		const api = await createCaller(event)
-		
+		const api = await createCaller(event);
+
 		await api.billingAddressTemplates.create({
 			...form.data
 		});
-		
+
 		return { form };
 	},
 	deleteBillingAddressTemplate: async (event) => {
@@ -70,10 +70,10 @@ export const actions = {
 			return fail(400, { form });
 		}
 
-		const api = await createCaller(event)
-		
+		const api = await createCaller(event);
+
 		await api.billingAddressTemplates.delete(form.data.billingAddressTemplateId);
-		
+
 		return { form };
 	},
 	makeBillingAddressTemplateDefault: async (event) => {
@@ -81,8 +81,8 @@ export const actions = {
 		if (!form.valid) {
 			return fail(400, { form });
 		}
-		
-		const api = await createCaller(event)
+
+		const api = await createCaller(event);
 
 		await api.billingAddressTemplates.makeDefault(form.data.billingAddressTemplateId);
 

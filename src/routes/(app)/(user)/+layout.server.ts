@@ -1,8 +1,4 @@
-import { createCaller } from '@/trpc/router.js';
+import { auth } from '@/auth';
+import { createCaller } from '@/trpc/router';
 
-export const load = async (event) => {
-
-	const api = await createCaller(event)
-
-	return { user: await api.user.get() };
-};
+export const load = async (event) => {};

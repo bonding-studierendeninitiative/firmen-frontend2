@@ -1,4 +1,4 @@
-import noUntranslatedStrings from './rules/no-untranslated-strings.js';
+import noUntranslatedStrings from './rules/no-untranslated-strings';
 
 const plugin = {
 	meta: {

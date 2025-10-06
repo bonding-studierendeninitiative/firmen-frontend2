@@ -1,15 +1,15 @@
 <script lang="ts">
+	import * as Tabs from '@/components/ui/tabs';
 	import { goto } from '$app/navigation';
 	import { ReturnIcon } from '@/@svelte/icons';
-	import { LinkTabs } from '@/@svelte/components';
 	import { page } from '$app/state';
 	import { Event } from '@/@svelte/components';
 	import { Button } from '@/components/ui/button';
 	import { _ } from '@services';
 	import { LoaderCircle } from '@lucide/svelte';
 	import { toast } from 'svelte-sonner';
-	import { trpc } from '@/trpc/client';
 	import { cn } from '@/utils';
+	import { getEventDetails, publishEvent } from '@/trpc/routers/admin';
 
 	let { data, children } = $props();
 
@@ -21,7 +21,9 @@
 		];
 	}
 
-	const publishEvent = trpc(page).admin.events.publish.createMutation();
+	let eventFilter = $derived({
+		eventId: page.params.id!
+	});
 </script>
 
 <div>
@@ -32,37 +34,48 @@
 		>
 			<ReturnIcon />
 		</button>
-		{#await data.event}
+		{#if getEventDetails(eventFilter).loading}
 			<LoaderCircle class="size-10 mx-auto animate-spin" />
-		{:then event}
-			<Event {event} />
+		{:else if getEventDetails(eventFilter).ready && getEventDetails(eventFilter).current}
+			<Event event={getEventDetails(eventFilter).current} />
 			<div class="grow"></div>
-			{#if event?.status === 'UNPUBLISHED'}
-				<Button class={cn($publishEvent.isPending && "animate-pulse")} disabled={$publishEvent.isPending} onclick={() => $publishEvent.mutate({
-					eventId: event.id
-					}, {
-						onError: (error) => {
-							toast.error(error.message);
-						},
-						onSuccess: () => {
+			{#if getEventDetails(eventFilter).current?.status === 'UNPUBLISHED'}
+				<Button
+					class={cn($effect.pending() && 'animate-pulse')}
+					disabled={!!$effect.pending()}
+					onclick={async () => {
+						try {
+							await publishEvent(eventFilter);
 							toast.success('Event published successfully');
+						} catch (error) {
+							toast.error(error.message);
+							throw error;
 						}
-					})}>{$_("common.publish")}</Button>
+					}}>{$_('common.publish')}</Button
+				>
 			{/if}
-		{:catch error}
-			<div class="text-red-500">Error: {error.message}</div>
-		{/await}
+		{/if}
 	</div>
 
-	{#await data.event}
+	{#if getEventDetails(eventFilter).loading}
 		<LoaderCircle class="size-10 mx-auto animate-spin" />
-	{:then event}
+	{:else if getEventDetails(eventFilter).ready && getEventDetails(eventFilter).current}
 		<div class="mt-12">
-			<LinkTabs tabs={getTabs(event)} />
+			<Tabs.Root
+				value={getTabs(getEventDetails(eventFilter).current!).filter((tab) =>
+					location.pathname.startsWith(tab.href)
+				)[0]?.href}
+			>
+				<Tabs.List class="bg-neutral-200">
+					{#each getTabs(getEventDetails(eventFilter).current!) as tab}
+						<a href={tab.href}>
+							<Tabs.Trigger value={tab.href}>{$_(`tab-headings.${tab.name}`)}</Tabs.Trigger>
+						</a>
+					{/each}
+				</Tabs.List>
+			</Tabs.Root>
 		</div>
-	{:catch error}
-		<div class="text-red-500">Error: {error.message}</div>
-	{/await}
+	{/if}
 
 	{@render children?.()}
 </div>

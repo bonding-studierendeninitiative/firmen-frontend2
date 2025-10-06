@@ -1,13 +1,21 @@
 <script lang="ts">
-	import { SignIn } from 'svelte-clerk';
-	import { derived } from 'svelte/store';
-	import { queryParam, ssp } from 'sveltekit-search-params';
+	import AuthCard from '@/components/auth/AuthCard.svelte';
+	import { queryParameters, ssp } from 'sveltekit-search-params';
 	import SuperDebug from 'sveltekit-superforms';
 
-	const redirectTo = queryParam('redirectTo', ssp.string('/'));
-	const safeRedirectTo = derived(redirectTo, ([value]) => {
-		return `/${value.slice(1)}`;
+	const params = queryParameters({ redirectTo: ssp.string('/') });
+	const safeRedirectTo = $derived.by(() => {
+		return `/${params.redirectTo.slice(1)}`;
 	});
 </script>
 
-<SignIn afterSignInUrl={$safeRedirectTo} />
+<AuthCard
+	className="my-4"
+	callbackURL={safeRedirectTo}
+	localization={{
+		SIGN_IN: 'Sign In',
+		SIGN_UP: 'Sign Up',
+		SIGN_IN_DESCRIPTION: 'Please enter your credentials to sign in.',
+		SIGN_UP_DESCRIPTION: 'Create a new account by filling out the form below.'
+	}}
+/>
