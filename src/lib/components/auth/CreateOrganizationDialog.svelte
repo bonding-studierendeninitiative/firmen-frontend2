@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { preventDefault } from 'svelte/legacy';
 
-	import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetFooter } from '@/components/ui/sheet';
+	import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/Dialog';
 	import { Button } from '../ui/button';
 	import { Input } from '../ui/input';
 	import OrganizationLogo from './OrganizationLogo.svelte';
@@ -80,13 +80,13 @@
 	}
 </script>
 
-<Sheet bind:open {onOpenChange}>
-	<SheetContent class={`max-w-md ${className} ${classNames?.dialog?.content ?? ''}`}>
-		<SheetHeader class={classNames?.dialog?.header}>
-			<SheetTitle class={classNames?.title}>
+<Dialog bind:open {onOpenChange}>
+    <DialogContent class={`max-w-md !fixed !top-1/2 !left-1/2 !-translate-x-1/2 !-translate-y-1/2 ${className} ${classNames?.dialog?.content ?? ''}`}>
+		<DialogHeader class={classNames?.dialog?.header}>
+			<DialogTitle class={classNames?.title}>
 				{localization?.CREATE_ORGANIZATION ?? 'Create Organization'}
-			</SheetTitle>
-		</SheetHeader>
+			</DialogTitle>
+		</DialogHeader>
 
 		<form onsubmit={preventDefault(handleSubmit)} class="space-y-6">
 			{#if error}
@@ -152,7 +152,7 @@
 				{/if}
 			</div>
 
-			<SheetFooter class={classNames?.dialog?.footer}>
+			<DialogFooter class={classNames?.dialog?.footer}>
 				<Button type="button" variant="outline" onclick={() => onOpenChange(false)}>
 					{localization?.CANCEL ?? 'Cancel'}
 				</Button>
@@ -161,10 +161,10 @@
 						? (localization?.CREATING ?? 'Creating...')
 						: (localization?.CREATE_ORGANIZATION ?? 'Create Organization')}
 				</Button>
-			</SheetFooter>
+			</DialogFooter>
 		</form>
-	</SheetContent>
-</Sheet>
+	</DialogContent>
+</Dialog>
 
 <style>
 	/* Add any scoped styles here if needed */

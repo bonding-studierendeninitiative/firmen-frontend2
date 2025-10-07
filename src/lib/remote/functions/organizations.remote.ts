@@ -31,7 +31,9 @@ export const createInvite = form(
 	}
 );
 
-export const createOrganization = command(object({ name: string() }), async (input) => {
+export const createOrganization = form(object({
+	name: string()
+}), async (input) => {
 	const ctx = await createAuthenticatedContext();
 	if (!ctx.session) error(401, 'Unauthorized');
 	try {
@@ -50,7 +52,29 @@ export const createOrganization = command(object({ name: string() }), async (inp
 	} catch (e) {
 		error(500, e instanceof Error ? e.message : 'Failed to create organization');
 	}
+
 });
+
+// export const createOrganization = command(object({ name: string() }), async (input) => {
+// 	const ctx = await createAuthenticatedContext();
+// 	if (!ctx.session) error(401, 'Unauthorized');
+// 	try {
+// 		const organization = await ctx.auth.createOrganization({
+// 			body: {
+// 				name: input.name,
+// 				slug: input.name.toLowerCase().replace(/\s+/g, '-'),
+// 				userId: ctx.session.userId,
+// 				metadata: {
+// 					public: { name: input.name, slug: input.name.toLowerCase().replace(/\s+/g, '-') }
+// 				},
+// 				keepCurrentActiveOrganization: false
+// 			}
+// 		});
+// 		return makeSerializable(organization);
+// 	} catch (e) {
+// 		error(500, e instanceof Error ? e.message : 'Failed to create organization');
+// 	}
+// });
 
 export const getUserMemberships = query(object({}), async () => {
 	const ctx = await createAuthenticatedContext();

@@ -4,26 +4,19 @@
 	import * as Card from '@/components/ui/card';
 	import { Badge } from '@/components/ui/badge';
 	import { Users, Plus, Building2, Settings } from '@lucide/svelte';
+	import {createOrganization} from "@/remote/functions"
+	
+	let createOrganisationOpen  = $state(false);
 
 	interface Organization {
 		id: string;
 		name: string;
 		slug: string;
-		role?: string;
-		membersCount?: number;
-		logo?: string;
-		isPersonal?: boolean;
+		logo?: string | null | undefined | undefined;
+		metadata?: any;
 	}
 
 	interface Props {
-		className?: string;
-		classNames?: {
-			base?: string;
-			header?: string;
-			content?: string;
-			card?: string;
-			createButton?: string;
-		};
 		localization?: any;
 		organizations?: Organization[];
 		currentOrganization?: Organization;
@@ -33,8 +26,6 @@
 	}
 
 	let {
-		className = '',
-		classNames = {},
 		localization = {},
 		organizations = [],
 		currentOrganization,
@@ -47,8 +38,8 @@
 	let orgList = $derived(organizations.filter((org) => !org.isPersonal));
 </script>
 
-<Card.Root class={cn('w-full', className, classNames?.base)}>
-	<Card.Header class={classNames?.header}>
+<Card.Root class='w-full'>
+	<Card.Header>
 		<div class="flex items-center justify-between">
 			<div class="space-y-1">
 				<Card.Title class="flex items-center gap-2">
@@ -59,8 +50,8 @@
 					{localization.ORGANIZATIONS_DESCRIPTION || 'Manage your organizations and teams'}
 				</Card.Description>
 			</div>
-			{#if onCreateOrganization}
-				<Button size="sm" onclick={onCreateOrganization} class={classNames?.createButton}>
+			{#if onCreateOrganization && orgList.length > 0}
+				<Button size="sm" onclick={onCreateOrganization}>
 					<Plus class="mr-2 size-4" />
 					{localization.CREATE_ORGANIZATION || 'Create'}
 				</Button>
@@ -68,8 +59,10 @@
 		</div>
 	</Card.Header>
 
-	<Card.Content class={cn('space-y-4', classNames?.content)}>
-		{#if orgList.length === 0}
+	<Card.Content class='space-y-4 h-80 w-120'>
+		{#if createOrganisationOpen}
+			<form {...createOrganization.enhance(async () => {})}></form>
+		{:else if orgList.length === 0}
 			<!-- Empty state -->
 			<div class="text-center py-8 space-y-4">
 				<div class="flex justify-center">
@@ -87,7 +80,7 @@
 					</p>
 				</div>
 				{#if onCreateOrganization}
-					<Button onclick={onCreateOrganization}>
+					<Button onclick={() => createOrganisationOpen = true}>
 						<Plus class="mr-2 size-4" />
 						{localization.CREATE_FIRST_ORGANIZATION || 'Create your first organization'}
 					</Button>
@@ -101,8 +94,7 @@
 						class={cn(
 							'flex w-full items-center justify-between p-4 rounded-lg border transition-colors',
 							'hover:bg-accent cursor-pointer',
-							currentOrganization?.id === org.id && 'border-primary bg-primary/5',
-							classNames?.card
+							currentOrganization?.id === org.id && 'border-primary bg-primary/5'
 						)}
 						onclick={() => onSelectOrganization?.(org)}
 						tabindex="0"

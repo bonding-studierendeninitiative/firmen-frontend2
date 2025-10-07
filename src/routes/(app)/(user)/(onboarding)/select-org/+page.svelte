@@ -4,20 +4,23 @@
 	import { CreateOrganizationDialog, OrganizationsCard } from '@/components/auth';
 	import { Button } from '@/components/ui/button';
 	import { fade } from 'svelte/transition';
-	let org = authClient.useListOrganizations();
+	import { getUserMemberships } from '@/remote/functions/organizations.remote.js';
+
+	let orgs = getUserMemberships({})
+	
 	let showCreateDialog = $state(false);
 </script>
 
 <CreateOrganizationDialog bind:open={showCreateDialog} />
 
 <div in:fade>
-	{#if $org.isPending}
+	{#if orgs.loading}
 		<p>Loading organizations...</p>
-	{:else if $org.error}
-		<p>Error loading organizations: {$org.error.message}</p>
+	{:else if orgs.error}
+		<p>Error loading organizations: {orgs.error}</p>
 	{:else}
 		<OrganizationsCard
-			organizations={$org.data ?? []}
+			organizations={orgs.current ?? []}
 			onSelectOrganization={async (org) => {
 				console.log('Selected organization:', org);
 				await authClient.organization.setActive({ organizationId: org.id });
