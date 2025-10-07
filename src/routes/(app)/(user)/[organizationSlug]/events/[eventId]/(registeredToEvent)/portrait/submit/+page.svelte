@@ -282,10 +282,10 @@
 						<h3 class="text-xl font-medium">Select a template</h3>
 						<RadioGroup.Root bind:value={selectedTemplate}>
 							<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-								{#if $portraitTemplatesQuery.isLoading}
+								{#if portraitTemplatesQuery.loading}
 									<LoaderCircle class="size-6 mx-auto animate-spin" />
 								{:else}
-									{#each $portraitTemplatesQuery.data?.portraitTemplates ?? [] as template (template.id)}
+									{#each portraitTemplatesQuery.current?.portraitTemplates ?? [] as template (template.id)}
 										<Label for={`portrait-template-${template.id}`}>
 											<RadioGroup.Item
 												value={template.id}

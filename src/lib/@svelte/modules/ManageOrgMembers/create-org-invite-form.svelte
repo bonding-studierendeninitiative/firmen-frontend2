@@ -27,7 +27,7 @@
 	<div class=" flex flex-col gap-1">
 		<Label>{$_('admin-pages.organizations.organizationEmail')}</Label>
 		<Input
-			name={createInvite.field('email')}
+			{...createInvite.fields.email.as('email')}
 			placeholder={$_('user-pages.organizations.createOrganization.placeholders.organizationEmail')}
 		/>
 

@@ -2,12 +2,9 @@
 	import { cn } from '@/utils';
 	import SettingsCard from './shared/SettingsCard.svelte';
 	import { Input } from '@/components/ui/input';
-	import { Button } from '@/components/ui/button';
 	import * as Card from '@/components/ui/card';
 	import { Skeleton } from '@/components/ui/skeleton';
-	import { Field, Control, FieldErrors, Label } from '@/components/ui/form';
-	import { superForm, type SuperValidated, type Infer } from 'sveltekit-superforms';
-	import { valibot } from 'sveltekit-superforms/adapters';
+	import { Label } from '@/components/ui/form';
 	import * as v from 'valibot';
 	import { toast } from 'svelte-sonner';
 

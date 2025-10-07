@@ -85,8 +85,6 @@
 			<Button
 				onclick={async () => {
 					try {
-						console.log('Activating buy option', page.params.buyOptionId);
-
 						await activateBuyOption({
 							buyOptionId: page.params.buyOptionId!,
 							eventId: page.params.id!
