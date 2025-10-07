@@ -1,5 +1,5 @@
 import { query, form, command } from '$app/server';
-import { object, nullish, string } from 'valibot';
+import { object, nullish, string, pipe, minLength } from 'valibot';
 import { error } from '@sveltejs/kit';
 import { createOrgMemberContext } from '@/remote/context';
 import { superValidate } from 'sveltekit-superforms';
@@ -26,7 +26,7 @@ export const getBillingAddressTemplates = orgMemberQuery(
 					page: Number(input.page),
 					size: Number(input.limit),
 					sortDirection: 'desc',
-					sortBy: 'createdAt'
+					sortBy: 'creationDate'
 				}
 			}
 		);
@@ -41,13 +41,31 @@ export const getBillingAddressTemplates = orgMemberQuery(
 
 export const createBillingAddressTemplate = form(
 	object({
-		organizationId: string(),
-		street: string(),
-		city: string(),
-		zipCode: string(),
-		country: string(),
-		vat: string(),
-		organizationName: string(),
+		organizationId: pipe(
+			string('Organization ID is required'),
+			minLength(1, 'Organization ID is required')
+		),
+		street: pipe(
+			string('Die Straße ist erforderlich.'),
+			minLength(2, 'Die Straße muss mindestens 2 Zeichen lang sein.')
+		),
+		city: pipe(
+			string('Die Stadt ist erforderlich.'),
+			minLength(2, 'Die Stadt muss mindestens 2 Zeichen lang sein.')
+		),
+		zipCode: pipe(
+			string('Die Postleitzahl ist erforderlich.'),
+			minLength(4, 'Die Postleitzahl muss mindestens 4 Zeichen lang sein.')
+		),
+		country: pipe(
+			string('Das Land ist erforderlich.'),
+			minLength(2, 'Das Land muss mindestens 2 Zeichen lang sein.')
+		),
+		vat: pipe(string()),
+		organizationName: pipe(
+			string('Der Organisationsname ist erforderlich.'),
+			minLength(2, 'Der Organisationsname muss mindestens 2 Zeichen lang sein.')
+		),
 		billingReference: string()
 	}),
 	async (data) => {

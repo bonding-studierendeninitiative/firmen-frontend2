@@ -35,7 +35,7 @@
 		</div>
 		<ManageOrgMembers
 			organizationId={data.organization?.id || ''}
-			membersResponse={membersResponse.current}
+			{membersResponse}
 			onChangeUserRole={async (userId, role, organizationId) => {
 				await authClient.organization.updateMemberRole(
 					{ memberId: userId, role, organizationId },

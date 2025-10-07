@@ -4,17 +4,15 @@
 	import { AddBillingAddressTemplate } from '@/@svelte/modules';
 	import { LoaderCircle } from '@lucide/svelte';
 	import { fade } from 'svelte/transition';
-	import {
-		createBillingAddressTemplateForm,
-		deleteBillingAddressTemplateForm,
-		getBillingAddressTemplates,
-		makeBillingAddressTemplateDefaultForm
-	} from '@/remote/functions';
+	import { createBillingAddressTemplateForm, getBillingAddressTemplates } from '@/remote/functions';
 
 	let billingAddressTemplatesQuery = getBillingAddressTemplates({
 		page: '0',
 		limit: '10'
 	});
+
+	let { data } = $props();
+	const organization = data?.organization;
 </script>
 
 <div>
@@ -29,23 +27,19 @@
 			<LoaderCircle class="size-10 mx-auto animate-spin" />
 		{:else if billingAddressTemplatesQuery.ready}
 			<section in:fade class="flex flex-col @3xl:col-span-2 col-span-3">
-				{#each (billingAddressTemplatesQuery.current ?? []).filter(Boolean) as billingAddress, index (index)}
+				{#each (billingAddressTemplatesQuery.current.billingAddressTemplates ?? []).filter(Boolean) as billingAddress, index (index)}
 					<BillingAddressCard
 						{billingAddress}
 						isDefault={billingAddress.id ===
-							organization?.publicMetadata?.defaultBillingAddressTemplateId}
+							organization?.metadata?.defaultBillingAddressTemplateId}
 					/>
 				{/each}
 				<div class=" flex justify-between items-center my-6 pb-6">
-					{#if createBillingAddressTemplateForm({}).ready}
-						<AddBillingAddressTemplate
-							createBillingAddressTemplateForm={createBillingAddressTemplateForm({}).current!}
-						/>
-					{/if}
+					<AddBillingAddressTemplate organizationId={organization?.id || ''} />
 				</div>
 			</section>
 		{:else if billingAddressTemplatesQuery.error}
-			<div class="text-red-500">{error}</div>
+			<div class="text-red-500">{billingAddressTemplatesQuery.error}</div>
 		{/if}
 	</div>
 </div>
