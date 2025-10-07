@@ -1,90 +1,77 @@
 <script lang="ts">
-	import { preventDefault } from 'svelte/legacy';
-
 	import { Button } from '../ui/button';
 	import { Input } from '../ui/input';
 	import { Label } from '../ui/label';
+	import { _ } from 'svelte-i18n';
+	import { signUp } from '@/remote/functions';
 
 	interface Props {
 		className?: string;
-		classNames?: any;
-		localization?: any;
-		redirectTo?: string;
-		isSubmitting?: boolean;
 		callbackURL?: string;
 	}
 
-	let {
-		className = '',
-		classNames = {},
-		localization = {},
-		redirectTo = '',
-		isSubmitting = false,
-		callbackURL = ''
-	}: Props = $props();
-
-	let name = $state('');
+	let { className = '', callbackURL }: Props = $props();
+	let emailSent = $state(false);
 	let email = $state('');
-	let password = '';
-	let confirmPassword = '';
-	let error: string | null = $state(null);
-
-	async function handleSubmit(event?: Event) {
-		event?.preventDefault();
-		error = null;
-		if (!name || !email || !password || !confirmPassword) {
-			error = localization?.FIELDS_REQUIRED ?? 'All fields are required';
-			return;
-		}
-		if (password !== confirmPassword) {
-			error = localization?.PASSWORDS_DO_NOT_MATCH ?? 'Passwords do not match';
-			return;
-		}
-
-		// TODO: Implement actual sign up logic
-		console.log('Sign up:', { name, email, password, callbackURL });
-	}
 </script>
 
-<form onsubmit={handleSubmit} class={`grid w-full gap-6 ${className} ${classNames?.base ?? ''}`}>
-	{#if error}
-		<div class="text-red-500 text-sm">{error}</div>
-	{/if}
-
-	<!-- Name input -->
-	<div class="grid gap-2">
-		<Label for="name">{localization?.NAME ?? 'Name'}</Label>
-		<Input
-			id="name"
-			type="text"
-			bind:value={name}
-			placeholder={localization?.NAME_PLACEHOLDER ?? 'Enter your name'}
-			disabled={isSubmitting}
-			class={classNames?.input ?? ''}
-		/>
+{#if emailSent}
+	<div class="text-center space-y-4">
+		<div class="text-green-600 text-lg font-semibold">
+			{$_('auth.signIn.emailSent')}
+		</div>
+		<p class="text-sm text-muted-foreground">
+			{$_('auth.signIn.emailSentMessage', { values: { email } })}
+		</p>
 	</div>
+{:else}
+	<form
+		{...signUp.enhance(async ({ data, submit }) => {
+			try {
+				email = data.email;
+				await submit();
+				emailSent = signUp.result?.ok === true;
+			} catch (error) {
+				console.error('Sign up failed:', error);
+			}
+		})}
+		class={`grid w-full gap-6 ${className}`}
+	>
+		<!-- Hidden callbackURL input -->
+		{#if callbackURL}
+			<input {...signUp.fields.callbackURL.as('hidden')} value={callbackURL} />
+		{/if}
+		<!-- Name input -->
+		<div class="grid gap-2">
+			<Label for="name">{$_('auth.sign-up.name')}</Label>
+			<Input
+				id="name"
+				{...signUp.fields.name.as('text')}
+				placeholder={$_('auth.sign-up.placeholders.name')}
+				disabled={signUp.pending > 0}
+			/>
+			{#each signUp.fields.name.issues() ?? [] as issue}
+				<div class="text-red-500 text-sm">{issue.message}</div>
+			{/each}
+		</div>
 
-	<!-- Email input -->
-	<div class="grid gap-2">
-		<Label for="email">{localization?.EMAIL ?? 'Email'}</Label>
-		<Input
-			id="email"
-			type="email"
-			bind:value={email}
-			placeholder={localization?.EMAIL_PLACEHOLDER ?? 'Enter your email'}
-			disabled={isSubmitting}
-			class={classNames?.input ?? ''}
-		/>
-	</div>
+		<!-- Email input -->
+		<div class="grid gap-2">
+			<Label for="email">{$_('auth.sign-up.email')}</Label>
+			<Input
+				id="email"
+				{...signUp.fields.email.as('text')}
+				placeholder={$_('auth.sign-up.placeholders.email')}
+				disabled={signUp.pending > 0}
+			/>
+			{#each signUp.fields.email.issues() ?? [] as issue}
+				<div class="text-red-500 text-sm">{issue.message}</div>
+			{/each}
+		</div>
 
-	<!-- Submit button -->
-	<Button type="submit" disabled={isSubmitting} class={`w-full ${classNames?.button ?? ''}`}>
-		{isSubmitting
-			? (localization?.SIGNING_UP ?? 'Signing up...')
-			: (localization?.SIGN_UP_ACTION ?? 'Sign up')}
-	</Button>
-</form>
-
-<style>
-	/* Add any scoped styles here if needed */
-</style>
+		<!-- Submit button -->
+		<Button type="submit" disabled={signUp.pending > 0} class={`w-full`}>
+			{signUp.pending > 0 ? $_('auth.sign-up.sending') : $_('auth.sign-up.action')}
+		</Button>
+	</form>
+{/if}

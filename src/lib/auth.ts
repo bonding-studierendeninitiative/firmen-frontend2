@@ -94,6 +94,7 @@ export const auth = betterAuth({
 			adminRoles: 'admin'
 		}),
 		magicLink({
+			disableSignUp: true,
 			// Optional: specify the magic link settings
 			sendMagicLink: async ({ email, token, url }, request) => {
 				// Implement your email sending logic here

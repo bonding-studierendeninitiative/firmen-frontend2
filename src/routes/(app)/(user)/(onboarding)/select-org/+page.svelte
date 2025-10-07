@@ -18,10 +18,10 @@
 	{:else}
 		<OrganizationsCard
 			organizations={$org.data ?? []}
-			onSelectOrganization={(org) => {
+			onSelectOrganization={async (org) => {
 				console.log('Selected organization:', org);
-				authClient.organization.setActive({ organizationId: org.id });
-				goto(`/${org.slug}/dashboard`);
+				await authClient.organization.setActive({ organizationId: org.id });
+				await goto(`/${org.slug}/dashboard`);
 			}}
 			onCreateOrganization={() => (showCreateDialog = true)}
 		/>

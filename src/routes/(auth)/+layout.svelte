@@ -3,6 +3,10 @@
 	import { LanguageSelect } from '@/@svelte/components';
 	import { _ } from '@services';
 	import type { Snippet } from 'svelte';
+	import * as Card from '@/components/ui/card';
+	import * as Tabs from '@/components/ui/tabs';
+	import { page } from '$app/state';
+	import { cn } from '@/utils';
 	interface Props {
 		children?: Snippet;
 	}
@@ -18,8 +22,37 @@
 				<LanguageSelect />
 			</div>
 		</nav>
-		<div class=" flex justify-center items-center grow">
-			{@render children?.()}
+		<div class=" flex justify-center items-center flex-col grow">
+			<Tabs.Root
+				value={page.url.pathname.startsWith('/sign-in') ? 'SIGN_IN' : 'SIGN_UP'}
+				class={`mb-2`}
+			>
+				<Tabs.List class="w-full">
+					<a href="/sign-in" class="grow">
+						<Tabs.Trigger
+							value="SIGN_IN"
+							class={cn(`px-4 py-2 w-full`, {
+								'font-bold': page.url.pathname === '/sign-in'
+							})}
+						>
+							{$_('auth.sign-in.title')}
+						</Tabs.Trigger>
+					</a>
+					<a href="/sign-up" class="grow">
+						<Tabs.Trigger
+							value="SIGN_UP"
+							class={cn(`px-4 py-2 w-full`, {
+								'font-bold': page.url.pathname === '/sign-up'
+							})}
+						>
+							{$_('auth.sign-up.title')}
+						</Tabs.Trigger>
+					</a>
+				</Tabs.List>
+			</Tabs.Root>
+			<Card.Root class={`w-full max-w-sm`}>
+				{@render children?.()}
+			</Card.Root>
 		</div>
 		<footer class=" px-10 py-4 border-t border-solid border-border bottom-0 w-full @container">
 			<div
@@ -31,7 +64,9 @@
 						<a href="https://bonding.de/impressum" target="_blank">{$_('auth.footer.imprint')}</a>
 					</p>
 					<p>
-						<a href="https://bonding.de/datenschutz" target="_blank">{$_('auth.footer.privacyPolicy')}</a>
+						<a href="https://bonding.de/datenschutz" target="_blank"
+							>{$_('auth.footer.privacyPolicy')}</a
+						>
 					</p>
 				</div>
 			</div>

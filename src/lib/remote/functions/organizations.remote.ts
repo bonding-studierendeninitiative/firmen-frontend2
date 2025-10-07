@@ -6,32 +6,6 @@ import { SetOrgDetailsRequestSchema } from '@schema';
 import { createAuthenticatedContext, createOrgMemberContext } from '@/remote/context';
 import { superValidate } from 'sveltekit-superforms';
 import { valibot } from 'sveltekit-superforms/adapters';
-import { authenticatedQuery } from '../auth-guards';
-
-export const generateInvite = command(
-	object({
-		email: string(),
-		organizationID: string(),
-		role: union([literal('admin'), literal('member')])
-	}),
-	async (input) => {
-		const ctx = await createAuthenticatedContext();
-		if (!ctx.session) error(401, 'Unauthorized');
-		try {
-			const orgInvite = await ctx.auth.createInvitation({
-				body: {
-					organizationId: input.organizationID,
-					email: input.email,
-					resend: true,
-					role: input.role as 'admin' | 'member'
-				}
-			});
-			return makeSerializable(orgInvite);
-		} catch (e) {
-			error(500, e instanceof Error ? e.message : 'Failed to generate organization invite');
-		}
-	}
-);
 
 export const createInvite = form(
 	object({

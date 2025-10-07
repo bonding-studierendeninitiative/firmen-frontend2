@@ -1,7 +1,8 @@
 <script lang="ts">
-	import AuthCard from '@/components/auth/AuthCard.svelte';
+	import { AuthForm } from '@/components/auth';
 	import { queryParameters, ssp } from 'sveltekit-search-params';
-	import SuperDebug from 'sveltekit-superforms';
+	import * as Card from '@/components/ui/card';
+	import { _ } from '@services';
 
 	const params = queryParameters({ redirectTo: ssp.string('/') });
 	const safeRedirectTo = $derived.by(() => {
@@ -9,13 +10,14 @@
 	});
 </script>
 
-<AuthCard
-	className="my-4"
-	callbackURL={safeRedirectTo}
-	localization={{
-		SIGN_IN: 'Sign In',
-		SIGN_UP: 'Sign Up',
-		SIGN_IN_DESCRIPTION: 'Please enter your credentials to sign in.',
-		SIGN_UP_DESCRIPTION: 'Create a new account by filling out the form below.'
-	}}
-/>
+<Card.Header>
+	<Card.Title>{$_('auth.sign-in.title')}</Card.Title>
+	<Card.Description>
+		{$_('auth.sign-up.description')}
+	</Card.Description>
+</Card.Header>
+
+<Card.Content class={`grid gap-6`}>
+	<!-- AuthForm goes here -->
+	<AuthForm className="my-4" callbackURL={safeRedirectTo} />
+</Card.Content>

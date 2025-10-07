@@ -20,6 +20,22 @@
       "sendMagicLink": "Weiter",
       "adminSignIn": "Admin-Anmeldung",
       "backToRegular": "Zurück zur normalen Anmeldung"
+    },
+    "sign-up": {
+      "title": "Registrieren",
+      "description": "weiter zum bonding Firmenintranet",
+      "action": "Konto erstellen",
+      "sending": "Konto wird erstellt...",
+      "placeholders": {
+        "email": "Ihre Arbeits-E-Mail-Adresse",
+        "name": "Ihr vollständiger Name"
+      },
+      "email": "E-Mail-Adresse",
+      "fields-required": "Diese Felder sind erforderlich",
+      "name": "Name"
+    },
+    "sign-in": {
+      "title": "Einloggen"
     }
   },
   "common": {

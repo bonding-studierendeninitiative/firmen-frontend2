@@ -10,30 +10,24 @@
 		classNames?: any;
 		callbackURL?: string;
 		isSubmitting?: boolean;
-		localization?: any;
-		pathname?: string;
 		redirectTo?: string;
 		view?: string;
-		otpSeparators?: number;
 	}
 
 	let {
 		className = '',
 		classNames = {},
-		callbackURL = '',
+		callbackURL,
 		isSubmitting = false,
-		localization = {},
-		pathname = '',
 		redirectTo = '',
-		view = 'SIGN_IN',
-		otpSeparators = 0
+		view = 'SIGN_IN'
 	}: Props = $props();
 </script>
 
 {#if view === 'SIGN_IN'}
-	<SignInForm {classNames} {localization} {redirectTo} {isSubmitting} {className} />
+	<SignInForm {classNames} {redirectTo} {isSubmitting} {className} />
 {:else if view === 'SIGN_UP'}
-	<SignUpForm {classNames} {localization} {redirectTo} {isSubmitting} {callbackURL} {className} />
+	<SignUpForm {callbackURL} {className} />
 {:else if view === 'SIGN_OUT'}
 	<SignOut />
 {:else if view === 'CALLBACK'}

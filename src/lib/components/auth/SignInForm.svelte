@@ -7,6 +7,7 @@
 	import { PUBLIC_APP_URL } from '$env/static/public';
 	import { GithubIcon, LinkedinIcon, MicrosoftEntraIcon } from '@/@svelte/icons';
 	import { _ } from '@services';
+	import { toast } from 'svelte-sonner';
 
 	interface Props {
 		className?: string;
@@ -18,7 +19,6 @@
 	let { className = '', classNames = {}, redirectTo = '', isSubmitting = false }: Props = $props();
 
 	let email = $state('');
-	let rememberMe = $state(false);
 	let error: string | null = $state(null);
 	let emailSent = $state(false);
 	let showAdmin = $state(false);
@@ -36,6 +36,11 @@
 				email,
 				callbackURL: `${PUBLIC_APP_URL}${redirectTo || '/dashboard'}`
 			});
+
+			if (res.error) {
+				toast.error(res.error.code || $_('auth.signIn.magicLinkError'));
+				return;
+			}
 			emailSent = true;
 		} catch (err) {
 			error = 'Failed to send magic link';
@@ -47,6 +52,13 @@
 	async function handleSSO(provider: 'entra' | 'github' | 'linkedin') {
 		try {
 			isSubmitting = true;
+			if (provider === 'entra') {
+				await authClient.signIn.sso({
+					callbackURL: `${PUBLIC_APP_URL}${redirectTo || '/dashboard'}`,
+					providerId: 'entra'
+				});
+				return;
+			}
 			const res = await authClient.signIn.social({
 				provider,
 				callbackURL: `${PUBLIC_APP_URL}${redirectTo || '/dashboard'}`
@@ -64,7 +76,10 @@
 	}
 </script>
 
-<form class={`grid w-full gap-6 ${className} ${classNames?.base ?? ''}`}>
+<form
+	class={`grid w-full gap-6 ${className} ${classNames?.base ?? ''}`}
+	onsubmit={(e) => e.preventDefault()}
+>
 	{#if emailSent}
 		<div class="text-center space-y-4">
 			<div class="text-green-600 text-lg font-semibold">

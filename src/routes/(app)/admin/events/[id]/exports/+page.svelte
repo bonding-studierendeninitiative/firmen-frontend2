@@ -18,7 +18,6 @@
 	import { toast } from 'svelte-sonner';
 	import { queryParameters, ssp } from 'sveltekit-search-params';
 	import { deleteExport, generateDownloadLink, getAllExports } from '@/remote/functions/admin';
-	import type { ExportForEventOutput } from '@api/admin-client';
 
 	const params = queryParameters(
 		{
@@ -36,10 +35,12 @@
 		limit: params.limit
 	}));
 
+	let exportsQuery = $derived(getAllExports(exportFilters));
+
 	async function onDelete({ eventId, exportId }: { eventId: string; exportId: string }) {
 		try {
 			await deleteExport({ eventId, exportId }).updates(
-				getAllExports(exportFilters).withOverride((old) => ({
+				exportsQuery.withOverride((old) => ({
 					...old,
 					exports: old.exports?.filter((exp) => exp.id !== exportId) ?? [],
 					totalElements: Number(old.totalElements) - 1
@@ -69,15 +70,15 @@
 	let viewMode = $state<'table' | 'grid'>('table');
 </script>
 
-{#if getAllExports(exportFilters).loading}
+{#if exportsQuery.loading}
 	<LoaderCircle class="size-10 mx-auto animate-spin my-10" />
-{:else if getAllExports(exportFilters).current}
+{:else if exportsQuery.current}
 	<div class="container mx-auto py-6 space-y-6">
 		<div class="flex items-center justify-between">
 			<div class="flex items-center gap-1">
 				<span class=" text-sm text-muted-foreground"
 					>{$_('admin-pages.events.exports.summary', {
-						values: { exports: getAllExports(exportFilters).current?.totalElements }
+						values: { exports: exportsQuery.current?.totalElements }
 					})}</span
 				>
 				<Button
@@ -85,14 +86,12 @@
 					size="sm"
 					variant="ghost"
 					onclick={async () => {
-						getAllExports(exportFilters).refresh();
+						exportsQuery.refresh();
 						toast.success('Die Exporte wurden aktualisiert');
 					}}
-					disabled={getAllExports(exportFilters).loading}
+					disabled={exportsQuery.loading}
 				>
-					<RefreshCw
-						class={cn('size-3', { 'animate-spin': getAllExports(exportFilters).loading })}
-					/>
+					<RefreshCw class={cn('size-3', { 'animate-spin': exportsQuery.loading })} />
 				</Button>
 			</div>
 			<div class="flex items-center gap-2">
@@ -114,7 +113,7 @@
 				</Button>
 			</div>
 		</div>
-		{#if getAllExports(exportFilters).current?.totalElements === 0}
+		{#if exportsQuery.current?.totalElements === 0}
 			<div class="text-center py-12">
 				<FileText class="h-12 w-12 mx-auto text-muted-foreground mb-4" />
 				<h3 class="text-lg font-medium mb-2">
@@ -128,14 +127,14 @@
 			{#if viewMode === 'table'}
 				<ExportsTableView
 					eventId={page.params.id!}
-					exports={getAllExports(exportFilters).current?.exports ?? []}
+					exports={exportsQuery.current?.exports ?? []}
 					{onDelete}
 					{onDownload}
 				/>
 			{:else}
 				<ExportsGridView
 					eventId={page.params.id!}
-					exports={getAllExports(exportFilters).current?.exports ?? []}
+					exports={exportsQuery.current?.exports ?? []}
 					{onDelete}
 					{onDownload}
 				/>
@@ -147,7 +146,7 @@
 					params.page = pageNumber - 1;
 				}}
 				page={Number(params.page) + 1}
-				count={Number(getAllExports(exportFilters).current?.totalElements)}
+				count={Number(exportsQuery.current?.totalElements)}
 				perPage={Number(params.limit)}
 			>
 				{#snippet children({ pages, currentPage })}

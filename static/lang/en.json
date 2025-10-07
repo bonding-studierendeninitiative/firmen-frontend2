@@ -20,6 +20,22 @@
       "sendMagicLink": "Continue",
       "adminSignIn": "Admin sign in",
       "backToRegular": "Back to regular sign in"
+    },
+    "sign-up": {
+      "title": "Sign up",
+      "description": "continue to bonding Firmenintranet",
+      "action": "Create account",
+      "sending": "Creating account...",
+      "placeholders": {
+        "email": "Your workplace email address",
+        "name": "Your full name"
+      },
+      "email": "Email address",
+      "fields-required": "These fields are required",
+      "name": "Name"
+    },
+    "sign-in": {
+      "title": "Sign in"
     }
   },
   "common": {
