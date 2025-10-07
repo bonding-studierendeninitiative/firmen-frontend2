@@ -20,7 +20,9 @@
 		sortDirection: 'desc'
 	});
 
-	let editOrganizationDetailsFormQuery = editOrganizationDetailsForm();
+	let orgPublicMetadata = $derived(
+		JSON.parse(data.organization?.metadata ?? '{ "public": {} }')?.public
+	);
 </script>
 
 <div in:fade class="space-y-8">
@@ -51,13 +53,10 @@
 			}}
 		/>
 	</section>
-	{#if editOrganizationDetailsFormQuery.loading}
-		<LoaderCircle class="size-10 mx-auto animate-spin" />
-	{:else if editOrganizationDetailsFormQuery.ready}
-		<EditOrganizationDetailsForm
-			editOrganizationDetailsForm={editOrganizationDetailsFormQuery.current}
-		/>
-	{/if}
+	<EditOrganizationDetailsForm
+		orgDetails={orgPublicMetadata}
+		orgAddress={orgPublicMetadata?.organizationAddress}
+	/>
 	<LeaveOrganizationCard
 		className="w-full"
 		classNames={{}}

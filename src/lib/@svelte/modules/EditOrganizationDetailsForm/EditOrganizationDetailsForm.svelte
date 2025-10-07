@@ -1,43 +1,37 @@
 <script lang="ts">
 	import { Button } from '@/components/ui/button';
-	import { Control, Description, Field, FieldErrors, Label } from '@/components/ui/form';
+	import { Label } from '@/components/ui/label';
 	import { Input } from '@/components/ui/input';
 	import { PhoneInput } from '@/@svelte/components/PhoneInput';
-	import { type Infer, superForm, type SuperValidated } from 'sveltekit-superforms';
-	import { type SetOrgDetailsRequest, SetOrgDetailsRequestSchema } from '@schema';
-	import { valibotClient } from 'sveltekit-superforms/adapters';
-	import { toast } from 'svelte-sonner';
 	import { _ } from '@services';
 	import * as Card from '@/components/ui/card';
-	import { invalidate } from '$app/navigation';
+	import { editOrganizationDetails, editOrganizationAddress } from '@/remote/functions';
+	import { toast } from 'svelte-sonner';
 
-	interface Props {
-		editOrganizationDetailsForm: SuperValidated<Infer<SetOrgDetailsRequest>>;
+	let { orgAddress, orgDetails } = $props();
+
+	if (orgAddress) {
+		editOrganizationAddress.fields.set(orgAddress);
 	}
-
-	let { editOrganizationDetailsForm }: Props = $props();
-
-	const superform = superForm<Infer<SetOrgDetailsRequest>>(editOrganizationDetailsForm, {
-		validators: valibotClient(SetOrgDetailsRequestSchema),
-		dataType: 'json',
-		async onResult({ result }) {
-			if (result.type === 'success') {
-				toast.success($_('common.saved'));
-				/*await utils.organizations.getDetails.invalidate({
-					slug: page.params.organizationSlug
-				});*/
-				await invalidate('organization');
-			} else if (result.type === 'error') {
-				toast.error(result.error.message);
-			}
-		}
-	});
-
-	const { form: formData, enhance, submitting } = superform;
+	if (orgDetails) {
+		editOrganizationDetails.fields.set(orgDetails);
+	}
 </script>
 
-<!-- TODO: Replace this with sveltekit remote form functions -->
-<form class="space-y-12" action="?/updateOrg" method="post" use:enhance>
+<form
+	class="space-y-12"
+	{...editOrganizationAddress.enhance(async ({ submit }) => {
+		try {
+			await submit();
+			if (editOrganizationAddress.result) {
+				toast.success($_('user-pages.settings.org-details.updateSuccess'));
+				editOrganizationAddress.fields.set(editOrganizationAddress.result);
+			}
+		} catch (e) {
+			console.error(e);
+		}
+	})}
+>
 	<section class="grid gap-x-8 grid-cols-3 @container gap-y-8">
 		<div class="@3xl:col-span-1 col-span-3">
 			<h2 class=" text-stone-800 text-lg font-extrabold">
@@ -49,129 +43,114 @@
 		</div>
 		<div class="space-y-6 @3xl:col-span-2 col-span-3">
 			<Card.Root>
-				<Card.Content class="pt-6">
-					<Field form={superform} name="name">
-						<Control>
-							{#snippet children({ props })}
-								<Label
-									>{$_(
-										'user-pages.organizations.createOrganization.labels.organizationName'
-									)}</Label
-								>
-								<Input
-									class="max-w-md"
-									{...props}
-									bind:value={$formData.name}
-									placeholder={$_(
-										'user-pages.organizations.createOrganization.placeholders.organizationName'
-									)}
-								/>
-							{/snippet}
-						</Control>
-						<Description />
-						<FieldErrors />
-					</Field>
-					<Field form={superform} name="organizationAddress.street">
-						<Control>
-							{#snippet children({ props })}
-								<Label
-									>{$_(
-										'user-pages.organizations.createOrganization.labels.organizationStreetAddress'
-									)}</Label
-								>
-								<Input
-									class="max-w-md"
-									{...props}
-									bind:value={$formData.organizationAddress.street}
-									placeholder={$_(
-										'user-pages.organizations.createOrganization.placeholders.organizationStreetAddress'
-									)}
-								/>
-							{/snippet}
-						</Control>
-						<Description />
-						<FieldErrors />
-					</Field>
-					<Field form={superform} name="organizationAddress.extendedAddress">
-						<Control>
-							{#snippet children({ props })}
-								<Label
-									>{$_(
-										'user-pages.organizations.createOrganization.labels.organizationExtendedAddress'
-									)}</Label
-								>
-								<Input
-									class="max-w-md"
-									{...props}
-									bind:value={$formData.organizationAddress.extendedAddress}
-									placeholder={$_(
-										'user-pages.organizations.createOrganization.placeholders.organizationExtendedAddress'
-									)}
-								/>
-							{/snippet}
-						</Control>
-						<Description />
-						<FieldErrors />
-					</Field>
+				<Card.Content class="pt-6 space-y-3">
+					<div>
+						<Label>
+							{$_('user-pages.organizations.createOrganization.labels.organizationName')}
+							<Input
+								class="max-w-md"
+								{...editOrganizationAddress.fields.entityName.as('text')}
+								placeholder={$_(
+									'user-pages.organizations.createOrganization.placeholders.organizationName'
+								)}
+							/>
+							{#each editOrganizationAddress.fields.entityName.issues() ?? [] as issue}
+								<div class="text-red-500 text-sm">{issue.message}</div>
+							{/each}
+						</Label>
+					</div>
+					<div>
+						<Label>
+							{$_('user-pages.organizations.createOrganization.labels.organizationStreetAddress')}
+							<Input
+								class="max-w-md"
+								{...editOrganizationAddress.fields.street.as('text')}
+								placeholder={$_(
+									'user-pages.organizations.createOrganization.placeholders.organizationStreetAddress'
+								)}
+							/>
+							{#each editOrganizationAddress.fields.street.issues() ?? [] as issue}
+								<div class="text-red-500 text-sm">{issue.message}</div>
+							{/each}
+						</Label>
+					</div>
+					<div>
+						<Label>
+							{$_('user-pages.organizations.createOrganization.labels.organizationExtendedAddress')}
+							<Input
+								class="max-w-md"
+								{...editOrganizationAddress.fields.extendedAddress.as('text')}
+								placeholder={$_(
+									'user-pages.organizations.createOrganization.placeholders.organizationExtendedAddress'
+								)}
+							/>
+							{#each editOrganizationAddress.fields.extendedAddress.issues() ?? [] as issue}
+								<div class="text-red-500 text-sm">{issue.message}</div>
+							{/each}
+						</Label>
+					</div>
 
 					<div class="flex gap-4">
 						<div class="max-w-28">
 							<div class="mt-1">
-								<Field form={superform} name="organizationAddress.zipCode">
-									<Control>
-										{#snippet children({ props })}
-											<Label
-												>{$_(
-													'user-pages.organizations.createOrganization.labels.organizationZipCode'
-												)}</Label
-											>
-											<Input
-												{...props}
-												bind:value={$formData.organizationAddress.zipCode}
-												placeholder={$_(
-													'user-pages.organizations.createOrganization.placeholders.organizationZipCode'
-												)}
-											/>
-										{/snippet}
-									</Control>
-									<Description />
-									<FieldErrors />
-								</Field>
+								<Label>
+									{$_('user-pages.organizations.createOrganization.labels.organizationZipCode')}
+									<Input
+										{...editOrganizationAddress.fields.zipCode.as('text')}
+										placeholder={$_(
+											'user-pages.organizations.createOrganization.placeholders.organizationZipCode'
+										)}
+									/>
+									{#each editOrganizationAddress.fields.zipCode.issues() ?? [] as issue}
+										<div class="text-red-500 text-sm">{issue.message}</div>
+									{/each}
+								</Label>
 							</div>
 						</div>
 						<div class="grow">
 							<div class="mt-1">
-								<Field form={superform} name="organizationAddress.locality">
-									<Control>
-										{#snippet children({ props })}
-											<Label
-												>{$_(
-													'user-pages.organizations.createOrganization.labels.organizationLocality'
-												)}</Label
-											>
-											<Input
-												class="max-w-xs"
-												{...props}
-												bind:value={$formData.organizationAddress.locality}
-												placeholder={$_(
-													'user-pages.organizations.createOrganization.placeholders.organizationLocality'
-												)}
-											/>
-										{/snippet}
-									</Control>
-									<Description />
-									<FieldErrors />
-								</Field>
+								<Label>
+									{$_('user-pages.organizations.createOrganization.labels.organizationLocality')}
+									<Input
+										class="max-w-xs"
+										{...editOrganizationAddress.fields.locality.as('text')}
+										placeholder={$_(
+											'user-pages.organizations.createOrganization.placeholders.organizationLocality'
+										)}
+									/>
+									{#each editOrganizationAddress.fields.locality.issues() ?? [] as issue}
+										<div class="text-red-500 text-sm">{issue.message}</div>
+									{/each}
+								</Label>
 							</div>
 						</div>
 					</div>
+					<div>
+						<Label>
+							{$_('user-pages.organizations.createOrganization.labels.organizationCountry')}
+							<Input
+								class="max-w-md"
+								{...editOrganizationAddress.fields.country.as('text')}
+								placeholder={$_(
+									'user-pages.organizations.createOrganization.placeholders.organizationCountry'
+								)}
+							/>
+							{#each editOrganizationAddress.fields.country.issues() ?? [] as issue}
+								<div class="text-red-500 text-sm">{issue.message}</div>
+							{/each}
+						</Label>
+					</div>
 				</Card.Content>
 				<Card.Footer class="border-t px-6 py-4">
-					<Button disabled={$submitting} type="submit">{$_('common.save')}</Button>
+					<Button disabled={editOrganizationAddress.pending > 0} type="submit"
+						>{$_('common.save')}</Button
+					>
 				</Card.Footer>
 			</Card.Root>
 		</div>
 	</section>
+</form>
+<form class="space-y-12" {...editOrganizationDetails.enhance(({ submit }) => submit())}>
 	<section class="grid gap-x-8 grid-cols-3 @container gap-y-8">
 		<div class="@3xl:col-span-1 col-span-3">
 			<h2 class=" text-stone-800 text-lg font-extrabold">
@@ -183,74 +162,48 @@
 		</div>
 		<div class="space-y-6 @3xl:col-span-2 col-span-3">
 			<Card.Root>
-				<Card.Content class="pt-6">
-					<Field form={superform} name="organizationPhone">
-						<Control>
-							{#snippet children({ props })}
-								<Label
-									>{$_(
-										'user-pages.organizations.createOrganization.labels.organizationPhone'
-									)}</Label
-								>
-								<PhoneInput
-									class="max-w-md"
-									bind:selectedCountry={$formData.organizationAddress.country}
-									searchPlaceholder={$_(
-										'user-pages.organizations.createOrganization.placeholders.phoneCountryCodeSearch'
-									)}
-									bind:value={$formData.organizationPhone}
-									{...props}
-								/>
-							{/snippet}
-						</Control>
-						<Description />
-						<FieldErrors />
-					</Field>
-					<Field form={superform} name="organizationEmail">
-						<Control>
-							{#snippet children({ props })}
-								<Label
-									>{$_(
-										'user-pages.organizations.createOrganization.labels.organizationEmail'
-									)}</Label
-								>
-								<Input
-									class="max-w-md"
-									{...props}
-									bind:value={$formData.organizationEmail}
-									placeholder={$_(
-										'user-pages.organizations.createOrganization.placeholders.organizationEmail'
-									)}
-								/>
-							{/snippet}
-						</Control>
-						<Description />
-						<FieldErrors />
-					</Field>
-					<Field form={superform} name="organizationWebsite">
-						<Control>
-							{#snippet children({ props })}
-								<Label
-									>{$_(
-										'user-pages.organizations.createOrganization.labels.organizationWebsite'
-									)}</Label
-								>
-								<Input
-									class="max-w-md"
-									{...props}
-									bind:value={$formData.organizationWebsite}
-									placeholder={$_(
-										'user-pages.organizations.createOrganization.placeholders.organizationWebsite'
-									)}
-								/>
-							{/snippet}
-						</Control>
-						<Description />
-						<FieldErrors />
-					</Field>
+				<Card.Content class="pt-6 space-y-3">
+					<div>
+						<Label>
+							{$_('user-pages.organizations.createOrganization.labels.organizationPhone')}
+							<PhoneInput
+								class="max-w-md"
+								searchPlaceholder={$_(
+									'user-pages.organizations.createOrganization.placeholders.phoneCountryCodeSearch'
+								)}
+								{...editOrganizationDetails.fields.organizationPhone.as('tel')}
+							/>
+						</Label>
+					</div>
+					<div>
+						<Label>
+							{$_('user-pages.organizations.createOrganization.labels.organizationEmail')}
+							<Input
+								class="max-w-md"
+								{...editOrganizationDetails.fields.organizationEmail.as('email')}
+								placeholder={$_(
+									'user-pages.organizations.createOrganization.placeholders.organizationEmail'
+								)}
+							/>
+						</Label>
+					</div>
+					<div>
+						<Label>
+							{$_('user-pages.organizations.createOrganization.labels.organizationWebsite')}
+							<Input
+								class="max-w-md"
+								{...editOrganizationDetails.fields.organizationWebsite.as('url')}
+								placeholder={$_(
+									'user-pages.organizations.createOrganization.placeholders.organizationWebsite'
+								)}
+							/>
+						</Label>
+					</div>
 				</Card.Content>
 				<Card.Footer class="border-t px-6 py-4">
-					<Button disabled={$submitting} type="submit">{$_('common.save')}</Button>
+					<Button disabled={editOrganizationDetails.pending > 0} type="submit">
+						{$_('common.save')}
+					</Button>
 				</Card.Footer>
 			</Card.Root>
 		</div>

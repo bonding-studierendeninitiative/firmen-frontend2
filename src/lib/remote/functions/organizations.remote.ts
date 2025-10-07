@@ -1,7 +1,7 @@
 import { command, form, query } from '$app/server';
 import { object, string, union, literal } from 'valibot';
 import { error } from '@sveltejs/kit';
-import { SetOrgDetailsRequestSchema } from '@schema';
+import { SetOrgAddressSchema, SetOrgDetailsRequestSchema } from '@schema';
 import { createAuthenticatedContext, createOrgMemberContext } from '@/remote/context';
 import { superValidate } from 'sveltekit-superforms';
 import { valibot } from 'sveltekit-superforms/adapters';
@@ -117,6 +117,54 @@ export const setDetails = command(
 		}
 	}
 );
+
+export const editOrganizationDetails = form(SetOrgDetailsRequestSchema, async (input) => {
+	const ctx = await createOrgMemberContext();
+	try {
+		const org = await ctx.db.organization.findUnique({
+			where: { id: ctx.session.activeOrganizationId }
+		});
+		if (!org) {
+			error(404, 'Organization not found');
+		}
+		const oldMetadata = JSON.parse(org.metadata || '{"public": {}}');
+		const updatedOrg = await ctx.auth.updateOrganization({
+			body: {
+				organizationId: ctx.session.activeOrganizationId,
+				data: { metadata: { public: { ...oldMetadata.public, ...input } } }
+			},
+			headers: { Authorization: `Bearer ${ctx.session?.token}` }
+		});
+		return updatedOrg;
+	} catch (e) {
+		console.error('Error updating organization details:', e);
+		error(500, e instanceof Error ? e.message : 'Error updating organization details');
+	}
+});
+
+export const editOrganizationAddress = form(SetOrgAddressSchema, async (input) => {
+	const ctx = await createOrgMemberContext();
+	try {
+		const org = await ctx.db.organization.findUnique({
+			where: { id: ctx.session.activeOrganizationId }
+		});
+		if (!org) {
+			error(404, 'Organization not found');
+		}
+		const oldMetadata = JSON.parse(org.metadata || '{"public": {}}');
+		const updatedOrg = await ctx.auth.updateOrganization({
+			body: {
+				organizationId: ctx.session.activeOrganizationId,
+				data: { metadata: { public: { ...oldMetadata.public, organizationAddress: input } } }
+			},
+			headers: { Authorization: `Bearer ${ctx.session?.token}` }
+		});
+		return updatedOrg?.metadata?.public?.organizationAddress;
+	} catch (e) {
+		console.error('Error updating organization address:', e);
+		error(500, e instanceof Error ? e.message : 'Error updating organization address');
+	}
+});
 
 export const editOrganizationDetailsForm = query(async () => {
 	const ctx = await createOrgMemberContext();
