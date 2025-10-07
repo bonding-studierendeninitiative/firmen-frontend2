@@ -1,18 +1,26 @@
 <script lang="ts">
 	import { cn } from '@/utils';
-	import { Button } from '@/components/ui/button';
 	import * as Card from '@/components/ui/card';
 	import { Badge } from '@/components/ui/badge';
 	import { Users, Plus, Building2, Settings } from '@lucide/svelte';
-	import {createOrganization} from "@/remote/functions"
-	
-	let createOrganisationOpen  = $state(false);
+	import { createOrganizationByUserForm } from '@/remote/functions';
+	import { Button } from '@/components/ui/button';
+	import { Label } from '@/components/ui/label';
+	import { Input } from '@/components/ui/input';
+	import { toast } from 'svelte-sonner';
+	import { LoaderCircle } from '@lucide/svelte';
+	import { _ } from '@services';
+
+	let createOrganisationOpen = $state(false);
+	let pending = $state(false);
+	const { name } = createOrganizationByUserForm.fields;
 
 	interface Organization {
 		id: string;
 		name: string;
 		slug: string;
 		logo?: string | null | undefined | undefined;
+		members: Array[any];
 		metadata?: any;
 	}
 
@@ -20,7 +28,6 @@
 		localization?: any;
 		organizations?: Organization[];
 		currentOrganization?: Organization;
-		onCreateOrganization?: () => void;
 		onSelectOrganization?: (org: Organization) => void;
 		onManageOrganization?: (org: Organization) => void;
 	}
@@ -29,7 +36,6 @@
 		localization = {},
 		organizations = [],
 		currentOrganization,
-		onCreateOrganization,
 		onSelectOrganization,
 		onManageOrganization
 	}: Props = $props();
@@ -38,30 +44,57 @@
 	let orgList = $derived(organizations.filter((org) => !org.isPersonal));
 </script>
 
-<Card.Root class='w-full'>
+<Card.Root class="w-full h-96 flex flex-col">
 	<Card.Header>
 		<div class="flex items-center justify-between">
 			<div class="space-y-1">
 				<Card.Title class="flex items-center gap-2">
 					<Building2 class="size-5" />
-					{localization.ORGANIZATIONS || 'Organizations'}
+					{$_('onboarding.organizations')}
 				</Card.Title>
 				<Card.Description>
-					{localization.ORGANIZATIONS_DESCRIPTION || 'Manage your organizations and teams'}
+					{$_('onboarding.chooseorganization')}
 				</Card.Description>
 			</div>
-			{#if onCreateOrganization && orgList.length > 0}
-				<Button size="sm" onclick={onCreateOrganization}>
+			{#if orgList.length > 0}
+				<Button size="sm" class="ml-4" onclick={() => (createOrganisationOpen = true)}>
 					<Plus class="mr-2 size-4" />
-					{localization.CREATE_ORGANIZATION || 'Create'}
+					{$_("onboarding.createorg")}
 				</Button>
 			{/if}
 		</div>
 	</Card.Header>
 
-	<Card.Content class='space-y-4 h-80 w-120'>
+	<Card.Content class={cn(
+        'space-y-4 flex-1 w-full pr-2 min-w-90',
+        (orgList.length > 0 || createOrganisationOpen) && 'overflow-y-auto'
+    )}>
 		{#if createOrganisationOpen}
-			<form {...createOrganization.enhance(async () => {})}></form>
+			<form
+				{...createOrganizationByUserForm.enhance(async ({ submit }) => {
+					try {
+						pending = true;
+						await submit();
+						pending = false;
+						createOrganisationOpen = false;
+					} catch (e) {
+						console.error(e);
+						toast.error(e?.body?.message);
+						pending = false;
+					}
+				})}
+				id="create-org-form"
+			>
+				<div class="flex flex-col gap-1">
+					<Label>{$_('admin-pages.organizations.name')}</Label>
+					<Input
+						{...name.as('text')}
+						placeholder={$_(
+							'user-pages.organizations.createOrganization.placeholders.organizationName'
+						)}
+					/>
+				</div>
+			</form>
 		{:else if orgList.length === 0}
 			<!-- Empty state -->
 			<div class="text-center py-8 space-y-4">
@@ -72,24 +105,23 @@
 				</div>
 				<div class="space-y-2">
 					<h3 class="font-medium">
-						{localization.NO_ORGANIZATIONS || 'No organizations yet'}
+						{$_('onboarding.organizations')}
 					</h3>
 					<p class="text-sm text-muted-foreground max-w-sm mx-auto">
-						{localization.NO_ORGANIZATIONS_DESCRIPTION ||
-							'Create your first organization to collaborate with your team'}
+						{$_("onboarding.emptydescription")}
 					</p>
 				</div>
-				{#if onCreateOrganization}
-					<Button onclick={() => createOrganisationOpen = true}>
+					<Button onclick={() => (createOrganisationOpen = true)}>
 						<Plus class="mr-2 size-4" />
-						{localization.CREATE_FIRST_ORGANIZATION || 'Create your first organization'}
+						{$_("onboarding.createfirstorg")}
 					</Button>
-				{/if}
 			</div>
 		{:else}
 			<!-- Organizations list -->
 			<div class="space-y-3">
-				{#each orgList as org (org.id)}
+				{#each orgList as org}
+					{@const membersCount = org.members.length}
+
 					<button
 						class={cn(
 							'flex w-full items-center justify-between p-4 rounded-lg border transition-colors',
@@ -124,13 +156,10 @@
 									{/if}
 								</div>
 								<div class="flex items-center gap-2 text-sm text-muted-foreground">
-									<Badge variant="outline" class="text-xs">
-										{org.role}
-									</Badge>
 									<div class="flex items-center gap-1">
 										<Users class="size-3" />
-										{org.membersCount}
-										{org.membersCount === 1
+										{membersCount}
+										{membersCount === 1
 											? localization.MEMBER || 'member'
 											: localization.MEMBERS || 'members'}
 									</div>
@@ -157,4 +186,21 @@
 			</div>
 		{/if}
 	</Card.Content>
+
+	<Card.Footer>
+		{#if createOrganisationOpen}
+			<div class="flex justify-end items-center w-full">
+				<Button class="mr-2" variant="outline" onclick={() => (createOrganisationOpen = false)}>
+					{$_('common.cancel')}
+				</Button>
+				{#if pending}
+					<Button form="create-org-form" disabled>
+						<LoaderCircle class="mr-2 size-4 animate-spin" />{$_('common.create')}
+					</Button>
+				{:else}
+					<Button form="create-org-form" type="submit">{$_('common.create')}</Button>
+				{/if}
+			</div>
+		{/if}
+	</Card.Footer>
 </Card.Root>

@@ -17,7 +17,7 @@ export async function load(event) {
 		redirect(302, '/admin');
 	}
 
-	const userMetaDataMissing = Object.keys(user?.metadata).length === 0;
+    const userMetaDataMissing = Object.keys(user?.metadata ?? {}).length === 0;
 	if (userMetaDataMissing) {
 		redirect(302, '/add-personal-details');
 	}

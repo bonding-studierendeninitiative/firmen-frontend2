@@ -7,11 +7,11 @@
 	import { getUserMemberships } from '@/remote/functions/organizations.remote.js';
 
 	let orgs = getUserMemberships({})
-	
-	let showCreateDialog = $state(false);
+	console.log(orgs.current)
+	// let showCreateDialog = $state(false);
 </script>
 
-<CreateOrganizationDialog bind:open={showCreateDialog} />
+<!-- <CreateOrganizationDialog bind:open={showCreateDialog} /> -->
 
 <div in:fade>
 	{#if orgs.loading}
@@ -26,7 +26,6 @@
 				await authClient.organization.setActive({ organizationId: org.id });
 				await goto(`/${org.slug}/dashboard`);
 			}}
-			onCreateOrganization={() => (showCreateDialog = true)}
 		/>
 	{/if}
 </div>

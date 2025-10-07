@@ -1,12 +1,16 @@
-import { command, query } from '$app/server';
-import { object, string } from 'valibot';
+import { command, form, query } from '$app/server';
+import { minLength, object, pipe, string } from 'valibot';
 import { makeSerializable } from '@/utils';
 import { error } from '@sveltejs/kit';
 import { createAuthenticatedContext } from '@/remote/context';
 
-const updateUserDetailsSchema = object({ phone: string(), title: string(), position: string() });
+const updateUserDetailsSchema = object({
+	phone: pipe(string(), minLength(3)),
+	title: pipe(string(), minLength(3)),
+	position: pipe(string(), minLength(3))
+});
 
-export const updateMetadata = command(updateUserDetailsSchema, async (input) => {
+export const updateMetadataForm = form(updateUserDetailsSchema, async (input) => {
 	try {
 		const ctx = await createAuthenticatedContext();
 		await ctx.auth.updateUser({

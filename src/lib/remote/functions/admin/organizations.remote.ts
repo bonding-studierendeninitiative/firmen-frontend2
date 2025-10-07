@@ -314,7 +314,8 @@ export const getLegacyOrgDetails = query(
 	}
 );
 
-export const createOrg = form(async (formData) => {
+
+export const createOrganizationByAdminForm = form(async (formData) => {
 	const formSchema = object({
 		name: pipe(string(), nonEmpty()),
 		ownerMail: pipe(string(), nonEmpty('Please provide an email address'), email('Invalid email'))
@@ -404,7 +405,7 @@ export const createOrg = form(async (formData) => {
 
 					/*await ctx.api.post("/api/v2/notifications/org-member", {
 					body: {
-                        adminId: ctx.session?.userId,
+						adminId: ctx.session?.userId,
 						id: updatedInvitation.id,
 						role: updatedInvitation.role as string,
 						email: updatedInvitation.email.toLowerCase(),

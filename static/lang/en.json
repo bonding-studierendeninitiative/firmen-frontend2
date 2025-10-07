@@ -470,6 +470,14 @@
       "admin": "Admin"
     }
   },
+  "onboarding": {
+    "organizations": "Organisationen",
+    "description-organization": "Wählen Sie Ihre Organisation",
+    "emptydescription": "Create your first organization to collaborate with your team",
+    "chooseorganization": "Choose your organisation",
+    "createorg": "Create",
+    "createfirstorg": "Create your first organization"
+  },
   "sidebar": {
     "dashboard": "Dashboard",
     "events": "Events",

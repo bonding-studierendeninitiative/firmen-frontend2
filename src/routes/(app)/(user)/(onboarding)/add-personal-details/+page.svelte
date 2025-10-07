@@ -3,22 +3,23 @@
 
 	import { _ } from '@services';
 	import * as Card from '@/components/ui/card';
-
-	let { data } = $props();
+	import { goto } from '$app/navigation';
+	import { page } from '$app/state';
+	import authClient from '@/auth-client';
+	const onUserUpdate = async () => {
+		goto("/")
+	}
 </script>
 
 <main class="container mt-8">
-	<Card.Root>
+	<Card.Root class="mx-auto w-full max-w-xl">
 		<Card.Header>
 			<Card.Title>{$_('user-pages.contactPersons.signUp.title')}</Card.Title>
 			<Card.Description>{$_('user-pages.contactPersons.signUp.description')}</Card.Description>
 		</Card.Header>
 		<Card.Content>
 			<UpdateUserDetails
-				validated={data.form}
-				onUpdate={({}) => {
-					// Handle the updated data
-				}}
+				onUserDetailsUpdate={onUserUpdate}
 			/>
 		</Card.Content>
 	</Card.Root>

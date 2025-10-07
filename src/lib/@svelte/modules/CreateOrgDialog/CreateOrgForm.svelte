@@ -5,7 +5,7 @@
 	import { toast } from 'svelte-sonner';
 	import { LoaderCircle } from '@lucide/svelte';
 	import { _ } from '@services';
-	import { createOrg } from '@/remote/functions/admin';
+	import { createOrganizationByAdminForm } from '@/remote/functions/admin';
 
 	let request = $state({
 		name: '',
@@ -23,7 +23,7 @@
 </script>
 
 <form
-	{...createOrg.enhance(async ({ submit }) => {
+	{...createOrganizationByAdminForm.enhance(async ({ submit }) => {
 		try {
 			pending = true;
 			await submit();
