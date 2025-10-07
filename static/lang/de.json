@@ -839,7 +839,8 @@
           "organizationZipCode": "Postleitzahl",
           "organizationLocality": "Ortschaft",
           "create": "Erstellen",
-          "organizationWebsite": "Website"
+          "organizationWebsite": "Website",
+          "organizationCountry": "Land"
         },
         "placeholders": {
           "organizationName": "ABC Firma GmbH",
@@ -854,7 +855,8 @@
           "organizationLocality": "Berlin",
           "create": "Erstellen",
           "searchOrganization": "Suche nach meinen Organisationen",
-          "organizationWebsite": "bonding.de"
+          "organizationWebsite": "bonding.de",
+          "organizationCountry": "Deutschland"
         }
       }
     },

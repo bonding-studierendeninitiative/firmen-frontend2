@@ -6,18 +6,23 @@
 	import { Trash } from '@lucide/svelte';
 	import { Button } from '@/components/ui/button';
 	import * as Dialog from '@/components/ui/dialog';
-	import {
-		deleteBillingAddressTemplate,
-		makeBillingAddressTemplateDefault
-	} from '@/remote/functions';
 
 	let isDeleteFormOpen = $state(false);
 	interface Props {
 		isDefault: boolean;
 		billingAddress: Infer<BillingAddressTemplate>;
+		makeBillingAddressTemplateDefault?: (args: {
+			billingAddressTemplateId: string;
+		}) => Promise<void>;
+		deleteBillingAddressTemplate?: (args: { billingAddressTemplateId: string }) => Promise<void>;
 	}
 
-	let { isDefault, billingAddress }: Props = $props();
+	let {
+		isDefault,
+		billingAddress,
+		makeBillingAddressTemplateDefault,
+		deleteBillingAddressTemplate
+	}: Props = $props();
 </script>
 
 <div class=" bg-stone-50 p-4 w-full flex justify-between mt-2 rounded-lg">
@@ -38,8 +43,9 @@
 				<Button
 					class="mx-6"
 					onclick={() =>
-						makeBillingAddressTemplateDefault({ billingAddressTemplateId: billingAddress.id })}
-					>{$_('user-pages.settings.makeItDefault')}</Button
+						makeBillingAddressTemplateDefault?.({
+							billingAddressTemplateId: billingAddress.id
+						})}>{$_('user-pages.settings.makeItDefault')}</Button
 				>
 			{/if}
 			<button class="text-stone-500"><PencilSquareIcon /></button>
@@ -59,7 +65,7 @@
 						<Button
 							variant="destructive"
 							onclick={() =>
-								deleteBillingAddressTemplate({ billingAddressTemplateId: billingAddress.id })}
+								deleteBillingAddressTemplate?.({ billingAddressTemplateId: billingAddress.id })}
 							>{$_('common.delete')}</Button
 						>
 					</Dialog.Footer>

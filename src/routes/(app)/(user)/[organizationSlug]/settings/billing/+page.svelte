@@ -4,15 +4,22 @@
 	import { AddBillingAddressTemplate } from '@/@svelte/modules';
 	import { LoaderCircle } from '@lucide/svelte';
 	import { fade } from 'svelte/transition';
-	import { createBillingAddressTemplateForm, getBillingAddressTemplates } from '@/remote/functions';
+	import {
+		deleteBillingAddressTemplate,
+		getBillingAddressTemplates,
+		getDetails,
+		makeBillingAddressTemplateDefault
+	} from '@/remote/functions';
+	import { page } from '$app/state';
 
 	let billingAddressTemplatesQuery = getBillingAddressTemplates({
 		page: '0',
 		limit: '10'
 	});
 
-	let { data } = $props();
-	const organization = data?.organization;
+	let orgQuery = getDetails({
+		slug: page.params.organizationSlug!
+	});
 </script>
 
 <div>
@@ -31,11 +38,17 @@
 					<BillingAddressCard
 						{billingAddress}
 						isDefault={billingAddress.id ===
-							organization?.metadata?.defaultBillingAddressTemplateId}
+							JSON.parse(orgQuery?.current?.metadata)?.public?.defaultBillingAddressTemplateId}
+						makeBillingAddressTemplateDefault={async (args) => {
+							await makeBillingAddressTemplateDefault(args).updates(orgQuery);
+						}}
+						deleteBillingAddressTemplate={async (args) => {
+							await deleteBillingAddressTemplate(args).updates(billingAddressTemplatesQuery);
+						}}
 					/>
 				{/each}
 				<div class=" flex justify-between items-center my-6 pb-6">
-					<AddBillingAddressTemplate organizationId={organization?.id || ''} />
+					<AddBillingAddressTemplate organizationId={orgQuery?.current?.id || ''} />
 				</div>
 			</section>
 		{:else if billingAddressTemplatesQuery.error}

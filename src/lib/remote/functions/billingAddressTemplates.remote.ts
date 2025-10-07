@@ -1,14 +1,7 @@
-import { query, form, command } from '$app/server';
+import { form, command } from '$app/server';
 import { object, nullish, string, pipe, minLength } from 'valibot';
 import { error } from '@sveltejs/kit';
 import { createOrgMemberContext } from '@/remote/context';
-import { superValidate } from 'sveltekit-superforms';
-import { valibot } from 'sveltekit-superforms/adapters';
-import {
-	CreateBillingAddressTemplateForm as CreateBillingFormSchema,
-	DeleteBillingAddressTemplateForm as DeleteBillingFormSchema,
-	MakeBillingAddressTemplateDefaultForm as MakeDefaultBillingFormSchema
-} from '@schema';
 import { orgMemberQuery } from '../auth-guards';
 
 export const getBillingAddressTemplates = orgMemberQuery(
@@ -87,24 +80,6 @@ export const createBillingAddressTemplate = form(
 		return await response.json();
 	}
 );
-
-// Provide superforms for client-side usage (admin-style pattern)
-export const createBillingAddressTemplateForm = query(object({}), async () => {
-	const createForm = await superValidate({}, valibot(CreateBillingFormSchema), { errors: false });
-	return createForm;
-});
-
-export const deleteBillingAddressTemplateForm = query(object({}), async () => {
-	const deleteForm = await superValidate({}, valibot(DeleteBillingFormSchema), { errors: false });
-	return deleteForm;
-});
-
-export const makeBillingAddressTemplateDefaultForm = query(object({}), async () => {
-	const makeDefaultForm = await superValidate({}, valibot(MakeDefaultBillingFormSchema), {
-		errors: false
-	});
-	return makeDefaultForm;
-});
 
 // Delete billing address template via form remote
 export const deleteBillingAddressTemplate = command(

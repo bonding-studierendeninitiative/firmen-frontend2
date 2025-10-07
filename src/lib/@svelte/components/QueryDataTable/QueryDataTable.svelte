@@ -41,7 +41,6 @@
 	import Skeleton from '@/components/ui/skeleton/skeleton.svelte';
 	import { createSvelteTable } from './data-table.svelte';
 	import FlexRender from './flex-render.svelte';
-	import SuperDebug from 'sveltekit-superforms';
 
 	// Default props
 	let {
@@ -182,7 +181,7 @@
 </script>
 
 <section class="mt-4 space-y-4">
-	<div class="rounded-md border bg-card border-card shadow shadow-card">
+	<div class="rounded-md border bg-card border-border shadow shadow-card">
 		<Table.Root>
 			<Table.Header>
 				{#each table.getHeaderGroups() as headerGroup (headerGroup.id)}

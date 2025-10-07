@@ -818,7 +818,8 @@
           "organizationZipCode": "Zip Code",
           "organizationLocality": "Locality",
           "create": "Create",
-          "organizationWebsite": "Website"
+          "organizationWebsite": "Website",
+          "organizationCountry": "Country"
         },
         "placeholders": {
           "organizationName": "ABC Company LLC",
@@ -833,7 +834,8 @@
           "organizationLocality": "New York",
           "create": "Create",
           "searchOrganization": "Search my organizations",
-          "organizationWebsite": "bonding.de"
+          "organizationWebsite": "bonding.de",
+          "organizationCountry": "Germany"
         }
       }
     },
