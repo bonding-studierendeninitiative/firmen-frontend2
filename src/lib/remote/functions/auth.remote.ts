@@ -6,9 +6,6 @@ import { error } from '@sveltejs/kit';
 
 export const signIn = command(object({ email: string() }), async (input) => {
 	const { email } = input;
-	if (!email) {
-		error(400, 'Email is required');
-	}
 
 	const ctx = await createContext(getRequestEvent());
 

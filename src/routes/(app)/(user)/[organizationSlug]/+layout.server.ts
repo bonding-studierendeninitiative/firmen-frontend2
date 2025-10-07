@@ -1,11 +1,11 @@
-import { redirect } from '@sveltejs/kit';
+import { redirect, type LoadEvent } from '@sveltejs/kit';
 import { createLogger } from 'vite';
 import { PUBLIC_BONDING_ORG_ID } from '$env/static/public';
-import { getDetails } from '@/remote/functions/organizations.remote.js';
+import { getDetails } from '@/remote/functions';
 
 const logger = createLogger();
 
-export async function load(event) {
+export async function load(event: LoadEvent) {
 	const { session, user } = await event.parent();
 	if (user?.banned) {
 		redirect(302, '/banned');
@@ -22,9 +22,7 @@ export async function load(event) {
 		redirect(302, '/add-personal-details');
 	}
 
-	console.log('Organization slug:', event.params.organizationSlug);
-
-	event.depends('organization');
+	logger.info(`Organization slug: ${event.params.organizationSlug}`);
 
 	const organization = await getDetails({
 		slug: event.params.organizationSlug!

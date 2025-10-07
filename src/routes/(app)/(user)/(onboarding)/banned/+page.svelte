@@ -9,5 +9,5 @@
 	<p class="text-lg text-muted-foreground mb-8">
 		Dein Account wurde gesperrt. Bitte kontaktiere den Support, wenn du Fragen hast.
 	</p>
-	<a href="mailto:support@firmen.com" class="text-blue-500 hover:underline">support@firmen.com</a>
+	<a href="mailto:info@bonding.de" class="text-blue-500 hover:underline">info@bonding.de</a>
 </section>

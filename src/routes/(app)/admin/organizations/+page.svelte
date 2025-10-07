@@ -7,7 +7,6 @@
 	import { fade } from 'svelte/transition';
 	import { getOrgs } from '@/remote/functions/admin';
 	import { queryParameters, ssp } from 'sveltekit-search-params';
-	import SuperDebug from 'sveltekit-superforms';
 
 	let params = queryParameters(
 		{
@@ -57,5 +56,4 @@
 		totalCount={(await getOrgs(filters)).totalCount || 0}
 		{params}
 	/>
-	<SuperDebug data={filters} />
 </div>

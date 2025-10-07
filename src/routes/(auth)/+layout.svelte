@@ -25,13 +25,13 @@
 		<div class=" flex justify-center items-center flex-col grow">
 			<Tabs.Root
 				value={page.url.pathname.startsWith('/sign-in') ? 'SIGN_IN' : 'SIGN_UP'}
-				class={`mb-2`}
+				class=" mb-2"
 			>
 				<Tabs.List class="w-full">
 					<a href="/sign-in" class="grow">
 						<Tabs.Trigger
 							value="SIGN_IN"
-							class={cn(`px-4 py-2 w-full`, {
+							class={cn({
 								'font-bold': page.url.pathname === '/sign-in'
 							})}
 						>
@@ -41,7 +41,7 @@
 					<a href="/sign-up" class="grow">
 						<Tabs.Trigger
 							value="SIGN_UP"
-							class={cn(`px-4 py-2 w-full`, {
+							class={cn({
 								'font-bold': page.url.pathname === '/sign-up'
 							})}
 						>
