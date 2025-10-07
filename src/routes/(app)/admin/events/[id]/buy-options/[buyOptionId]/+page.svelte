@@ -86,7 +86,7 @@
 		>
 			{#snippet failed(error, reset)}
 				<Button variant="outline" onclick={reset} class="mx-auto">
-					{$_('common.retry')}
+					{$_('common.reset')}
 				</Button>
 			{/snippet}
 			<CreateAddonPackage

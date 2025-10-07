@@ -72,7 +72,7 @@
 				id="banReason"
 				name="banReason"
 				bind:value={banReason}
-				placeholder={$_('admin-pages.users.overview.banReasonPlaceholder')}
+				placeholder={$_('admin-pages.users.overview.ban-reason-placeholder')}
 				class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
 				required
 			/>
@@ -82,7 +82,7 @@
 				{$_('admin-pages.users.overview.banExpires')}
 			</Label>
 			<p class="text-sm text-gray-500">
-				{$_('admin-pages.users.overview.banExpiresDescription')}
+				{$_('admin-pages.users.overview.ban-expires-description')}
 			</p>
 			<Tabs.Root class="mt-2" bind:value={banExpiryType}>
 				<Tabs.List>

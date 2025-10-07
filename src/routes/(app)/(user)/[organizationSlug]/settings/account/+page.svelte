@@ -50,7 +50,7 @@
 					});
 				}}
 			>
-				Save
+				{$_('common.save')}
 			</Button>
 		</form>
 	</section>

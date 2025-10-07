@@ -274,7 +274,7 @@
 			<section>
 				<section class="space-y-4">
 					<h3 class="text-xl font-semibold text-stone-800">
-						{$_('admin-pages.organizations.sso.title') ?? 'Single Sign-On (SSO)'}
+						{$_('admin-pages.organizations.sso.title')}
 					</h3>
 
 					{#if getSsoProviders(filters).loading}
@@ -286,12 +286,12 @@
 						{#if ssoConnections?.length === 0}
 							<Alert.Root class="bg-muted text-muted-foreground">
 								<Alert.Title>
-									{$_('admin-pages.organizations.sso.none') ?? 'No SSO connections configured'}
+									{$_('admin-pages.organizations.sso.none')}
 								</Alert.Title>
 								<Alert.Description>
 									{$_('admin-pages.organizations.sso.hint', {
 										values: { org: (await getOrgDetails(filters))?.name }
-									}) ?? 'You can add identity providers for this organization.'}
+									})}
 								</Alert.Description>
 							</Alert.Root>
 						{:else}
@@ -318,23 +318,20 @@
 						<!-- create-sso dialog trigger -->
 						<Dialog.Root bind:open={isCreateSsoOpen}>
 							<Dialog.Trigger>
-								{$_('admin-pages.organizations.sso.add') ?? 'Add SSO Provider'}
+								{$_('admin-pages.organizations.sso.add')}
 							</Dialog.Trigger>
 							<Dialog.Content class="sm:max-w-[640px]">
 								<Dialog.Header>
-									<Dialog.Title
-										>{$_('admin-pages.organizations.sso.add') ?? 'Add SSO Provider'}</Dialog.Title
-									>
+									<Dialog.Title>{$_('admin-pages.organizations.sso.add')}</Dialog.Title>
 									<Dialog.Description>
-										{$_('admin-pages.organizations.sso.add-description') ??
-											'Create a new SSO provider for this organization.'}
+										{$_('admin-pages.organizations.sso.add-description')}
 									</Dialog.Description>
 								</Dialog.Header>
 								<div class="space-y-4 py-2">
 									<div class="grid grid-cols-1 gap-3">
 										<label class="flex flex-col">
 											<span class="text-sm text-muted-foreground"
-												>{$_('admin-pages.organizations.sso.providerId') ?? 'Provider ID'}</span
+												>{$_('admin-pages.organizations.sso.providerId')}</span
 											>
 											<input
 												class="input"
@@ -344,14 +341,13 @@
 										</label>
 										<label class="flex flex-col">
 											<span class="text-sm text-muted-foreground"
-												>{$_('admin-pages.organizations.sso.domain') ?? 'Domain'}</span
+												>{$_('admin-pages.organizations.sso.domain')}</span
 											>
 											<input class="input" bind:value={ssoDomain} placeholder="example.com" />
 										</label>
 										<label class="flex flex-col">
 											<span class="text-sm text-muted-foreground"
-												>{$_('admin-pages.organizations.sso.authorizationEndpoint') ??
-													'Authorization Endpoint'}</span
+												>{$_('admin-pages.organizations.sso.authorizationEndpoint')}</span
 											>
 											<input
 												class="input"
@@ -361,8 +357,7 @@
 										</label>
 										<label class="flex flex-col">
 											<span class="text-sm text-muted-foreground"
-												>{$_('admin-pages.organizations.sso.tokenEndpoint') ??
-													'Token Endpoint'}</span
+												>{$_('admin-pages.organizations.sso.tokenEndpoint')}</span
 											>
 											<input
 												class="input"
@@ -372,7 +367,7 @@
 										</label>
 										<label class="flex flex-col">
 											<span class="text-sm text-muted-foreground"
-												>{$_('admin-pages.organizations.sso.jwksEndpoint') ?? 'JWKS Endpoint'}</span
+												>{$_('admin-pages.organizations.sso.jwksEndpoint')}</span
 											>
 											<input
 												class="input"
@@ -382,8 +377,7 @@
 										</label>
 										<label class="flex flex-col">
 											<span class="text-sm text-muted-foreground"
-												>{$_('admin-pages.organizations.sso.discoveryEndpoint') ??
-													'Discovery Endpoint'}</span
+												>{$_('admin-pages.organizations.sso.discoveryEndpoint')}</span
 											>
 											<input
 												class="input"
@@ -393,8 +387,7 @@
 										</label>
 										<label class="flex flex-col">
 											<span class="text-sm text-muted-foreground"
-												>{$_('admin-pages.organizations.sso.scopes') ??
-													'Scopes (comma separated)'}</span
+												>{$_('admin-pages.organizations.sso.scopes')}</span
 											>
 											<input
 												class="input"
@@ -412,7 +405,7 @@
 										<!-- mapping -->
 										<div class="pt-2">
 											<p class="text-sm font-medium">
-												{$_('admin-pages.organizations.sso.mapping') ?? 'Claim mapping'}
+												{$_('admin-pages.organizations.sso.mapping')}
 											</p>
 											<label class="flex flex-col pt-1">
 												<span class="text-sm text-muted-foreground">ID claim</span>
@@ -437,7 +430,7 @@
 										</div>
 										<label class="flex flex-col">
 											<span class="text-sm text-muted-foreground"
-												>{$_('admin-pages.organizations.sso.issuer') ?? 'Issuer (OIDC issuer)'}
+												>{$_('admin-pages.organizations.sso.issuer')}
 											</span>
 											<input
 												class="input"
@@ -447,13 +440,13 @@
 										</label>
 										<label class="flex flex-col">
 											<span class="text-sm text-muted-foreground"
-												>{$_('admin-pages.organizations.sso.clientId') ?? 'Client ID'}</span
+												>{$_('admin-pages.organizations.sso.clientId')}</span
 											>
 											<input class="input" bind:value={ssoClientId} />
 										</label>
 										<label class="flex flex-col">
 											<span class="text-sm text-muted-foreground"
-												>{$_('admin-pages.organizations.sso.clientSecret') ?? 'Client Secret'}</span
+												>{$_('admin-pages.organizations.sso.clientSecret')}</span
 											>
 											<input class="input" bind:value={ssoClientSecret} type="password" />
 										</label>
@@ -496,10 +489,7 @@
 												// on success, close dialog and refresh providers list
 												isCreateSsoOpen = false;
 												await getSsoProviders(filters).refresh();
-												toast.success(
-													$_('admin-pages.organizations.sso.create-success') ??
-														'SSO provider created'
-												);
+												toast.success($_('admin-pages.organizations.sso.create-success'));
 											} catch (err) {
 												console.error(err);
 												toast.error(err?.message ?? 'Could not create external connection');
@@ -514,10 +504,7 @@
 						{#if data.is_bondingOrg}
 							<Alert.Root class="bg-primary text-primary-foreground">
 								<TriangleAlert class="size-5 text-current!" />
-								<Alert.Title
-									>{$_('admin-pages.organizations.sso.bonding-warning') ??
-										'Bonding org — proceed with care'}</Alert.Title
-								>
+								<Alert.Title>{$_('admin-pages.organizations.sso.bonding-warning')}</Alert.Title>
 							</Alert.Root>
 						{/if}
 					</div>

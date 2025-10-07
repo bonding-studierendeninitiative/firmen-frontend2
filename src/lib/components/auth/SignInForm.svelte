@@ -38,7 +38,7 @@
 			});
 
 			if (res.error) {
-				toast.error(res.error.code || $_('auth.signIn.magicLinkError'));
+				toast.error(res.error.code || $_('auth.sign-in.magic-link-error'));
 				return;
 			}
 			emailSent = true;

@@ -24,7 +24,7 @@
 		try {
 			await submit();
 			if (editOrganizationAddress.result) {
-				toast.success($_('user-pages.settings.org-details.updateSuccess'));
+				toast.success($_('user-pages.settings.org-details.update-success'));
 				editOrganizationAddress.fields.set(editOrganizationAddress.result);
 			}
 		} catch (e) {

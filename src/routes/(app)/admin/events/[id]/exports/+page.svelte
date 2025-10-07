@@ -46,9 +46,9 @@
 					totalElements: Number(old.totalElements) - 1
 				}))
 			);
-			toast.success('Der Export wurde gelöscht');
+			toast.success($_('admin-pages.events.exports.delete.success'));
 		} catch (error) {
-			toast.error('Beim Löschen des Exports ist ein Fehler aufgetreten');
+			toast.error($_('admin-pages.events.exports.delete.error'));
 		}
 	}
 

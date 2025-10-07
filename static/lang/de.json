@@ -35,7 +35,8 @@
       "name": "Name"
     },
     "sign-in": {
-      "title": "Einloggen"
+      "title": "Einloggen",
+      "magic-link-error": "Der Anmelde-Link konnte nicht versendet werden"
     }
   },
   "common": {
@@ -113,7 +114,11 @@
     "create": "Erstellen",
     "view-details": "Details anzeigen",
     "export": "Katalogdaten exportieren…",
-    "add": "Hinzufügen"
+    "add": "Hinzufügen",
+    "reset": "Zurücksetzen",
+    "user": "Nutzer",
+    "notifications": "Benachrichtigungen",
+    "menu": "Menü"
   },
   "components": {
     "addonPackage": {
@@ -251,7 +256,8 @@
       "active": "aktiv",
       "search-placeholder": "Nach einer Kaufoption suchen…",
       "create-new": "Erstelle eine neue Kaufoption…",
-      "select": "Wähle eine Kaufoption aus..."
+      "select": "Wähle eine Kaufoption aus...",
+      "unnamed": "Unbenannte Kaufoption"
     },
     "contact-person": {
       "full-name": "Ansprechperson:"
@@ -264,12 +270,14 @@
       "service-count": "Anzahl der maximalen Leistungen pro Paket",
       "error": "Beim Laden dieses Formulars is ein Fehler aufgetreten: {error}",
       "package-count-description": "Das kann später noch geändert werden",
-      "service-count-description": "Das kann später noch geändert werden"
+      "service-count-description": "Das kann später noch geändert werden",
+      "success": "Die Kaufoption wurde erfolgreich erstellt"
     },
     "delete-buy-option": {
       "title": "Kaufoption löschen",
       "description": "Möchtest du wirklich diese Kaufoption löschen?",
-      "success": "Die Kaufoption wurde erfolgreich gelöscht"
+      "success": "Die Kaufoption wurde erfolgreich gelöscht",
+      "error": "Die Kaufoption konnte nicht gelöscht werden."
     },
     "organization": {
       "name": "Organisation:"
@@ -398,11 +406,15 @@
       "description": "Sollte die ausgewählte Imageanzeige noch nicht überprüft sein, kümmert sich das Veranstaltungsteam darum.",
       "no-data-heading": "Keine Imageanzeigen gefunden",
       "no-data-sub-heading": "Ihre Organization hat noch keine Imageanzeigen hinterlegt",
-      "no-data-action": "Jetzt Imageanzeige hochladen"
+      "no-data-action": "Jetzt Imageanzeige hochladen",
+      "no-data": "Noch nichts hier",
+      "success-toast": "Die Imageanzeige wurde erfolgreich ausgewählt!",
+      "error-toast": "Die Imageanzeige konnte nicht ausgewählt werden!"
     },
     "delete-logo-dialog": {
       "title": "Logo \"{logoName}\" löschen",
-      "description": "Möchten Sie dieses Logo wirklich löschen?"
+      "description": "Möchten Sie dieses Logo wirklich löschen?",
+      "success": "Das Logo wurde erfolgreich gelöscht!"
     },
     "delete-advertisement-dialog": {
       "title": "Imageanzeige \"{advertisementName}\" löschen",
@@ -474,7 +486,8 @@
     },
     "remove-member-dialog": {
       "title": "Nutzer aus Organisation entfernen",
-      "description": "Möchtest du den:die Nutzer:in benachrichtigen?"
+      "description": "Möchtest du den:die Nutzer:in benachrichtigen?",
+      "success": "Das Mitglied wurde erfolgreich aus der Organisation entfernt!"
     },
     "manage-users": {
       "user": "Nutzer:in",
@@ -485,6 +498,10 @@
       "member": "Mitglied",
       "owner": "Besitzer:in",
       "admin": "Administrator:in"
+    },
+    "activate-buy-option": {
+      "success": "Kaufoption aktiviert!",
+      "error": "Kaufoption konnte nicht aktiviert werden."
     }
   },
   "onboarding": {
@@ -509,6 +526,7 @@
     "users": "Nutzer:innen"
   },
   "tab-headings": {
+    "account": "Konto",
     "published": "Veröffentlicht",
     "unpublished": "Nicht veröffentlicht",
     "archived": "Archiviert",
@@ -559,7 +577,8 @@
     "firstName": "Vorname",
     "lastName": "Nachname",
     "created": "Erstellt",
-    "expires": "Läuft ab"
+    "expires": "Läuft ab",
+    "email": "E-Mail-Adresse"
   },
   "file-types": {
     "application/pdf": "Vektorgrafik (PDF)",
@@ -587,15 +606,26 @@
       },
       "org-details": {
         "title": "Juristische Anschrift",
-        "description": "Unter welchem Namen und an welcher Adresse ist ihre Organisation eingetragen?"
+        "description": "Unter welchem Namen und an welcher Adresse ist ihre Organisation eingetragen?",
+        "update-success": "Die juristische Adresse wurde erfolgreich aktualisiert"
       },
       "org-contact-details": {
         "title": "Kontaktdaten",
         "description": "Die allgemeinen Kontaktdaten ihrer Organisation."
       },
       "organizationAccountListDescription": "Eine Auflistung aller Konten, die mit Ihrer Organisation verknüpft sind.",
-      "account": "Konto",
-      "accountSubHeading": "Aktualisieren Sie Ihr Portrait und Ihre Organisationsdetails hier.",
+      "account": {
+        "title": "Kontodetails",
+        "description": "Verwalten Sie hier Ihr Konto und Ihre Organisationsdetails.",
+        "labels": {
+          "name": "Vollständiger Name",
+          "email": "Konto-E-Mail-Adresse"
+        },
+        "sessions": {
+          "title": "Anmeldungen"
+        }
+      },
+      "accountSubHeading": "Aktualisieren Sie Ihr Konto und Ihre Organisationsdetails hier.",
       "personalInformation": "Persönliche Informationen",
       "personalInformationSubHeading": "Aktualisieren Sie Ihr Portrait und Ihre Organisationsdetails hier.",
       "contactPerson": "Ansprechpartner",
@@ -642,7 +672,8 @@
       "archivedEvents": "Archivierte Veranstaltungen",
       "billingAddressAddedSuccessfully": "Rechnungsadresse erfolgreich hinzugefügt",
       "deleteAddress": "Addresse löschen",
-      "deleteAddressDescription": "Möchten Sie diese Adresse löschen?"
+      "deleteAddressDescription": "Möchten Sie diese Adresse löschen?",
+      "title": "Einstellungen"
     },
     "notifications": {
       "notifications": "Benachrichtigungen",
@@ -890,7 +921,14 @@
     "catalogue-data": {
       "logos": "Logos",
       "base": "Ausstellerdaten",
-      "adverts": "Image-Anzeigen"
+      "adverts": "Image-Anzeigen",
+      "advertisements": {
+        "delete-error": "Fehler beim Löschen der Imageanzeige"
+      },
+      "portraits": {
+        "delete-success": "Das Portrait wurde erfolgreich gelöscht",
+        "delete-error": "Fehler beim Löschen des Portraits"
+      }
     }
   },
   "admin-pages": {
@@ -946,7 +984,28 @@
           }
         }
       },
-      "membersCount": "{count} Mitglieder"
+      "membersCount": "{count} Mitglieder",
+      "sso": {
+        "title": "Single Sign-On (SSO)",
+        "none": "Es wurden keine SSO-Verbidung eingerichtet",
+        "hint": "Sie können Anmeldedienste zu dieser Organisation hinzufügen",
+        "add": "SSO-Anbieter hinzufügen",
+        "add-description": "Einen neuen SSO-Anbieter für diese Organisation anlegen",
+        "providerId": "Anbieter-ID",
+        "domain": "Domäne",
+        "authorizationEndpoint": "Authorisierungs-Endpunkt",
+        "tokenEndpoint": "Token-Endpunkt",
+        "jwksEndpoint": "JWKS-Endpunkt",
+        "discoveryEndpoint": "Discovery-Endpunkt",
+        "scopes": "Scopes (mit Komma getrennt)",
+        "pkce": "PKCE verwenden?",
+        "mapping": "Claim-Zuweisungen",
+        "issuer": "Aussteller (OIDC issuer)",
+        "clientId": "Client ID",
+        "clientSecret": "Client-Secret",
+        "create-success": "SSO-Anbieter erfolgreich erstellt!",
+        "bonding-warning": "Das ist die bonding org. Pass auf!"
+      }
     },
     "addons": {
       "title": "Erstelle ein neues Zusatzleistungspaket",
@@ -1015,7 +1074,11 @@
         "title": "Kaufoptionen",
         "publish": "Diese Kaufoption veröffentlichen",
         "addons": "Zusatzleistungspakete",
-        "no-addon-packages": "Keine Zusatzleistungspakete"
+        "no-addon-packages": "Keine Zusatzleistungspakete",
+        "update": {
+          "success": "Die Kaufoption wurde erfolgreich aktualisiert",
+          "error": "Die Kaufoption konnte nicht gelöscht werden"
+        }
       },
       "event-registrations": {
         "data-table": {
@@ -1123,7 +1186,8 @@
         "delete": {
           "title": "Export löschen",
           "description": "Bist du sicher, dass du diesen Export löschen möchtest?",
-          "success": "Export erfolgreich gelöscht"
+          "success": "Export erfolgreich gelöscht",
+          "error": "Beim Löschen des Exports ist ein Fehler aufgetreten"
         }
       }
     },
@@ -1151,7 +1215,9 @@
         "days": "Tage",
         "weeks": "Wochen",
         "months": "Monate",
-        "years": "Jahre"
+        "years": "Jahre",
+        "ban-reason-placeholder": "Warum sollte der Nutzer/die Nutzerin gesperrt werden?",
+        "ban-expires-description": "Wie lange soll der Nutzer gesperrt werden?"
       },
       "orgs": {
         "noOrganizations": "Der Nutzer/die Nutzerin ist kein Mitglied einer Organisation",
@@ -1167,7 +1233,10 @@
         "refresh-sessions": "Sitzungen aktualisieren",
         "session-revoked-successfully": "Die Sizung wurde erfolgreich widerrufen",
         "failed-to-revoke-session": "Die Sitzung konnte nicht widerrufen werden",
-        "ip-address": "IP-Adresse"
+        "ip-address": "IP-Adresse",
+        "error": "Sitzungen konnten nicht abgerufen werden: {error}",
+        "revoke-all-sessions-successful": "Alle Sitzungen wurden erforlgreich widerrufen",
+        "revoke-all-sessions-error": "Es konnten nicht alle Sitzungen widerrufen werden"
       },
       "data-table": {
         "headers": {

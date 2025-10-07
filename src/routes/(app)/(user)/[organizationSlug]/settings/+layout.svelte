@@ -31,7 +31,7 @@
 </script>
 
 <div>
-	<h1 class=" text-stone-950 text-3xl font-extrabold">{$_('user-pages.settings.account')}</h1>
+	<h1 class=" text-stone-950 text-3xl font-extrabold">{$_('user-pages.settings.title')}</h1>
 	<h4 class=" text-stone-500">{$_('user-pages.settings.accountSubHeading')}</h4>
 	<div class=" mt-12">
 		<Tabs.Root value={page.url.pathname.split('/').pop() || 'organization'}>

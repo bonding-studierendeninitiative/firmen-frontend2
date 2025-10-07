@@ -17,14 +17,14 @@
 
 	let userQuery = $derived(getUser(page.params.id!));
 
-	let abc = $derived(
+	let sessionsQuery = $derived(
 		authClient.admin.listUserSessions({
 			userId: userQuery.current?.id!
 		})
 	);
 
 	function refetchSessions() {
-		abc = authClient.admin.listUserSessions({
+		sessionsQuery = authClient.admin.listUserSessions({
 			userId: userQuery.current?.id!
 		});
 	}
@@ -151,7 +151,7 @@
 	{/if}
 	<section class="space-y-4">
 		<h2 class="text-lg font-semibold">{$_('admin-pages.users.sessions.title')}</h2>
-		{#await abc}
+		{#await sessionsQuery}
 			<div class="flex justify-center">
 				<LoaderCircle class="size-10 animate-spin" />
 			</div>
@@ -208,8 +208,8 @@
 									refetchSessions();
 								}),
 							{
-								success: 'All sessions revoked successfully',
-								error: 'Failed to revoke all sessions'
+								success: $_('admin-pages.users.sessions.revoke-all-sessions-successful'),
+								error: $_('admin-pages.users.sessions.revoke-all-sessions-error')
 							}
 						);
 					}}>{$_('admin-pages.users.sessions.revoke-all-sessions')}</Button

@@ -86,9 +86,9 @@
 						onDelete={async ({ portraitTemplateId }) => {
 							try {
 								await deletePortraitTemplate(portraitTemplateId).updates(portraitTemplatesQuery);
-								toast.success($_('user-pages.portraits.deletePortraitSuccess'));
+								toast.success($_('user-pages.catalogue-data.portraits.delete-success'));
 							} catch (error) {
-								toast.error('Error deleting portrait');
+								toast.error($_('user-pages.catalogue-data.portraits.delete-error'));
 								throw error;
 							}
 						}}

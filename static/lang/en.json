@@ -35,7 +35,8 @@
       "name": "Name"
     },
     "sign-in": {
-      "title": "Sign in"
+      "title": "Sign in",
+      "magic-link-error": "The magic link could not be sent"
     }
   },
   "common": {
@@ -113,7 +114,12 @@
     "create": "Create",
     "view-details": "View details",
     "export": "Export…",
-    "add": "Add"
+    "add": "Add",
+    "retry": "Retry",
+    "reset": "Reset",
+    "user": "User",
+    "notifications": "Notifications",
+    "menu": "Menu"
   },
   "components": {
     "addonPackage": {
@@ -237,7 +243,8 @@
       "active": "active",
       "search-placeholder": "Search for a buy option…",
       "create-new": "Create a new buy option…",
-      "select": "Select a buy option..."
+      "select": "Select a buy option...",
+      "unnamed": "Unnamed buy option"
     },
     "contact-person": {
       "full-name": "Contact Person:"
@@ -250,12 +257,14 @@
       "service-count": "Service count",
       "error": "There was an error loading the form: {error}",
       "package-count-description": "This can be adjusted later",
-      "service-count-description": "This can be adjusted later"
+      "service-count-description": "This can be adjusted later",
+      "success": "The buy option was successfully created"
     },
     "delete-buy-option": {
       "title": "Delete buy Option",
       "description": "Do you really want to delete this buy option?",
-      "success": "The buy option was deleted successfully"
+      "success": "The buy option was deleted successfully",
+      "error": "The buy option could not be deleted."
     },
     "organization": {
       "name": "Organization:"
@@ -385,15 +394,20 @@
       "description": "If the selected advertisement is not yet confirmed, the event team will take care of it.",
       "no-data-heading": "No advertisements found",
       "no-data-sub-heading": "Your organization hasn't uploaded any advertisements yet",
-      "no-data-action": "Upload a advertisement now"
+      "no-data-action": "Upload a advertisement now",
+      "no-data": "Nothing here",
+      "success-toast": "The advertisement was successfully picked!",
+      "error-toast": "The advertisement could not be picked!"
     },
     "delete-logo-dialog": {
       "title": "Delete logo \"{logoName}\"",
-      "description": "Do you really want to delete this logo?"
+      "description": "Do you really want to delete this logo?",
+      "success": "The logo was successfully deleted!"
     },
     "delete-advertisement-dialog": {
       "title": "Delete advert \"{advertisementName}\"",
-      "description": "Do you really want to delete this advert?"
+      "description": "Do you really want to delete this advert?",
+      "success": "The advertisement was deleted successfully"
     },
     "admin-import-legacy-org": {
       "trigger": "Import legacy organization",
@@ -457,7 +471,8 @@
     },
     "remove-member-dialog": {
       "title": "Remove user from org",
-      "description": "Do you want to notifiy the user?"
+      "description": "Do you want to notifiy the user?",
+      "success": "The member was successfully removed from the organization!"
     },
     "manage-users": {
       "user": "User",
@@ -468,6 +483,10 @@
       "member": "Member",
       "owner": "Owner",
       "admin": "Admin"
+    },
+    "activate-buy-option": {
+      "success": "Buy option activated!",
+      "error": "Buy option could not be activated."
     }
   },
   "onboarding": {
@@ -492,6 +511,7 @@
     "users": "Users"
   },
   "tab-headings": {
+    "account": "Account",
     "published": "Published",
     "unpublished": "Unpublished",
     "archived": "Archived",
@@ -542,7 +562,8 @@
     "firstName": "First Name",
     "lastName": "Last Name",
     "created": "Created",
-    "expires": "Expires"
+    "expires": "Expires",
+    "email": "Email"
   },
   "file-types": {
     "application/pdf": "Vector graphic (PDF)",
@@ -570,14 +591,25 @@
       },
       "org-details": {
         "title": "Legal address",
-        "description": "We recommend that you supply your organizations official legal name and address (e. g. the information that will appear on the contract)."
+        "description": "We recommend that you supply your organizations official legal name and address (e. g. the information that will appear on the contract).",
+        "update-success": "The official address was successfully updated"
       },
       "org-contact-details": {
         "title": "Contact info",
         "description": "The general purpose contact data for your organization."
       },
       "organizationAccountListDescription": "A list of all accounts associated with your organization",
-      "account": "Account",
+      "account": {
+        "title": "Account details",
+        "description": "Manage your account and organization details here.",
+        "labels": {
+          "name": "Full name",
+          "email": "Account email address"
+        },
+        "sessions": {
+          "title": "Logins"
+        }
+      },
       "accountSubHeading": "Update your profile and organization details here.",
       "personalInformation": "Personal Information",
       "personalInformationSubHeading": "Update your profile and organization details here.",
@@ -625,7 +657,8 @@
       "archivedEvents": "Archived Events",
       "billingAddressAddedSuccessfully": "Billing address added successfully",
       "deleteAddress": "Delete Address",
-      "deleteAddressDescription": "Do you want to delete this address?"
+      "deleteAddressDescription": "Do you want to delete this address?",
+      "title": "Settings"
     },
     "notifications": {
       "notifications": "Notifications",
@@ -869,7 +902,14 @@
     "catalogue-data": {
       "logos": "Logos",
       "base": "Catalogue data",
-      "adverts": "Adverts"
+      "adverts": "Adverts",
+      "advertisements": {
+        "delete-error": "Error deleting advertisement"
+      },
+      "portraits": {
+        "delete-success": "The portrait was deleted successfully",
+        "delete-error": "Error deleting portrait"
+      }
     }
   },
   "admin-pages": {
@@ -925,7 +965,28 @@
           }
         }
       },
-      "membersCount": "{count} members"
+      "membersCount": "{count} members",
+      "sso": {
+        "title": "Single Sign-On (SSO)",
+        "none": "No SSO connections configured",
+        "hint": "You can add identity providers for this organization.",
+        "add": "Add SSO provider",
+        "add-description": "Create a new SSO provider for this organization.",
+        "providerId": "Provider id",
+        "domain": "Domain",
+        "authorizationEndpoint": "Authorization endpoint",
+        "tokenEndpoint": "Token endpoint",
+        "jwksEndpoint": "JWKS endpoint",
+        "discoveryEndpoint": "Discovery endpoint",
+        "scopes": "Scopes (comma separated)",
+        "pkce": "Use PKCE?",
+        "mapping": "Claim mappings",
+        "issuer": "Issuer (OIDC issuer)",
+        "clientId": "Client ID",
+        "clientSecret": "Client secret",
+        "create-success": "SSO provider created successfully!",
+        "bonding-warning": "bonding org - procees with care"
+      }
     },
     "addons": {
       "title": "Create a new addon package",
@@ -994,7 +1055,11 @@
         "title": "Buy options",
         "publish": "Publish this buy option",
         "addons": "Add-ons",
-        "no-addon-packages": "No addon packages"
+        "no-addon-packages": "No addon packages",
+        "update": {
+          "success": "Buy option was updated successfully",
+          "error": "The buy option could not be deleted"
+        }
       },
       "event-registrations": {
         "data-table": {
@@ -1097,7 +1162,8 @@
         "delete": {
           "description": "Are you sure you want to delete this export? This action cannot be undone.",
           "title": "Delete Export",
-          "success": "Export deleted successfully"
+          "success": "Export deleted successfully",
+          "error": "Error deleting the export"
         }
       }
     },
@@ -1119,7 +1185,13 @@
         "banExpires": "Ban expiry",
         "banned": "The user is banned",
         "permanentBan": "permanent",
-        "temporaryBan": "temporary"
+        "temporaryBan": "temporary",
+        "ban-reason-placeholder": "Why should the user be banned?",
+        "ban-expires-description": "How long should th euser be banned?",
+        "hours": "hours",
+        "days": "days",
+        "months": "months",
+        "years": "years"
       },
       "orgs": {
         "noOrganizations": "The user is not member of an organization",
@@ -1135,7 +1207,10 @@
         "revoke-session": "Revoke session",
         "session-revoked-successfully": "Session revoked successfully",
         "failed-to-revoke-session": "Failed to revoke session",
-        "ip-address": "IP address"
+        "ip-address": "IP address",
+        "error": "Sessions could not be retrieved: {error}",
+        "revoke-all-sessions-successful": "All sessions revoked successfully",
+        "revoke-all-sessions-error": "Failed to revoke all sessions"
       },
       "data-table": {
         "headers": {
@@ -1144,5 +1219,8 @@
         }
       }
     }
+  },
+  "tab-heading": {
+    "account": "Account"
   }
 }

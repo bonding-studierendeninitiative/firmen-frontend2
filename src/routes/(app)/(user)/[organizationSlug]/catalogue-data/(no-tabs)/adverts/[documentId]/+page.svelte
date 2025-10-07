@@ -98,7 +98,7 @@
 								await goto(`/${page.params.organizationSlug}/catalogue-data/adverts`);
 								toast.success($_('modules.delete-advertisement-dialog.success'));
 							} catch (error) {
-								toast.error('Error deleting advertisement');
+								toast.error($_('user-pages.catalogue-data.advertisements.delete-error'));
 								throw error;
 							}
 						}}
