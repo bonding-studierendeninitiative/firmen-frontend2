@@ -12,7 +12,7 @@ import { error } from '@sveltejs/kit';
 export const getEventRegistrations = query(
 	object({
 		eventId: string(),
-		cursor: nullish(number(), 0),
+		page: nullish(number(), 0),
 		limit: nullish(number(), 10)
 	}),
 	async (input) => {
@@ -22,7 +22,7 @@ export const getEventRegistrations = query(
 				eventId: input.eventId
 			},
 			query: {
-				page: input.cursor,
+				page: input.page,
 				size: input.limit
 			}
 		});

@@ -26,9 +26,9 @@
 	}: Props = $props();
 </script>
 
-<div class=" p-4 shadow-custom rounded-md border border-solid border-stone-200">
-	<div class=" flex justify-end items-start gap-x-2">
-		<Event event={{ dateFrom: date, location: subHeading, name: heading }} />
+<div class=" p-4 shadow-custom rounded-md border border-card bg-card">
+	<div class=" flex justify-end gap-x-2 items-center">
+		<Event loading={false} event={{ dateFrom: date, location: subHeading, name: heading }} />
 		<div class="grow"></div>
 		{#if showButton}
 			<Button size="sm" variant="secondary" class="py-1.5!" onclick={() => onRegisterClick?.()}>

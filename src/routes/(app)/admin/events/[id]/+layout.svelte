@@ -10,6 +10,7 @@
 	import { toast } from 'svelte-sonner';
 	import { cn } from '@/utils';
 	import { getEventDetails, publishEvent } from '@/remote/functions/admin/index.js';
+	import Skeleton from '@/components/ui/skeleton/skeleton.svelte';
 
 	let { data, children } = $props();
 
@@ -28,6 +29,9 @@
 	let eventFilter = $derived({
 		eventId: page.params.id!
 	});
+
+	let getEventDetailsQuery = $derived(getEventDetails(eventFilter));
+
 	let pending = $state(false);
 </script>
 
@@ -39,43 +43,39 @@
 		>
 			<ReturnIcon />
 		</button>
-		{#if getEventDetails(eventFilter).loading}
-			<LoaderCircle class="size-10 mx-auto animate-spin" />
-		{:else if getEventDetails(eventFilter).ready && getEventDetails(eventFilter).current}
-			<Event event={getEventDetails(eventFilter).current} />
-			<div class="grow"></div>
-			{#if getEventDetails(eventFilter).current?.status === 'UNPUBLISHED'}
-				<Button
-					class={cn(pending && 'animate-pulse')}
-					disabled={pending}
-					onclick={async () => {
-						try {
-							pending = true;
-							await publishEvent(eventFilter);
-							toast.success('Event published successfully');
-						} catch (error: unknown) {
-							toast.error(error.body.message);
-							throw error;
-						} finally {
-							pending = false;
-						}
-					}}>{$_('common.publish')}</Button
-				>
-			{/if}
+		<Event loading={getEventDetailsQuery.loading} event={getEventDetailsQuery.current} />
+		<div class="grow"></div>
+		{#if getEventDetailsQuery.current?.status === 'UNPUBLISHED'}
+			<Button
+				class={cn(pending && 'animate-pulse')}
+				disabled={pending}
+				onclick={async () => {
+					try {
+						pending = true;
+						await publishEvent(eventFilter);
+						toast.success('Event published successfully');
+					} catch (error: unknown) {
+						toast.error(error.body.message);
+						throw error;
+					} finally {
+						pending = false;
+					}
+				}}>{$_('common.publish')}</Button
+			>
 		{/if}
 	</div>
 
-	{#if getEventDetails(eventFilter).loading}
-		<LoaderCircle class="size-10 mx-auto animate-spin" />
-	{:else if getEventDetails(eventFilter).ready && getEventDetails(eventFilter).current}
+	{#if getEventDetailsQuery.loading}
+		<Skeleton class=" bg-gray-400 h-10 w-[40ch] mt-12 mb-2" />
+	{:else if getEventDetailsQuery.ready && getEventDetailsQuery.current}
 		<div class="mt-12">
 			<Tabs.Root
-				value={getTabs(getEventDetails(eventFilter).current!).filter((tab) =>
+				value={getTabs(getEventDetailsQuery.current!).filter((tab) =>
 					location.pathname.startsWith(tab.href)
 				)[0]?.href}
 			>
 				<Tabs.List class="bg-neutral-200">
-					{#each getTabs(getEventDetails(eventFilter).current!) as tab}
+					{#each getTabs(getEventDetailsQuery.current!) as tab}
 						<a href={tab.href}>
 							<Tabs.Trigger value={tab.href}>{$_(`tab-headings.${tab.name}`)}</Tabs.Trigger>
 						</a>
