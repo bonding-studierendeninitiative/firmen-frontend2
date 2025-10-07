@@ -1,7 +1,6 @@
 import { command, form, query } from '$app/server';
-import { object, string, number, union, literal, optional } from 'valibot';
+import { object, string, union, literal } from 'valibot';
 import { error } from '@sveltejs/kit';
-import { makeSerializable } from '@/utils/serializable';
 import { SetOrgDetailsRequestSchema } from '@schema';
 import { createAuthenticatedContext, createOrgMemberContext } from '@/remote/context';
 import { superValidate } from 'sveltekit-superforms';
@@ -16,7 +15,7 @@ export const createInvite = form(
 	async (input) => {
 		try {
 			const ctx = await createOrgMemberContext();
-			const orgInvite = await ctx.auth.createInvitation({
+			return await ctx.auth.createInvitation({
 				body: {
 					organizationId: input.organizationID,
 					email: input.email,
@@ -24,19 +23,17 @@ export const createInvite = form(
 					role: input.role as 'admin' | 'member'
 				}
 			});
-			return makeSerializable(orgInvite);
 		} catch (e) {
 			error(500, e instanceof Error ? e.message : 'Failed to generate organization invite');
 		}
 	}
 );
 
-
 export const createOrganizationByUserForm = form(object({ name: string() }), async (input) => {
 	const ctx = await createAuthenticatedContext();
 	if (!ctx.session) error(401, 'Unauthorized');
 	try {
-		const organization = await ctx.auth.createOrganization({
+		return await ctx.auth.createOrganization({
 			body: {
 				name: input.name,
 				slug: input.name.toLowerCase().replace(/\s+/g, '-'),
@@ -47,49 +44,47 @@ export const createOrganizationByUserForm = form(object({ name: string() }), asy
 				keepCurrentActiveOrganization: false
 			}
 		});
-		return makeSerializable(organization);
 	} catch (e) {
 		error(500, e instanceof Error ? e.message : 'Failed to create organization');
 	}
 });
 
 export const getUserMemberships = query(object({}), async () => {
-    const ctx = await createAuthenticatedContext();
-    if (!ctx.session) error(401, 'Unauthorized');
-    try {
-        const memberships = await ctx.db.organization.findMany({
-            where: {
-                members: {
-                    some: {
-                        userId: ctx.session.userId
-                    }
-                }
-            },
-            include: {
-                members: {
-                    select: {
-                        id: true,
-                        organizationId: true,
-                        userId: true,
-                        role: true
-                    }
-                }
-            }
-        });
-        return memberships;
-    } catch (e) {
-        error(500, e instanceof Error ? e.message : 'Failed to get user memberships');
-    }
+	const ctx = await createAuthenticatedContext();
+	if (!ctx.session) error(401, 'Unauthorized');
+	try {
+		const memberships = await ctx.db.organization.findMany({
+			where: {
+				members: {
+					some: {
+						userId: ctx.session.userId
+					}
+				}
+			},
+			include: {
+				members: {
+					select: {
+						id: true,
+						organizationId: true,
+						userId: true,
+						role: true
+					}
+				}
+			}
+		});
+		return memberships;
+	} catch (e) {
+		error(500, e instanceof Error ? e.message : 'Failed to get user memberships');
+	}
 });
 
 export const getDetails = query(object({ slug: string() }), async (input) => {
 	const ctx = await createAuthenticatedContext();
 	try {
-		const org = await ctx.db.organization.findFirst({
+		return await ctx.db.organization.findFirst({
 			where: { slug: input.slug },
 			include: { members: { select: { id: true, organizationId: true, userId: true, role: true } } }
 		});
-		return makeSerializable(org);
 	} catch (e) {
 		error(500, e instanceof Error ? e.message : 'Failed to get organization details');
 	}
@@ -98,11 +93,10 @@ export const getDetails = query(object({ slug: string() }), async (input) => {
 export const getDetailsById = query(object({ id: string() }), async (input) => {
 	const ctx = await createAuthenticatedContext();
 	try {
-		const org = await ctx.db.organization.findFirst({
+		return await ctx.db.organization.findFirst({
 			where: { id: input.id },
 			include: { members: { select: { id: true, organizationId: true, userId: true, role: true } } }
 		});
-		return org;
 	} catch (e) {
 		error(500, e instanceof Error ? e.message : 'Failed to get organization details');
 	}

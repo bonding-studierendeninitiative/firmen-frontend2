@@ -1,6 +1,5 @@
-import { command, form, query } from '$app/server';
+import { form, query } from '$app/server';
 import { minLength, object, pipe, string } from 'valibot';
-import { makeSerializable } from '@/utils';
 import { error } from '@sveltejs/kit';
 import { createAuthenticatedContext } from '@/remote/context';
 
@@ -31,8 +30,7 @@ export const updateMetadataForm = form(updateUserDetailsSchema, async (input) =>
 export const getUser = query(object({}), async () => {
 	try {
 		const ctx = await createAuthenticatedContext();
-		const user = await ctx.db.user.findFirst({ where: { id: ctx.session.userId } });
-		return makeSerializable(user);
+		return await ctx.db.user.findFirst({ where: { id: ctx.session.userId } });
 	} catch (error) {
 		console.error('Error fetching user:', error);
 		return null;

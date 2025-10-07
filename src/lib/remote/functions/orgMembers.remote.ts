@@ -1,6 +1,5 @@
 import { command } from '$app/server';
 import { literal, object, optional, string, union } from 'valibot';
-import { makeSerializable } from '@/utils/serializable';
 import { error } from '@sveltejs/kit';
 import { createAuthenticatedContext } from '@/remote/context';
 import { orgMemberQuery } from '../auth-guards';
@@ -14,7 +13,7 @@ export const generateInvite = command(
 	async (input) => {
 		const ctx = await createAuthenticatedContext();
 		try {
-			const orgInvite = await ctx.auth.createInvitation({
+			return await ctx.auth.createInvitation({
 				body: {
 					organizationId: input.organizationID,
 					email: input.email,
@@ -22,7 +21,6 @@ export const generateInvite = command(
 					role: input.role as 'admin' | 'member'
 				}
 			});
-			return makeSerializable(orgInvite);
 		} catch (e) {
 			error(500, e instanceof Error ? e.message : 'Failed to generate organization invite');
 		}

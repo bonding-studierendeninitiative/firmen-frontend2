@@ -1,5 +1,5 @@
 import { command, query } from '$app/server';
-import { object, string, number, optional, boolean, union, literal, nullish, slug } from 'valibot';
+import { object, string, number, optional, boolean, union, literal, nullish } from 'valibot';
 import { createAdminContext } from '@/remote/context';
 import { error } from '@sveltejs/kit';
 
