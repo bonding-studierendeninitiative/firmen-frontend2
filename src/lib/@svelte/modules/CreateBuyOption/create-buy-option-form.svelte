@@ -6,10 +6,8 @@
 	import { Input } from '@/components/ui/input';
 	import { page } from '$app/state';
 	import { createBuyOption } from '@/remote/functions/admin';
-	import { toast } from 'svelte-sonner';
 	import { Label } from '@/components/ui/label';
 	import type { RemoteQuery, RemoteQueryOverride } from '@sveltejs/kit';
-	import SuperDebug from 'sveltekit-superforms';
 
 	interface Props {
 		isDialogOpen?: boolean;
@@ -70,7 +68,6 @@
 >
 	<input {...createBuyOption.fields.eventId.as('hidden')} value={page.params.id!} />
 
-	<SuperDebug data={createBuyOption.fields.value()} />
 	<div>
 		<Label>{$_('modules.create-buy-option.name')}</Label>
 		<Input {...createBuyOption.fields.name.as('text')} />
@@ -78,15 +75,6 @@
 			<div class="text-red-500 text-sm">{issue.message}</div>
 		{/each}
 	</div>
-
-	<!--<Field form={superform} name="description">
-				<div>
-						<Label>Buy option description</Label>
-						<Input {...props} bind:value={$formData.description} />
-				</div>
-				<Description />
-				<FieldErrors />
-			</Field> -->
 
 	<div class="flex flex-row items-center justify-between">
 		<div class="flex flex-col gap-1">

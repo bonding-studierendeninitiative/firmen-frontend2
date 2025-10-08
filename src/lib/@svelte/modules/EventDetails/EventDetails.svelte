@@ -118,9 +118,7 @@
 	{/if}
 	<footer class=" flex mt-6 justify-end items-center">
 		{#if canProceed()}
-			<Button href={`${event?.id}/event-registration?${searchParams}`}
-				>{$_('common.continue')}</Button
-			>
+			<Button href={`checkout?${searchParams}`}>{$_('common.continue')}</Button>
 		{:else}
 			<Button disabled={true}>{$_('common.continue')}</Button>
 		{/if}

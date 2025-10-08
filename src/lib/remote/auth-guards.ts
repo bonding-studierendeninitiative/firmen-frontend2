@@ -1,6 +1,8 @@
-import { command, getRequestEvent, query } from '$app/server';
+import { command, form, getRequestEvent, query } from '$app/server';
 import type { BaseSchema, InferOutput } from 'valibot';
 import { createPublicContext, createAuthenticatedContext, createOrgMemberContext } from './context';
+import type { RemoteFormInput } from '@sveltejs/kit';
+import type { StandardSchemaV1 } from '@standard-schema/spec';
 
 export const publicQuery = <S extends BaseSchema<any, T, any>, T>(
 	schema: S,
@@ -64,6 +66,26 @@ export const orgMemberCommand = <S extends BaseSchema<any, T, any>, T>(
 	}) => T
 ) => {
 	return command(schema, async (input) => {
+		const ctx = await createOrgMemberContext();
+
+		return fn({ ctx, input });
+	});
+};
+
+export const orgMemberForm = <
+	Schema extends StandardSchemaV1<RemoteFormInput, Record<string, any>>,
+	T
+>(
+	schema: Schema,
+	fn: ({
+		ctx,
+		input
+	}: {
+		ctx: Awaited<ReturnType<typeof createOrgMemberContext>>;
+		input: RemoteFormInput;
+	}) => T
+) => {
+	return form(schema, async (input) => {
 		const ctx = await createOrgMemberContext();
 
 		return fn({ ctx, input });

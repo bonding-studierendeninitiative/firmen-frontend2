@@ -3,8 +3,6 @@ import { object, string, union, literal } from 'valibot';
 import { error } from '@sveltejs/kit';
 import { SetOrgAddressSchema, SetOrgDetailsRequestSchema } from '@schema';
 import { createAuthenticatedContext, createOrgMemberContext } from '@/remote/context';
-import { superValidate } from 'sveltekit-superforms';
-import { valibot } from 'sveltekit-superforms/adapters';
 
 export const createInvite = form(
 	object({
@@ -164,20 +162,4 @@ export const editOrganizationAddress = form(SetOrgAddressSchema, async (input) =
 		console.error('Error updating organization address:', e);
 		error(500, e instanceof Error ? e.message : 'Error updating organization address');
 	}
-});
-
-export const editOrganizationDetailsForm = query(async () => {
-	const ctx = await createOrgMemberContext();
-	const organization = await ctx.db.organization.findUnique({
-		where: { id: ctx.session.activeOrganizationId }
-	});
-	if (!organization) error(404, 'Organization not found');
-	const editOrganizationDetailsForm = await superValidate(
-		JSON.parse(organization.metadata || '{"public": {}}').public,
-		valibot(SetOrgDetailsRequestSchema),
-		{
-			errors: false
-		}
-	);
-	return editOrganizationDetailsForm;
 });

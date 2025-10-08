@@ -1,11 +1,8 @@
-import { query, form } from '$app/server';
+import { form } from '$app/server';
 import { file, literal, nonEmpty, nullish, object, pipe, string, union } from 'valibot';
 import { Problem } from '@api/client';
 import { error } from '@sveltejs/kit';
 import { createOrgMemberContext } from '@/remote/context';
-import { superValidate } from 'sveltekit-superforms';
-import { valibot } from 'sveltekit-superforms/adapters';
-import { UploadCatalogueDataForm } from '@schema';
 import { orgMemberCommand, orgMemberQuery } from '../auth-guards';
 
 export const uploadCatalogueData = form(
@@ -24,7 +21,7 @@ export const uploadCatalogueData = form(
 				'post',
 				'/api/v2/organization/{organizationId}/catalogue-data/request-upload-url',
 				{
-					path: { organizationId:	ctx.session.activeOrganizationId},
+					path: { organizationId: ctx.session.activeOrganizationId },
 					body: {
 						title: data.title,
 						mimeType: data.file.type,
@@ -54,25 +51,12 @@ export const uploadCatalogueData = form(
 				console.error(txt);
 				error(500, 'The upload could not be completed');
 			}
-			return {success: true}
+			return { success: true };
 		} catch (e) {
 			error(500, e instanceof Error ? e.message : 'Failed to upload');
 		}
 	}
 );
-
-export const uploadForm = query('unchecked', async () => {
-	const ctx = await createOrgMemberContext();
-	return await superValidate(
-		{
-			orgId: ctx.session.activeOrganizationId
-		},
-		valibot(UploadCatalogueDataForm),
-		{
-			errors: false
-		}
-	);
-});
 
 export const getCatalogueByType = orgMemberQuery(
 	object({

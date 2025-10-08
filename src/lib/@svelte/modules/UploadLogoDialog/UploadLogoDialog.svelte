@@ -1,22 +1,21 @@
 <script lang="ts">
 	import { Button, buttonVariants } from '@/components/ui/button';
+	import { Label } from '@/components/ui/label';
 	import * as Dialog from '@/components/ui/dialog';
+	import { toast } from 'svelte-sonner';
 	import { _ } from '@services';
 	import { Input } from '@/components/ui/input';
-	import { Plus } from '@lucide/svelte';
 	import { cn } from '@/utils';
-	import { toast } from 'svelte-sonner';
+	import { Plus } from '@lucide/svelte';
 	import { uploadCatalogueData } from '@/remote/functions';
-	import type { RemoteQuery, RemoteQueryOverride } from '@sveltejs/kit';
-	
+
 	interface Props {
-		open: boolean
+		open: boolean;
 		onSuccess?: () => void;
 	}
-	
-	let { open = $bindable(false), onSuccess }:Props = $props();
 
-	// use the remote form's fields directly
+	let { open = $bindable(false), onSuccess }: Props = $props();
+
 	const { title, file, documentType } = uploadCatalogueData.fields;
 </script>
 
@@ -49,9 +48,8 @@
 				<Dialog.Title>{$_('modules.upload-logo.title')}</Dialog.Title>
 				<Dialog.Description>{$_('modules.upload-logo.description')}</Dialog.Description>
 			</Dialog.Header>
-
 			<div class="grid gap-2">
-				<label for="title" class="sr-only">{$_('modules.upload-logo.name')}</label>
+				<Label for="title" class="sr-only">{$_('modules.upload-logo.name')}</Label>
 				<Input
 					id="title"
 					{...title.as('text')}
@@ -64,7 +62,7 @@
 			</div>
 
 			<div class="grid gap-2">
-				<label for="file" class="sr-only">{$_('modules.upload-logo.file')}</label>
+				<Label for="file" class="sr-only">{$_('modules.upload-logo.file')}</Label>
 				<input
 					id="file"
 					class="focus-within:ring-2 focus-within:ring-offset-2 text-sm font-medium ring-offset-background border-input focus-visible:outline-hidden h-10 bg-gray-50 border rounded-md px-3 py-2 placeholder-gray-400 w-full"
@@ -75,10 +73,11 @@
 				{#each uploadCatalogueData.fields.file.issues() ?? [] as issue}
 					<div class="text-red-500 text-sm">{issue.message}</div>
 				{/each}
-				<div class="text-sm text-muted-foreground">{$_('modules.upload-logo.file-description')}</div>
+				<div class="text-sm text-muted-foreground">
+					{$_('modules.upload-logo.file-description')}
+				</div>
 			</div>
 
-			<!-- ensure document type is set -->
 			<input {...documentType.as('hidden')} value="logo" />
 
 			<Dialog.Footer>

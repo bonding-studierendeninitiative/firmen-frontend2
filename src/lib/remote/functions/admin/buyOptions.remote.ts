@@ -1,9 +1,21 @@
 import { query, command, form } from '$app/server';
 import { createAdminContext } from '@/remote/context';
 import { error } from '@sveltejs/kit';
-import { object, string, nullish, number } from 'valibot';
+import {
+	object,
+	string,
+	nullish,
+	number,
+	optional,
+	array,
+	union,
+	literal,
+	boolean,
+	nonEmpty,
+	pipe
+} from 'valibot';
 import { CreateBuyOptionRequestSchema } from '@schema';
-import { UpdateEventBuyOptionInput } from '@api/admin-client';
+import { Problem } from '@api/admin-client';
 
 // Get all buy options
 export const getBuyOptions = query(
@@ -62,24 +74,62 @@ export const createBuyOption = form(CreateBuyOptionRequestSchema, async (input) 
 	return { id: response.id };
 });
 
+const EventDayInput = object({
+	dayDate: optional(string()),
+	remainingCapacity: optional(number()),
+	totalCapacity: optional(number())
+});
+
+const PackageBenefitInput = object({
+	numericValue: optional(number()),
+	stringValue: optional(string()),
+	booleanValue: optional(boolean())
+});
+
+const PackageInput = object({
+	name: string(),
+	price: number(),
+	benefits: array(PackageBenefitInput)
+});
+
+const ServiceInput = object({
+	name: string(),
+	description: optional(string(), ''),
+	valueType: union([literal('STRING'), literal('INTEGER'), literal('BOOLEAN')])
+});
+
+const UpdateEventBuyOption = object({
+	packages: optional(array(PackageInput), []),
+	services: optional(array(ServiceInput), []),
+	eventDays: optional(array(EventDayInput), []),
+	name: pipe(string(), nonEmpty()),
+	allowedSignUpDays: optional(number(), 1)
+});
+
 // update buy option
 export const updateBuyOption = form(
 	object({
-		data: UpdateEventBuyOptionInput,
+		data: UpdateEventBuyOption,
 		eventId: string(),
 		buyOptionId: string()
 	}),
 	async (input) => {
 		const ctx = await createAdminContext();
 
-		const response = await ctx.adminApi.put(
+		const response = await ctx.adminApi.request(
+			'put',
 			'/api/v2/admin/event/{eventId}/buy-option/{buyOptionId}',
 			{
 				path: { eventId: input.eventId, buyOptionId: input.buyOptionId },
 				body: input.data
 			}
 		);
-		await getBuyOptions({ eventId: input.eventId }).refresh();
+
+		if (response.status !== 200) {
+			const problem = (await response.json()) as Problem;
+			console.error('Error updating buy option:', problem);
+			error(500, problem.detail || 'The buy option could not be updated');
+		}
 
 		return response;
 	}

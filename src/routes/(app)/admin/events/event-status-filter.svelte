@@ -9,7 +9,7 @@
 	import { cn } from '@/utils';
 	import { queryParameters, ssp } from 'sveltekit-search-params';
 
-	type Status = 'published' | 'unpublished' | 'archived';
+	type Status = 'PUBLISHED' | 'unpublished' | 'archived';
 
 	const clearFilters = () => {
 		params.status = [];
@@ -21,7 +21,7 @@
 
 	const getStatusColor = (status: Status) => {
 		switch (status) {
-			case 'published':
+			case 'PUBLISHED':
 				return 'data-[state=on]:bg-green-200 data-[state=on]:text-green-900';
 			case 'unpublished':
 				return 'data-[state=on]:bg-amber-200 data-[state=on]:text-amber-900';
@@ -30,7 +30,7 @@
 		}
 	};
 
-	const status = ['published', 'published', 'archived'] as const;
+	const status = ['PUBLISHED', 'unpublished', 'archived'] as const;
 </script>
 
 <Popover.Root>

@@ -1,9 +1,7 @@
-import { form, query } from '$app/server';
+import { form } from '$app/server';
 import { createAdminContext } from '@/remote/context';
 import { nonEmpty, object, pipe, string } from 'valibot';
 import { ReviewDocumentRequest } from '@schema';
-import { superValidate } from 'sveltekit-superforms';
-import { valibot } from 'sveltekit-superforms/adapters';
 import { error } from '@sveltejs/kit';
 
 export const reviewDocument = form(
@@ -29,9 +27,3 @@ export const reviewDocument = form(
 		return response;
 	}
 );
-
-export const reviewDocumentForm = query(object({}), async () => {
-	return await superValidate(valibot(ReviewDocumentRequest), {
-		id: 'reviewDocumentForm'
-	});
-});

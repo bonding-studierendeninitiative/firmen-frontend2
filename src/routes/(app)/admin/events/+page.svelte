@@ -32,7 +32,7 @@
 	};
 	let isListView = $state(true);
 
-	const params = queryParameters(
+	let params = queryParameters(
 		{
 			status: ssp.array<string>(),
 			page: ssp.number(),
@@ -42,6 +42,16 @@
 			showDefaults: false
 		}
 	);
+
+	let eventsFilter = $derived.by(() => ({
+		status: params.status?.length ? params.status : ['PUBLISHED', 'UNPUBLISHED', 'ARCHIVED'],
+		page: params.page ?? 0,
+		size: params.size ?? 10,
+		sortBy: 'dateFrom',
+		sortDirection: 'desc'
+	}));
+
+	let eventsQuery = $derived(getEvents(eventsFilter));
 
 	function resetFiltering() {
 		params.status = null;
@@ -76,14 +86,14 @@
 			</ButtonIcon>
 		</div>
 	</section>
-	{#if getEvents(params).loading}
+	{#if eventsQuery.loading}
 		<LoaderCircle class=" size-16 mx-auto animate-spin" />
-	{:else if getEvents(params).current}
+	{:else if eventsQuery.current}
 		<section in:blur class="space-y-6">
-			{#if Number(getEvents(params).current?.totalElements) > 0}
+			{#if Number(eventsQuery.current?.totalElements) > 0}
 				<PublishedEventsTab
 					{isListView}
-					publishedEvents={getEvents(params).current?.data?.map(mapEvent) ?? []}
+					publishedEvents={eventsQuery.current?.data?.map(mapEvent) ?? []}
 					handleEventRegistration={(id) => goto(`/admin/events/${id}/registrations/`)}
 					handleBuyOptions={(id) => goto(`/admin/events/${id}/buy-options/`)}
 				/>
@@ -94,9 +104,9 @@
 						params.set('page', (pageNumber - 1).toString());
 						await goto(`?${params}`);
 					}}
-					page={Number(getEvents(params).current?.page) + 1}
-					count={Number(getEvents(params).current?.totalElements)}
-					perPage={getEvents(params).current?.size}
+					page={Number(eventsQuery.current?.page) + 1}
+					count={Number(eventsQuery.current?.totalElements)}
+					perPage={eventsQuery.current?.size}
 				>
 					{#snippet children({ pages, currentPage })}
 						<Pagination.Content>

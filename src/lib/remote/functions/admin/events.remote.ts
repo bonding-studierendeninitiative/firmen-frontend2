@@ -10,7 +10,7 @@ export const getEvents = query(
 		sortBy: optional(string()),
 		page: nullish(number(), 0),
 		size: nullish(number(), 10),
-		event_status: optional(
+		status: optional(
 			array(union([literal('UNPUBLISHED'), literal('PUBLISHED'), literal('ARCHIVED')])),
 			['UNPUBLISHED']
 		)
@@ -19,7 +19,7 @@ export const getEvents = query(
 		const ctx = await createAdminContext();
 		const response = await ctx.adminApi.get('/api/v2/admin/event', {
 			query: {
-				event_status: input.event_status,
+				event_status: input.status,
 				size: input.size,
 				page: input.page
 			}

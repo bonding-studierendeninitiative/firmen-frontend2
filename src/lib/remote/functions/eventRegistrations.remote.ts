@@ -10,7 +10,7 @@ import {
 import { superValidate } from 'sveltekit-superforms';
 import { valibot } from 'sveltekit-superforms/adapters';
 import { SubmitPortraitRequest } from '@schema';
-import { orgMemberCommand, orgMemberQuery } from '../auth-guards';
+import { orgMemberCommand, orgMemberForm, orgMemberQuery } from '../auth-guards';
 
 export const changeContactPeople = orgMemberCommand(
 	object({ eventRegistrationId: string(), contactPeople: array(string()) }),
@@ -95,7 +95,7 @@ export const submitPortrait = orgMemberCommand(
 	}
 );
 
-export const registerOrganizationToEvent = orgMemberCommand(
+export const registerOrganizationToEvent = orgMemberForm(
 	RegisterOrganizationToEventInput,
 	async ({ input, ctx }) => {
 		const response = await ctx.api.request('post', '/api/v2/event-registration', { body: input });

@@ -1,6 +1,4 @@
 <script lang="ts">
-	import { run } from 'svelte/legacy';
-
 	import { _, locale } from '@services';
 	import { AddonList, LocalizedDate, Modal } from '@/@svelte/components';
 	import { Input } from '@/components/ui/input';
@@ -13,81 +11,62 @@
 	import * as RadioGroup from '@/components/ui/radio-group';
 	import { Checkbox } from '@/components/ui/checkbox';
 	import { Label } from '@/components/ui/label';
-	import { Control, Description, Field, FieldErrors } from '@/components/ui/form';
 	import { goto } from '$app/navigation';
-	import SuperDebug, { type Infer, intProxy, superForm } from 'sveltekit-superforms';
-	import { valibot } from 'sveltekit-superforms/adapters';
+	import SuperDebug from 'sveltekit-superforms';
 	import { toast } from 'svelte-sonner';
-	import {
-		type CreateEventRegistration,
-		CreateEventRegistrationSchema,
-		type GetBuyOptionResponse
-	} from '@schema';
+	import { type GetBuyOptionResponse } from '@schema';
 	import { CalendarDays, Check } from '@lucide/svelte';
 	import type { InferOutput } from 'valibot';
+	import { registerOrganizationToEvent } from '@/remote/functions';
 
 	interface Props {
 		addonPackages: any;
-		createEventRegistrationForm: any;
 		orgSlug: string;
 		event: any;
 		buyOption: InferOutput<GetBuyOptionResponse>;
 	}
 
-	let { addonPackages, createEventRegistrationForm, orgSlug, event, buyOption }: Props = $props();
-
-	const superform = superForm<Infer<CreateEventRegistration>>(createEventRegistrationForm!, {
-		validators: valibot(CreateEventRegistrationSchema),
-		dataType: 'json',
-		invalidateAll: 'force',
-		onResult({ result }) {
-			if (result.type === 'success') {
-				toast.success($_('common.saved'));
-				isOpen = true;
-			} else if (result.type === 'error') {
-				toast.error(result.error.message);
-			}
-		}
-	});
-	const { form: formData, enhance } = superform;
+	let { addonPackages, orgSlug, event, buyOption }: Props = $props();
 
 	let isOpen = $state(false);
 
 	let billingEqualCompany = $state(false);
-	run(() => {
-		if (billingEqualCompany) $formData.billingOrganizationName = $formData.contractLegalEntityName;
-	});
-	run(() => {
-		if (billingEqualCompany) $formData.billingStreet = $formData.contractAddressStreet;
-	});
-	run(() => {
-		if (billingEqualCompany) $formData.billingZipCode = $formData.contractAddressZipCode;
-	});
-	run(() => {
-		if (billingEqualCompany) $formData.billingCity = $formData.contractAddressCity;
-	});
-	run(() => {
-		if (billingEqualCompany) $formData.billingCountry = $formData.contractAddressCountry;
+
+	$effect(() => {
+		if (billingEqualCompany) {
+			syncBillingAddress();
+		}
 	});
 
-	function handlePackageSelect(v: boolean, pkgID: string) {
-		if (v) {
-			$formData.packageId = pkgID;
-		} else {
-			if ($formData.packageId === pkgID) {
-				$formData.packageId = '';
-			}
-		}
+	function syncBillingAddress() {
+		const {
+			billingOrganizationName,
+			billingStreet,
+			billingZipCode,
+			billingCity,
+			billingCountry,
+			contractLegalEntityName,
+			contractAddressStreet,
+			contractAddressZipCode,
+			contractAddressCity,
+			contractAddressCountry
+		} = registerOrganizationToEvent.fields;
+		billingOrganizationName.set(contractLegalEntityName.value());
+		billingStreet.set(contractAddressStreet.value());
+		billingZipCode.set(contractAddressZipCode.value());
+		billingCity.set(contractAddressCity.value());
+		billingCountry.set(contractAddressCountry.value());
 	}
 
 	function getPackagePrice(id?: string | null) {
 		const pkg = buyOption?.packages.find((pkg) => pkg.id === id);
 
-		if ($formData.selectedAmountOfParticipationDays > 1) {
-			const extraDays = $formData.selectedAmountOfParticipationDays - 1;
+		if (registerOrganizationToEvent.fields.selectedAmountOfParticipationDays.value() > 1) {
+			const extraDays =
+				registerOrganizationToEvent.fields.selectedAmountOfParticipationDays.value() - 1;
 			const cheapestPackage = buyOption?.packages
 				.filter((pkg) => Boolean(pkg.price))
-				.sort((a, b) => a.price - b.price)[0];
+				.sort((a, b) => Number(a.price) - Number(b.price))[0];
 			return pkg ? Number(pkg.price) + extraDays * Number(cheapestPackage?.price) : 0;
 		} else {
 			return pkg ? Number(pkg.price) : 0;
@@ -108,10 +87,10 @@
 	) {
 		return addonPackagesList.reduce((sum, addonPackage) => {
 			if (selectedAddonPackages.includes(addonPackage.id)) {
-				sum += addonPackage.price;
+				sum += Number(addonPackage.price);
 			} else {
 				addonPackage.addons.forEach((addon) => {
-					if (addon && selectedAddons.includes(addon.id) && addon.price) {
+					if (addon && addon.id && selectedAddons.includes(addon.id) && addon.price) {
 						sum += addon.price;
 					}
 				});
@@ -120,19 +99,15 @@
 		}, 0);
 	}
 
-	let selectedPackagePrice = $derived(getPackagePrice($formData.packageId) as number);
+	let selectedPackagePrice = $derived(
+		getPackagePrice(registerOrganizationToEvent.fields.packageId.value()) as number
+	);
 	let selectedAddonPrice = $derived(
 		getSelectedAddonPackagesPrice(
 			addonPackages ?? [],
-			$formData.selectedAddonPackages ?? [],
-			$formData.selectedAddons ?? []
+			registerOrganizationToEvent.fields.selectedAddonPackages.value() ?? [],
+			registerOrganizationToEvent.fields.selectedAddons.value() ?? []
 		) as number
-	);
-
-	const selectedAmountOfParticipationDaysProxy = intProxy(
-		superform,
-		'selectedAmountOfParticipationDays',
-		{}
 	);
 
 	let termsAccepted = $state(false);
@@ -163,13 +138,13 @@
 		<Breadcrumb.List>
 			<Breadcrumb.Item>
 				<Breadcrumb.Item>
-						<a href={`/${orgSlug}/events`}>{$_('user-pages.events.events')}</a>
+					<a href={`/${orgSlug}/events`}>{$_('user-pages.events.events')}</a>
 				</Breadcrumb.Item>
 			</Breadcrumb.Item>
 			<Breadcrumb.Separator />
 			<Breadcrumb.Item>
 				<Breadcrumb.Item>
-						<a href={`/${orgSlug}/events/${event?.id}`}>{event?.name}</a>
+					<a href={`/${orgSlug}/events/${event?.id}`}>{event?.name}</a>
 				</Breadcrumb.Item>
 			</Breadcrumb.Item>
 			<Breadcrumb.Separator />
@@ -194,113 +169,73 @@
 
 	<div class=" grid grid-cols-1 gap-4">
 		<form
-			action="?/createEventRegistration"
+			{...registerOrganizationToEvent.enhance(async ({ submit }) => {
+				try {
+					await submit();
+				} catch (e) {
+					console.error(e);
+					// @ts-expect-error
+					toast.error(e?.body?.message);
+				}
+			})}
 			id="create-event-registration-form"
-			method="post"
-			use:enhance
 		>
 			<h4 class=" font-extrabold text-sm text-stone-900 mb-6">
 				{$_('user-pages.events.event-registration.companyInformation')}
 			</h4>
-			<Field form={superform} name="contractLegalEntityName">
-				<Control>
-					{#snippet children({ props })}
-						<Label
-							>{$_('user-pages.events.event-registration.labels.contractLegalEntityName')}</Label
-						>
-						<Input
-							{...props}
-							bind:value={$formData.contractLegalEntityName}
-							placeholder={$_(
-								'user-pages.events.event-registration.placeholders.contractLegalEntityName'
-							)}
-						/>
-					{/snippet}
-				</Control>
-				<Description />
-				<FieldErrors />
-			</Field>
-			<Field form={superform} name="contractAddressStreet">
-				<Control>
-					{#snippet children({ props })}
-						<Label>{$_('user-pages.events.event-registration.labels.contractAddressStreet')}</Label>
-						<Input
-							{...props}
-							bind:value={$formData.contractAddressStreet}
-							placeholder={$_(
-								'user-pages.events.event-registration.placeholders.contractAddressStreet'
-							)}
-						/>
-					{/snippet}
-				</Control>
-				<Description />
-				<FieldErrors />
-			</Field>
+			<div>
+				<Label>{$_('user-pages.events.event-registration.labels.contractLegalEntityName')}</Label>
+				<Input
+					{...registerOrganizationToEvent.fields.contractLegalEntityName.as('text')}
+					placeholder={$_(
+						'user-pages.events.event-registration.placeholders.contractLegalEntityName'
+					)}
+				/>
+			</div>
+			<div>
+				<Label>{$_('user-pages.events.event-registration.labels.contractAddressStreet')}</Label>
+				<Input
+					{...registerOrganizationToEvent.fields.contractAddressStreet.as('text')}
+					placeholder={$_(
+						'user-pages.events.event-registration.placeholders.contractAddressStreet'
+					)}
+				/>
+			</div>
+
 			<div class="flex gap-4">
 				<div class="max-w-2xl">
 					<div class="mt-1">
-						<Field form={superform} name="contractAddressZipCode">
-							<Control>
-								{#snippet children({ props })}
-									<Label
-										>{$_(
-											'user-pages.events.event-registration.labels.contractAddressZipCode'
-										)}</Label
-									>
-									<Input
-										{...props}
-										bind:value={$formData.contractAddressZipCode}
-										placeholder={$_(
-											'user-pages.events.event-registration.placeholders.contractAddressZipCode'
-										)}
-									/>
-								{/snippet}
-							</Control>
-							<Description />
-							<FieldErrors />
-						</Field>
+						<Label>{$_('user-pages.events.event-registration.labels.contractAddressZipCode')}</Label
+						>
+						<Input
+							{...registerOrganizationToEvent.fields.contractAddressZipCode.as('text')}
+							placeholder={$_(
+								'user-pages.events.event-registration.placeholders.contractAddressZipCode'
+							)}
+						/>
 					</div>
 				</div>
 				<div class="grow">
 					<div class="mt-1">
-						<Field form={superform} name="contractAddressCity">
-							<Control>
-								{#snippet children({ props })}
-									<Label
-										>{$_('user-pages.events.event-registration.labels.contractAddressCity')}</Label
-									>
-									<Input
-										{...props}
-										bind:value={$formData.contractAddressCity}
-										placeholder={$_(
-											'user-pages.events.event-registration.placeholders.contractAddressCity'
-										)}
-									/>
-								{/snippet}
-							</Control>
-							<Description />
-							<FieldErrors />
-						</Field>
+						<Label>{$_('user-pages.events.event-registration.labels.contractAddressCity')}</Label>
+						<Input
+							{...registerOrganizationToEvent.fields.contractAddressCity.as('text')}
+							placeholder={$_(
+								'user-pages.events.event-registration.placeholders.contractAddressCity'
+							)}
+						/>
 					</div>
 				</div>
 			</div>
-			<Field form={superform} name="contractAddressCountry">
-				<Control>
-					{#snippet children({ props })}
-						<Label>{$_('user-pages.events.event-registration.labels.contractAddressCountry')}</Label
-						>
-						<Input
-							{...props}
-							bind:value={$formData.contractAddressCountry}
-							placeholder={$_(
-								'user-pages.events.event-registration.placeholders.contractAddressCountry'
-							)}
-						/>
-					{/snippet}
-				</Control>
-				<Description />
-				<FieldErrors />
-			</Field>
+			<div>
+				<Label>{$_('user-pages.events.event-registration.labels.contractAddressCountry')}</Label>
+				<Input
+					{...registerOrganizationToEvent.fields.contractAddressCountry.as('text')}
+					placeholder={$_(
+						'user-pages.events.event-registration.placeholders.contractAddressCountry'
+					)}
+				/>
+			</div>
 
 			<h4 class=" font-extrabold text-sm text-stone-900 mt-10 mb-6">
 				{$_('user-pages.events.event-registration.billingInformation')}
@@ -319,127 +254,79 @@
 					{$_('user-pages.events.event-registration.billingEqualCompany')}
 				</Label>
 			</div>
-			<Field form={superform} name="billingOrganizationName">
-				<Control>
-					{#snippet children({ props })}
-						<Label
-							>{$_('user-pages.events.event-registration.labels.billingOrganizationName')}</Label
-						>
-						<Input
-							disabled={billingEqualCompany}
-							{...props}
-							bind:value={$formData.billingOrganizationName}
-							placeholder={$_(
-								'user-pages.events.event-registration.placeholders.billingOrganizationName'
-							)}
-						/>
-					{/snippet}
-				</Control>
-				<Description />
-				<FieldErrors />
-			</Field>
-			<Field form={superform} name="billingStreet">
-				<Control>
-					{#snippet children({ props })}
-						<Label>{$_('user-pages.events.event-registration.labels.billingStreet')}</Label>
-						<Input
-							disabled={billingEqualCompany}
-							{...props}
-							bind:value={$formData.billingStreet}
-							placeholder={$_('user-pages.events.event-registration.placeholders.billingStreet')}
-						/>
-					{/snippet}
-				</Control>
-				<Description />
-				<FieldErrors />
-			</Field>
+			<div>
+				<Label>{$_('user-pages.events.event-registration.labels.billingOrganizationName')}</Label>
+				<Input
+					disabled={billingEqualCompany}
+					{...registerOrganizationToEvent.fields.billingOrganizationName.as('text')}
+					placeholder={$_(
+						'user-pages.events.event-registration.placeholders.billingOrganizationName'
+					)}
+				/>
+			</div>
+
+			<div>
+				<Label>{$_('user-pages.events.event-registration.labels.billingStreet')}</Label>
+				<Input
+					disabled={billingEqualCompany}
+					{...registerOrganizationToEvent.fields.billingStreet.as('text')}
+					placeholder={$_('user-pages.events.event-registration.placeholders.billingStreet')}
+				/>
+			</div>
+
 			<div class="flex gap-4">
 				<div class="max-w-2xl">
 					<div class="mt-1">
-						<Field form={superform} name="billingZipCode">
-							<Control>
-								{#snippet children({ props })}
-									<Label>{$_('user-pages.events.event-registration.labels.billingZipCode')}</Label>
-									<Input
-										disabled={billingEqualCompany}
-										{...props}
-										bind:value={$formData.billingZipCode}
-										placeholder={$_(
-											'user-pages.events.event-registration.placeholders.billingZipCode'
-										)}
-									/>
-								{/snippet}
-							</Control>
-							<Description />
-							<FieldErrors />
-						</Field>
+						<div>
+							<Label>{$_('user-pages.events.event-registration.labels.billingZipCode')}</Label>
+							<Input
+								disabled={billingEqualCompany}
+								{...registerOrganizationToEvent.fields.billingZipCode.as('text')}
+								placeholder={$_('user-pages.events.event-registration.placeholders.billingZipCode')}
+							/>
+						</div>
 					</div>
 				</div>
 				<div class="grow">
 					<div class="mt-1">
-						<Field form={superform} name="billingCity">
-							<Control>
-								{#snippet children({ props })}
-									<Label>{$_('user-pages.events.event-registration.labels.billingCity')}</Label>
-									<Input
-										disabled={billingEqualCompany}
-										{...props}
-										bind:value={$formData.billingCity}
-										placeholder={$_(
-											'user-pages.events.event-registration.placeholders.billingCity'
-										)}
-									/>
-								{/snippet}
-							</Control>
-							<Description />
-							<FieldErrors />
-						</Field>
+						<div>
+							<Label>{$_('user-pages.events.event-registration.labels.billingCity')}</Label>
+							<Input
+								disabled={billingEqualCompany}
+								{...registerOrganizationToEvent.fields.billingCity.as('text')}
+								placeholder={$_('user-pages.events.event-registration.placeholders.billingCity')}
+							/>
+						</div>
 					</div>
 				</div>
 			</div>
-			<Field form={superform} name="billingCountry">
-				<Control>
-					{#snippet children({ props })}
-						<Label>{$_('user-pages.events.event-registration.labels.billingCountry')}</Label>
-						<Input
-							disabled={billingEqualCompany}
-							{...props}
-							bind:value={$formData.billingCountry}
-							placeholder={$_('user-pages.events.event-registration.placeholders.billingCountry')}
-						/>
-					{/snippet}
-				</Control>
-				<Description />
-				<FieldErrors />
-			</Field>
+			<div>
+				<Label>{$_('user-pages.events.event-registration.labels.billingCountry')}</Label>
+				<Input
+					disabled={billingEqualCompany}
+					{...registerOrganizationToEvent.fields.billingCountry.as('text')}
+					placeholder={$_('user-pages.events.event-registration.placeholders.billingCountry')}
+				/>
+			</div>
+
 			<hr class="my-8" />
-			<Field form={superform} name="billingVat">
-				<Control>
-					{#snippet children({ props })}
-						<Label>{$_('user-pages.events.event-registration.labels.billingVat')}</Label>
-						<Input
-							{...props}
-							bind:value={$formData.billingVat}
-							placeholder={$_('user-pages.events.event-registration.placeholders.billingVat')}
-						/>
-					{/snippet}
-				</Control>
-				<Description />
-				<FieldErrors />
-			</Field>
-			<Field form={superform} name="billingReference">
-				<Control>
-					{#snippet children({ props })}
-						<Label>{$_('user-pages.events.event-registration.labels.billingReference')}</Label>
-						<Input {...props} bind:value={$formData.billingReference} placeholder={''} />
-					{/snippet}
-				</Control>
-				<Description />
-				<FieldErrors />
-			</Field>
+			<div>
+				<Label>{$_('user-pages.events.event-registration.labels.billingVat')}</Label>
+				<Input
+					{...registerOrganizationToEvent.fields.billingVat.as('text')}
+					placeholder={$_('user-pages.events.event-registration.placeholders.billingVat')}
+				/>
+			</div>
+
+			<div>
+				<Label>{$_('user-pages.events.event-registration.labels.billingReference')}</Label>
+				<Input
+					{...registerOrganizationToEvent.fields.billingReference.as('text')}
+					placeholder={''}
+				/>
+			</div>
 		</form>
 	</div>
-
 	{#if Number(buyOption?.allowedSignUpDays) > 1}
 		<section class=" my-10">
 			<h4 class=" font-extrabold text-sm text-stone-900">
@@ -449,7 +336,16 @@
 				{$_('user-pages.events.sign-up-days.description')}
 			</p>
 			<div class="my-4">
-				<Tabs.Root bind:value={$selectedAmountOfParticipationDaysProxy}>
+				<Tabs.Root
+					bind:value={
+						() =>
+							registerOrganizationToEvent.fields.selectedAmountOfParticipationDays
+								.value()
+								.toString(),
+						(a) =>
+							registerOrganizationToEvent.fields.selectedAmountOfParticipationDays.set(Number(a))
+					}
+				>
 					<Tabs.List>
 						{#each Array.from(Array(buyOption?.allowedSignUpDays).keys()) as dayIndex}
 							<Tabs.Trigger value={(dayIndex + 1).toString()}
@@ -471,7 +367,10 @@
 		<div class=" @container/event-days flex justify-between my-4">
 			<ToggleGroup.Root
 				type="multiple"
-				bind:value={$formData.selectedEventDays}
+				bind:value={
+					registerOrganizationToEvent.fields.selectedEventDays.value,
+					registerOrganizationToEvent.fields.selectedEventDays.set
+				}
 				class="grid grid-cols-1 @xl/event-days:grid-cols-2 @3xl/event-days:grid-cols-3 gap-4"
 			>
 				{#each buyOption?.eventDays as day}
@@ -504,7 +403,9 @@
 									class="text-muted-foreground text-nowrap"
 								/>
 							</div>
-							{#if $formData.selectedEventDays.includes(day.dayDate)}
+							{#if registerOrganizationToEvent.fields.selectedEventDays
+								.value()
+								.includes(day.dayDate)}
 								<div
 									class="size-6 rounded-full bg-primary shrink-0 grow-0 flex items-center justify-center"
 								>
@@ -525,7 +426,12 @@
 		</p>
 
 		<div class=" border border-stone-200 w-full rounded-lg mt-6">
-			<RadioGroup.Root bind:value={$formData.packageId}>
+			<RadioGroup.Root
+				bind:value={
+					registerOrganizationToEvent.fields.packageId.value,
+					registerOrganizationToEvent.fields.packageId.set
+				}
+			>
 				{#each buyOption?.packages ?? [] as pkg}
 					<Label
 						for={`package-${pkg.id}`}
@@ -561,8 +467,14 @@
 		</p>
 		<AddonList
 			addons={addonPackages}
-			bind:selectedAddons={$formData.selectedAddons}
-			bind:selectedAddonPackages={$formData.selectedAddonPackages}
+			bind:selectedAddons={
+				registerOrganizationToEvent.fields.selectedAddons.value,
+				registerOrganizationToEvent.fields.selectedAddons.set
+			}
+			bind:selectedAddonPackages={
+				registerOrganizationToEvent.fields.selectedAddonPackages.value,
+				registerOrganizationToEvent.fields.selectedAddonPackages.set
+			}
 		/>
 	</section>
 	<!--
@@ -637,24 +549,11 @@
 	<footer class=" flex mt-6 justify-end items-center">
 		<Button
 			form="create-event-registration-form"
-			disabled={!termsAccepted || $formData.packageId === ''}
+			disabled={!termsAccepted || registerOrganizationToEvent.fields.packageId.value() === ''}
 			variant="gradient"
 			type="submit">{$_('common.submit')}</Button
 		>
 	</footer>
 
-	<SuperDebug data={$formData} />
+	<SuperDebug data={registerOrganizationToEvent.fields.value()} />
 </div>
-
-<style>
-	/* Scoped styling - it will only affect elements inside this Layout */
-	:global(.undertaking-text a) {
-		/* Example Tailwind-like styles */
-		color: #3b82f6; /* equivalent to text-blue-500 */
-		text-decoration: underline; /* underline */
-	}
-
-	:global(.undertaking-text a:hover) {
-		color: #1e40af; /* equivalent to hover:text-blue-700 */
-	}
-</style>

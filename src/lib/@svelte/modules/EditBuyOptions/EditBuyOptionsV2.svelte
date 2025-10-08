@@ -35,6 +35,7 @@
 	import type { UpdateEventBuyOptionInput } from '@api/admin-client';
 	import { updateBuyOption } from '@/remote/functions/admin';
 	import { toast } from 'svelte-sonner';
+	import SuperDebug from 'sveltekit-superforms';
 
 	interface Props {
 		eventId: string;
@@ -42,7 +43,7 @@
 		data: UpdateEventBuyOptionInput;
 	}
 
-	let { data }: Props = $props();
+	let { data, buyOptionId, eventId }: Props = $props();
 
 	if (data) {
 		updateBuyOption.fields.data.set(data);
@@ -153,12 +154,11 @@
 	}
 
 	function removePackage(packageIndex: number): void {
-		updateBuyOption.fields.data.set({
-			...updateBuyOption.fields.data.value(),
-			packages: updateBuyOption.fields.data.packages
-				.value()
-				?.filter((pkg, index) => index !== packageIndex)
-		});
+		console.log('Removing package at index:', packageIndex);
+		let packages = updateBuyOption.fields.data.packages;
+		let newPackages = packages.value()?.filter((pkg, index) => index !== packageIndex);
+		console.log('New packages after removal:', newPackages);
+		packages.set(newPackages);
 	}
 
 	function movePackage(packageIndex: number, direction: 'left' | 'right'): void {
@@ -182,19 +182,7 @@
 	}
 </script>
 
-<form
-	{...updateBuyOption.enhance(async ({ submit, form }) => {
-		try {
-			await submit();
-			toast.success($_('components.edit-buy-options.update-success'));
-			form.reset();
-		} catch (e) {
-			console.error(e);
-			toast.error(e?.body?.message || 'Error updating buy option');
-		}
-	})}
-	class="space-y-6 pb-6"
->
+<form {...updateBuyOption} class="space-y-6 pb-6">
 	<div class="flex justify-between items-center">
 		<div>
 			<h2 class="text-2xl font-semibold">{$_('components.editBuyOptions.buyOptionEditor')}</h2>
@@ -207,6 +195,12 @@
 			</Button>
 		</div>
 	</div>
+
+	{#each updateBuyOption.fields.allIssues() ?? [] as issue}
+		<div class="text-red-500 text-sm">{issue.message}</div>
+	{/each}
+
+	<SuperDebug data={updateBuyOption.fields.value()} />
 
 	<Tabs
 		value={activeTab}
@@ -221,8 +215,8 @@
 		</TabsList>
 
 		<TabsContent value="editor" class="space-y-6">
-			<input {...updateBuyOption.fields.buyOptionId.as('hidden')} />
-			<input {...updateBuyOption.fields.eventId.as('hidden')} />
+			<input {...updateBuyOption.fields.buyOptionId.as('hidden', buyOptionId)} />
+			<input {...updateBuyOption.fields.eventId.as('hidden', eventId)} />
 			<Card>
 				<CardHeader>
 					<CardTitle>{$_('components.editBuyOptions.generalInformation')}</CardTitle>
@@ -319,8 +313,9 @@
 																<Label for="remainingCapacity">Remaining Capacity</Label>
 																<Input
 																	id="remainingCapacity"
-																	max={updateBuyOption.fields.data.eventDays.value()?.[index]
-																		.totalCapacity}
+																	max={updateBuyOption.fields.data.eventDays[
+																		index
+																	].totalCapacity.value()}
 																	{...updateBuyOption.fields.data.eventDays[
 																		index
 																	].remainingCapacity.as('number')}
@@ -339,25 +334,28 @@
 																<div class="text-sm mb-2">Capacity Usage</div>
 																<Progress
 																	value={calculateCapacityPercentage(
-																		updateBuyOption.fields.data.eventDays.value()?.[index]
+																		updateBuyOption.fields.data.eventDays[index].value()
 																	)}
 																	class="h-2"
 																/>
 																<div class="flex justify-between text-sm mt-1">
 																	<span
 																		>{Number(
-																			updateBuyOption.fields.data.eventDays.value()?.[index]
-																				.totalCapacity
+																			updateBuyOption.fields.data.eventDays[
+																				index
+																			].totalCapacity.value()
 																		) -
 																			Number(
-																				updateBuyOption.fields.data.eventDays.value()?.[index]
-																					.remainingCapacity
+																				updateBuyOption.fields.data.eventDays[
+																					index
+																				].remainingCapacity.value()
 																			)}
 																		booked</span
 																	>
 																	<span class="text-muted-foreground"
-																		>{updateBuyOption.fields.data.eventDays.value()?.[index]
-																			.remainingCapacity}
+																		>{updateBuyOption.fields.data.eventDays[
+																			index
+																		].remainingCapacity.value()}
 																		remaining</span
 																	>
 																</div>
@@ -625,6 +623,9 @@
 										</Button>
 									</div>
 								</div>
+							{/each}
+							{#each updateBuyOption.fields.data.packages.issues() ?? [] as issue}
+								<div class="text-red-500 text-sm">{issue.message}</div>
 							{/each}
 						</div>
 					</CardContent>

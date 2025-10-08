@@ -2,8 +2,6 @@ import { command, form, query } from '$app/server';
 import { createAdminContext } from '@/remote/context';
 import { error } from '@sveltejs/kit';
 import { object, string, number, nullish } from 'valibot';
-import { superValidate } from 'sveltekit-superforms/client';
-import { valibot } from 'sveltekit-superforms/adapters';
 import { CreateEventAddonPackageSchema } from '@schema/eventAddonPackages';
 
 // Addon Packages
@@ -49,25 +47,6 @@ export const getAddonPackage = query(
 			}
 		);
 		return response;
-	}
-);
-
-export const createAddonPackageForm = query(
-	object({
-		buyOptionId: string(),
-		eventId: string()
-	}),
-	({ buyOptionId, eventId }) => {
-		return superValidate(
-			{
-				buyOptionId,
-				eventId
-			},
-			valibot(CreateEventAddonPackageSchema),
-			{
-				errors: false
-			}
-		);
 	}
 );
 

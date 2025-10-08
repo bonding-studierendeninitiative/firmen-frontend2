@@ -25,7 +25,11 @@
 	{#if getBuyOptionQuery.loading}
 		<LoaderCircle class="size-12 animate-spin mx-auto" />
 	{:else if getBuyOptionQuery.ready}
-		<EditBuyOptionsV2 data={getBuyOptionQuery.current} />
+		<EditBuyOptionsV2
+			data={getBuyOptionQuery.current}
+			eventId={page.params.id!}
+			buyOptionId={page.params.buyOptionId!}
+		/>
 	{/if}
 	<Separator class="-mx-6 w-auto" />
 	<div class="py-6 space-y-6 w-full">

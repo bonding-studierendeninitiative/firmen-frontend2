@@ -17,10 +17,6 @@ import {
 import { error } from '@sveltejs/kit';
 import { generateId } from 'better-auth';
 import { createAdminContext } from '@/remote/context';
-import { superValidate } from 'sveltekit-superforms';
-import { valibot } from 'sveltekit-superforms/adapters';
-import { CreateOrgInviteRequestSchema } from '@schema';
-import { PUBLIC_APP_URL } from '$env/static/public';
 
 export const getOrgs = query(
 	object({
@@ -464,47 +460,5 @@ export const createOrganizationByAdminForm = form(
 				timeout: 10000 // 10 seconds
 			}
 		);
-	}
-);
-
-// Members: create invite form
-export const createInviteForm = query(
-	object({
-		organizationId: string()
-	}),
-	async ({ organizationId }) => {
-		return await superValidate(
-			{
-				organizationID: organizationId,
-				redirectURL: PUBLIC_APP_URL
-			},
-			valibot(CreateOrgInviteRequestSchema),
-			{ errors: false }
-		);
-	}
-);
-
-// Members: generate invite
-export const generateInvite = command(
-	object({
-		email: string(),
-		organizationID: string(),
-		role: union([literal('admin'), literal('member'), literal('owner')])
-	}),
-	async ({ email, organizationID, role }) => {
-		const ctx = await createAdminContext();
-		try {
-			const orgInvite = await ctx.auth.createInvitation({
-				body: {
-					organizationId: organizationID,
-					email,
-					resend: true,
-					role
-				}
-			});
-			return orgInvite;
-		} catch (e) {
-			error(500, e instanceof Error ? e.message : 'Failed to generate organization invite');
-		}
 	}
 );
