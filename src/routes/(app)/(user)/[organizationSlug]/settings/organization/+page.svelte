@@ -8,10 +8,7 @@
 
 	let { data } = $props();
 
-	// TODO: Switch to remote function and page level callbacks instead of using data from the load function & trpc
-
 	import { getAll as getAllOrgMembers } from '@/remote/functions/orgMembers.remote.js';
-	import { editOrganizationDetailsForm } from '@/remote/functions/organizations.remote.js';
 
 	let membersResponse = getAllOrgMembers({
 		offset: '0',

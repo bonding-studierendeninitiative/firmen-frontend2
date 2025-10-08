@@ -69,7 +69,11 @@ export const auth = betterAuth({
 
 	plugins: [
 		// Add any plugins you need here
-		organization({}),
+		organization({
+			async sendInvitationEmail(data, request) {
+				// Implement your email sending logic here
+			}
+		}),
 		bearer({}),
 		jwt({
 			jwt: {

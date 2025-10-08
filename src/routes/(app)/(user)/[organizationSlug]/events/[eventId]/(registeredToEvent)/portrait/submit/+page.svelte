@@ -99,8 +99,6 @@
 		}
 	});
 
-	// TODO: Switch to remote function and page level callbacks instead of using data from the load function & trpc
-
 	const portraitTemplatesQuery = getPortraitTemplates({ page: 0, query: '' });
 
 	// Step titles and icons for the wizard
