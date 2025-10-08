@@ -1,4 +1,4 @@
-import { command, query } from '$app/server';
+import { form, query } from '$app/server';
 import { createAdminContext } from '@/remote/context';
 import { nonEmpty, object, pipe, string } from 'valibot';
 import { ReviewDocumentRequest } from '@schema';
@@ -6,7 +6,7 @@ import { superValidate } from 'sveltekit-superforms';
 import { valibot } from 'sveltekit-superforms/adapters';
 import { error } from '@sveltejs/kit';
 
-export const reviewDocument = command(
+export const reviewDocument = form(
 	object({
 		documentId: pipe(string(), nonEmpty()),
 		data: ReviewDocumentRequest
