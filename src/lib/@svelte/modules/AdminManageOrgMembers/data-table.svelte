@@ -4,7 +4,6 @@
 	import { _ } from '@services';
 	import { cn } from '@/utils/ui';
 	import { LocalizedDate, SearchInput, QueryDataTable } from '@/@svelte/components';
-	import CreateOrgInviteDialog from './create-org-invite-dialog.svelte';
 	import AddMemberDialog from './add-member-dialog.svelte';
 	import DataTableRoleSwitcher from './data-table-role-switcher.svelte';
 	import { createColumnHelper } from '@tanstack/table-core';
@@ -137,7 +136,6 @@
 	<div class={cn(`flex items-center justify-between gap-4`)}>
 		<SearchInput class="max-w-sm" placeholder={$_('common.search')} type="text" />
 		<div class="flex items-center gap-4">
-			<CreateOrgInviteDialog {organizationId} />
 			{#if showAddMemberButton}
 				<AddMemberDialog orgId={organizationId} {onAddMember} />
 			{/if}
