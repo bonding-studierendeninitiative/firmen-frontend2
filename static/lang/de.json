@@ -245,6 +245,9 @@
     },
     "export-item": {
       "entries": "{ entries, plural, =0 {Keine Einträge} one {Ein Eintrag} other {{entries, number} Einträge} }"
+    },
+    "edit-buy-options": {
+      "update-success": "Die Kaufoption wurde erfolgreich aktualisiert"
     }
   },
   "modules": {
@@ -931,7 +934,7 @@
         "no-data-heading": "Keine Logos gefunden",
         "no-data-subheading": "Auf dieser Seite werden alle Logos angezeigt",
         "no-data-action": "Ein Logo hochladen"
-      }
+      },
       "advertisements": {
         "delete-error": "Fehler beim Löschen der Imageanzeige"
       },

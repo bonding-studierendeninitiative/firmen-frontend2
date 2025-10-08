@@ -4,7 +4,6 @@
 	import { cn } from '@/utils';
 	import ReviewRegistrationDocumentForm from './review-registration-document-form.svelte';
 	import type { AdminRegistrationDocumentOutput } from '@api/admin-client';
-	import { reviewDocumentForm } from '@/remote/functions/admin';
 
 	let open: boolean = $state(false);
 
@@ -18,12 +17,6 @@
 <Dialog.Root bind:open>
 	<Dialog.Trigger class={cn(buttonVariants({ variant: 'outline' }))}>Review&hellip;</Dialog.Trigger>
 	<Dialog.Content class="max-w-(--breakpoint-lg)">
-		{#if reviewDocumentForm({}).ready}
-			<ReviewRegistrationDocumentForm
-				bind:open
-				{document}
-				catalogueDataReviewForm={reviewDocumentForm({}).current!}
-			/>
-		{/if}
+		<ReviewRegistrationDocumentForm bind:open {document} />
 	</Dialog.Content>
 </Dialog.Root>

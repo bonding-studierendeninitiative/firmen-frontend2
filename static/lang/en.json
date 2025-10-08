@@ -232,6 +232,9 @@
     },
     "export-item": {
       "entries": "{ entries, plural, =0 {No entries} one {One entry} other {{entries, number} entries} }"
+    },
+    "edit-buy-options": {
+      "update-success": "The buy option was updated successfully"
     }
   },
   "modules": {
