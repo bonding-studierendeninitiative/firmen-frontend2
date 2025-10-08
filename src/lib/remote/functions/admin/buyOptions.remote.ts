@@ -2,9 +2,7 @@ import { query, command, form } from '$app/server';
 import { createAdminContext } from '@/remote/context';
 import { error } from '@sveltejs/kit';
 import { object, string, nullish, number } from 'valibot';
-import { CreateBuyOptionRequestSchema, UpdateBuyOptionRequestSchema } from '@schema';
-import { superValidate } from 'sveltekit-superforms';
-import { valibot } from 'sveltekit-superforms/adapters';
+import { CreateBuyOptionRequestSchema } from '@schema';
 import { UpdateEventBuyOptionInput } from '@api/admin-client';
 
 // Get all buy options
@@ -65,7 +63,7 @@ export const createBuyOption = form(CreateBuyOptionRequestSchema, async (input) 
 });
 
 // update buy option
-export const updateBuyOption = command(
+export const updateBuyOption = form(
 	object({
 		data: UpdateEventBuyOptionInput,
 		eventId: string(),
@@ -82,7 +80,7 @@ export const updateBuyOption = command(
 			}
 		);
 		await getBuyOptions({ eventId: input.eventId }).refresh();
-		await updateBuyOptionForm({ eventId: input.eventId, buyOptionId: input.buyOptionId }).refresh();
+
 		return response;
 	}
 );

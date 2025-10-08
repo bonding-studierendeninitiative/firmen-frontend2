@@ -11,8 +11,7 @@ import {
 	nullish,
 	pipe,
 	nonEmpty,
-	email,
-	safeParse
+	email
 } from 'valibot';
 
 import { error } from '@sveltejs/kit';
@@ -314,96 +313,88 @@ export const getLegacyOrgDetails = query(
 	}
 );
 
-
-export const createOrganizationByAdminForm = form(async (formData) => {
-	const formSchema = object({
+export const createOrganizationByAdminForm = form(
+	object({
 		name: pipe(string(), nonEmpty()),
 		ownerMail: pipe(string(), nonEmpty('Please provide an email address'), email('Invalid email'))
-	});
+	}),
+	async (input) => {
+		const ctx = await createAdminContext();
 
-	const form = safeParse(formSchema, Object.fromEntries(formData.entries()));
-
-	if (!form.success) {
-		error(400, 'form is invalid');
-	}
-
-	const ctx = await createAdminContext();
-
-	const input = form.output;
-	await ctx.db.$transaction(
-		async (tx) => {
-			try {
-				const organization = await tx.organization.create({
-					data: {
-						name: input.name,
-						slug: input.name.toLowerCase().replace(/\s+/g, '-'),
-						metadata: JSON.stringify({
-							public: {
-								name: input.name,
-								slug: input.name.toLowerCase().replace(/\s+/g, '-')
-							}
-						}),
-						id: generateId(),
-						createdAt: new Date()
-					}
-				});
-
-				if (!organization) {
-					error(500, 'Could not create organization');
-				}
-
-				let owner = await tx.user.findUnique({ where: { email: input.ownerMail } });
-
-				if (!owner) {
-					error(404, { message: 'Owner not found' });
-				}
-
-				const session = ctx.session;
-				const organizationId = organization.id;
-
-				const alreadyMember = await ctx.db.member.findFirst({
-					where: {
-						user: {
-							email: input.ownerMail
-						},
-						organizationId: organizationId
-					}
-				});
-				if (alreadyMember) {
-					error(400, { message: 'User is already a member of this organization' });
-				}
-				const alreadyInvited = await ctx.db.invitation.findMany({
-					where: {
-						AND: {
-							email: input.ownerMail,
-							organizationId: organizationId
-						}
-					}
-				});
-
-				// If there's an existing invitation, reuse it
-				if (alreadyInvited.length) {
-					const existingInvitation = alreadyInvited[0];
-
-					// Update the invitation's expiration date using the same logic as createInvitation
-					const defaultExpiration = 60 * 60 * 48; // 48 hours in seconds
-					const newExpiresAt = new Date(Date.now() + defaultExpiration * 1000);
-
-					await ctx.db.invitation.update({
-						where: {
-							id: existingInvitation.id
-						},
+		await ctx.db.$transaction(
+			async (tx) => {
+				try {
+					const organization = await tx.organization.create({
 						data: {
-							expiresAt: newExpiresAt
+							name: input.name,
+							slug: input.name.toLowerCase().replace(/\s+/g, '-'),
+							metadata: JSON.stringify({
+								public: {
+									name: input.name,
+									slug: input.name.toLowerCase().replace(/\s+/g, '-')
+								}
+							}),
+							id: generateId(),
+							createdAt: new Date()
 						}
 					});
 
-					const updatedInvitation = {
-						...existingInvitation,
-						expiresAt: newExpiresAt
-					};
+					if (!organization) {
+						error(500, 'Could not create organization');
+					}
 
-					/*await ctx.api.post("/api/v2/notifications/org-member", {
+					const owner = await tx.user.findUnique({ where: { email: input.ownerMail } });
+
+					if (!owner) {
+						error(404, { message: 'Owner not found' });
+					}
+
+					const session = ctx.session;
+					const organizationId = organization.id;
+
+					const alreadyMember = await ctx.db.member.findFirst({
+						where: {
+							user: {
+								email: input.ownerMail
+							},
+							organizationId: organizationId
+						}
+					});
+					if (alreadyMember) {
+						error(400, { message: 'User is already a member of this organization' });
+					}
+					const alreadyInvited = await ctx.db.invitation.findMany({
+						where: {
+							AND: {
+								email: input.ownerMail,
+								organizationId: organizationId
+							}
+						}
+					});
+
+					// If there's an existing invitation, reuse it
+					if (alreadyInvited.length) {
+						const existingInvitation = alreadyInvited[0];
+
+						// Update the invitation's expiration date using the same logic as createInvitation
+						const defaultExpiration = 60 * 60 * 48; // 48 hours in seconds
+						const newExpiresAt = new Date(Date.now() + defaultExpiration * 1000);
+
+						await ctx.db.invitation.update({
+							where: {
+								id: existingInvitation.id
+							},
+							data: {
+								expiresAt: newExpiresAt
+							}
+						});
+
+						/*const updatedInvitation = {
+							...existingInvitation,
+							expiresAt: newExpiresAt
+						};
+
+						await ctx.api.post("/api/v2/notifications/org-member", {
 					body: {
 						adminId: ctx.session?.userId,
 						id: updatedInvitation.id,
@@ -418,36 +409,36 @@ export const createOrganizationByAdminForm = form(async (formData) => {
 					},
 					ctx.request
 				);*/
-				}
-
-				const pendingInvitations = await ctx.db.invitation.findMany({
-					where: {
-						organizationId: organizationId,
-						status: 'pending'
 					}
-				});
 
-				if (pendingInvitations.length >= 100) {
-					error(400, { message: 'Too many pending invitations' });
-				}
+					const pendingInvitations = await ctx.db.invitation.findMany({
+						where: {
+							organizationId: organizationId,
+							status: 'pending'
+						}
+					});
 
-				let invitationData = {
-					role: 'owner',
-					email: input.ownerMail.toLowerCase(),
-					organizationId: organizationId
-				};
-
-				await ctx.db.invitation.create({
-					data: {
-						...invitationData,
-						id: generateId(),
-						expiresAt: new Date(Date.now() + 60 * 60 * 48 * 1000), // 48 hours from now,
-						status: 'pending',
-						inviterId: session!.userId
+					if (pendingInvitations.length >= 100) {
+						error(400, { message: 'Too many pending invitations' });
 					}
-				});
 
-				/* await ctx.context.orgOptions.sendInvitationEmail?.(
+					const invitationData = {
+						role: 'owner',
+						email: input.ownerMail.toLowerCase(),
+						organizationId: organizationId
+					};
+
+					await ctx.db.invitation.create({
+						data: {
+							...invitationData,
+							id: generateId(),
+							expiresAt: new Date(Date.now() + 60 * 60 * 48 * 1000), // 48 hours from now,
+							status: 'pending',
+							inviterId: session!.userId
+						}
+					});
+
+					/* await ctx.context.orgOptions.sendInvitationEmail?.(
 				{
 					id: invitation.id,
 					role: invitation.role as string,
@@ -462,18 +453,19 @@ export const createOrganizationByAdminForm = form(async (formData) => {
 				},
 				ctx.request
 			); */
-				getOrgs({
-					query: ''
-				}).refresh();
-			} catch (error) {
-				console.error(error);
+					getOrgs({
+						query: ''
+					}).refresh();
+				} catch (error) {
+					console.error(error);
+				}
+			},
+			{
+				timeout: 10000 // 10 seconds
 			}
-		},
-		{
-			timeout: 10000 // 10 seconds
-		}
-	);
-});
+		);
+	}
+);
 
 // Members: create invite form
 export const createInviteForm = query(

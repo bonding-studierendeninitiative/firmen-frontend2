@@ -5,17 +5,9 @@
 	import { _ } from '@services';
 	import { Separator } from '@/components/ui/separator';
 	import { LoaderCircle } from '@lucide/svelte';
-	import {
-		createAddonPackage,
-		createAddonPackageForm,
-		deleteAddonPackage,
-		getAddonPackages,
-		updateBuyOption,
-		updateBuyOptionForm
-	} from '@/remote/functions/admin';
+	import { deleteAddonPackage, getAddonPackages, getBuyOption } from '@/remote/functions/admin';
 	import { page } from '$app/state';
 	import { toast } from 'svelte-sonner';
-	import { goto } from '$app/navigation';
 	import { Button } from '@/components/ui/button';
 
 	let addonPackageFilter = $derived({
@@ -25,27 +17,15 @@
 		limit: 6
 	});
 
-	let createAddonPackageFormQuery = $derived(createAddonPackageForm(addonPackageFilter));
-	let updateBuyOptionFormQuery = $derived(updateBuyOptionForm(addonPackageFilter));
+	let getBuyOptionQuery = $derived(getBuyOption(addonPackageFilter));
 	let getAddonPackagesQuery = $derived(getAddonPackages(addonPackageFilter));
 </script>
 
 <div class="flex flex-col gap-y-2 justify-center @container p-6 rounded-xl border">
-	{#if updateBuyOptionFormQuery.loading}
+	{#if getBuyOptionQuery.loading}
 		<LoaderCircle class="size-12 animate-spin mx-auto" />
-	{:else if updateBuyOptionFormQuery.ready}
-		<EditBuyOptionsV2
-			form={updateBuyOptionFormQuery.current!}
-			onUpdateBuyOption={async (input) => {
-				try {
-					await updateBuyOption(input).updates(updateBuyOptionFormQuery);
-					toast.success($_('admin-pages.events.buy-options.update.success'));
-				} catch (error) {
-					toast.error($_('admin-pages.events.buy-options.update.error'));
-					console.error(error);
-				}
-			}}
-		/>
+	{:else if getBuyOptionQuery.ready}
+		<EditBuyOptionsV2 data={getBuyOptionQuery.current} />
 	{/if}
 	<Separator class="-mx-6 w-auto" />
 	<div class="py-6 space-y-6 w-full">

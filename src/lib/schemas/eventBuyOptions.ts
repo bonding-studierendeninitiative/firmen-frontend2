@@ -145,23 +145,14 @@ export const CreateBuyOptionRequestSchema = v.object({
 		v.minLength(3, 'Mindestens 3 Zeichen'),
 		v.maxLength(30, 'Maximal 30 Zeichen')
 	),
-	packageCount: v.optional(
-		v.pipe(
-			v.union([v.string(), v.number()]),
-			v.transform((input) => Number(input)),
-			v.number(),
-			v.maxValue(10),
-			v.minValue(0)
-		),
-		0
-	),
+	packageCount: v.optional(v.pipe(v.number(), v.maxValue(10), v.minValue(0)), 0),
 	serviceCount: v.optional(
 		v.pipe(
 			v.union([v.string(), v.number()]),
 			v.transform((input) => Number(input)),
 			v.number(),
-			v.maxValue(10),
-			v.minValue(0)
+			v.maxValue(10, 'Maximal 10 Leistungen'),
+			v.minValue(0, 'Mindestens 0 Leistungen')
 		),
 		0
 	)

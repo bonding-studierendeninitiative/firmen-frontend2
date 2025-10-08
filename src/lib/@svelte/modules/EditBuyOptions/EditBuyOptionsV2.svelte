@@ -6,7 +6,6 @@
 	import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 	import * as DropdownMenu from '@/components/ui/dropdown-menu';
 	import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-	import { Field, Control, Label as FormLabel } from '@/components/ui/form';
 	import { Label } from '@/components/ui/label';
 	import { Switch } from '@/components/ui/switch';
 	import { Textarea } from '@/components/ui/textarea';
@@ -29,69 +28,55 @@
 		DialogTrigger,
 		DialogClose
 	} from '@/components/ui/dialog';
-	import { type Infer, intProxy, superForm, type SuperValidated } from 'sveltekit-superforms';
-	import { UpdateBuyOptionRequestSchema, ValueType } from '@schema';
+	import { ValueType } from '@schema';
 	import { BuyOptionPreview } from '@/@svelte/modules';
 	import { cn } from '@/utils';
 	import { LocalizedDate } from '@/@svelte/components';
-	import type { UpdateBuyOptionRequest } from '@schema';
-	import { valibotClient } from 'sveltekit-superforms/adapters';
 	import type { UpdateEventBuyOptionInput } from '@api/admin-client';
+	import { updateBuyOption } from '@/remote/functions/admin';
+	import { toast } from 'svelte-sonner';
 
 	interface Props {
-		form: SuperValidated<Infer<UpdateBuyOptionRequest>>;
-		onUpdateBuyOption?: (params: {
-			eventId: string;
-			buyOptionId: string;
-			data: UpdateEventBuyOptionInput;
-		}) => Promise<void>;
+		eventId: string;
+		buyOptionId: string;
+		data: UpdateEventBuyOptionInput;
 	}
 
-	let { form, onUpdateBuyOption }: Props = $props();
+	let { data }: Props = $props();
 
-	let superform = superForm<Infer<UpdateBuyOptionRequest>>(form, {
-		dataType: 'json',
-		validators: valibotClient(UpdateBuyOptionRequestSchema)
-	});
-	let { form: formData, isTainted, tainted, reset } = superform;
+	if (data) {
+		updateBuyOption.fields.data.set(data);
+	}
 
-	let signUpDaysProxy = intProxy(superform, 'allowedSignUpDays', { empty: 'null' });
-
-	type Service = Exclude<Infer<UpdateBuyOptionRequest>['services'], undefined>[number];
-	type Package = Exclude<Infer<UpdateBuyOptionRequest>['packages'], undefined>[number];
+	type Service = Exclude<UpdateEventBuyOptionInput['services'], undefined>[number];
+	type Package = Exclude<UpdateEventBuyOptionInput['packages'], undefined>[number];
 	type PackageBenefit = Exclude<
-		Infer<UpdateBuyOptionRequest>['packages'],
+		UpdateEventBuyOptionInput['packages'],
 		undefined
 	>[number]['benefits'][number];
-	type EventDay = Exclude<Infer<UpdateBuyOptionRequest>['eventDays'], undefined>[number];
+	type EventDay = Exclude<UpdateEventBuyOptionInput['eventDays'], undefined>[number];
 
 	// Reactive variables (equivalent to React's useState)
 	let activeTab = $state('editor');
 
 	function handleCreateEventDay(e: Event) {
 		e.preventDefault();
-		formData.update((oldForm) => ({
-			...oldForm,
-			eventDays: [
-				...(oldForm.eventDays ?? []),
-				{
-					dayDate: new Date().toISOString().split('T')[0] ?? '2025-01-01',
-					totalCapacity: 0,
-					remainingCapacity: 0
-				}
-			]
-		}));
+		updateBuyOption.fields.data.eventDays.set([
+			...(updateBuyOption.fields.data.eventDays.value() ?? []),
+			{
+				dayDate: new Date().toISOString().split('T')[0] ?? '2025-01-01',
+				totalCapacity: 0,
+				remainingCapacity: 0
+			}
+		]);
 	}
 
 	function handleDeleteEventDay(e: Event, dayIndex: number) {
 		e.preventDefault();
-		formData.update((oldForm) => ({
-			...oldForm,
-			eventDays: [
-				...(oldForm.eventDays?.slice(0, dayIndex) ?? []),
-				...(oldForm.eventDays?.slice(dayIndex + 1) ?? [])
-			]
-		}));
+		updateBuyOption.fields.data.eventDays.set([
+			...(updateBuyOption.fields.data.eventDays.value()?.slice(0, dayIndex) ?? []),
+			...(updateBuyOption.fields.data.eventDays.value()?.slice(dayIndex + 1) ?? [])
+		]);
 	}
 
 	// Service management
@@ -102,44 +87,47 @@
 			valueType: ValueType.Boolean
 		};
 
-		$formData = {
-			...$formData,
-			services: [...($formData.services ?? []), newService],
-			packages: $formData.packages?.map((pkg) => ({
+		updateBuyOption.fields.data.set({
+			...updateBuyOption.fields.data.value(),
+			services: [...(updateBuyOption.fields.data.services.value() ?? []), newService],
+			packages: updateBuyOption.fields.data.packages.value()?.map((pkg) => ({
 				...pkg,
 				benefits: [...pkg.benefits, {}]
 			}))
-		};
+		});
 	}
 
 	function removeService(serviceIndex: number): void {
-		$formData = {
-			...$formData,
-			services: $formData.services?.filter((service, index) => index !== serviceIndex),
-			packages: $formData.packages?.map((pkg) => ({
+		updateBuyOption.fields.data.set({
+			...updateBuyOption.fields.data.value(),
+			services: updateBuyOption.fields.data.services
+				.value()
+				?.filter((service, index) => index !== serviceIndex),
+			packages: updateBuyOption.fields.data.packages.value()?.map((pkg) => ({
 				...pkg,
 				benefits: pkg.benefits.filter((value, index) => index !== serviceIndex)
 			}))
-		};
+		});
 	}
 
 	function moveService(serviceIndex: number, direction: 'up' | 'down'): void {
 		if (
 			(direction === 'up' && serviceIndex === 0) ||
-			(direction === 'down' && serviceIndex === Number($formData.services?.length) - 1)
+			(direction === 'down' &&
+				serviceIndex === Number(updateBuyOption.fields.data.services.value()?.length) - 1)
 		) {
 			return;
 		}
 
 		const newIndex = direction === 'up' ? serviceIndex - 1 : serviceIndex + 1;
-		const newServices = [...($formData.services ?? [])];
+		const newServices = [...(updateBuyOption.fields.data.services.value() ?? [])];
 		const [movedService] = newServices.splice(serviceIndex, 1);
 		newServices.splice(newIndex, 0, movedService);
 
-		$formData = {
-			...$formData,
+		updateBuyOption.fields.data.set({
+			...updateBuyOption.fields.data.value(),
 			services: newServices
-		};
+		});
 	}
 
 	// Package management
@@ -147,13 +135,13 @@
 		const newPackage: Package = {
 			name: 'New Package',
 			price: 0,
-			benefits: $formData.services?.map(() => ({})) ?? []
+			benefits: updateBuyOption.fields.data.services.value()?.map(() => ({})) ?? []
 		};
 
-		$formData = {
-			...$formData,
-			packages: [...($formData.packages ?? []), newPackage]
-		};
+		updateBuyOption.fields.data.packages.set([
+			...(updateBuyOption.fields.data.packages.value() ?? []),
+			newPackage
+		]);
 	}
 
 	// Calculate capacity percentage
@@ -165,51 +153,55 @@
 	}
 
 	function removePackage(packageIndex: number): void {
-		$formData = {
-			...$formData,
-			packages: $formData.packages?.filter((pkg, index) => index !== packageIndex)
-		};
+		updateBuyOption.fields.data.set({
+			...updateBuyOption.fields.data.value(),
+			packages: updateBuyOption.fields.data.packages
+				.value()
+				?.filter((pkg, index) => index !== packageIndex)
+		});
 	}
 
 	function movePackage(packageIndex: number, direction: 'left' | 'right'): void {
 		if (
 			(direction === 'left' && packageIndex === 0) ||
-			(direction === 'right' && packageIndex === Number($formData.packages?.length) - 1)
+			(direction === 'right' &&
+				packageIndex === Number(updateBuyOption.fields.data.packages.value()?.length) - 1)
 		) {
 			return;
 		}
 
 		const newIndex = direction === 'left' ? packageIndex - 1 : packageIndex + 1;
-		const newPackages = [...($formData.packages ?? [])];
+		const newPackages = [...(updateBuyOption.fields.data.packages.value() ?? [])];
 		const [movedPackage] = newPackages.splice(packageIndex, 1);
 		newPackages.splice(newIndex, 0, movedPackage);
 
-		$formData = {
-			...$formData,
+		updateBuyOption.fields.data.set({
+			...updateBuyOption.fields.data.value(),
 			packages: newPackages
-		};
-	}
-	function handleUpdateBuyOption() {
-		onUpdateBuyOption?.({
-			eventId: $formData.eventId,
-			buyOptionId: $formData.buyOptionId,
-			data: $formData
 		});
 	}
 </script>
 
-<div class="space-y-6 pb-6">
+<form
+	{...updateBuyOption.enhance(async ({ submit, form }) => {
+		try {
+			await submit();
+			toast.success($_('components.edit-buy-options.update-success'));
+			form.reset();
+		} catch (e) {
+			console.error(e);
+			toast.error(e?.body?.message || 'Error updating buy option');
+		}
+	})}
+	class="space-y-6 pb-6"
+>
 	<div class="flex justify-between items-center">
 		<div>
 			<h2 class="text-2xl font-semibold">{$_('components.editBuyOptions.buyOptionEditor')}</h2>
 			<p class="text-muted-foreground">{$_('components.editBuyOptions.editorDescription')}</p>
 		</div>
 		<div class="flex gap-2">
-			<Button
-				onclick={handleUpdateBuyOption}
-				disabled={!isTainted($tainted)}
-				class={cn(isTainted($tainted) ? 'animate-pulse' : null)}
-			>
+			<Button type="submit">
 				<Save class="mr-2 size-4" />
 				{$_('components.editBuyOptions.saveBuyOption')}
 			</Button>
@@ -229,8 +221,8 @@
 		</TabsList>
 
 		<TabsContent value="editor" class="space-y-6">
-			<input type="hidden" name="buyOptionId" value={$formData.buyOptionId} />
-			<input type="hidden" name="eventId" value={$formData.eventId} />
+			<input {...updateBuyOption.fields.buyOptionId.as('hidden')} />
+			<input {...updateBuyOption.fields.eventId.as('hidden')} />
 			<Card>
 				<CardHeader>
 					<CardTitle>{$_('components.editBuyOptions.generalInformation')}</CardTitle>
@@ -239,7 +231,7 @@
 					<div class="grid gap-4">
 						<div class="grid gap-2">
 							<Label for="buyOptionName">{$_('components.editBuyOptions.buyOptionName')}</Label>
-							<Input id="buyOptionName" name="name" bind:value={$formData.name} />
+							<Input id="buyOptionName" {...updateBuyOption.fields.data.name.as('text')} />
 						</div>
 					</div>
 					<section class="py-4 space-y-4">
@@ -253,30 +245,15 @@
 							</Button>
 						</div>
 						<div class="space-y-4">
-							{#if $formData.eventDays?.length === 0}
+							{#if updateBuyOption.fields.data.eventDays.value()?.length === 0}
 								<div class="text-center py-4 text-muted-foreground">
 									No event days added yet. Add days to allow organizations to select their preferred
 									participation day.
 								</div>
 							{:else}
 								<div class="grid gap-4">
-									{#each $formData.eventDays ?? [] as day, index}
+									{#each updateBuyOption.fields.data.eventDays.value() ?? [] as day, index}
 										<div class="flex items-center justify-between p-4 border rounded-md">
-											<input
-												type="hidden"
-												name={`eventDays[${index}][dayDate]`}
-												value={day.dayDate}
-											/>
-											<input
-												type="hidden"
-												name={`eventDays[${index}][totalCapacity]`}
-												value={day.totalCapacity}
-											/>
-											<input
-												type="hidden"
-												name={`eventDays[${index}][remainingCapacity]`}
-												value={day.remainingCapacity}
-											/>
 											<div class="flex-1">
 												<div class="flex items-center gap-2">
 													<Calendar class="size-5 text-muted-foreground" />
@@ -312,17 +289,27 @@
 																<Label for="eventDate">Event Date</Label>
 																<Input
 																	id="eventDate"
-																	type="date"
-																	bind:value={$formData.eventDays[index].dayDate}
+																	{...updateBuyOption.fields.data.eventDays[index].dayDate.as(
+																		'date'
+																	)}
+																	bind:value={
+																		updateBuyOption.fields.data.eventDays[index].dayDate.value,
+																		updateBuyOption.fields.data.eventDays[index].dayDate.set
+																	}
 																/>
 															</div>
 															<div class="grid gap-2">
 																<Label for="totalCapacity">Total Capacity</Label>
 																<Input
 																	id="totalCapacity"
-																	type="number"
-																	min="1"
-																	bind:value={$formData.eventDays[index].totalCapacity}
+																	{...updateBuyOption.fields.data.eventDays[index].totalCapacity.as(
+																		'number'
+																	)}
+																	bind:value={
+																		updateBuyOption.fields.data.eventDays[index].totalCapacity
+																			.value,
+																		updateBuyOption.fields.data.eventDays[index].totalCapacity.set
+																	}
 																/>
 																<p class="text-sm text-muted-foreground">
 																	Maximum number of organizations that can participate on this day
@@ -332,10 +319,17 @@
 																<Label for="remainingCapacity">Remaining Capacity</Label>
 																<Input
 																	id="remainingCapacity"
-																	type="number"
-																	min="0"
-																	max={$formData.eventDays?.[index].totalCapacity}
-																	bind:value={$formData.eventDays[index].remainingCapacity}
+																	max={updateBuyOption.fields.data.eventDays.value()?.[index]
+																		.totalCapacity}
+																	{...updateBuyOption.fields.data.eventDays[
+																		index
+																	].remainingCapacity.as('number')}
+																	bind:value={
+																		updateBuyOption.fields.data.eventDays[index].remainingCapacity
+																			.value,
+																		updateBuyOption.fields.data.eventDays[index].remainingCapacity
+																			.set
+																	}
 																/>
 																<p class="text-sm text-muted-foreground">
 																	Number of spots still available for booking
@@ -344,17 +338,26 @@
 															<div class="mt-2">
 																<div class="text-sm mb-2">Capacity Usage</div>
 																<Progress
-																	value={calculateCapacityPercentage($formData.eventDays?.[index])}
+																	value={calculateCapacityPercentage(
+																		updateBuyOption.fields.data.eventDays.value()?.[index]
+																	)}
 																	class="h-2"
 																/>
 																<div class="flex justify-between text-sm mt-1">
 																	<span
-																		>{Number($formData.eventDays?.[index].totalCapacity) -
-																			Number($formData.eventDays?.[index].remainingCapacity)}
+																		>{Number(
+																			updateBuyOption.fields.data.eventDays.value()?.[index]
+																				.totalCapacity
+																		) -
+																			Number(
+																				updateBuyOption.fields.data.eventDays.value()?.[index]
+																					.remainingCapacity
+																			)}
 																		booked</span
 																	>
 																	<span class="text-muted-foreground"
-																		>{$formData.eventDays?.[index].remainingCapacity}
+																		>{updateBuyOption.fields.data.eventDays.value()?.[index]
+																			.remainingCapacity}
 																		remaining</span
 																	>
 																</div>
@@ -381,19 +384,19 @@
 							{/if}
 						</div>
 					</section>
-					{#if Number($formData.eventDays?.length) > 1}
+					{#if Number(updateBuyOption.fields.data.eventDays.value()?.length) > 1}
 						<section class="py-4 space-y-4">
 							<h3 class="font-semibold text-lg grow">
 								{$_('components.editBuyOptions.eventDays.signUpDays.header')}
 							</h3>
-							<input
-								type="hidden"
-								name="allowedSignUpDays"
-								value={$formData.allowedSignUpDays ?? ''}
-							/>
-							<Tabs bind:value={$signUpDaysProxy}>
+							<Tabs
+								bind:value={
+									() => updateBuyOption.fields.data.allowedSignUpDays.value().toString(),
+									(a) => updateBuyOption.fields.data.allowedSignUpDays.set(a ? Number(a) : 0)
+								}
+							>
 								<TabsList>
-									{#each $formData.eventDays ?? [] as _someDay, dayIndex}
+									{#each updateBuyOption.fields.data.eventDays.value() ?? [] as _someDay, dayIndex}
 										<TabsTrigger value={(dayIndex + 1).toString()}
 											>{$_('components.editBuyOptions.eventDays.signUpDays.days', {
 												values: { days: (dayIndex + 1).toString() }
@@ -419,7 +422,7 @@
 					</CardHeader>
 					<CardContent>
 						<div class="space-y-4">
-							{#each $formData.services ?? [] as service, index}
+							{#each updateBuyOption.fields.data.services.value() ?? [] as service, index}
 								<div class="flex items-center justify-between p-2 border rounded-md">
 									<div>
 										<p class="font-medium">{service.name}</p>
@@ -453,8 +456,11 @@
 														>
 														<Input
 															id="serviceName"
-															name={`services[${index}].name`}
-															bind:value={$formData.services[index].name}
+															{...updateBuyOption.fields.data.services[index].name.as('text')}
+															bind:value={
+																updateBuyOption.fields.data.services[index].name.value,
+																updateBuyOption.fields.data.services[index].name.set
+															}
 														/>
 													</div>
 													<div class="grid gap-2">
@@ -463,57 +469,57 @@
 														>
 														<Textarea
 															id="serviceDescription"
-															bind:value={$formData.services[index].description}
+															{...updateBuyOption.fields.data.services[index].description.as(
+																'text'
+															)}
+															bind:value={
+																updateBuyOption.fields.data.services[index].description.value,
+																updateBuyOption.fields.data.services[index].description.set
+															}
 														/>
 													</div>
-													<Field
-														class="flex flex-col gap-y-1 justify-end"
-														form={superform}
-														name={`services[${index}].valueType`}
-													>
-														<Control>
-															{#snippet children({ props })}
-																<FormLabel>{$_('components.editBuyOptions.type')}</FormLabel>
-																<DropdownMenu.Root>
-																	<DropdownMenu.Trigger>
-																		{#snippet child({ props })}
-																			<Button class="my-2! p-2" variant="outline" {...props}>
-																				{#if $formData.services?.[index].valueType === 'STRING'}
-																					Textfeld für generische Werte
-																				{:else if $formData.services?.[index].valueType === 'BOOLEAN'}
-																					Enthalten (ja/nein)
-																				{:else if $formData.services?.[index].valueType === 'INTEGER'}
-																					Anzahl (z. B. 2 Stühle)
-																				{/if}
-																			</Button>
-																		{/snippet}
-																	</DropdownMenu.Trigger>
-																	<DropdownMenu.Content>
-																		<DropdownMenu.RadioGroup
-																			{...props}
-																			bind:value={$formData.services[index].valueType}
-																		>
-																			<DropdownMenu.RadioItem value="STRING"
-																				>{$_(
-																					'components.editBuyOptions.typeText'
-																				)}</DropdownMenu.RadioItem
-																			>
-																			<DropdownMenu.RadioItem value="BOOLEAN"
-																				>{$_(
-																					'components.editBuyOptions.typeBoolean'
-																				)}</DropdownMenu.RadioItem
-																			>
-																			<DropdownMenu.RadioItem value="INTEGER"
-																				>{$_(
-																					'components.editBuyOptions.typeNumeric'
-																				)}</DropdownMenu.RadioItem
-																			>
-																		</DropdownMenu.RadioGroup>
-																	</DropdownMenu.Content>
-																</DropdownMenu.Root>
-															{/snippet}
-														</Control>
-													</Field>
+													<div>
+														<Label>{$_('components.editBuyOptions.type')}</Label>
+														<DropdownMenu.Root>
+															<DropdownMenu.Trigger>
+																{#snippet child({ props })}
+																	<Button class="my-2! p-2" variant="outline" {...props}>
+																		{#if updateBuyOption.fields.data.services?.[index].valueType.value() === 'STRING'}
+																			Textfeld für generische Werte
+																		{:else if updateBuyOption.fields.data.services?.[index].valueType.value() === 'BOOLEAN'}
+																			Enthalten (ja/nein)
+																		{:else if updateBuyOption.fields.data.services?.[index].valueType.value() === 'INTEGER'}
+																			Anzahl (z. B. 2 Stühle)
+																		{/if}
+																	</Button>
+																{/snippet}
+															</DropdownMenu.Trigger>
+															<DropdownMenu.Content>
+																<DropdownMenu.RadioGroup
+																	bind:value={
+																		updateBuyOption.fields.data.services[index].valueType.value,
+																		updateBuyOption.fields.data.services[index].valueType.set
+																	}
+																>
+																	<DropdownMenu.RadioItem value="STRING"
+																		>{$_(
+																			'components.editBuyOptions.typeText'
+																		)}</DropdownMenu.RadioItem
+																	>
+																	<DropdownMenu.RadioItem value="BOOLEAN"
+																		>{$_(
+																			'components.editBuyOptions.typeBoolean'
+																		)}</DropdownMenu.RadioItem
+																	>
+																	<DropdownMenu.RadioItem value="INTEGER"
+																		>{$_(
+																			'components.editBuyOptions.typeNumeric'
+																		)}</DropdownMenu.RadioItem
+																	>
+																</DropdownMenu.RadioGroup>
+															</DropdownMenu.Content>
+														</DropdownMenu.Root>
+													</div>
 												</div>
 												<DialogFooter>
 													<DialogClose class={buttonVariants({ variant: 'outline' })}
@@ -544,7 +550,7 @@
 					</CardHeader>
 					<CardContent>
 						<div class="space-y-4">
-							{#each $formData.packages ?? [] as pkg, index}
+							{#each updateBuyOption.fields.data.packages.value() ?? [] as pkg, index}
 								<div class="flex items-center justify-between p-2 border rounded-md">
 									<div>
 										<p class="font-medium">{pkg.name}</p>
@@ -584,7 +590,14 @@
 														<Label for="packageName"
 															>{$_('components.editBuyOptions.packageName')}</Label
 														>
-														<Input id="packageName" bind:value={$formData.packages[index].name} />
+														<Input
+															id="packageName"
+															{...updateBuyOption.fields.data.packages[index].name.as('text')}
+															bind:value={
+																updateBuyOption.fields.data.packages[index].name.value,
+																updateBuyOption.fields.data.packages[index].name.set
+															}
+														/>
 													</div>
 													<div class="grid gap-2">
 														<Label for="packagePrice"
@@ -592,8 +605,11 @@
 														>
 														<Input
 															id="packagePrice"
-															type="number"
-															bind:value={$formData.packages[index].price}
+															{...updateBuyOption.fields.data.packages[index].price.as('number')}
+															bind:value={
+																updateBuyOption.fields.data.packages[index].price.value,
+																updateBuyOption.fields.data.packages[index].price.set
+															}
 														/>
 													</div>
 												</div>
@@ -627,7 +643,7 @@
 								<TableRow>
 									<TableHead class="w-[200px]">{$_('components.editBuyOptions.service')}</TableHead>
 									<TableHead class="w-[150px]">{$_('components.editBuyOptions.type')}</TableHead>
-									{#each $formData.packages ?? [] as pkg, index}
+									{#each updateBuyOption.fields.data.packages.value() ?? [] as pkg, index}
 										<TableHead class="text-center">
 											{pkg.name} ({$number((pkg.price ?? 0) / 100, {
 												style: 'currency',
@@ -639,14 +655,15 @@
 								</TableRow>
 							</TableHeader>
 							<TableBody>
-								{#each $formData.services ?? [] as service, serviceIndex}
+								{#each updateBuyOption.fields.data.services.value() ?? [] as service, serviceIndex}
 									<TableRow>
 										<TableCell class="font-medium">{service.name}</TableCell>
 										<TableCell>{service.valueType}</TableCell>
-										{#each $formData.packages ?? [] as _pkg, index}
+										{#each updateBuyOption.fields.data.packages.value() ?? [] as _pkg, index}
 											{@const benefit =
-												$formData.packages?.[index].benefits[serviceIndex] ??
-												({} as PackageBenefit)}
+												updateBuyOption.fields.data.packages.value()?.[index].benefits[
+													serviceIndex
+												] ?? ({} as PackageBenefit)}
 											<TableCell>
 												{#if service.valueType === ValueType.Boolean}
 													<div class="flex justify-center">
@@ -654,7 +671,9 @@
 															bind:checked={
 																() => benefit.booleanValue ?? false,
 																(value) =>
-																	($formData.packages[index].benefits[serviceIndex] = {
+																	updateBuyOption.fields.data.packages[index].benefits[
+																		serviceIndex
+																	].set({
 																		...benefit,
 																		booleanValue: value
 																	})
@@ -663,18 +682,16 @@
 													</div>
 												{:else if service.valueType === ValueType.Integer}
 													<Input
-														type="number"
-														bind:value={
-															$formData.packages[index].benefits[serviceIndex].numericValue
-														}
+														{...updateBuyOption.fields.data.packages[index].benefits[
+															serviceIndex
+														].numericValue.as('number')}
 														class="w-20 mx-auto"
 													/>
 												{:else}
 													<Input
-														type="text"
-														bind:value={
-															$formData.packages[index].benefits[serviceIndex].stringValue
-														}
+														{...updateBuyOption.fields.data.packages[index].benefits[
+															serviceIndex
+														].stringValue.as('text')}
 														class="w-full"
 													/>
 												{/if}
@@ -690,7 +707,7 @@
 		</TabsContent>
 
 		<TabsContent value="preview" class="px-6 border border-dashed rounded-md">
-			<BuyOptionPreview buyOption={$formData} />
+			<BuyOptionPreview buyOption={updateBuyOption.fields.data.value()} />
 		</TabsContent>
 	</Tabs>
-</div>
+</form>
