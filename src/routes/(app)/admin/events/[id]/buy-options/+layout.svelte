@@ -13,10 +13,10 @@
 	import {
 		activateBuyOption,
 		createBuyOption,
-		createBuyOptionForm,
 		deleteBuyOption,
 		getBuyOptions
 	} from '@/remote/functions/admin';
+	import SuperDebug from 'sveltekit-superforms';
 
 	let { children } = $props();
 
@@ -39,12 +39,14 @@
 		sortBy: 'creationDate',
 		sortDirection: 'desc'
 	}));
+
+	let getBuyOptionsQuery = $derived(getBuyOptions(buyOptionsFilter));
 </script>
 
-{#if getBuyOptions(buyOptionsFilter).loading}
+{#if getBuyOptionsQuery.loading}
 	<LoaderCircle class="animate-spin size-14 mx-auto" />
-{:else if getBuyOptions(buyOptionsFilter).ready}
-	{@const buyOptions = getBuyOptions(buyOptionsFilter).current?.buyOptions ?? []}
+{:else if getBuyOptionsQuery.ready}
+	{@const buyOptions = getBuyOptionsQuery.current?.buyOptions ?? []}
 	{@const activeBuyOption = buyOptions.find((buyOption) => buyOption.active)}
 
 	<section in:fade class="mt-10 flex flex-col gap-y-8">
@@ -64,7 +66,7 @@
 							buyOptionId: page.params.buyOptionId!,
 							eventId: page.params.id!
 						}).updates(
-							getBuyOptions(buyOptionsFilter).withOverride((data) => {
+							getBuyOptionsQuery.withOverride((data) => {
 								return {
 									...data,
 									buyOptions: data.buyOptions?.filter(
@@ -89,7 +91,7 @@
 							buyOptionId: page.params.buyOptionId!,
 							eventId: page.params.id!
 						}).updates(
-							getBuyOptions(buyOptionsFilter).withOverride((data) => {
+							getBuyOptionsQuery.withOverride((data) => {
 								return {
 									...data,
 									buyOptions: data.buyOptions?.map((option) => ({
@@ -114,27 +116,13 @@
 
 <CreateBuyOption
 	bind:isDialogOpen={$isDialogOpen}
-	eventId={page.params.id!}
-	onCreateBuyOption={async ({ submit, form }) => {
-		// Handle the creation of a new buy option
-		await submit().updates(
-			getBuyOptions(buyOptionsFilter).withOverride((prev) => {
-				// Invalidate the buy options list to include the newly created buy option
-				return {
-					...prev,
-					buyOptions: prev.buyOptions ? [createBuyOption.result?.data!, ...prev.buyOptions] : []
-				};
-			})
-		);
-		const result = createBuyOption.result;
-		if (result?.success !== undefined && result.success && result?.data !== undefined) {
+	onCreateBuyOption={async ({ submit }) => {
+		await submit().updates(getBuyOptionsQuery);
+		if (createBuyOption.result) {
+			await goto(`/admin/events/${page.params.id}/buy-options/${createBuyOption.result.id}`);
 			toast.success($_('modules.create-buy-option.success'));
-			await goto(`/admin/events/${page.params.id!}/buy-options/${result.data.id}`);
-			form.reset();
-			await createBuyOptionForm({ eventId: page.params.id! }).refresh();
 		} else {
-			toast.error($_('modules.create-buy-option.error'));
-			throw new Error('Could not create buy option');
+			throw new Error('Create buy option failed');
 		}
 	}}
 />

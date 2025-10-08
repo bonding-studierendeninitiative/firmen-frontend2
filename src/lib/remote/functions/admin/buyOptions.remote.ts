@@ -52,14 +52,6 @@ export const getBuyOption = query(
 	}
 );
 
-// Create form helper
-export const createBuyOptionForm = query(object({ eventId: string() }), async ({ eventId }) => {
-	const createForm = await superValidate({ eventId }, valibot(CreateBuyOptionRequestSchema), {
-		errors: false
-	});
-	return { createForm };
-});
-
 // Create buy option form
 export const createBuyOption = form(CreateBuyOptionRequestSchema, async (input) => {
 	const ctx = await createAdminContext();
@@ -68,24 +60,9 @@ export const createBuyOption = form(CreateBuyOptionRequestSchema, async (input) 
 		path: { eventId: input.eventId },
 		body: input
 	});
-	await getBuyOptions({ eventId: input.eventId }).refresh();
-	return { success: true, data: response };
-});
 
-export const updateBuyOptionForm = query(
-	object({ eventId: string(), buyOptionId: string() }),
-	async ({ eventId, buyOptionId }) => {
-		const buyOption = await getBuyOption({ eventId, buyOptionId });
-		const updateForm = await superValidate(
-			{ ...buyOption, eventId, buyOptionId },
-			valibot(UpdateBuyOptionRequestSchema),
-			{
-				errors: false
-			}
-		);
-		return updateForm;
-	}
-);
+	return { id: response.id };
+});
 
 // update buy option
 export const updateBuyOption = command(
