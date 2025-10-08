@@ -1,4 +1,4 @@
-import { getRequestEvent, query } from '$app/server';
+import { command, getRequestEvent, query } from '$app/server';
 import type { BaseSchema, InferOutput } from 'valibot';
 import { createPublicContext, createAuthenticatedContext, createOrgMemberContext } from './context';
 
@@ -47,6 +47,23 @@ export const orgMemberQuery = <S extends BaseSchema<any, T, any>, T>(
 	}) => T
 ) => {
 	return query(schema, async (input) => {
+		const ctx = await createOrgMemberContext();
+
+		return fn({ ctx, input });
+	});
+};
+
+export const orgMemberCommand = <S extends BaseSchema<any, T, any>, T>(
+	schema: S,
+	fn: ({
+		ctx,
+		input
+	}: {
+		ctx: Awaited<ReturnType<typeof createOrgMemberContext>>;
+		input: InferOutput<S>;
+	}) => T
+) => {
+	return command(schema, async (input) => {
 		const ctx = await createOrgMemberContext();
 
 		return fn({ ctx, input });

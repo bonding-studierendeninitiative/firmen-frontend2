@@ -1,21 +1,20 @@
-import { query, command, form } from '$app/server';
+import { query, form } from '$app/server';
 import { array, nullish, number, object, string, safeParse } from 'valibot';
 import { error } from '@sveltejs/kit';
 import { createOrgMemberContext } from '@/remote/context';
 import {
 	GetEventRegistrationsForOrganizationOutput,
-	RegisterOrganizationToEventInput
+	RegisterOrganizationToEventInput,
+	SubmitPortraitInput
 } from '@api/client';
 import { superValidate } from 'sveltekit-superforms';
 import { valibot } from 'sveltekit-superforms/adapters';
 import { SubmitPortraitRequest } from '@schema';
-import { orgMemberQuery } from '../auth-guards';
+import { orgMemberCommand, orgMemberQuery } from '../auth-guards';
 
-export const changeContactPeople = command(
+export const changeContactPeople = orgMemberCommand(
 	object({ eventRegistrationId: string(), contactPeople: array(string()) }),
-	async (input) => {
-		const ctx = await createOrgMemberContext();
-
+	async ({ input, ctx }) => {
 		const result = await ctx.api.request(
 			'post',
 			'/api/v2/event-registration/{eventRegistrationId}/change-contact-people',
@@ -82,11 +81,9 @@ export const forOrganization = orgMemberQuery(
 
 export type EventRegistrationsOutput = Awaited<ReturnType<typeof forOrganization>>;
 
-export const submitPortrait = command(
-	object({ eventRegistrationId: string(), data: object({}) }),
-	async ({ eventRegistrationId, data }) => {
-		const ctx = await createOrgMemberContext();
-
+export const submitPortrait = orgMemberCommand(
+	object({ eventRegistrationId: string(), data: SubmitPortraitInput }),
+	async ({ input: { eventRegistrationId, data }, ctx }) => {
 		const response = await ctx.api.request(
 			'post',
 			'/api/v2/event-registration/{eventRegistrationId}/portrait/submit',
@@ -98,11 +95,9 @@ export const submitPortrait = command(
 	}
 );
 
-export const registerOrganizationToEvent = command(
+export const registerOrganizationToEvent = orgMemberCommand(
 	RegisterOrganizationToEventInput,
-	async (input) => {
-		const ctx = await createOrgMemberContext();
-
+	async ({ input, ctx }) => {
 		const response = await ctx.api.request('post', '/api/v2/event-registration', { body: input });
 		if (response.status === 409) {
 			error(409, 'A registration to this event already exists for your organization!');

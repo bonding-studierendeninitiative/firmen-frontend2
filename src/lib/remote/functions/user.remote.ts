@@ -27,7 +27,7 @@ export const updateMetadataForm = form(updateUserDetailsSchema, async (input) =>
 	}
 });
 
-export const getUser = query(object({}), async () => {
+export const getUser = query('unchecked', async () => {
 	try {
 		const ctx = await createAuthenticatedContext();
 		return await ctx.db.user.findFirst({ where: { id: ctx.session.userId } });

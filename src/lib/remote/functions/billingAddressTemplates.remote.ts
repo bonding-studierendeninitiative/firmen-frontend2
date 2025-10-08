@@ -1,8 +1,8 @@
-import { form, command } from '$app/server';
+import { form } from '$app/server';
 import { object, nullish, string, pipe, minLength } from 'valibot';
 import { error } from '@sveltejs/kit';
 import { createOrgMemberContext } from '@/remote/context';
-import { orgMemberQuery } from '../auth-guards';
+import { orgMemberCommand, orgMemberQuery } from '../auth-guards';
 
 export const getBillingAddressTemplates = orgMemberQuery(
 	object({
@@ -82,11 +82,9 @@ export const createBillingAddressTemplate = form(
 );
 
 // Delete billing address template via form remote
-export const deleteBillingAddressTemplate = command(
+export const deleteBillingAddressTemplate = orgMemberCommand(
 	object({ billingAddressTemplateId: string() }),
-	async ({ billingAddressTemplateId }) => {
-		const ctx = await createOrgMemberContext();
-
+	async ({ input: { billingAddressTemplateId }, ctx }) => {
 		const response = await ctx.api.request(
 			'delete',
 			'/api/v2/organization/{organizationId}/billing-address-template/{billingAddressTemplateId}',
@@ -102,11 +100,9 @@ export const deleteBillingAddressTemplate = command(
 );
 
 // Make billing address template default via form remote
-export const makeBillingAddressTemplateDefault = command(
+export const makeBillingAddressTemplateDefault = orgMemberCommand(
 	object({ billingAddressTemplateId: string() }),
-	async ({ billingAddressTemplateId }) => {
-		const ctx = await createOrgMemberContext();
-
+	async ({ input: { billingAddressTemplateId }, ctx }) => {
 		await ctx.auth.updateOrganization({
 			body: {
 				organizationId: ctx.session.activeOrganizationId,

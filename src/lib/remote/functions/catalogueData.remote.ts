@@ -1,4 +1,4 @@
-import { query, command, form } from '$app/server';
+import { query, form } from '$app/server';
 import { file, literal, nullish, object, string, union } from 'valibot';
 import { Problem } from '@api/client';
 import { error } from '@sveltejs/kit';
@@ -6,7 +6,7 @@ import { createOrgMemberContext } from '@/remote/context';
 import { superValidate } from 'sveltekit-superforms';
 import { valibot } from 'sveltekit-superforms/adapters';
 import { UploadCatalogueDataForm } from '@schema';
-import { orgMemberQuery } from '../auth-guards';
+import { orgMemberCommand, orgMemberQuery } from '../auth-guards';
 
 export const uploadCatalogueData = form(
 	object({
@@ -96,11 +96,9 @@ export const getCatalogueByType = orgMemberQuery(
 	}
 );
 
-export const pickDocument = command(
+export const pickDocument = orgMemberCommand(
 	object({ eventRegistrationId: string(), documentId: string(), versionId: string() }),
-	async (input) => {
-		const ctx = await createOrgMemberContext();
-
+	async ({ input, ctx }) => {
 		const response = await ctx.api.request(
 			'post',
 			'/api/v2/event-registration/{eventRegistrationId}/pick-document/{documentId}/{versionId}',
@@ -112,11 +110,9 @@ export const pickDocument = command(
 	}
 );
 
-export const generateDownloadLink = command(
+export const generateDownloadLink = orgMemberCommand(
 	object({ organizationId: string(), documentId: string() }),
-	async (input) => {
-		const ctx = await createOrgMemberContext();
-
+	async ({ input, ctx }) => {
 		const response = await ctx.api.request(
 			'get',
 			'/api/v2/organization/{organizationId}/catalogue-data/{documentId}/download',
@@ -155,22 +151,23 @@ export const generateThumbnailLink = orgMemberQuery(
 	}
 );
 
-export const deleteDocument = command(object({ documentId: string() }), async ({ documentId }) => {
-	const ctx = await createOrgMemberContext();
-
-	const response = await ctx.api.request(
-		'delete',
-		'/api/v2/organization/{organizationId}/catalogue-data/{documentId}',
-		{
-			path: { documentId, organizationId: ctx.session.activeOrganizationId },
-			query: { 'ignore-conflict': false }
+export const deleteDocument = orgMemberCommand(
+	object({ documentId: string() }),
+	async ({ input: { documentId }, ctx }) => {
+		const response = await ctx.api.request(
+			'delete',
+			'/api/v2/organization/{organizationId}/catalogue-data/{documentId}',
+			{
+				path: { documentId, organizationId: ctx.session.activeOrganizationId },
+				query: { 'ignore-conflict': false }
+			}
+		);
+		if (response.status !== 204) {
+			const problem = (await response.json()) as Problem;
+			error(409, problem.detail || 'Conflict');
 		}
-	);
-	if (response.status !== 204) {
-		const problem = (await response.json()) as Problem;
-		error(409, problem.detail || 'Conflict');
 	}
-});
+);
 
 export const getDocument = orgMemberQuery(
 	object({ documentId: string() }),

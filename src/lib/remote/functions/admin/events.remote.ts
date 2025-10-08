@@ -3,7 +3,6 @@ import { createAdminContext } from '@/remote/context';
 import type { Problem } from '@api/client';
 import { error } from '@sveltejs/kit';
 import { object, optional, string, number, array, union, literal, nullish } from 'valibot';
-import { AddAddonPackageInput } from '@api/admin-client';
 
 export const getEvents = query(
 	object({

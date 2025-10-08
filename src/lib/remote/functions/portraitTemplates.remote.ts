@@ -1,4 +1,4 @@
-import { command } from '$app/server';
+import { form } from '$app/server';
 import { object, string, number, partial } from 'valibot';
 import { superValidate } from 'sveltekit-superforms';
 import { valibot } from 'sveltekit-superforms/adapters';
@@ -6,7 +6,7 @@ import { PortraitTemplateSchema, UpdatePortraitTemplateRequestSchema } from '@sc
 import { error } from '@sveltejs/kit';
 import { createOrgMemberContext } from '@/remote/context';
 import type { Problem } from '@api/client';
-import { orgMemberQuery } from '../auth-guards';
+import { orgMemberCommand, orgMemberQuery } from '../auth-guards';
 
 export const getAllPortraitTemplates = orgMemberQuery(
 	object({ page: number(), query: string() }),
@@ -48,7 +48,7 @@ export const editPortraitTemplateForm = orgMemberQuery(
 	}
 );
 
-export const createPortraitTemplate = command(PortraitTemplateSchema, async (input) => {
+export const createPortraitTemplate = form(PortraitTemplateSchema, async (input) => {
 	const ctx = await createOrgMemberContext();
 
 	const response = await ctx.api.request('post', '/api/v2/portrait-template', {
@@ -63,9 +63,7 @@ export const createPortraitTemplate = command(PortraitTemplateSchema, async (inp
 	return await response.json();
 });
 
-export const deletePortraitTemplate = command(string(), async (id) => {
-	const ctx = await createOrgMemberContext();
-
+export const deletePortraitTemplate = orgMemberCommand(string(), async ({ input: id, ctx }) => {
 	const response = await ctx.api.request(
 		'delete',
 		'/api/v2/portrait-template/{portraitTemplateId}',
@@ -79,7 +77,7 @@ export const deletePortraitTemplate = command(string(), async (id) => {
 	}
 });
 
-export const updatePortraitTemplate = command(
+export const updatePortraitTemplate = form(
 	object({ id: string(), data: partial(UpdatePortraitTemplateRequestSchema) }),
 	async ({ id, data }) => {
 		const ctx = await createOrgMemberContext();

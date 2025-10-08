@@ -142,7 +142,7 @@ export const auth = betterAuth({
 	],
 	secret: process.env.BETTER_AUTH_SECRET,
 	hooks: {
-		after: createAuthMiddleware(async ({ path, headers, params, request, context }) => {
+		after: createAuthMiddleware(async ({ path, headers, params, context }) => {
 			// This function runs after the authentication process
 			if (path.includes('/callback/:id') && (params.id === 'github' || params.id === 'microsoft')) {
 				// After the auth callback is processed, check the provider and perform organization/role adjustments
