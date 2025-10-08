@@ -757,7 +757,7 @@
           "billingOrganizationName": "Name on bill",
           "billingStreet": "Street on bill",
           "billingZipCode": "Zip code on bill",
-          "billingCity": "City on bill",
+          "billingCity": "Locality on bill",
           "billingCountry": "Country on bill",
           "billingVat": "VAT",
           "billingReference": "Reference"

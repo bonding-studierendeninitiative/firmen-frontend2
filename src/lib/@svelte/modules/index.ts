@@ -6,7 +6,6 @@ export * from './ConfirmEventRegistration';
 export * from './RejectEventRegistration';
 export * from './EventRegistration';
 export * from './ManageOrgMembers';
-export * from './UploadCatalogueData';
 export * from './ManageOrgMembers';
 export * from './AddBillingAddressTemplate';
 export * from './UpdateUserDetails';

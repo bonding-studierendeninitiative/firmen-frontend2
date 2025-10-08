@@ -772,7 +772,7 @@
           "billingOrganizationName": "Name auf Rechnung",
           "billingStreet": "Straße auf Rechnung",
           "billingZipCode": "Postleitzahl auf Rechnung",
-          "billingCity": "Stadt auf Rechnung",
+          "billingCity": "Ortschaft auf Rechnung",
           "billingCountry": "Land auf Rechnung",
           "billingVat": "Umsatzsteuer-Identifikationsnummer",
           "billingReference": "Referenz"
