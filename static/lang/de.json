@@ -922,6 +922,16 @@
       "logos": "Logos",
       "base": "Ausstellerdaten",
       "adverts": "Image-Anzeigen",
+      "adverts-data": {
+        "no-data-heading": "Keine Imageanzeigen gefunden",
+        "no-data-subheading": "Auf dieser Seite werden alle Imageanzeigen angezeigt",
+        "no-data-action": "Eine Imageanzeige hochladen"
+      },
+      "logos-data": {
+        "no-data-heading": "Keine Logos gefunden",
+        "no-data-subheading": "Auf dieser Seite werden alle Logos angezeigt",
+        "no-data-action": "Ein Logo hochladen"
+      }
       "advertisements": {
         "delete-error": "Fehler beim Löschen der Imageanzeige"
       },

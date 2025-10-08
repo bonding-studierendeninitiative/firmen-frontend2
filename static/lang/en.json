@@ -909,6 +909,16 @@
       "portraits": {
         "delete-success": "The portrait was deleted successfully",
         "delete-error": "Error deleting portrait"
+      },
+      "adverts-data": {
+        "no-data-heading": "No Adverts found",
+        "no-data-subheading": "You can create one from the advertisements page",
+        "no-data-action": "Upload an advertisement"
+      },
+      "logos-data": {
+        "no-data-heading": "No Logos found",
+        "no-data-subheading": "You can create one from the logos page",
+        "no-data-action": "Upload a logo"
       }
     }
   },

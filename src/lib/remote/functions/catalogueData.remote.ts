@@ -1,5 +1,5 @@
 import { query, form } from '$app/server';
-import { file, literal, nullish, object, string, union } from 'valibot';
+import { file, literal, nonEmpty, nullish, object, pipe, string, union } from 'valibot';
 import { Problem } from '@api/client';
 import { error } from '@sveltejs/kit';
 import { createOrgMemberContext } from '@/remote/context';
@@ -10,9 +10,8 @@ import { orgMemberCommand, orgMemberQuery } from '../auth-guards';
 
 export const uploadCatalogueData = form(
 	object({
-		title: string(),
+		title: pipe(string(), nonEmpty('Cannot be empty')),
 		file: file(),
-		orgId: string(),
 		documentType: union([literal('logo'), literal('advert')])
 	}),
 	async (input) => {
@@ -21,12 +20,11 @@ export const uploadCatalogueData = form(
 			const buf = Buffer.from(data.file.name, 'utf-8');
 			const base64Enc = buf.toString('base64');
 			const ctx = await createOrgMemberContext();
-
 			const response = await ctx.api.request(
 				'post',
 				'/api/v2/organization/{organizationId}/catalogue-data/request-upload-url',
 				{
-					path: { organizationId: data.orgId },
+					path: { organizationId:	ctx.session.activeOrganizationId},
 					body: {
 						title: data.title,
 						mimeType: data.file.type,
@@ -56,6 +54,7 @@ export const uploadCatalogueData = form(
 				console.error(txt);
 				error(500, 'The upload could not be completed');
 			}
+			return {success: true}
 		} catch (e) {
 			error(500, e instanceof Error ? e.message : 'Failed to upload');
 		}

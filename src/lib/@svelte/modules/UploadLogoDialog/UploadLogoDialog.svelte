@@ -1,37 +1,23 @@
 <script lang="ts">
 	import { Button, buttonVariants } from '@/components/ui/button';
 	import * as Dialog from '@/components/ui/dialog';
-	import { fileProxy, type Infer, superForm, type SuperValidated } from 'sveltekit-superforms';
-	import { UploadCatalogueDataRequest, type UploadLogoRequest } from '@schema';
-	import { Control, Description, Field, FieldErrors, Label } from '@/components/ui/form';
 	import { _ } from '@services';
 	import { Input } from '@/components/ui/input';
 	import { Plus } from '@lucide/svelte';
 	import { cn } from '@/utils';
+	import { toast } from 'svelte-sonner';
 	import { uploadCatalogueData } from '@/remote/functions';
 	import type { RemoteQuery, RemoteQueryOverride } from '@sveltejs/kit';
-	import { valibotClient } from 'sveltekit-superforms/adapters';
-
+	
 	interface Props {
-		open: boolean;
-		logoUploadForm: SuperValidated<Infer<UploadLogoRequest>>;
-		onUpload?: (args: {
-			submit: () => Promise<void> & {
-				updates: (...queries: Array<RemoteQuery<any> | RemoteQueryOverride>) => Promise<void>;
-			};
-			form: HTMLFormElement;
-			data: FormData;
-		}) => Promise<void>;
+		open: boolean
+		onSuccess?: () => void;
 	}
+	
+	let { open = $bindable(false), onSuccess }:Props = $props();
 
-	let { open = $bindable(), logoUploadForm, onUpload }: Props = $props();
-
-	const superform = superForm(logoUploadForm, {
-		validators: valibotClient(UploadCatalogueDataRequest)
-	});
-	const { form: formData, submitting, tainted, isTainted } = superform;
-
-	let file = fileProxy(formData, 'file');
+	// use the remote form's fields directly
+	const { title, file, documentType } = uploadCatalogueData.fields;
 </script>
 
 <Dialog.Root bind:open>
@@ -41,12 +27,19 @@
 	</Dialog.Trigger>
 	<Dialog.Content>
 		<form
-			{...uploadCatalogueData.enhance(async ({ submit, form, data }) => {
+			{...uploadCatalogueData.enhance(async ({ submit }) => {
 				try {
-					await onUpload?.({ submit, form, data });
-					open = false;
-				} catch (error) {
-					console.error('Error uploading logo:', error);
+					await submit();
+					if (uploadCatalogueData.result) {
+						toast.success('Logo uploaded successfully');
+						open = false;
+						if (onSuccess) {
+							onSuccess();
+						}
+					}
+				} catch (e) {
+					toast.error((e as any)?.message ?? 'Error uploading');
+					console.error('Error uploading logo:', e);
 				}
 			})}
 			enctype="multipart/form-data"
@@ -56,51 +49,42 @@
 				<Dialog.Title>{$_('modules.upload-logo.title')}</Dialog.Title>
 				<Dialog.Description>{$_('modules.upload-logo.description')}</Dialog.Description>
 			</Dialog.Header>
-			<Field class="flex-col flex justify-start" form={superform} name="title">
-				<Control>
-					{#snippet children({ props })}
-						<Label>{$_('modules.upload-logo.name')}</Label>
-						<Input {...props} bind:value={$formData.title} />
-					{/snippet}
-				</Control>
-				<Description />
-				<FieldErrors />
-			</Field>
-			<Field class="flex-col flex justify-start" form={superform} name="file">
-				<Control>
-					{#snippet children({ props })}
-						<Label>{$_('modules.upload-logo.file')}</Label>
-						<!-- Due to some weird bug, we can't use Input here! (02.07.2025) -->
-						<input
-							class="focus-within:ring-2 focus-within:ring-offset-2 text-sm font-medium ring-offset-background border-input focus-visible:outline-hidden h-10 bg-gray-50 border rounded-md px-3 py-2 placeholder-gray-400 w-full"
-							accept="image/*, application/pdf"
-							{...props}
-							type="file"
-							bind:files={$file}
-						/>
-					{/snippet}
-				</Control>
-				<Description>{$_('modules.upload-logo.file-description')}</Description>
-				<FieldErrors />
-			</Field>
-			<Field form={superform} name="orgId">
-				<Control>
-					{#snippet children({ props })}
-						<input type="hidden" value={$formData.orgId} name={props.name} />
-					{/snippet}
-				</Control>
-			</Field>
-			<Field form={superform} name="documentType">
-				<Control>
-					{#snippet children({ props })}
-						<input type="hidden" value="logo" {...props} />
-					{/snippet}
-				</Control>
-			</Field>
+
+			<div class="grid gap-2">
+				<label for="title" class="sr-only">{$_('modules.upload-logo.name')}</label>
+				<Input
+					id="title"
+					{...title.as('text')}
+					placeholder={$_('modules.upload-logo.name')}
+					disabled={uploadCatalogueData.pending > 0}
+				/>
+				{#each uploadCatalogueData.fields.title.issues() ?? [] as issue}
+					<div class="text-red-500 text-sm">{issue.message}</div>
+				{/each}
+			</div>
+
+			<div class="grid gap-2">
+				<label for="file" class="sr-only">{$_('modules.upload-logo.file')}</label>
+				<input
+					id="file"
+					class="focus-within:ring-2 focus-within:ring-offset-2 text-sm font-medium ring-offset-background border-input focus-visible:outline-hidden h-10 bg-gray-50 border rounded-md px-3 py-2 placeholder-gray-400 w-full"
+					accept="image/*, application/pdf"
+					{...file.as('file')}
+					disabled={uploadCatalogueData.pending > 0}
+				/>
+				{#each uploadCatalogueData.fields.file.issues() ?? [] as issue}
+					<div class="text-red-500 text-sm">{issue.message}</div>
+				{/each}
+				<div class="text-sm text-muted-foreground">{$_('modules.upload-logo.file-description')}</div>
+			</div>
+
+			<!-- ensure document type is set -->
+			<input {...documentType.as('hidden')} value="logo" />
+
 			<Dialog.Footer>
-				<Button disabled={!isTainted($tainted) || $submitting} type="submit"
-					>{$_('common.upload')}</Button
-				>
+				<Button disabled={uploadCatalogueData.pending > 0} type="submit">
+					{$_('common.upload')}
+				</Button>
 			</Dialog.Footer>
 		</form>
 	</Dialog.Content>

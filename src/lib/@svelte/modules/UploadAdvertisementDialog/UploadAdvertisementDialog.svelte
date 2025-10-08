@@ -1,9 +1,14 @@
 <script lang="ts">
 	import { Button, buttonVariants } from '@/components/ui/button';
+	import { Label } from '@/components/ui/label';
 	import * as Dialog from '@/components/ui/dialog';
-	import { fileProxy, type Infer, superForm, type SuperValidated } from 'sveltekit-superforms';
+	import SuperDebug, {
+		fileProxy,
+		type Infer,
+		superForm,
+		type SuperValidated
+	} from 'sveltekit-superforms';
 	import { toast } from 'svelte-sonner';
-	import { Control, Description, Field, FieldErrors, Label } from '@/components/ui/form';
 	import { _ } from '@services';
 	import { Input } from '@/components/ui/input';
 	import { valibotClient } from 'sveltekit-superforms/adapters';
@@ -14,35 +19,29 @@
 	import type { RemoteQuery, RemoteQueryOverride } from '@sveltejs/kit';
 
 	interface Props {
-		open: boolean;
-		advertisementUploadForm: SuperValidated<Infer<UploadAdvertisementRequest>>;
-		onUpload?: (args: {
-			submit: () => Promise<void> & {
-				updates: (...queries: Array<RemoteQuery<any> | RemoteQueryOverride>) => Promise<void>;
-			};
-			form: HTMLFormElement;
-			data: FormData;
-		}) => Promise<void>;
+		open: boolean
+		onSuccess?: () => void;
 	}
+	
+	let { open = $bindable(false), onSuccess }:Props = $props();
+	
+	const { title, file, documentType } = uploadCatalogueData.fields;
 
-	let { open = $bindable(), advertisementUploadForm, onUpload }: Props = $props();
+	// const superform = superForm(advertisementUploadForm, {
+	// 	validators: valibotClient(UploadAdvertisementRequest),
+	// 	onResult({ result }) {
+	// 		if (result.type === 'success') {
+	// 			open = false;
 
-	const superform = superForm(advertisementUploadForm, {
-		validators: valibotClient(UploadAdvertisementRequest),
-		onResult({ result }) {
-			if (result.type === 'success') {
-				open = false;
-				toast.success('Advertisement uploaded successfully');
-			} else {
-				console.log('Upload error:', result);
+	// 		} else {
+	// 			console.log('Upload error:', result);
 
-				toast.error(`Error: ${result.status}`);
-			}
-		}
-	});
-	const { enhance, form: formData, submitting, tainted, isTainted } = superform;
+	// 		}
+	// 	}
+	// });
+	// // const { enhance, form: formData, submitting, tainted, isTainted } = superform;
 
-	const file = fileProxy(superform, 'file');
+	// const file = fileProxy(superform, 'file');
 </script>
 
 <Dialog.Root bind:open>
@@ -52,12 +51,25 @@
 	</Dialog.Trigger>
 	<Dialog.Content>
 		<form
-			{...uploadCatalogueData.enhance(async ({ submit, form, data }) => {
+			{...uploadCatalogueData.enhance(async ({ submit }) => {
 				try {
-					await onUpload?.({ submit, form, data });
-					open = false;
-				} catch (error) {
-					console.error('Error uploading logo:', error);
+					await submit();
+					if (uploadCatalogueData.result) {
+						toast.success('Advertisement uploaded successfully');
+						open = false;
+						if (onSuccess) {
+							onSuccess();
+						}
+					}
+					// await uploadCatalogueData.validate()
+					// if (uploadCatalogueData.fields.allIssues()?.length == 0) {
+
+					// }else {
+					// 	console.log(uploadCatalogueData.fields.allIssues())
+					// }
+				} catch (e) {
+					toast.error((e as any)?.message ?? 'Error uploading');
+					console.error('Error uploading advertisment:', e);
 				}
 			})}
 			enctype="multipart/form-data"
@@ -67,7 +79,20 @@
 				<Dialog.Title>{$_('modules.upload-advertisement.title')}</Dialog.Title>
 				<Dialog.Description>{$_('modules.upload-advertisement.description')}</Dialog.Description>
 			</Dialog.Header>
-			<Field class="flex-col flex justify-start" form={superform} name="title">
+			<div class="grid gap-2">
+				<Label for="title">{$_('modules.upload-advertisement.name')}</Label>
+				<Input
+					id="title"
+					{...title.as('text')}
+					placeholder={$_('auth.sign-up.placeholders.name')}
+					disabled={uploadCatalogueData.pending > 0}
+				/>
+				{#each uploadCatalogueData.fields.title.issues() ?? [] as issue}
+					<div class="text-red-500 text-sm">{issue.message}</div>
+				{/each}
+			</div>
+
+			<!-- <Field class="flex-col flex justify-start" form={superform} name="title">
 				<Control>
 					{#snippet children({ props })}
 						<Label>{$_('modules.upload-advertisement.name')}</Label>
@@ -76,12 +101,27 @@
 				</Control>
 				<Description />
 				<FieldErrors />
-			</Field>
-			<Field class="flex-col flex justify-start" form={superform} name="file">
+			</Field> -->
+
+			<div class="grid gap-2">
+				<Label for="file">{$_('modules.upload-advertisement.file')}</Label>
+				<input
+					id="file"
+					class="focus-within:ring-2 focus-within:ring-offset-2 text-sm font-medium ring-offset-background border-input focus-visible:outline-hidden h-10 bg-background border rounded-md px-3 py-2"
+					accept="image/*, application/pdf"
+					{...file.as('file')}
+					disabled={uploadCatalogueData.pending > 0}
+				/>
+				{#each uploadCatalogueData.fields.file.issues() ?? [] as issue}
+					<div class="text-red-500 text-sm">{issue.message}</div>
+				{/each}
+			</div>
+
+			<!-- <Field class="flex-col flex justify-start" form={superform} name="file">
 				<Control>
 					{#snippet children({ props })}
 						<Label>{$_('modules.upload-advertisement.file')}</Label>
-						<!-- Due to some weird bug, we can't use Input here! (02.07.2025) -->
+						Due to some weird bug, we can't use Input here! (02.07.2025)
 						<input
 							class="focus-within:ring-2 focus-within:ring-offset-2 text-sm font-medium ring-offset-background border-input focus-visible:outline-hidden h-10 bg-background border rounded-md px-3 py-2"
 							accept="image/*, application/pdf"
@@ -93,16 +133,22 @@
 				</Control>
 				<Description>{$_('modules.upload-advertisement.file-description')}</Description>
 				<FieldErrors />
-			</Field>
-			<Field form={superform} name="orgId">
+			</Field> -->
+			<!-- <div class="grid gap-2">
+				<input {...orgId.as("hidden")} value={"advert"}/>
+			</div> -->
+			<div class="grid gap-2">
+				<input {...documentType.as('hidden')} value={'advert'} />
+			</div>
+			<!-- <Field form={superform} name="orgId">
 				<Control>
 					{#snippet children({ props })}
 						<input type="hidden" value={$formData.orgId} name={props.name} />
 					{/snippet}
 				</Control>
-			</Field>
+			</Field> -->
 			<Dialog.Footer>
-				<Button disabled={$file.length !== 1} type="submit">{$_('common.upload')}</Button>
+				<Button disabled={false} type="submit">{$_('common.upload')}</Button>
 			</Dialog.Footer>
 		</form>
 	</Dialog.Content>

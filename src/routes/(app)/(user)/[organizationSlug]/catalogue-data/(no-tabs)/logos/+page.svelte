@@ -7,11 +7,8 @@
 	import { _, dayjs } from '@services/i18n';
 	import LogoItem from './logo-item.svelte';
 	let isUploadOpen = $state(false);
-
-	import {
-		getCatalogueByType as getAllCatalogueData,
-		uploadForm as getCatalogueUploadForm
-	} from '@/remote/functions/catalogueData.remote';
+	import * as Pagination from '$lib/components/ui/pagination';
+	import { getCatalogueByType as getAllCatalogueData } from '@/remote/functions/catalogueData.remote';
 	import { page } from '$app/state';
 
 	let tabs = $derived([
@@ -29,11 +26,23 @@
 		}
 	]);
 
-	const logos = getAllCatalogueData({ limit: '10', documentType: 'logo' });
+	const pageSize = 8;
+	let currentPage = $state(1)
 
+// Use $derived instead of calling the function directly
+    // This will automatically refresh when currentPage changes
+    const logos = $derived(
+        getAllCatalogueData({ 
+            limit: String(pageSize), 
+            cursor: String(currentPage - 1), 
+            documentType: 'logo' 
+        })
+    );
 	const allLogos = $derived.by(() => {
 		return logos.current?.documents ?? [];
 	});
+
+	const totalElements = $derived.by(() => logos.current?.totalElements ?? 0);
 
 	const groupedLogos = $derived.by(() => {
 		return allLogos.reduce((acc, logo) => {
@@ -47,8 +56,11 @@
 		}, {});
 	});
 
-	const uploadFormQuery = getCatalogueUploadForm({});
+	const onSuccess = () => {
+		logos.refresh();
+	};
 </script>
+
 
 <div class="size-full flex flex-col justify-start items-stretch min-h-max">
 	<h1 class=" text-stone-950 text-3xl font-extrabold">{$_('user-pages.portraits.portraits')}</h1>
@@ -60,23 +72,7 @@
 
 		<div in:fade class="space-y-4">
 			<div class="flex justify-end">
-				{#if uploadFormQuery.loading}
-					<Button class="min-w-32 mr-2" disabled>
-						<LoaderCircle class="size-5 mx-auto animate-spin" />
-					</Button>
-				{:else if uploadFormQuery.ready}
-					<UploadLogoDialog
-						bind:open={isUploadOpen}
-						logoUploadForm={uploadFormQuery.current!}
-						onUpload={async ({ submit, form, data }) => {
-							try {
-								await submit().updates(logos);
-							} catch (error) {
-								console.error('Error uploading logo:', error);
-							}
-						}}
-					/>
-				{/if}
+				<UploadLogoDialog bind:open={isUploadOpen} {onSuccess} />
 			</div>
 			{#if logos.loading}
 				<LoaderCircle class="size-10 mx-auto animate-spin" />
@@ -84,9 +80,9 @@
 				{#if allLogos}
 					{#if allLogos.length < 1}
 						<NoDataFound
-							heading="No logos found"
-							subHeading="You can add logos to your organization"
-							buttonText="Add logo"
+							heading={$_('user-pages.catalogue-data.logos-data.no-data-heading')}
+							subHeading={$_('user-pages.catalogue-data.logos-data.no-data-subheading')}
+							buttonText={$_('user-pages.catalogue-data.logos-data.no-data-action')}
 							onButtonClick={() => {
 								isUploadOpen = true;
 							}}
@@ -105,6 +101,35 @@
 									</div>
 								</div>
 							{/each}
+							<Pagination.Root count={totalElements} perPage={pageSize} bind:page={currentPage}>
+								{#snippet children({ pages, currentPage })}
+									<Pagination.Content>
+										<Pagination.Item>
+											<Pagination.PrevButton />
+										</Pagination.Item>
+										{#each pages as page (page.key)}
+											{#if page.type === 'ellipsis'}
+												<Pagination.Item>
+													<Pagination.Ellipsis />
+												</Pagination.Item>
+											{:else}
+												<Pagination.Item>
+                                                    <Pagination.Link 
+                                                        {page} 
+                                                        isActive={currentPage === page.value}
+                                                        class={currentPage === page.value ? 'border-1 border-stone-950' : ''}
+                                                    >
+                                                        {page.value}
+                                                    </Pagination.Link>
+                                                </Pagination.Item>
+											{/if}
+										{/each}
+										<Pagination.Item>
+											<Pagination.NextButton />
+										</Pagination.Item>
+									</Pagination.Content>
+								{/snippet}
+							</Pagination.Root>
 						</div>
 					{/if}
 				{/if}
