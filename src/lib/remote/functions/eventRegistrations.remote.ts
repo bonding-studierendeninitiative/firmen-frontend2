@@ -81,13 +81,14 @@ export const forOrganization = orgMemberQuery(
 
 export type EventRegistrationsOutput = Awaited<ReturnType<typeof forOrganization>>;
 
-export const submitPortrait = orgMemberCommand(
-	object({ eventRegistrationId: string(), data: SubmitPortraitInput }),
-	async ({ input: { eventRegistrationId, data }, ctx }) => {
+export const submitPortraitForm = form(
+	object({ eventRegistrationId: string(), ...SubmitPortraitInput.entries}),
+	async (input) => {
+		const ctx = await createOrgMemberContext()
 		const response = await ctx.api.request(
 			'post',
 			'/api/v2/event-registration/{eventRegistrationId}/portrait/submit',
-			{ path: { eventRegistrationId }, body: data }
+			{ path: { eventRegistrationId: input.eventRegistrationId }, body: input }
 		);
 		if (response.status !== 204) {
 			error(400, 'The portrait could not be submitted!');
@@ -110,18 +111,18 @@ export const registerOrganizationToEvent = orgMemberForm(
 	}
 );
 
-// Form helper for portrait submission
-export const submitPortraitForm = query(
-	object({ eventRegistrationId: string() }),
-	async ({ eventRegistrationId }) => {
-		const submitForm = await superValidate(
-			{ eventRegistrationId },
-			valibot(SubmitPortraitRequest),
-			{ errors: false }
-		);
-		return submitForm;
-	}
-);
+// // Form helper for portrait submission
+// export const submitPortraitForm = query(
+// 	object({ eventRegistrationId: string() }),
+// 	async ({ eventRegistrationId }) => {
+// 		const submitForm = await superValidate(
+// 			{ eventRegistrationId },
+// 			valibot(SubmitPortraitRequest),
+// 			{ errors: false }
+// 		);
+// 		return submitForm;
+// 	}
+// );
 
 // Optional: submit portrait via form remote for SPA forms
 export const submitPortraitAction = form('unchecked', async (formData) => {

@@ -14,6 +14,8 @@
 	} from '@/remote/functions/admin';
 	import { toast } from 'svelte-sonner';
 	import * as Pagination from '@/components/ui/pagination';
+	import CreateEventRegistrationForm from './create-event-registration-form.svelte';
+	import type { AdminRegisterOrganizationToEventInput } from '@api/admin-client';
 
 	let eventRegistrationFilters = $derived({
 		limit: 10,
@@ -21,10 +23,55 @@
 		page: 0
 	});
 
+	const onCreateEventRegistration = async (input: AdminRegisterOrganizationToEventInput) => {
+		try {
+			await createEventRegistration(input).updates(
+				eventRegistrationsQuery.withOverride((prev) => {
+					const eventId = input.eventId;
+					const organizationId = input.organizationId;
+					const contactPeople = input.contactPeople;
+					const canUploadAdvertisement = input.canUploadAdvertisement;
+					const confirmedRegistration = input.confirmedRegistration;
+					return {
+						...prev,
+						eventRegistrations: [
+							...prev.eventRegistrations,
+							{
+								id: 'new-id',
+								eventId,
+								organization: {
+									id: organizationId,
+									name: 'Loading...',
+									logo: null,
+									address: ''
+								},
+								contactPeople,
+								canUploadAdvertisement,
+								confirmedRegistration
+							}
+						]
+					};
+				})
+			);
+			console.log('Created event registration');
+			toast.success('Die Anmeldung wurde erfolgreich erstellt');
+		} catch (error) {
+			toast.error('Fehler beim Erstellen der Anmeldung');
+			// Re-throw so the dialog component can keep the dialog open on failure
+			throw error;
+		}
+	};
+
+	let eventRegistrationDialogOpen = $state(false);
 	let eventRegistrationsQuery = $derived(getEventRegistrations(eventRegistrationFilters));
 </script>
 
 <section in:fade class=" mt-6">
+	<CreateEventRegistrationForm
+		bind:open={eventRegistrationDialogOpen}
+		{onCreateEventRegistration}
+	/>
+
 	{#if Number(eventRegistrationsQuery.current?.eventRegistrations.length) < 1}
 		<section class=" mt-10">
 			<NoDataFound
@@ -94,51 +141,6 @@
 						toast.success('Die Anmeldung wurde erfolgreich bestätigt');
 					} catch (error) {
 						toast.error('Fehler beim Bestätigen der Anmeldung');
-						// Re-throw so the dialog component can keep the dialog open on failure
-						throw error;
-					}
-				}}
-				onCreateEventRegistration={async ({
-					eventId,
-					organizationId,
-					contactPeople,
-					canUploadAdvertisement,
-					confirmedRegistration
-				}) => {
-					try {
-						await createEventRegistration({
-							eventId,
-							organizationId,
-							contactPeople,
-							canUploadAdvertisement,
-							confirmedRegistration
-						}).updates(
-							eventRegistrationsQuery.withOverride((prev) => {
-								return {
-									...prev,
-									eventRegistrations: [
-										...prev.eventRegistrations,
-										{
-											id: 'new-id',
-											eventId,
-											organization: {
-												id: organizationId,
-												name: 'Loading...',
-												logo: null,
-												address: ''
-											},
-											contactPeople,
-											canUploadAdvertisement,
-											confirmedRegistration
-										}
-									]
-								};
-							})
-						);
-						console.log('Created event registration');
-						toast.success('Die Anmeldung wurde erfolgreich erstellt');
-					} catch (error) {
-						toast.error('Fehler beim Erstellen der Anmeldung');
 						// Re-throw so the dialog component can keep the dialog open on failure
 						throw error;
 					}

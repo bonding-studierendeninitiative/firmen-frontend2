@@ -48,7 +48,7 @@ export const PortraitTemplateInput = v.object({
   employees_europe: v.string(),
   employees_germany: v.string(),
   graduates: v.string(),
-  desiredDisciplines: v.string(),
+  desiredDisciplines: v.optional(v.string(), ""),
   entryOptions: v.string(),
   offersThesis: v.boolean(),
   offersOutOfCountryWork: v.boolean(),

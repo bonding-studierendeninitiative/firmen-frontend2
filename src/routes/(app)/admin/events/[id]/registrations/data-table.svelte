@@ -49,26 +49,12 @@
 		onDelete,
 		onReject,
 		onConfirm,
-		onCreateEventRegistration
 	}: {
 		data: GetEventRegistrationsOutput['eventRegistrations'];
 		isLoading: boolean;
 		onDelete: ({ eventRegistrationId }: { eventRegistrationId: string }) => Promise<void>;
 		onReject: ({ eventRegistrationId }: { eventRegistrationId: string }) => Promise<void>;
 		onConfirm: ({ eventRegistrationId }: { eventRegistrationId: string }) => Promise<void>;
-		onCreateEventRegistration: ({
-			eventId,
-			organizationId,
-			contactPeople,
-			canUploadAdvertisement,
-			confirmedRegistration
-		}: {
-			eventId: string;
-			organizationId: string;
-			contactPeople: string[];
-			canUploadAdvertisement: boolean;
-			confirmedRegistration: boolean;
-		}) => Promise<void>;
 	} = $props();
 
 	let packages = $derived([
@@ -510,7 +496,6 @@
 		disabled={!enableExport}
 		selectedEventRegistrations={selectedEventRegistrationIds}
 	/>
-	<CreateEventRegistrationForm bind:open {onCreateEventRegistration} />
 </section>
 {#if table && table.getAllLeafColumns().length}
 	<section class="mt-10">

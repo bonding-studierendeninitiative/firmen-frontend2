@@ -1,4 +1,4 @@
-import { submitPortrait } from '@/remote/functions/eventRegistrations.remote.js';
+import { submitPortraitForm } from '@/remote/functions/eventRegistrations.remote.js';
 import { SubmitPortraitRequest } from '@schema';
 import { fail, superValidate, type Infer } from 'sveltekit-superforms';
 import { valibot } from 'sveltekit-superforms/adapters';
@@ -31,7 +31,7 @@ export const actions = {
 			return fail(400, { form });
 		}
 
-		await submitPortrait({
+		await submitPortraitForm({
 			eventRegistrationId: form.data.eventRegistrationId,
 			data: form.data
 		});

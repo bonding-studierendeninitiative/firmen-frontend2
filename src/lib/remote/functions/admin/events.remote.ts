@@ -24,6 +24,7 @@ export const getEvents = query(
 				page: input.page
 			}
 		});
+		console.log(response)
 		return response;
 	}
 );

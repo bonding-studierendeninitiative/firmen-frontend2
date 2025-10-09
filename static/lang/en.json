@@ -436,7 +436,8 @@
       "title": "File history"
     },
     "submit-portrait-dialog": {
-      "title": "Pick a portrait now"
+      "title": "Pick a portrait now",
+      "description": "Create a company portrait to gain attenention"
     },
     "submit-portrait-form": {
       "firstHeading": "How would you like to start?",
@@ -457,7 +458,8 @@
       },
       "step-0": {
         "title": "Start",
-        "short-title": "Start"
+        "short-title": "Start",
+        "short-title-template": "Template"
       },
       "step-2": {
         "short-title": "Locations"

@@ -447,7 +447,7 @@
       "title": "Dateihistorie"
     },
     "submit-portrait-dialog": {
-      "description": "Hier kommt noch eine gute Beschriebung rein",
+      "description": "Erstellen Sie Ihr Firmenportrait, um die Aufmerksamkeit von Studierenden zu gewinnen.",
       "title": "Jetzt Portrait auswählen"
     },
     "submit-portrait-form": {
@@ -469,7 +469,8 @@
       },
       "step-0": {
         "short-title": "Start",
-        "title": "Start"
+        "title": "Start",
+        "short-title-template": "Vorlage"
       },
       "step-2": {
         "short-title": "Standorte"
