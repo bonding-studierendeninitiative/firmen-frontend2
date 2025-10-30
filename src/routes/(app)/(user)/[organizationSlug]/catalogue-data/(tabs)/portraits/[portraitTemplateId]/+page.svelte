@@ -1,10 +1,11 @@
 <script lang="ts">
 	import { PortraitForm } from '@/@svelte/modules';
 	import { goto } from '$app/navigation';
-	import { page } from '$app/state';
 	import { editPortraitTemplateForm } from '@/remote/functions';
 
-	let editFormQuery = editPortraitTemplateForm(page.params.portraitTemplateId!);
+	let { params } = $props();
+
+	let editFormQuery = editPortraitTemplateForm(params.portraitTemplateId!);
 </script>
 
 {#if editFormQuery.ready}

@@ -25,6 +25,21 @@
 		selectedEventDays = $bindable([]),
 		selectedPackageId = $bindable('')
 	}: Props = $props();
+
+	function findBenefit(
+		packageId: string,
+		serviceId: string
+	): {
+		booleanValue?: boolean | null;
+		numericValue?: number | null;
+		stringValue?: string | null;
+	} | null {
+		return (
+			buyOption?.benefits?.find(
+				(benefit) => benefit.packageId === packageId && benefit.serviceId === serviceId
+			) ?? null
+		);
+	}
 </script>
 
 <section class=" my-10">
@@ -73,6 +88,7 @@
 						</div>
 					</Table.Cell>
 					{#each buyOption?.packages ?? [] as pkg (pkg.id)}
+						{@const benefit = findBenefit(pkg.id!, service.id!)}
 						<Table.Cell
 							class={selectedPackageId === pkg.id
 								? 'p-3 border border-stone-200 bg-slate-300'
@@ -80,18 +96,18 @@
 						>
 							<div class="flex justify-center items-center">
 								{#if service.valueType === 'BOOLEAN'}
-									{#if pkg.benefits?.[index].booleanValue}
+									{#if benefit?.booleanValue}
 										<OutlinedCheckIcon />
 									{:else}
 										<OutlinedCrossIcon />
 									{/if}
 								{/if}
 								{#if service.valueType === 'INTEGER'}
-									{pkg.benefits?.[index].numericValue}
+									{benefit?.numericValue}
 								{/if}
 
 								{#if service.valueType === 'STRING'}
-									{pkg.benefits?.[index].stringValue}
+									{benefit?.stringValue}
 								{/if}
 							</div>
 						</Table.Cell>

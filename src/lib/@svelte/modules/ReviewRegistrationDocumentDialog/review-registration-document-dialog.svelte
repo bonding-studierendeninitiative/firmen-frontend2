@@ -15,7 +15,9 @@
 </script>
 
 <Dialog.Root bind:open>
-	<Dialog.Trigger class={cn(buttonVariants({ variant: 'outline' }))}>Review&hellip;</Dialog.Trigger>
+	<Dialog.Trigger class={cn(buttonVariants({ variant: 'outline' }))} type="button"
+		>Review&hellip;</Dialog.Trigger
+	>
 	<Dialog.Content class="max-w-(--breakpoint-lg)">
 		<ReviewRegistrationDocumentForm bind:open {document} />
 	</Dialog.Content>

@@ -124,7 +124,7 @@
 	let open = $state(false);
 </script>
 
-<Dialog {open} onOpenChange={() => console.log('open changed')} class="max-w-4xl">
+<Dialog {open} onOpenChange={() => console.log('open changed')}>
 	<DialogContent class="max-w-4xl max-h-[90vh] p-0">
 		<DialogHeader class="p-6 pb-2">
 			<div class="flex items-center justify-between">

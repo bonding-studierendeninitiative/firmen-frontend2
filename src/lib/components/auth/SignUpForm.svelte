@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { Button } from '../ui/button';
 	import { Input } from '../ui/input';
-	import { Label } from '../ui/label';
 	import { _ } from 'svelte-i18n';
+	import * as Field from '../ui/field';
 	import { signUp } from '@/remote/functions';
 
 	interface Props {
@@ -39,35 +39,39 @@
 	>
 		<!-- Hidden callbackURL input -->
 		{#if callbackURL}
-			<input {...signUp.fields.callbackURL.as('hidden')} value={callbackURL} />
+			<input {...signUp.fields.callbackURL.as('hidden', callbackURL)} />
 		{/if}
-		<!-- Name input -->
-		<div class="grid gap-2">
-			<Label for="name">{$_('auth.sign-up.name')}</Label>
+
+		<Field.Field>
+			<Field.Label for="name">{$_('auth.sign-up.name')}</Field.Label>
 			<Input
 				id="name"
 				{...signUp.fields.name.as('text')}
 				placeholder={$_('auth.sign-up.placeholders.name')}
 				disabled={signUp.pending > 0}
 			/>
-			{#each signUp.fields.name.issues() ?? [] as issue}
-				<div class="text-red-500 text-sm">{issue.message}</div>
-			{/each}
-		</div>
+			<Field.Error>
+				{#each signUp.fields.name.issues() ?? [] as issue}
+					<div class="text-red-500 text-sm">{issue.message}</div>
+				{/each}
+			</Field.Error>
+		</Field.Field>
 
 		<!-- Email input -->
-		<div class="grid gap-2">
-			<Label for="email">{$_('auth.sign-up.email')}</Label>
+		<Field.Field>
+			<Field.Label for="email">{$_('auth.sign-up.email')}</Field.Label>
 			<Input
 				id="email"
 				{...signUp.fields.email.as('text')}
 				placeholder={$_('auth.sign-up.placeholders.email')}
 				disabled={signUp.pending > 0}
 			/>
-			{#each signUp.fields.email.issues() ?? [] as issue}
-				<div class="text-red-500 text-sm">{issue.message}</div>
-			{/each}
-		</div>
+			<Field.Error>
+				{#each signUp.fields.email.issues() ?? [] as issue}
+					<div class="text-red-500 text-sm">{issue.message}</div>
+				{/each}
+			</Field.Error>
+		</Field.Field>
 
 		<!-- Submit button -->
 		<Button type="submit" disabled={signUp.pending > 0} class={`w-full`}>

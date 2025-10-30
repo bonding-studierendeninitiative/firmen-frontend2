@@ -1,43 +1,44 @@
 <script lang="ts">
 	import { LinkTabs, NoDataFound } from '@/@svelte/components';
-	import { LoaderCircle, Plus } from '@lucide/svelte';
+	import { LoaderCircle } from '@lucide/svelte';
 	import { fade } from 'svelte/transition';
 	import { UploadLogoDialog } from '@/@svelte/modules';
-	import { Button } from '@/components/ui/button';
 	import { _, dayjs } from '@services/i18n';
 	import LogoItem from './logo-item.svelte';
-	let isUploadOpen = $state(false);
 	import * as Pagination from '$lib/components/ui/pagination';
 	import { getCatalogueByType as getAllCatalogueData } from '@/remote/functions/catalogueData.remote';
-	import { page } from '$app/state';
+
+	let { params } = $props();
+
+	let isUploadOpen = $state(false);
 
 	let tabs = $derived([
 		{
 			name: 'catalogue-data-portraits',
-			href: `/${page.params.organizationSlug!}/catalogue-data/portraits`
+			href: `/${params.organizationSlug!}/catalogue-data/portraits`
 		},
 		{
 			name: 'catalogue-data-logos',
-			href: `/${page.params.organizationSlug!}/catalogue-data/logos`
+			href: `/${params.organizationSlug!}/catalogue-data/logos`
 		},
 		{
 			name: 'catalogue-data-adverts',
-			href: `/${page.params.organizationSlug!}/catalogue-data/adverts`
+			href: `/${params.organizationSlug!}/catalogue-data/adverts`
 		}
 	]);
 
 	const pageSize = 8;
-	let currentPage = $state(1)
+	let currentPage = $state(1);
 
-// Use $derived instead of calling the function directly
-    // This will automatically refresh when currentPage changes
-    const logos = $derived(
-        getAllCatalogueData({ 
-            limit: String(pageSize), 
-            cursor: String(currentPage - 1), 
-            documentType: 'logo' 
-        })
-    );
+	// Use $derived instead of calling the function directly
+	// This will automatically refresh when currentPage changes
+	const logos = $derived(
+		getAllCatalogueData({
+			limit: String(pageSize),
+			cursor: String(currentPage - 1),
+			documentType: 'logo'
+		})
+	);
 	const allLogos = $derived.by(() => {
 		return logos.current?.documents ?? [];
 	});
@@ -60,7 +61,6 @@
 		logos.refresh();
 	};
 </script>
-
 
 <div class="size-full flex flex-col justify-start items-stretch min-h-max">
 	<h1 class=" text-stone-950 text-3xl font-extrabold">{$_('user-pages.portraits.portraits')}</h1>
@@ -114,14 +114,14 @@
 												</Pagination.Item>
 											{:else}
 												<Pagination.Item>
-                                                    <Pagination.Link 
-                                                        {page} 
-                                                        isActive={currentPage === page.value}
-                                                        class={currentPage === page.value ? 'border-1 border-stone-950' : ''}
-                                                    >
-                                                        {page.value}
-                                                    </Pagination.Link>
-                                                </Pagination.Item>
+													<Pagination.Link
+														{page}
+														isActive={currentPage === page.value}
+														class={currentPage === page.value ? 'border-1 border-stone-950' : ''}
+													>
+														{page.value}
+													</Pagination.Link>
+												</Pagination.Item>
 											{/if}
 										{/each}
 										<Pagination.Item>

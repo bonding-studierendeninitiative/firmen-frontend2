@@ -78,7 +78,7 @@
 				</div>
 			</div>
 
-			<input {...documentType.as('hidden')} value="logo" />
+			<input {...documentType.as('hidden', 'logo')} />
 
 			<Dialog.Footer>
 				<Button disabled={uploadCatalogueData.pending > 0} type="submit">

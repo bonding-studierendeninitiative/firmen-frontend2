@@ -1,11 +1,12 @@
 <script lang="ts">
-	import { page } from '$app/state';
 	import { EventDetails } from '@/@svelte/modules';
 	import { getActiveBuyOption, getEventDetails } from '@/remote/functions/events.remote.js';
 	import { LoaderCircle } from '@lucide/svelte';
 
-	let eventQuery = getEventDetails(page.params.eventId!);
-	let eventBuyOptions = getActiveBuyOption(page.params.eventId!);
+	let { params } = $props();
+
+	let eventQuery = getEventDetails(params.eventId);
+	let eventBuyOptions = getActiveBuyOption(params.eventId);
 </script>
 
 {#if eventQuery.loading || eventBuyOptions.loading}
@@ -14,6 +15,6 @@
 	<EventDetails
 		event={eventQuery.current}
 		buyOption={eventBuyOptions.current}
-		orgSlug={page.params.organizationSlug}
+		orgSlug={params.organizationSlug}
 	/>
 {/if}

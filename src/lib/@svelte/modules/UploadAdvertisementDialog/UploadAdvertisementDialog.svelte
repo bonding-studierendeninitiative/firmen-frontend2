@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { Button, buttonVariants } from '@/components/ui/button';
-	import { Label } from '@/components/ui/label';
 	import * as Dialog from '@/components/ui/dialog';
 	import { toast } from 'svelte-sonner';
 	import { _ } from '@services';
@@ -8,6 +7,7 @@
 	import { cn } from '@/utils';
 	import { Plus } from '@lucide/svelte';
 	import { uploadCatalogueData } from '@/remote/functions';
+	import * as Field from '@/components/ui/field';
 
 	interface Props {
 		open: boolean;
@@ -48,21 +48,23 @@
 				<Dialog.Title>{$_('modules.upload-advertisement.title')}</Dialog.Title>
 				<Dialog.Description>{$_('modules.upload-advertisement.description')}</Dialog.Description>
 			</Dialog.Header>
-			<div class="grid gap-2">
-				<Label for="title">{$_('modules.upload-advertisement.name')}</Label>
+			<Field.Field>
+				<Field.Label for="title">{$_('modules.upload-advertisement.name')}</Field.Label>
 				<Input
 					id="title"
 					{...title.as('text')}
 					placeholder={$_('auth.sign-up.placeholders.name')}
 					disabled={uploadCatalogueData.pending > 0}
 				/>
-				{#each uploadCatalogueData.fields.title.issues() ?? [] as issue}
-					<div class="text-red-500 text-sm">{issue.message}</div>
-				{/each}
-			</div>
+				<Field.Error>
+					{#each uploadCatalogueData.fields.title.issues() ?? [] as issue}
+						<div class="text-red-500 text-sm">{issue.message}</div>
+					{/each}
+				</Field.Error>
+			</Field.Field>
 
-			<div class="grid gap-2">
-				<Label for="file">{$_('modules.upload-advertisement.file')}</Label>
+			<Field.Field>
+				<Field.Label for="file">{$_('modules.upload-advertisement.file')}</Field.Label>
 				<input
 					id="file"
 					class="focus-within:ring-2 focus-within:ring-offset-2 text-sm font-medium ring-offset-background border-input focus-visible:outline-hidden h-10 bg-background border rounded-md px-3 py-2"
@@ -70,12 +72,14 @@
 					{...file.as('file')}
 					disabled={uploadCatalogueData.pending > 0}
 				/>
-				{#each uploadCatalogueData.fields.file.issues() ?? [] as issue}
-					<div class="text-red-500 text-sm">{issue.message}</div>
-				{/each}
-			</div>
+				<Field.Error>
+					{#each uploadCatalogueData.fields.file.issues() ?? [] as issue}
+						<div class="text-red-500 text-sm">{issue.message}</div>
+					{/each}
+				</Field.Error>
+			</Field.Field>
 
-			<input {...documentType.as('hidden')} value="advert" />
+			<input {...documentType.as('hidden', 'advert')} />
 
 			<Dialog.Footer>
 				<Button disabled={uploadCatalogueData.pending > 0} type="submit"

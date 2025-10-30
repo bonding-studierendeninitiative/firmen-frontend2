@@ -6,7 +6,14 @@ import { building } from '$app/environment';
 import { PUBLIC_BONDING_ORG_ID } from '$env/static/public';
 
 // hooks.server.ts
-import type { Handle } from '@sveltejs/kit';
+import type { Handle, HandleValidationError } from '@sveltejs/kit';
+
+export const handleValidationError: HandleValidationError = ({ event, issues }) => {
+	console.error('Validation error on request to', event.url.pathname, issues);
+	return {
+		message: 'Nice try, hacker!'
+	};
+};
 
 Sentry.init({
 	dsn: 'https://f1933902b8f781edc8b707ee9d75ea53@o4508733953540096.ingest.de.sentry.io/4508733955571792',

@@ -12,6 +12,12 @@
 	}
 
 	let { children }: Props = $props();
+
+	let activeTab = $derived.by(() => {
+		if (page.url.pathname === '/sign-in') return 'SIGN_IN';
+		if (page.url.pathname === '/sign-up') return 'SIGN_UP';
+		return 'SIGN_IN';
+	});
 </script>
 
 <div class=" flex w-full h-screen @container">
@@ -23,10 +29,7 @@
 			</div>
 		</nav>
 		<div class=" flex justify-center items-center flex-col grow">
-			<Tabs.Root
-				value={page.url.pathname.startsWith('/sign-in') ? 'SIGN_IN' : 'SIGN_UP'}
-				class=" mb-2"
-			>
+			<Tabs.Root value={activeTab} class=" mb-2">
 				<Tabs.List class="w-full">
 					<a href="/sign-in" class="grow">
 						<Tabs.Trigger

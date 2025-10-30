@@ -4,11 +4,10 @@
 	import { _ } from '@services';
 	import * as Card from '@/components/ui/card';
 	import { goto } from '$app/navigation';
-	import { page } from '$app/state';
-	import authClient from '@/auth-client';
+
 	const onUserUpdate = async () => {
-		goto("/")
-	}
+		goto('/');
+	};
 </script>
 
 <main class="container mt-8">
@@ -18,9 +17,7 @@
 			<Card.Description>{$_('user-pages.contactPersons.signUp.description')}</Card.Description>
 		</Card.Header>
 		<Card.Content>
-			<UpdateUserDetails
-				onUserDetailsUpdate={onUserUpdate}
-			/>
+			<UpdateUserDetails onUserDetailsUpdate={onUserUpdate} />
 		</Card.Content>
 	</Card.Root>
 </main>

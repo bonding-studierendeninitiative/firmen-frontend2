@@ -6,6 +6,7 @@
 	import { TrashIcon } from '@/@svelte/icons';
 	import { LoaderCircle } from '@lucide/svelte';
 	import { buttonVariants } from '@/components/ui/button';
+	import { cn } from '@/utils';
 
 	let {
 		onDelete
@@ -20,9 +21,10 @@
 	<Dialog.Overlay />
 	<Dialog.Trigger
 		disabled={!page.params.buyOptionId}
-		class={[buttonVariants({ variant: 'ghost', size: 'icon' }), 'text-red-500 hover:text-red-700']}
+		class={cn([buttonVariants({ variant: 'destructive', size: 'default' })])}
 	>
 		<TrashIcon class="size-6" />
+		{$_('common.delete')}
 	</Dialog.Trigger>
 	<Dialog.Content>
 		<Dialog.Header>

@@ -10,17 +10,17 @@
 	} from '@/remote/functions';
 	import { LoaderCircle } from '@lucide/svelte';
 	import * as Breadcrumb from '@/components/ui/breadcrumb';
-	import { page } from '$app/state';
-	import { th } from '@faker-js/faker';
 	import { toast } from 'svelte-sonner';
 	import { goto } from '$app/navigation';
 
+	let { params } = $props();
+
 	let logoFilter = $derived({
-		documentId: page.params.documentId!
+		documentId: params.documentId!
 	});
 
 	let thumbnailFilter = $derived({
-		documentId: page.params.documentId!,
+		documentId: params.documentId!,
 		resolution: 'large' as const
 	});
 
@@ -28,7 +28,7 @@
 		if (!getDocument(logoFilter).ready) return null;
 		else {
 			return {
-				documentId: page.params.documentId!,
+				documentId: params.documentId!,
 				organizationId: getDocument(logoFilter).current?.organizationId!
 			};
 		}
@@ -81,7 +81,7 @@
 					onDelete={async (id) => {
 						try {
 							await deleteDocument({ documentId: id }).updates(getDocument(logoFilter));
-							await goto(`/${page.params.organizationSlug}/catalogue-data/logos`);
+							await goto(`/${params.organizationSlug}/catalogue-data/logos`);
 							toast.success($_('modules.delete-logo-dialog.success'));
 						} catch (error) {
 							toast.error('Error deleting logo');

@@ -42,6 +42,8 @@
 	import { createSvelteTable } from '@/@svelte/components/QueryDataTable/data-table.svelte';
 	import { Checkbox } from '@/components/ui/checkbox';
 	import type { GetEventRegistrationsOutput } from '@/remote/functions/admin';
+	import SendEmailDialog from './send-email-dialog.svelte';
+	import type { RemoteQuery, RemoteQueryOverride } from '@sveltejs/kit';
 
 	let {
 		data,
@@ -49,12 +51,22 @@
 		onDelete,
 		onReject,
 		onConfirm,
+		onEmailSent,
+		eventId
 	}: {
+		eventId: string;
 		data: GetEventRegistrationsOutput['eventRegistrations'];
 		isLoading: boolean;
 		onDelete: ({ eventRegistrationId }: { eventRegistrationId: string }) => Promise<void>;
 		onReject: ({ eventRegistrationId }: { eventRegistrationId: string }) => Promise<void>;
 		onConfirm: ({ eventRegistrationId }: { eventRegistrationId: string }) => Promise<void>;
+		onEmailSent?: ({
+			submit
+		}: {
+			submit: () => Promise<void> & {
+				updates: (...queries: Array<RemoteQuery<any> | RemoteQueryOverride>) => Promise<void>;
+			};
+		}) => Promise<void>;
 	} = $props();
 
 	let packages = $derived([
@@ -492,6 +504,7 @@
 		title={$_('admin-pages.events.event-registrations.data-table.filters.addons')}
 		counts={counts.addons}
 	/>
+	<SendEmailDialog {eventId} registrationIds={selectedEventRegistrationIds} {onEmailSent} />
 	<ExportCatalogueDataDialog
 		disabled={!enableExport}
 		selectedEventRegistrations={selectedEventRegistrationIds}
@@ -499,7 +512,7 @@
 </section>
 {#if table && table.getAllLeafColumns().length}
 	<section class="mt-10">
-		<div class="rounded-md border bg-card border-card shadow shadow-card">
+		<div class="rounded-md border bg-card border-border shadow shadow-card">
 			<Table.Root>
 				<Table.Header>
 					{#each table.getHeaderGroups() as headerGroup (headerGroup.id)}

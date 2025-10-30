@@ -6,6 +6,10 @@
 	import { Skeleton } from '@/components/ui/skeleton';
 	import { Link } from '@/@svelte/components';
 	import { getEvents } from '@/remote/functions/admin';
+
+	let archivedEventsQuery = getEvents({ status: ['ARCHIVED'] });
+	let unpublishedEventsQuery = getEvents({ status: ['UNPUBLISHED'] });
+	let publishedEventsQuery = getEvents({ status: ['PUBLISHED'] });
 </script>
 
 <h1 class=" text-stone-950 text-3xl font-extrabold">{$_('admin-pages.dashboard.dashboard')}</h1>
@@ -20,12 +24,10 @@
 		<Card.Content class="space-y-4">
 			<div class="flex items-baseline flex-nowrap gap-2 flex-row">
 				<Globe class="w-5 text-muted-foreground" />
-				{#if getEvents({ event_status: ['PUBLISHED'] }).loading}
+				{#if publishedEventsQuery.loading}
 					<Skeleton class="w-6 h-12 text-muted-foreground" />
-				{:else if getEvents({ event_status: ['PUBLISHED'] }).current}
-					<span class="text-3xl font-semibold"
-						>{getEvents({ event_status: ['PUBLISHED'] }).current?.totalElements}</span
-					>
+				{:else if publishedEventsQuery.current}
+					<span class="text-3xl font-semibold">{publishedEventsQuery.current?.totalElements}</span>
 				{:else}
 					<span class="text-3xl font-semibold">NaN</span>
 				{/if}
@@ -33,11 +35,10 @@
 			</div>
 			<div class="flex items-center flex-nowrap gap-2 flex-row">
 				<Shield class="w-5 text-muted-foreground" />
-				{#if getEvents({ event_status: ['UNPUBLISHED'] }).loading}
+				{#if unpublishedEventsQuery.loading}
 					<Skeleton class="w-6 h-12 text-muted-foreground" />
-				{:else if getEvents({ event_status: ['UNPUBLISHED'] }).current}
-					<span class="text-3xl font-semibold"
-						>{getEvents({ event_status: ['UNPUBLISHED'] }).current?.totalElements}</span
+				{:else if unpublishedEventsQuery.current}
+					<span class="text-3xl font-semibold">{unpublishedEventsQuery.current?.totalElements}</span
 					>
 				{:else}
 					<span class="text-3xl font-semibold">NaN</span>
@@ -46,12 +47,10 @@
 			</div>
 			<div class="flex items-center flex-nowrap gap-2 flex-row">
 				<Archive class="w-5 text-muted-foreground" />
-				{#if getEvents({ event_status: ['ARCHIVED'] }).loading}
+				{#if archivedEventsQuery.loading}
 					<Skeleton class="w-6 h-12 text-muted-foreground" />
-				{:else if getEvents({ event_status: ['ARCHIVED'] }).current}
-					<span class="text-3xl font-semibold"
-						>{getEvents({ event_status: ['ARCHIVED'] }).current?.totalElements}</span
-					>
+				{:else if archivedEventsQuery.current}
+					<span class="text-3xl font-semibold">{archivedEventsQuery.current?.totalElements}</span>
 				{:else}
 					<span class="text-3xl font-semibold">NaN</span>
 				{/if}

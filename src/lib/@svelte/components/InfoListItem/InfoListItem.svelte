@@ -26,7 +26,7 @@
 	}: Props = $props();
 </script>
 
-<div class=" p-4 shadow-custom rounded-md border border-card bg-card">
+<div class=" p-4 shadow-custom rounded-md border border-border bg-card">
 	<div class=" flex justify-end gap-x-2 items-center">
 		<Event loading={false} event={{ dateFrom: date, location: subHeading, name: heading }} />
 		<div class="grow"></div>

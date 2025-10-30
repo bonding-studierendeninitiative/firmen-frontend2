@@ -7,6 +7,7 @@
 	const params = queryParameters({ redirectTo: ssp.string('/') });
 	const safeRedirectTo = $derived.by(() => {
 		if (params.redirectTo) return `/${params.redirectTo.slice(1)}`;
+		return '/';
 	});
 </script>
 

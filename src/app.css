@@ -1,5 +1,6 @@
 @import 'tailwindcss';
 @import "tw-animate-css";
+@plugin "@tailwindcss/typography";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -352,5 +353,11 @@
 
   body {
     @apply bg-background text-foreground;
+  }
+
+  .markdown-body {
+    @apply prose prose-base;
+    @apply dark:prose-invert;
+    @apply max-w-none;
   }
 }

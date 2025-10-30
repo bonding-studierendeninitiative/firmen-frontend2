@@ -17,7 +17,7 @@
 		</div>
 	</Sidebar>
 
-	<div class="h-dvh w-full grow overflow-y-scroll bg-muted">
+	<div class="h-dvh w-full grow overflow-y-scroll bg-white">
 		<AdminJobs />
 		<div class="w-full px-16 py-22">
 			{@render children?.()}

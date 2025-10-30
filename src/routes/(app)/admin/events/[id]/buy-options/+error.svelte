@@ -1,5 +1,5 @@
-<script>
-	import { page } from '$app/state';
+<script lang="ts">
+	let { error } = $props();
 </script>
 
-<h1>Error in buy options {page.error?.message}</h1>
+<h1>Error in buy options {error?.message}</h1>

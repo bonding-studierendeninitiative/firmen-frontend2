@@ -19,7 +19,7 @@
 
 	let { logo }: Props = $props();
 
-	import { generateDownloadLink as getDownload } from '@/remote/functions/admin';
+	import { generateDocumentDownloadLink as getDownload } from '@/remote/functions/admin';
 	const download = getDownload({
 		documentId: logo?.documentVersion?.document?.id ?? '',
 		organizationId: logo?.documentVersion?.document?.organizationId ?? ''
@@ -54,7 +54,10 @@
 			/>
 		</Dialog.Trigger>
 	{:else}
-		<LogoStatusIcon title={$_('status-text.missing')} variant={{ variant: 'missing' }} />
+		<LogoStatusIcon
+			title={$_('status-text.missing')}
+			variant={{ variant: logo.status ?? 'missing' }}
+		/>
 	{/if}
 	<Dialog.Content class="sm:max-w-4xl">
 		{#if logo.documentVersion}

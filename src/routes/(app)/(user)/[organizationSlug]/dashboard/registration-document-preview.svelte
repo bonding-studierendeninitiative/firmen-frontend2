@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { page } from '$app/state';
 	import { LocalizedDate, StatusBadge } from '@/@svelte/components';
 	import { Button } from '@/components/ui/button';
 	import { generateThumbnailLink as getThumbnail } from '@/remote/functions';

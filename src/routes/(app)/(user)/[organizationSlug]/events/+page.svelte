@@ -3,8 +3,9 @@
 	import { EventsList } from '@/@svelte/modules';
 	import { LoaderCircle } from '@lucide/svelte';
 	import { fade } from 'svelte/transition';
-	import { page } from '$app/state';
 	import { getPublished } from '@/remote/functions';
+
+	let { params } = $props();
 
 	let eventsQuery = getPublished({
 		page: '0',
@@ -26,10 +27,7 @@
 					{$_('user-pages.events.noEvents')}
 				</p>
 			{/if}
-			<EventsList
-				events={eventsQuery.current?.data ?? []}
-				orgSlug={page.params.organizationSlug!}
-			/>
+			<EventsList events={eventsQuery.current?.data ?? []} orgSlug={params.organizationSlug} />
 		</div>
 	{/if}
 </div>

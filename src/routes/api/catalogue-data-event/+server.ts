@@ -1,6 +1,6 @@
 import { validateRequestSignature } from '@/utils/signature';
 import { sendUpdateToOrg } from '@api/broadcaster';
-import { error, json } from '@sveltejs/kit';
+import { error, json, type RequestEvent } from '@sveltejs/kit';
 
 type CatalogueDataEvent = {
 	organizationId: string;
@@ -10,7 +10,7 @@ type CatalogueDataEvent = {
 	documentType: string;
 };
 
-export async function POST(event) {
+export async function POST(event: RequestEvent) {
 	validateRequestSignature(event);
 
 	// 2. Parse the payload

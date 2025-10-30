@@ -46,7 +46,7 @@ export const deleteExport = command(
 			error(500, 'The export could not be deleted');
 		}
 
-		getAllExports({ eventId: input.eventId }).refresh();
+		getAllExports({ eventId: input.eventId, page: 0, limit: 10 }).refresh();
 	}
 );
 export const generateDownloadLink = query(

@@ -8,14 +8,15 @@
 	import { Button } from '@/components/ui/button';
 	import authClient from '@/auth-client';
 	import BanUserDialog from '@/components/auth/admin/ban-user-dialog.svelte';
-	import { page } from '$app/state';
 	import UserOrgsDataTable from './user-orgs-data-table.svelte';
 	import { fade } from 'svelte/transition';
 	import SessionRow from './session-row.svelte';
 	import { toast } from 'svelte-sonner';
 	import { getOrgMemberships, getUser, updateRole } from '@/remote/functions/admin';
 
-	let userQuery = $derived(getUser(page.params.id!));
+	let { params } = $props();
+
+	let userQuery = $derived(getUser(params.id));
 
 	let sessionsQuery = $derived(
 		authClient.admin.listUserSessions({
@@ -43,7 +44,7 @@
 				memberId,
 				role
 			}).updates(
-				getOrgMemberships(page.params.id!).withOverride((orgMemberships) => {
+				getOrgMemberships(params.id).withOverride((orgMemberships) => {
 					return orgMemberships.map((membership) => {
 						if (membership.userId === memberId) {
 							return {
@@ -136,12 +137,12 @@
 			</Alert.Root>
 		{/if}
 		<div class="flex flex-col">
-			{#if page.params.id && getOrgMemberships(page.params.id).ready}
+			{#if params.id && getOrgMemberships(params.id).ready}
 				<h2 class="text-lg font-semibold">{$_('admin-pages.users.orgs.orgMemberships')}</h2>
 				<UserOrgsDataTable
-					memberships={getOrgMemberships(page.params.id).current ?? []}
+					memberships={getOrgMemberships(params.id).current ?? []}
 					isLoading={false}
-					totalCount={getOrgMemberships(page.params.id).current?.length ?? 0}
+					totalCount={getOrgMemberships(params.id).current?.length ?? 0}
 					{onChangeUserRole}
 				/>
 			{:else}

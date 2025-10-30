@@ -66,7 +66,7 @@
 		}
 	})}
 >
-	<input {...createBuyOption.fields.eventId.as('hidden')} value={page.params.id!} />
+	<input {...createBuyOption.fields.eventId.as('hidden', page.params.id!)} />
 
 	<div>
 		<Label>{$_('modules.create-buy-option.name')}</Label>

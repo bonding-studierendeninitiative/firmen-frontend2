@@ -13,3 +13,4 @@ export * from './organization.remote';
 export * from './organizations.remote';
 export * from './user.remote';
 export * from './users.remote';
+export * from './event-emails.remote';

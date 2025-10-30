@@ -1,17 +1,9 @@
 import * as v from 'valibot';
 
 const EventAddonPackageSchema = v.object({
-	purchasable: v.pipe(
-		v.optional(v.string(), 'false'),
-		v.transform((val) => val === 'true'),
-		v.boolean()
-	),
+	purchasable: v.boolean(),
 	title: v.pipe(v.string(), v.maxLength(50), v.minLength(1)),
-	price: v.pipe(
-		v.optional(v.string(), '0'),
-		v.transform((val) => Number(val)),
-		v.number()
-	),
+	price: v.number(),
 	description: v.optional(v.pipe(v.string(), v.maxLength(255))),
 	label: v.string(),
 	addons: v.optional(

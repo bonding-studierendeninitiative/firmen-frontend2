@@ -1,8 +1,8 @@
 import { validateRequestSignature } from '@/utils/signature';
 import { PrismaClient } from '@prisma-app/client/client';
-import { error, json } from '@sveltejs/kit';
+import { error, json, type RequestEvent } from '@sveltejs/kit';
 
-export async function GET(event) {
+export async function GET(event: RequestEvent) {
 	validateRequestSignature(event);
 
 	const request = event.url.searchParams;

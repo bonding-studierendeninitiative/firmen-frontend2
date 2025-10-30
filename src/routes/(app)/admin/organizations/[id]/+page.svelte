@@ -7,7 +7,7 @@
 	import * as Avatar from '@/components/ui/avatar';
 	import { Link, LocalizedDate } from '@/@svelte/components';
 	import { fade } from 'svelte/transition';
-	import authClient from '@/auth-client.js';
+	import authClient from '@/auth-client';
 	import * as Dialog from '@/components/ui/dialog';
 	import { Button } from '@/components/ui/button';
 	import { toast } from 'svelte-sonner';
@@ -18,7 +18,7 @@
 		getSsoProviders,
 		removeMember,
 		updateRole
-	} from '@/remote/functions/admin/index.js';
+	} from '@/remote/functions/admin';
 	import SuperDebug from 'sveltekit-superforms';
 
 	let { data } = $props();

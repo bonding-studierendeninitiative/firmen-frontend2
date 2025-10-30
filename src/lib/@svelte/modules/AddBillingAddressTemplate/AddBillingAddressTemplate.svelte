@@ -23,8 +23,7 @@
 			</Dialog.Header>
 			<div class=" grid grid-cols-1 gap-6 py-6">
 				<input
-					{...createBillingAddressTemplate.fields.organizationId.as('hidden')}
-					value={organizationId}
+					{...createBillingAddressTemplate.fields.organizationId.as('hidden', organizationId)}
 				/>
 				<div>
 					<Label>{$_('modules.add-billing-address-template.companyName')}</Label>

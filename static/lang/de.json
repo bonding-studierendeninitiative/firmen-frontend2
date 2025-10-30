@@ -167,7 +167,10 @@
       "preview": "Vorschau",
       "generalInformation": "Grundinformationen",
       "saveBuyOption": "Kaufoption speichern",
-      "packageBenefitConfiguration": "Paketvorteile"
+      "packageBenefitConfiguration": "Paketvorteile",
+      "addon-packages": "Zusatzleistungen",
+      "settings": "Einstellungen",
+      "event-days": "Buchbare Tage"
     },
     "table": {
       "no-records": "Es wurden keine Datensätze gefunden."
@@ -247,7 +250,15 @@
       "entries": "{ entries, plural, =0 {Keine Einträge} one {Ein Eintrag} other {{entries, number} Einträge} }"
     },
     "edit-buy-options": {
-      "update-success": "Die Kaufoption wurde erfolgreich aktualisiert"
+      "update-success": "Die Kaufoption wurde erfolgreich aktualisiert",
+      "danger-zone": {
+        "title": "Gefahrenzone",
+        "description": "Unwiderrufbare Handlungen, die diese Kaufoption nachhalting beeinflussen."
+      },
+      "buy-option-version": {
+        "label": "Version der Kaufoption",
+        "description": "Jede Änderung erhöht die Versionsnummer der Kaufoption um eins."
+      }
     }
   },
   "modules": {
@@ -516,12 +527,12 @@
     "createfirstorg": "Erstellen Sie Ihre erste Organisation"
   },
   "sidebar": {
-    "dashboard": "Dashboard",
+    "dashboard": "Mein Dashboard",
     "events": "Veranstaltungen",
-    "catalogue-data": "Ausstellerdaten",
+    "catalogue-data": "Meine Ausstellerdaten",
     "notifications": "Benachrichtigungen",
-    "settings": "Einstellungen",
-    "account": "Konto",
+    "settings": "Meine Einstellungen",
+    "account": "Mein Konto",
     "categories": "Kategorien",
     "packages": "Pakete",
     "addons": "Add-ons",
@@ -557,7 +568,8 @@
     "portrait-contact": "Kontaktinformationen",
     "registrations": "Anmeldungen",
     "buy-options": "Kaufoptionen",
-    "exports": "Katalogdaten-Exporte"
+    "exports": "Katalogdaten-Exporte",
+    "emails": "E-Mails & Vorlagen"
   },
   "table-headings": {
     "company": "Firma",
@@ -1203,6 +1215,28 @@
           "success": "Export erfolgreich gelöscht",
           "error": "Beim Löschen des Exports ist ein Fehler aufgetreten"
         }
+      },
+      "emails": {
+        "draftInfo": "Serienmail-Vorlagen",
+        "subject": "Betreffzeile",
+        "createDraft": "Neue E-Mail-Vorlage erstellen",
+        "createDraftDescription": "Du kannst Vorlagen verwenden, um Serienmails an Ansprechpersonen zu versenden.",
+        "reply-to": "Antwortadresse",
+        "body": "Nachrichtinhalt",
+        "send-email": {
+          "trigger": "Serienmail versenden...",
+          "title": "Eine Serienmail versenden",
+          "description": "Du kannst die mit den ausgewählten Anmeldungen verknüpften Ansprechpersonen mit einer Serienmail kontaktieren",
+          "select-draft": "Wähle eine E-Mail-Vorlage aus...",
+          "no-drafts": "Keine Vorlagen verfügbar",
+          "preview-for": "Vorschau für {contactName} ({email})",
+          "selected-draft": "Ausgewählte Vorlage:"
+        },
+        "markdown": {
+          "help": {
+            "title": "Anleitung"
+          }
+        }
       }
     },
     "dashboard": {
@@ -1257,6 +1291,12 @@
           "role": "Rolle",
           "created-at": "Beigetreten"
         }
+      }
+    },
+    "edit-buy-options": {
+      "delete-buy-option": {
+        "title": "Kaufoption löschen",
+        "description": "Diese Aktion kann nicht widerrufen werden. Alle Daten werden vollständig gelöscht."
       }
     }
   }

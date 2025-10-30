@@ -10,16 +10,17 @@
 	} from '@/remote/functions';
 	import { LoaderCircle } from '@lucide/svelte';
 	import * as Breadcrumb from '@/components/ui/breadcrumb';
-	import { page } from '$app/state';
 	import { goto } from '$app/navigation';
 	import { toast } from 'svelte-sonner';
 
+	let { params } = $props();
+
 	let advertisementFilter = $derived({
-		documentId: page.params.documentId!
+		documentId: params.documentId
 	});
 
 	let thumbnailFilter = $derived({
-		documentId: page.params.documentId!,
+		documentId: params.documentId,
 		resolution: 'large' as const
 	});
 
@@ -27,7 +28,7 @@
 		if (!getDocument(advertisementFilter).ready) return null;
 		else {
 			return {
-				documentId: page.params.documentId!,
+				documentId: params.documentId,
 				organizationId: getDocument(advertisementFilter).current?.organizationId!
 			};
 		}
@@ -95,7 +96,7 @@
 						onDelete={async (id) => {
 							try {
 								await deleteDocument({ documentId: id }).updates(getDocument(advertisementFilter));
-								await goto(`/${page.params.organizationSlug}/catalogue-data/adverts`);
+								await goto(`/${params.organizationSlug}/catalogue-data/adverts`);
 								toast.success($_('modules.delete-advertisement-dialog.success'));
 							} catch (error) {
 								toast.error($_('user-pages.catalogue-data.advertisements.delete-error'));

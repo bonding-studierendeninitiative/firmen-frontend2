@@ -13,7 +13,6 @@
 	import ExportsGridView from './exports-grid-view.svelte';
 	import * as Pagination from '@/components/ui/pagination';
 	import { _ } from '@services';
-	import { page } from '$app/state';
 	import { cn } from '@/utils';
 	import { toast } from 'svelte-sonner';
 	import { queryParameters, ssp } from 'sveltekit-search-params';
@@ -29,8 +28,10 @@
 		}
 	);
 
+	let { params: routeParams } = $props();
+
 	let exportFilters = $derived.by(() => ({
-		eventId: page.params.id!,
+		eventId: routeParams.id,
 		page: params.page,
 		limit: params.limit
 	}));
@@ -126,14 +127,14 @@
 		{:else}
 			{#if viewMode === 'table'}
 				<ExportsTableView
-					eventId={page.params.id!}
+					eventId={routeParams.id}
 					exports={exportsQuery.current?.exports ?? []}
 					{onDelete}
 					{onDownload}
 				/>
 			{:else}
 				<ExportsGridView
-					eventId={page.params.id!}
+					eventId={routeParams.id}
 					exports={exportsQuery.current?.exports ?? []}
 					{onDelete}
 					{onDownload}

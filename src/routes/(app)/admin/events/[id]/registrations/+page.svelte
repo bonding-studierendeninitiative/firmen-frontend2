@@ -3,7 +3,6 @@
 	import { NoDataFound } from '@/@svelte/components';
 	import { ChevronLeft, ChevronRight } from '@lucide/svelte';
 	import { fade } from 'svelte/transition';
-	import { page } from '$app/state';
 	import DataTable from './data-table.svelte';
 	import {
 		confirmEventRegistration,
@@ -14,12 +13,15 @@
 	} from '@/remote/functions/admin';
 	import { toast } from 'svelte-sonner';
 	import * as Pagination from '@/components/ui/pagination';
-	import CreateEventRegistrationForm from './create-event-registration-form.svelte';
+	import { goto } from '$app/navigation';
 	import type { AdminRegisterOrganizationToEventInput } from '@api/admin-client';
+	import CreateEventRegistrationForm from './create-event-registration-form.svelte';
+
+	let { params } = $props();
 
 	let eventRegistrationFilters = $derived({
 		limit: 10,
-		eventId: page.params.id!,
+		eventId: params.id,
 		page: 0
 	});
 
@@ -84,6 +86,23 @@
 	{:else}
 		<section class=" mt-10 space-y-4">
 			<DataTable
+				onEmailSent={async ({ submit }) => {
+					try {
+						await submit();
+						toast.success('Die E-Mails wurden erfolgreich versendet', {
+							action: {
+								label: 'Zu den E-Mails',
+								onClick: async () => {
+									await goto(`/admin/events/${params.id}/emails`);
+								}
+							}
+						});
+					} catch (error) {
+						toast.error('Fehler beim Versenden der E-Mails');
+						throw error; // Re-throw so the dialog component can keep the dialog open on failure
+					}
+				}}
+				eventId={params.id}
 				isLoading={eventRegistrationsQuery.loading}
 				data={eventRegistrationsQuery.current?.eventRegistrations ?? []}
 				onDelete={async ({ eventRegistrationId }) => {

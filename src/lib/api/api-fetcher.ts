@@ -12,11 +12,11 @@ export function apiFetcher<T extends { token?: { jwt: string } }>(ctx: T) {
 		const searchParams = new URLSearchParams(params?.query as Record<string, string>);
 		const path = replaceVariables(url, params?.path);
 		const headers = {
-			...(['post', 'put'].includes(method) && { 'Content-Type': 'application/json' }),
+			...(['post', 'put', 'patch'].includes(method) && { 'Content-Type': 'application/json' }),
 			...(ctx?.token?.jwt && { Authorization: `Bearer ${ctx.token.jwt}` })
 		};
 		return fetch(`${path}?${searchParams}`, {
-			method,
+			method: method.toUpperCase(),
 			body: !['get', 'head'].includes(method) ? JSON.stringify(params?.body) : undefined,
 			headers
 		});

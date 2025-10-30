@@ -1,18 +1,16 @@
 <script lang="ts">
-	import * as Tabs from '@/components/ui/tabs';
 	import { goto } from '$app/navigation';
 	import { ReturnIcon } from '@/@svelte/icons';
-	import { page } from '$app/state';
-	import { Event } from '@/@svelte/components';
+	import { Event, LinkTabs } from '@/@svelte/components';
 	import { Button } from '@/components/ui/button';
 	import { _ } from '@services';
-	import { LoaderCircle } from '@lucide/svelte';
 	import { toast } from 'svelte-sonner';
 	import { cn } from '@/utils';
-	import { getEventDetails, publishEvent } from '@/remote/functions/admin/index.js';
+	import { getEventDetails, publishEvent } from '@/remote/functions/admin';
 	import Skeleton from '@/components/ui/skeleton/skeleton.svelte';
+	import SuperDebug from 'sveltekit-superforms';
 
-	let { data, children } = $props();
+	let { data, children, params } = $props();
 
 	function getTabs(event: { id?: string | undefined }) {
 		const eventId = event.id;
@@ -22,12 +20,13 @@
 		return [
 			{ href: `/admin/events/${eventId}/registrations`, name: 'registrations' },
 			{ name: 'buy-options', href: `/admin/events/${eventId}/buy-options` },
-			{ name: 'exports', href: `/admin/events/${eventId}/exports` }
+			{ name: 'exports', href: `/admin/events/${eventId}/exports` },
+			{ name: 'emails', href: `/admin/events/${eventId}/emails` }
 		];
 	}
 
 	let eventFilter = $derived({
-		eventId: page.params.id!
+		eventId: params.id!
 	});
 
 	let getEventDetailsQuery = $derived(getEventDetails(eventFilter));
@@ -69,19 +68,7 @@
 		<Skeleton class=" bg-gray-400 h-10 w-[40ch] mt-12 mb-2" />
 	{:else if getEventDetailsQuery.ready && getEventDetailsQuery.current}
 		<div class="mt-12">
-			<Tabs.Root
-				value={getTabs(getEventDetailsQuery.current!).filter((tab) =>
-					location.pathname.startsWith(tab.href)
-				)[0]?.href}
-			>
-				<Tabs.List class="bg-neutral-200">
-					{#each getTabs(getEventDetailsQuery.current!) as tab}
-						<a href={tab.href}>
-							<Tabs.Trigger value={tab.href}>{$_(`tab-headings.${tab.name}`)}</Tabs.Trigger>
-						</a>
-					{/each}
-				</Tabs.List>
-			</Tabs.Root>
+			<LinkTabs tabs={getTabs(getEventDetailsQuery.current!)} />
 		</div>
 	{/if}
 

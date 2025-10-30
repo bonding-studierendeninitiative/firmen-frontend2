@@ -10,7 +10,8 @@
 		getDetails,
 		makeBillingAddressTemplateDefault
 	} from '@/remote/functions';
-	import { page } from '$app/state';
+
+	let { params } = $props();
 
 	let billingAddressTemplatesQuery = getBillingAddressTemplates({
 		page: '0',
@@ -18,7 +19,7 @@
 	});
 
 	let orgQuery = getDetails({
-		slug: page.params.organizationSlug!
+		slug: params.organizationSlug
 	});
 </script>
 

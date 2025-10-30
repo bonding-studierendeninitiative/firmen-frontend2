@@ -32,7 +32,6 @@
 	import { SubmitPortraitRequest } from '@schema';
 	import { valibot } from 'sveltekit-superforms/adapters';
 	import { Label } from '@/components/ui/label';
-	import { page } from '$app/state';
 	import { getAllPortraitTemplates as getPortraitTemplates } from '@/remote/functions/index.js';
 	import { toast } from 'svelte-sonner';
 

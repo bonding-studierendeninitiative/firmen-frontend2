@@ -61,15 +61,17 @@
 	<div class="space-y-4 py-2 col-span-2">
 		<AdminRegistrationDocumentPreview registrationDocument={document} />
 
-		<input {...reviewDocument.fields.documentId.as('hidden')} value={document.id} />
+		<input {...reviewDocument.fields.documentId.as('hidden', document.id)} />
 
 		<div>
 			<Label>{$_('modules.review-catalogue-data.feedback-type')}</Label>
 			<Tabs.Root
 				class="p-1"
 				bind:value={
-					reviewDocument.fields.data.documentChangeType.value,
-					reviewDocument.fields.data.documentChangeType.set
+					() => reviewDocument.fields.data.documentChangeType.value() ?? 'confirmation',
+					(a) => {
+						if (a) reviewDocument.fields.data.documentChangeType.set(a);
+					}
 				}
 			>
 				<Tabs.List class="space-x-1">

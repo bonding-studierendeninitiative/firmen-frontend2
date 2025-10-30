@@ -40,6 +40,7 @@
 	}
 
 	const thumbnail = getThumbnail({
+		organizationId: advertisement?.documentVersion?.document?.organizationId ?? '',
 		documentId: advertisement?.documentVersion?.document?.id ?? '',
 		resolution: 'large'
 	});
@@ -48,7 +49,10 @@
 <Dialog.Root>
 	{#if advertisement}
 		<Dialog.Trigger>
-			<AdvertStatusIcon variant={advertisement?.status ?? 'missing'} />
+			<AdvertStatusIcon
+				title={$_('status-text.' + advertisement.status)}
+				variant={advertisement.status ?? 'missing'}
+			/>
 		</Dialog.Trigger>
 	{:else}
 		<AdvertStatusIcon title={$_('status-text.missing')} variant={'missing'} />
@@ -59,9 +63,9 @@
 				<div
 					class="aspect-[1/1.41] bg-gray-100 dark:bg-gray-700 rounded-md flex items-center justify-center overflow-hidden"
 				>
-					{#if $thumbnail.data}
+					{#if thumbnail.current}
 						<img
-							src={$thumbnail.data || '/placeholder.svg'}
+							src={thumbnail.current || '/placeholder.svg'}
 							alt={advertisement?.documentVersion?.document?.title}
 							class="object-contain size-full"
 						/>
@@ -83,10 +87,10 @@
 					<div class="grow"></div>
 					<Dialog.Footer class="flex justify-end">
 						<ReviewRegistrationDocumentDialog document={advertisement} />
-						<Button disabled={$download.isPending} onclick={handleDownload}
+						<Button disabled={download.loading} onclick={handleDownload}
 							>{$_('common.download')}
 						</Button>
-						<DeleteAdvertisementDialog {advertisement} />
+						<DeleteAdvertisementDialog {advertisement} onDelete={async () => {}} />
 					</Dialog.Footer>
 				</div>
 			</div>

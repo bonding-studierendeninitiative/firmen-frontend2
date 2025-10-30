@@ -18,35 +18,20 @@
 
 	const handleAddSubAddon = (e: Event) => {
 		e.preventDefault();
-		createAddonPackage.input![`addonPackage.addons[${addons}].title`] = '';
-		createAddonPackage.input![`addonPackage.addons[${addons}].description`] = '';
-		createAddonPackage.input![`addonPackage.addons[${addons}].price`] = '0';
-		createAddonPackage.input![`addonPackage.addons[${addons}].label`] = '';
-		addons += 1;
+		createAddonPackage.fields.addonPackage.addons.set([
+			...createAddonPackage.fields.addonPackage.addons.value(),
+			{
+				title: '',
+				price: '0',
+				description: '',
+				label: ''
+			}
+		]);
 	};
 	const handleRemoveAddon = (e: Event, index: number) => {
 		e.preventDefault();
-		let subAddonsCopy = [];
-		for (let i = 0; i < addons; i++) {
-			subAddonsCopy.push({
-				title: createAddonPackage.input?.[`addonPackage.addons[${i}].title`] || '',
-				description: createAddonPackage.input?.[`addonPackage.addons[${i}].description`] || '',
-				price: Number(createAddonPackage.input?.[`addonPackage.addons[${i}].price`] || '0'),
-				label: createAddonPackage.input?.[`addonPackage.addons[${i}].label`] || ''
-			});
-			delete createAddonPackage.input![`addonPackage.addons[${i}].title`];
-			delete createAddonPackage.input![`addonPackage.addons[${i}].description`];
-			delete createAddonPackage.input![`addonPackage.addons[${i}].price`];
-			delete createAddonPackage.input![`addonPackage.addons[${i}].label`];
-		}
-		subAddonsCopy.splice(index, 1);
-		subAddonsCopy.forEach((addon, i) => {
-			createAddonPackage.input![`addonPackage.addons[${i}].title`] = addon.title;
-			createAddonPackage.input![`addonPackage.addons[${i}].description`] = addon.description;
-			createAddonPackage.input![`addonPackage.addons[${i}].price`] = String(addon.price);
-			createAddonPackage.input![`addonPackage.addons[${i}].label`] = addon.label;
-		});
-		addons = Math.max(0, addons - 1);
+		let addons = createAddonPackage.fields.addonPackage.addons;
+		addons.set(addons.value().filter((_, i) => i !== index));
 	};
 
 	interface Props {
@@ -67,16 +52,14 @@
 	let { isOpen = $bindable(false), onCreateAddonPackage }: Props = $props();
 
 	$effect(() => {
-		if (!isOpen && createAddonPackage.input) {
-			createAddonPackage.input['addonPackage.title'] = '';
-			createAddonPackage.input['addonPackage.label'] = '';
-			createAddonPackage.input['addonPackage.description'] = '';
-			createAddonPackage.input['addonPackage.price'] = '';
-			createAddonPackage.input['addonPackage.purchasable'] = 'off';
+		if (!isOpen && createAddonPackage.fields.addonPackage.value()) {
+			createAddonPackage.fields.addonPackage.title.set('');
+			createAddonPackage.fields.addonPackage.label.set('');
+			createAddonPackage.fields.addonPackage.description.set('');
+			createAddonPackage.fields.addonPackage.price.set(0);
+			createAddonPackage.fields.addonPackage.purchasable.set(false);
 		}
 	});
-
-	let addons = $state(0);
 </script>
 
 <Dialog.Root bind:open={isOpen}>
@@ -106,74 +89,57 @@
 			})}
 		>
 			<ScrollArea class="h-[60dvh]">
-				<input type="hidden" name={createAddonPackage.field('eventId')} value={page.params.id!} />
-				<input
-					type="hidden"
-					name={createAddonPackage.field('buyOptionId')}
-					value={page.params.buyOptionId!}
-				/>
+				<input {...createAddonPackage.fields.eventId.as('hidden', page.params.id!)} />
+				<input {...createAddonPackage.fields.buyOptionId.as('hidden', page.params.buyOptionId!)} />
 				<div class="-m-2 px-4 py-2 h-max flex flex-col gap-4 @lg:grid @lg:grid-cols-3">
 					<div class="@lg:col-span-2">
 						<Label>{$_('admin-pages.addons.addonName')}</Label>
-						<Input required name={createAddonPackage.field('addonPackage.title')} />
-						{#if createAddonPackage.issues?.['addonPackage.title']}
-							{#each createAddonPackage.issues['addonPackage.title'] as issue}
-								<div class="text-red-500 text-sm">{issue.message}</div>
-							{/each}
-						{/if}
+						<Input {...createAddonPackage.fields.addonPackage.title.as('text')} required />
+						{#each createAddonPackage.fields.addonPackage.title.issues() as issue}
+							<div class="text-red-500 text-sm">{issue.message}</div>
+						{/each}
 					</div>
 					<div class="@lg:col-span-1">
 						<Label>{$_('admin-pages.addons.label')}</Label>
-						<Input name={createAddonPackage.field('addonPackage.label')} />
-						{#if createAddonPackage.issues?.['addonPackage.label']}
-							{#each createAddonPackage.issues['addonPackage.label'] as issue}
-								<div class="text-red-500">{issue.message}</div>
-							{/each}
-						{/if}
+						<Input {...createAddonPackage.fields.addonPackage.label.as('text')} />
+
+						{#each createAddonPackage.fields.addonPackage.label.issues() as issue}
+							<div class="text-red-500">{issue.message}</div>
+						{/each}
 					</div>
 					<div class="@lg:col-span-2">
 						<Label>{$_('admin-pages.addons.packageInformation')}</Label>
-						<Textarea name={createAddonPackage.field('addonPackage.description')} />
-						{#if createAddonPackage.issues?.['addonPackage.description']}
-							{#each createAddonPackage.issues['addonPackage.description'] as issue}
+						<Textarea {...createAddonPackage.fields.addonPackage.description.as('text')} />
+						{#if createAddonPackage.fields.addonPackage.description.issues()}
+							{#each createAddonPackage.fields.addonPackage.description.issues() as issue}
 								<div class="text-red-500">{issue.message}</div>
 							{/each}
 						{/if}
 					</div>
 					<Checkbox
 						containerClass="col-span-1"
-						bind:checked={
-							() => {
-								return createAddonPackage.input?.['addonPackage.purchasable'] === 'on';
-							},
-							(v) => {
-								createAddonPackage.input!['addonPackage.purchasable'] = v ? 'on' : 'off';
-							}
-						}
+						{...createAddonPackage.fields.addonPackage.purchasable.as('checkbox')}
 						label={$_('admin-pages.addons.purchasable')}
 					>
 						<div class="text-gray">{$_('admin-pages.addons.purchasableDescription')}</div>
 						{#snippet description()}
 							<Input
-								type="number"
-								required={!createAddonPackage.input ||
-									createAddonPackage.input['addonPackage.purchasable'] === 'on'}
-								disabled={createAddonPackage.input?.['addonPackage.purchasable'] !== 'on'}
-								name={createAddonPackage.field('addonPackage.price')}
+								required={!createAddonPackage.fields.addonPackage.purchasable.value() ||
+									createAddonPackage.fields.addonPackage.purchasable.value() === true}
+								disabled={createAddonPackage.fields.addonPackage.purchasable.value() !== true}
+								{...createAddonPackage.fields.addonPackage.price.as('number')}
 								placeholder={$_('admin-pages.addons.pricePlaceholder')}
 							/>
-							{#if createAddonPackage.issues?.['addonPackage.price']}
-								{#each createAddonPackage.issues['addonPackage.price'] as issue}
-									<div class="text-red-500 text-sm">{issue.message}</div>
-								{/each}
-							{/if}
+							{#each createAddonPackage.fields.addonPackage.price.issues() as issue}
+								<div class="text-red-500 text-sm">{issue.message}</div>
+							{/each}
 						{/snippet}
 					</Checkbox>
 					<section class="col-span-3">
 						<fieldset class="border border-stone-300 rounded-lg p-4">
 							<legend class="px-2 text-sm font-semibold">{$_('common.addons')}</legend>
 							<div class="space-y-2">
-								{#each Array.from({ length: addons }) as _unused, index}
+								{#each createAddonPackage.fields.addonPackage.addons.value() as _unused, index}
 									<div class={`p-2 relative grid grid-cols-2 gap-4 w-full`}>
 										<button
 											class="absolute right-3 top-4 text-red-500 hover:text-red-700 text-xs"
@@ -183,12 +149,12 @@
 										</button>
 
 										<Label>{$_('admin-pages.addons.subAddonName')}</Label>
-										<Input name={createAddonPackage.field(`addonPackage.addons[${index}].title`)} />
-										{#if createAddonPackage.issues?.[`addonPackage.addons[${index}].title`]}
-											{#each createAddonPackage.issues[`addonPackage.addons[${index}].title`] as issue}
-												<div class="text-red-500 text-sm">{issue.message}</div>
-											{/each}
-										{/if}
+										<Input
+											{...createAddonPackage.fields.addonPackage.addons[index].title.as('text')}
+										/>
+										{#each createAddonPackage.fields.addonPackage.addons[index].title.issues() as issue}
+											<div class="text-red-500 text-sm">{issue.message}</div>
+										{/each}
 
 										<Label>{$_('admin-pages.addons.price')}</Label>
 										<input
@@ -203,7 +169,7 @@
 										<Label>{$_('admin-pages.addons.label')}</Label>
 										<Input name={`addonPackage.addons[${index}].label`} />
 									</div>
-									{#if index < addons - 1}
+									{#if index < createAddonPackage.fields.addonPackage.addons.value().length - 1}
 										<Separator class="-mx-4 mr-auto" />
 									{/if}
 								{/each}
@@ -214,7 +180,12 @@
 						</fieldset>
 					</section>
 				</div>
-				<SuperDebug data={{ input: createAddonPackage.input, issues: createAddonPackage.issues }} />
+				<SuperDebug
+					data={{
+						form: createAddonPackage.fields.value(),
+						issues: createAddonPackage.fields.allIssues()
+					}}
+				/>
 				<Button variant="default" type="submit">{$_('common.save')}</Button>
 			</ScrollArea>
 		</form>

@@ -1,11 +1,9 @@
 <script lang="ts">
 	import * as Card from '@/components/ui/card';
-	import { StatusBadge } from '@/@svelte/components';
 	import { _ } from '@services';
 	import { cn } from '@/utils';
 	import { Button } from '@/components/ui/button';
 	import { SimpleDocumentOutput } from '@api/client';
-	import { page } from '$app/state';
 	import { generateThumbnailLink as getThumbnail } from '@/remote/functions';
 	import { LoaderCircle } from '@lucide/svelte';
 

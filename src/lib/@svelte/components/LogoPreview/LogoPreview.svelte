@@ -3,7 +3,6 @@
 	import { _ } from '@services';
 	import { cn, getHumanReadableFileSize } from '@/utils';
 	import type { RegistrationDocumentOutput } from '@api/client';
-	import { page } from '$app/state';
 	import { generateThumbnailLink as getThumbnail } from '@/remote/functions';
 	import LocalizedDate from '../LocalizedDate/LocalizedDate.svelte';
 	import { Button } from '@/components/ui/button';

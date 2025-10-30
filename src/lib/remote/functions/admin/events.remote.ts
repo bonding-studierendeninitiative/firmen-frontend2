@@ -24,7 +24,7 @@ export const getEvents = query(
 				page: input.page
 			}
 		});
-		console.log(response)
+		console.log(response);
 		return response;
 	}
 );
@@ -35,7 +35,7 @@ export const getEventDetails = query(
 	}),
 	async ({ eventId }) => {
 		const ctx = await createAdminContext();
-		const response = await ctx.api.get('/api/v2/event/{eventId}', {
+		const response = await ctx.api.get('/api/v2/admin/event/{eventId}', {
 			path: { eventId }
 		});
 		return response;

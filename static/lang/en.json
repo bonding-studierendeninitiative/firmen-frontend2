@@ -168,7 +168,10 @@
       "preview": "Preview",
       "generalInformation": "General information",
       "saveBuyOption": "Save buy option",
-      "packageBenefitConfiguration": "Package benefits"
+      "packageBenefitConfiguration": "Package benefits",
+      "addon-packages": "Additional services",
+      "settings": "Settings",
+      "event-days": "Event days"
     },
     "table": {
       "no-records": "No records were found."
@@ -234,7 +237,15 @@
       "entries": "{ entries, plural, =0 {No entries} one {One entry} other {{entries, number} entries} }"
     },
     "edit-buy-options": {
-      "update-success": "The buy option was updated successfully"
+      "update-success": "The buy option was updated successfully",
+      "danger-zone": {
+        "title": "Danger zone",
+        "description": "Irreversible actions that permanently affect this buy option."
+      },
+      "buy-option-version": {
+        "label": "Buy option version",
+        "description": "Every change increments the buy options version by one."
+      }
     }
   },
   "modules": {
@@ -543,7 +554,8 @@
     "portrait-contact": "Contact info",
     "registrations": "Registrations",
     "buy-options": "Buy Options",
-    "exports": "Catalogue data exports"
+    "exports": "Catalogue data exports",
+    "emails": "Emails"
   },
   "table-headings": {
     "company": "Company",
@@ -1180,6 +1192,28 @@
           "success": "Export deleted successfully",
           "error": "Error deleting the export"
         }
+      },
+      "emails": {
+        "draftInfo": "Email drafts",
+        "subject": "Email subject",
+        "createDraft": "Create a new email template",
+        "createDraftDescription": "You can use templates to send bulk emails to contact people.",
+        "reply-to": "Reply-to address",
+        "body": "Body content",
+        "send-email": {
+          "trigger": "Send bulk email...",
+          "title": "Send a bulk email",
+          "description": "You can send an email to the contact people associated with the selected event registrations ",
+          "select-draft": "Select an email draft...",
+          "no-drafts": "No drafts available.",
+          "preview-for": "Preview for {contactName} ({email})",
+          "selected-draft": "Selected draft:"
+        },
+        "markdown": {
+          "help": {
+            "title": "Help"
+          }
+        }
       }
     },
     "dashboard": {
@@ -1232,6 +1266,12 @@
           "role": "Role",
           "created-at": "Joined"
         }
+      }
+    },
+    "edit-buy-options": {
+      "delete-buy-option": {
+        "title": "Delete buy option",
+        "description": "This action cannot be undone. All data will be permanently removed."
       }
     }
   },

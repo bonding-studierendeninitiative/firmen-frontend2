@@ -5,10 +5,8 @@
 	import { Button } from '@/components/ui/button';
 	import { ViewLogoDialog } from '@/@svelte/modules';
 	import { SimpleDocumentOutput } from '@api/client';
-	import { page } from '$app/state';
 	import { generateThumbnailLink as getThumbnail } from '@/remote/functions';
 	import { LoaderCircle } from '@lucide/svelte';
-	import { goto } from '$app/navigation';
 
 	interface Props {
 		logo: SimpleDocumentOutput;

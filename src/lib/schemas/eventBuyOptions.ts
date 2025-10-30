@@ -207,3 +207,24 @@ export const UpdateBuyOptionRequestSchema = v.object({
 });
 
 export type UpdateBuyOptionRequest = typeof UpdateBuyOptionRequestSchema;
+
+export const CreateBuyOptionEventDayInput = v.object({
+	eventId: v.string(),
+	buyOptionId: v.string(),
+	date: v.string(),
+	totalCapacity: v.optional(v.number(), 0),
+	version: v.number()
+});
+
+export type CreateBuyOptionEventDayInput = typeof CreateBuyOptionEventDayInput;
+
+export const UpdateEventDayInput = v.object({
+	eventId: v.string(),
+	buyOptionId: v.string(),
+	eventDayId: v.string(),
+	date: v.string(),
+	totalCapacity: v.optional(v.number(), 0),
+	version: v.number()
+});
+
+export type UpdateEventDayInput = typeof UpdateEventDayInput;

@@ -7,9 +7,9 @@
 	import { goto } from '$app/navigation';
 	import { forOrganization as getEventRegistrations } from '@/remote/functions/index.js';
 
-	let { data, children } = $props();
+	let { data, children, params } = $props();
 
-	let selectedEvent = $state(page.params.eventId ?? '');
+	let selectedEvent = $state(params.eventId ?? '');
 
 	$effect(() => {
 		if (selectedEvent && !page.url.pathname.includes(selectedEvent)) {
