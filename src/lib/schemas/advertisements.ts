@@ -55,7 +55,6 @@ export type DeleteAdvertisementRequest = typeof DeleteAdvertisementRequest;
 
 export const ReviewDocumentRequest = pipe(
 	object({
-		documentId: pipe(string(), nonEmpty()),
 		documentChangeType: union([
 			literal('confirmation'),
 			literal('change-request'),

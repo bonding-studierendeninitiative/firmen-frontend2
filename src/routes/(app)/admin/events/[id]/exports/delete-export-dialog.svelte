@@ -1,45 +1,18 @@
 <script lang="ts">
-	import { page } from '$app/state';
 	import { buttonVariants } from '@/components/ui/button';
 	import * as AlertDialog from '@/components/ui/alert-dialog';
-	import { trpc } from '@/trpc/client';
 	import { Trash2 } from '@lucide/svelte';
 	import { _ } from '@services';
-	import { toast } from 'svelte-sonner';
 
 	interface Props {
 		exportId: string;
 		eventId: string;
+		onDelete: ({ eventId, exportId }: { eventId: string; exportId: string }) => void;
 	}
 
-	let { exportId, eventId }: Props = $props();
+	let { exportId, eventId, onDelete }: Props = $props();
 
 	let open = $state(false);
-
-    const api = trpc(page)
-
-    const utils = api.createUtils()
-
-	const deleteMut = api.admin.export.delete.createMutation();
-
-	function handleDelete(eventId: string, exportId: string) {
-		$deleteMut.mutate(
-			{
-				eventId,
-				exportId
-			},
-			{
-				onSuccess: async (result) => {
-					open = false;
-					toast.success($_('admin-pages.events.exports.delete.success'));
-                    await utils.admin.export.getAll.invalidate({eventId})
-				},
-				onError: (e) => {
-					toast.error(e.message);
-				}
-			}
-		);
-	}
 </script>
 
 <AlertDialog.Root bind:open>
@@ -55,7 +28,13 @@
 		</AlertDialog.Header>
 		<AlertDialog.Footer>
 			<AlertDialog.Cancel>{$_('common.cancel')}</AlertDialog.Cancel>
-			<AlertDialog.Action class={buttonVariants({variant: "destructive"})} onclick={() => handleDelete(eventId, exportId)}>
+			<AlertDialog.Action
+				class={buttonVariants({ variant: 'destructive' })}
+				onclick={() => {
+					onDelete({ eventId, exportId });
+					open = false;
+				}}
+			>
 				{$_('common.delete')}
 			</AlertDialog.Action>
 		</AlertDialog.Footer>

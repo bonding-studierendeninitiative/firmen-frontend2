@@ -3,8 +3,7 @@
 	import { _ } from '@services';
 	import { cn, getHumanReadableFileSize } from '@/utils';
 	import type { RegistrationDocumentOutput } from '@api/client';
-	import { page } from '$app/state';
-	import { trpc } from '@/trpc/client';
+	import { generateThumbnailLink as getThumbnail } from '@/remote/functions';
 	import LocalizedDate from '../LocalizedDate/LocalizedDate.svelte';
 	import { Button } from '@/components/ui/button';
 	import { Replace } from '@lucide/svelte';
@@ -17,29 +16,21 @@
 
 	let { logo, class: className = '', pickNewLogo }: Props = $props();
 
-	const thumbnail = trpc(page).catalogueData.generateThumbnailLink.createQuery(
-		{
-			documentId: logo.documentVersion?.document?.id ?? '',
-			resolution: 'small'
-		},
-		{
-			enabled: true
-		}
-	);
+	const thumbnail = getThumbnail({
+		documentId: logo.documentVersion?.document?.id ?? '',
+		resolution: 'small'
+	});
 </script>
 
 <section
-	class={cn(
-		'p-4 flex flex-row gap-4 w-full bg-muted rounded-xl border border-border',
-		className
-	)}
+	class={cn('p-4 flex flex-row gap-4 w-full bg-muted rounded-xl border border-border', className)}
 >
-	{#if Number($thumbnail.data?.length) > 0}
+	{#if typeof thumbnail.current === 'string' && thumbnail.current.length > 0}
 		<div
 			class="aspect-video bg-white dark:bg-gray-700 rounded-md flex items-center justify-center overflow-hidden shrink-0"
 		>
 			<img
-				src={$thumbnail.data || '/placeholder.svg'}
+				src={thumbnail.current || '/placeholder.svg'}
 				alt={logo.status}
 				class="object-contain size-full"
 			/>

@@ -4,28 +4,28 @@
 	import { Button } from '$lib/components/ui/button';
 	import { _ } from '@services';
 	import RemoveMemberDialog from './remove-member-dialog.svelte';
-	import AddMemberDialog from './add-member-dialog.svelte';
 	interface Props {
 		id: string;
 		orgId: string;
+		onRemoveMember?: (userId: string, organizationId: string) => void;
 	}
 
-	let { id, orgId }: Props = $props();
+	let { id, orgId, onRemoveMember }: Props = $props();
 	let open = $state(false);
 	let isAddOpen = false;
 </script>
 
-<RemoveMemberDialog {orgId} {id} bind:open />
+<RemoveMemberDialog {orgId} {id} bind:open {onRemoveMember} />
 
 <DropdownMenu.Root>
-	<DropdownMenu.Trigger >
+	<DropdownMenu.Trigger>
 		{#snippet child({ props })}
-				<Button variant="ghost" {...props} size="icon" class="relative size-8 p-0">
+			<Button variant="ghost" {...props} size="icon" class="relative size-8 p-0">
 				<span class="sr-only">{$_('common.open-menu')}</span>
 				<Ellipsis class="size-4" />
 			</Button>
-					{/snippet}
-		</DropdownMenu.Trigger>
+		{/snippet}
+	</DropdownMenu.Trigger>
 	<DropdownMenu.Content>
 		<DropdownMenu.Group>
 			<DropdownMenu.Item

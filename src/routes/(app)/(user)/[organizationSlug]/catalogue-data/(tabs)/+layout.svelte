@@ -3,8 +3,6 @@
 	import { LinkTabs } from '@/@svelte/components';
 	import { fade } from 'svelte/transition';
 	import { source } from 'sveltekit-sse';
-	import { trpc } from '@/trpc/client';
-	import { page } from '$app/state';
 	import { invalidate } from '$app/navigation';
 
 	let { data, children } = $props();
@@ -24,27 +22,26 @@
 		}
 	]);
 
-	const api = trpc(page);
-	const utils = api.createUtils();
+	// TODO: Switch to remote function and page level callbacks instead of using data from the load function & trpc
+
+	// We don't need the trpc utils from the client here; use invalidate from $app/navigation
 
 	source('_api/events')
 		.select('catalogue-data-event')
 		.json()
 		.subscribe(async (catalogueDataEvent) => {
 			if (!catalogueDataEvent) {
-				console.log("catalogueDataEvent is null")
+				console.log('catalogueDataEvent is null');
 				return;
 			}
 			if (!catalogueDataEvent.documentId || typeof catalogueDataEvent.documentId !== 'string') {
-				console.log("catalogueDataEvent is missing documentId")
+				console.log('catalogueDataEvent is missing documentId');
 				return;
 			}
 			if (catalogueDataEvent.documentType === 'logo') {
-				await utils.catalogueData.getAll.invalidate({documentType: "logo"})
-				await invalidate("orgLogos")
+				await invalidate('orgLogos');
 			} else if (catalogueDataEvent.documentType === 'advert') {
-				await utils.catalogueData.getAll.invalidate({documentType: "advert"})
-				await invalidate("orgAdverts")
+				await invalidate('orgAdverts');
 			}
 		});
 </script>

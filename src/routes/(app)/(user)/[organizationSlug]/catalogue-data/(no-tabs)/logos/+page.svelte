@@ -1,48 +1,51 @@
 <script lang="ts">
 	import { LinkTabs, NoDataFound } from '@/@svelte/components';
-	import { LoaderCircle, Plus } from '@lucide/svelte';
+	import { LoaderCircle } from '@lucide/svelte';
 	import { fade } from 'svelte/transition';
 	import { UploadLogoDialog } from '@/@svelte/modules';
-	import { Button } from '@/components/ui/button';
-	import { trpc } from '@/trpc/client';
-	import { page } from '$app/state';
 	import { _, dayjs } from '@services/i18n';
-	import { derived } from 'svelte/store';
 	import LogoItem from './logo-item.svelte';
-	let { data } = $props();
-	let isUploadOpen = $state(false);
+	import * as Pagination from '$lib/components/ui/pagination';
+	import { getCatalogueByType as getAllCatalogueData } from '@/remote/functions/catalogueData.remote';
 
-	const api = trpc(page);
+	let { params } = $props();
+
+	let isUploadOpen = $state(false);
 
 	let tabs = $derived([
 		{
 			name: 'catalogue-data-portraits',
-			href: `/${data.orgSlug}/catalogue-data/portraits`
+			href: `/${params.organizationSlug!}/catalogue-data/portraits`
 		},
 		{
 			name: 'catalogue-data-logos',
-			href: `/${data.orgSlug}/catalogue-data/logos`
+			href: `/${params.organizationSlug!}/catalogue-data/logos`
 		},
 		{
 			name: 'catalogue-data-adverts',
-			href: `/${data.orgSlug}/catalogue-data/adverts`
+			href: `/${params.organizationSlug!}/catalogue-data/adverts`
 		}
 	]);
 
-	const [logos, resolveLogos] = api.catalogueData.getAll.createInfiniteQuery(
-		{ limit: '10', documentType: 'logo' },
-		{
-			getNextPageParam: (lastPage) =>
-				Math.max(Number(lastPage.pageNumber) + 1, Number(lastPage.totalPages) - 1).toString(),
-			lazy: true
-		}
-	);
+	const pageSize = 8;
+	let currentPage = $state(1);
 
-	const allLogos = derived(logos, (logos) => {
-		return logos.data?.pages.flatMap((page) => page.documents) ?? [];
+	// Use $derived instead of calling the function directly
+	// This will automatically refresh when currentPage changes
+	const logos = $derived(
+		getAllCatalogueData({
+			limit: String(pageSize),
+			cursor: String(currentPage - 1),
+			documentType: 'logo'
+		})
+	);
+	const allLogos = $derived.by(() => {
+		return logos.current?.documents ?? [];
 	});
 
-	const groupedLogos = derived(allLogos, (allLogos) => {
+	const totalElements = $derived.by(() => logos.current?.totalElements ?? 0);
+
+	const groupedLogos = $derived.by(() => {
 		return allLogos.reduce((acc, logo) => {
 			const year = dayjs(logo?.activeVersion?.createdAt).year();
 
@@ -54,11 +57,9 @@
 		}, {});
 	});
 
-	const uploadFormQuery = api.catalogueData.uploadForm.createQuery(undefined, {
-		staleTime: Infinity
-	});
-
-	const uploadForm = $uploadFormQuery.data;
+	const onSuccess = () => {
+		logos.refresh();
+	};
 </script>
 
 <div class="size-full flex flex-col justify-start items-stretch min-h-max">
@@ -71,30 +72,20 @@
 
 		<div in:fade class="space-y-4">
 			<div class="flex justify-end">
-				{#if $uploadFormQuery.isLoading}
-					<Button class="min-w-32 mr-2" disabled>
-						<LoaderCircle class="size-5 mx-auto animate-spin" />
-					</Button>
-				{:else if $uploadFormQuery.data}
-					<UploadLogoDialog bind:open={isUploadOpen} logoUploadForm={$uploadFormQuery.data} />
-				{/if}
+				<UploadLogoDialog bind:open={isUploadOpen} {onSuccess} />
 			</div>
-			{#await resolveLogos(data.data)}
+			{#if logos.loading}
 				<LoaderCircle class="size-10 mx-auto animate-spin" />
-			{:then _ignored}
-				{#if $logos.data}
-					{#if $allLogos.length < 1}
+			{:else if logos.ready}
+				{#if allLogos}
+					{#if allLogos.length < 1}
 						<NoDataFound
-							heading="No logos found"
-							subHeading="You can add logos to your organization"
-							buttonText="Add logo"
-							onButtonClick={() => {
-								isUploadOpen = true;
-							}}
+							heading={$_('user-pages.catalogue-data.logos-data.no-data-heading')}
+							subHeading={$_('user-pages.catalogue-data.logos-data.no-data-subheading')}
 						/>
 					{:else}
 						<div in:fade class="space-y-8">
-							{#each Object.entries($groupedLogos || {}).sort( ([ayear, alogos], [byear, blogos]) => byear.localeCompare(ayear) ) as [year, logos] (year)}
+							{#each Object.entries(groupedLogos || {}).sort( ([ayear, alogos], [byear, blogos]) => byear.localeCompare(ayear) ) as [year, logos] (year)}
 								<div class="space-y-4 py-2 @container/logos">
 									<h2 class="text-xl font-bold border-b">{year}</h2>
 									<div
@@ -106,17 +97,39 @@
 									</div>
 								</div>
 							{/each}
+							<Pagination.Root count={totalElements} perPage={pageSize} bind:page={currentPage}>
+								{#snippet children({ pages, currentPage })}
+									<Pagination.Content>
+										<Pagination.Item>
+											<Pagination.PrevButton />
+										</Pagination.Item>
+										{#each pages as page (page.key)}
+											{#if page.type === 'ellipsis'}
+												<Pagination.Item>
+													<Pagination.Ellipsis />
+												</Pagination.Item>
+											{:else}
+												<Pagination.Item>
+													<Pagination.Link
+														{page}
+														isActive={currentPage === page.value}
+														class={currentPage === page.value ? 'border-1 border-stone-950' : ''}
+													>
+														{page.value}
+													</Pagination.Link>
+												</Pagination.Item>
+											{/if}
+										{/each}
+										<Pagination.Item>
+											<Pagination.NextButton />
+										</Pagination.Item>
+									</Pagination.Content>
+								{/snippet}
+							</Pagination.Root>
 						</div>
 					{/if}
 				{/if}
-				{#if $logos.isPending || $logos.isFetching}
-					<LoaderCircle class="size-10 mx-auto animate-spin" />
-				{:else if $logos.isError}
-					<article>
-						Error loading logos: {$logos.error}
-					</article>
-				{/if}
-			{/await}
+			{/if}
 		</div>
 	</section>
 </div>

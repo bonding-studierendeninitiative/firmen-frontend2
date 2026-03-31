@@ -1,9 +1,9 @@
-import { object, string } from 'valibot';
+import { minLength, object, pipe, string } from 'valibot';
 
 export const UpdateUserDetailsRequest = object({
-	phone: string(),
-	title: string(),
-	position: string()
+	phone: pipe(string(), minLength(3)),
+	title: pipe(string(), minLength(3)),
+	position: pipe(string(), minLength(3))
 });
 
 export type UpdateUserDetails = typeof UpdateUserDetailsRequest;

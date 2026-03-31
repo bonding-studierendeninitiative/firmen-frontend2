@@ -1,23 +1,21 @@
 <script lang="ts">
 	import { _ } from '@services';
 	import type { PageServerData } from './$types';
-
-	import {
-		type CreateOrgInviteRequest,
-		type GetOrgMembersResponse
-	} from '@schema';
-	import { type SuperValidated } from 'sveltekit-superforms';
-	import type { InferOutput } from 'valibot';
 	import { ManageOrgMembers } from '@/@svelte/modules';
+	import { getOrgMembers } from '@/remote/functions';
 
 	interface Props {
 		data: PageServerData;
-		createInviteForm?: SuperValidated<InferOutput<CreateOrgInviteRequest>> | undefined;
-		organizationMembers?: InferOutput<GetOrgMembersResponse> | undefined;
 	}
 
-	let { data, createInviteForm = data.createInviteForm, organizationMembers = data.organizationMembers }: Props = $props();
+	let { data }: Props = $props();
 
+	let organizationMembersQuery = getOrgMembers({
+		limit: '10',
+		offset: '0',
+		orderBy: 'name',
+		orderDirection: 'asc'
+	});
 </script>
 
 <section class="grid gap-x-8 grid-cols-3 @container gap-y-8">
@@ -29,5 +27,9 @@
 			{$_('user-pages.settings.org-members.description')}
 		</h4>
 	</div>
-	<ManageOrgMembers class="@3xl:col-span-2 col-span-3" {createInviteForm} {organizationMembers} />
+	<ManageOrgMembers
+		class="@3xl:col-span-2 col-span-3"
+		organizationId={data.organization?.id!}
+		membersResponse={organizationMembersQuery}
+	/>
 </section>

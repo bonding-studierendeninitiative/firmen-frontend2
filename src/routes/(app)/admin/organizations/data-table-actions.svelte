@@ -31,10 +31,10 @@
 			</DropdownMenu.Item>
 		</DropdownMenu.Group>
 		<DropdownMenu.Separator />
-		<DropdownMenu.Item>
-			<Link href={`/admin/organizations/${id}`}>
+		<Link href={`/admin/organizations/${id}`}>
+			<DropdownMenu.Item>
 				{$_('admin-pages.organizations.data-table.actions.view-details')}
-			</Link>
-		</DropdownMenu.Item>
+			</DropdownMenu.Item>
+		</Link>
 	</DropdownMenu.Content>
 </DropdownMenu.Root>

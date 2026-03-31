@@ -1,9 +1,11 @@
 // src/+layout.server.ts
-import { type AuthObject, buildClerkProps } from 'svelte-clerk/server';
+import { auth } from '@/auth';
 
-// To enable Clerk SSR support, add initial state props to the load function
-export const load = async ({ locals }) => {
+export const load = async ({ locals, request }) => {
+	const session = await auth.api.getSession({
+		headers: request.headers
+	});
 	return {
-		...buildClerkProps(locals.auth() as unknown as AuthObject)
+		...session
 	};
 };

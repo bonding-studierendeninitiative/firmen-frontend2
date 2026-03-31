@@ -1,11 +1,9 @@
 <script lang="ts">
-	import { page } from '$app/state';
 	import { LocalizedDate } from '@/@svelte/components';
 	import { Badge } from '@/components/ui/badge';
 	import { Button } from '@/components/ui/button';
 	import { Skeleton } from '@/components/ui/skeleton';
 	import * as Table from '@/components/ui/table';
-	import { trpc } from '@/trpc/client';
 	import { getHumanReadableFileSize } from '@/utils';
 	import type { ExportForEventOutput } from '@api/admin-client';
 	import { Download, FileText, ImageIcon, Palette } from '@lucide/svelte';
@@ -15,33 +13,11 @@
 	interface Props {
 		exports: ExportForEventOutput[];
 		eventId: string;
+		onDelete: ({ eventId, exportId }: { eventId: string; exportId: string }) => void;
+		onDownload: ({ eventId, exportId }: { eventId: string; exportId: string }) => void;
 	}
 
-	let { exports, eventId }: Props = $props();
-
-	const download = trpc(page).admin.export.generateDownloadLink.createMutation();
-
-	function handleDownload(exportItem: ExportForEventOutput) {
-		$download.mutate(
-			{
-				eventId,
-				exportId: exportItem.id
-			},
-			{
-				onSuccess: (result) => {
-					const url = result;
-					if (url) {
-						const a = document.createElement('a');
-						a.href = url;
-						a.download = url.split('/').pop();
-						document.body.appendChild(a);
-						a.click();
-						document.body.removeChild(a);
-					}
-				}
-			}
-		);
-	}
+	let { exports, eventId, onDelete, onDownload }: Props = $props();
 
 	const getDocumentTypeColor = (type: ExportForEventOutput['type']) => {
 		switch (type) {
@@ -57,7 +33,7 @@
 	};
 </script>
 
-<div class="rounded-md border">
+<div class="rounded-md border bg-card border-card shadow shadow-border">
 	<Table.Root>
 		<Table.Header>
 			<Table.Row>
@@ -67,7 +43,9 @@
 				<Table.Head>{$_('admin-pages.events.exports.headers.file-size')}</Table.Head>
 				<Table.Head>{$_('admin-pages.events.exports.headers.content-type')}</Table.Head>
 				<Table.Head>{$_('admin-pages.events.exports.headers.created')}</Table.Head>
-				<Table.Head class="text-right">{$_('admin-pages.events.exports.headers.actions')}</Table.Head>
+				<Table.Head class="text-right"
+					>{$_('admin-pages.events.exports.headers.actions')}</Table.Head
+				>
 			</Table.Row>
 		</Table.Header>
 		<Table.Body>
@@ -87,7 +65,7 @@
 							</Badge>
 						</div>
 					</Table.Cell>
-                    <Table.Cell>{$_("admin-pages.events.exports.status." + exportItem.status)}</Table.Cell>
+					<Table.Cell>{$_('admin-pages.events.exports.status.' + exportItem.status)}</Table.Cell>
 					<Table.Cell>
 						{#if exportItem.status === 'pending'}
 							<Skeleton class="h-7 w-full" />
@@ -114,10 +92,14 @@
 					<Table.Cell><LocalizedDate date={exportItem.createdAt} /></Table.Cell>
 					<Table.Cell class="text-right">
 						<div class="flex items-center justify-end gap-2">
-							<Button variant="outline" size="sm" onclick={() => handleDownload(exportItem)}>
+							<Button
+								variant="outline"
+								size="sm"
+								onclick={() => onDownload({ eventId, exportId: exportItem.id! })}
+							>
 								<Download class="h-4 w-4" />
 							</Button>
-                            <DeleteExportDialog {eventId} exportId={exportItem.id} />
+							<DeleteExportDialog {eventId} exportId={exportItem.id!} {onDelete} />
 						</div>
 					</Table.Cell>
 				</Table.Row>

@@ -2,21 +2,14 @@
 	import { Button } from '@/components/ui/button';
 	import * as Dialog from '@/components/ui/dialog';
 	import { _ } from '@services';
-	import { trpc } from '@/trpc/client';
-	import { page } from '$app/state';
-	import { toast } from 'svelte-sonner';
 
 	interface Props {
 		isOpen: boolean;
 		id: string;
+		onReject: ({ eventRegistrationId }: { eventRegistrationId: string }) => Promise<void>;
 	}
 
-	let { isOpen = $bindable(), id }: Props = $props();
-
-	const api = trpc(page);
-	const utils = api.createUtils();
-
-	const rejectEventRegistration = api.admin.eventRegistrations.reject.createMutation();
+	let { isOpen = $bindable(), id, onReject }: Props = $props();
 </script>
 
 <Dialog.Root bind:open={isOpen}>
@@ -35,25 +28,16 @@
 		</Dialog.Header>
 		<Dialog.Footer>
 			<Button
-				onclick={() => {
-					$rejectEventRegistration.mutate(
-						{
-							eventRegistrationId: id
-						},
-						{
-							onSuccess: async () => {
-								toast.success(
-									$_('admin-pages.events.event-registrations.reject-event-registration.success')
-								);
-								isOpen = false;
-								await utils.admin.events.getEventRegistrations.invalidate();
-							},
-							onError: (err) => {
-								toast.error(err.message);
-							}
-						}
-					);
-				}} variant="destructive">{$_('admin-pages.events.event-registrations.reject-event-registration.proceed')}</Button
+				onclick={async () => {
+					try {
+						await onReject({ eventRegistrationId: id });
+						isOpen = false;
+					} catch (error) {
+						console.error('Error rejecting event registration:', error);
+					}
+				}}
+				variant="destructive"
+				>{$_('admin-pages.events.event-registrations.reject-event-registration.proceed')}</Button
 			>
 		</Dialog.Footer>
 	</Dialog.Content>

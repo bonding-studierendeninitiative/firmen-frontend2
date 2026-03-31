@@ -15,7 +15,7 @@
 		detailedValue?: Partial<DetailedValue> | null;
 		value?: string;
 		searchPlaceholder?: string;
-		name: string | undefined;
+		name?: string | undefined;
 		label: string | undefined;
 		required?: boolean;
 		class?: string;

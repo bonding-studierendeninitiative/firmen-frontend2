@@ -12,8 +12,8 @@
 	import { blur } from 'svelte/transition';
 	import EventStatusFilter from './event-status-filter.svelte';
 	import { queryParameters, ssp } from 'sveltekit-search-params';
-
-	let { data } = $props();
+	import { fade } from 'svelte/transition';
+	import { getEvents } from '@/remote/functions/admin';
 
 	const mapEvent = (event: {
 		id: string;
@@ -32,20 +32,35 @@
 	};
 	let isListView = $state(true);
 
-	const Params = queryParameters({
-		status: ssp.array<string>(),
-		page: false,
-		sort: false
-	});
+	let params = queryParameters(
+		{
+			status: ssp.array<string>(),
+			page: ssp.number(),
+			size: ssp.number()
+		},
+		{
+			showDefaults: false
+		}
+	);
+
+	let eventsFilter = $derived.by(() => ({
+		status: params.status?.length ? params.status : ['PUBLISHED', 'UNPUBLISHED', 'ARCHIVED'],
+		page: params.page ?? 0,
+		size: params.size ?? 10,
+		sortBy: 'dateFrom',
+		sortDirection: 'desc'
+	}));
+
+	let eventsQuery = $derived(getEvents(eventsFilter));
 
 	function resetFiltering() {
-		$Params.status = null;
-		$Params.page = null;
-		$Params.sort = null;
+		params.status = null;
+		params.page = null;
+		params.size = null;
 	}
 </script>
 
-<div class="space-y-6">
+<div in:fade class="space-y-6">
 	<div class=" flex justify-between items-end">
 		<div>
 			<h1 class=" text-stone-950 text-3xl font-extrabold">{$_('admin-pages.events.heading')}</h1>
@@ -71,14 +86,14 @@
 			</ButtonIcon>
 		</div>
 	</section>
-	{#await data.events}
+	{#if eventsQuery.loading}
 		<LoaderCircle class=" size-16 mx-auto animate-spin" />
-	{:then events}
+	{:else if eventsQuery.current}
 		<section in:blur class="space-y-6">
-			{#if Number(events?.totalElements) > 0}
+			{#if Number(eventsQuery.current?.totalElements) > 0}
 				<PublishedEventsTab
 					{isListView}
-					publishedEvents={events?.data?.map(mapEvent) ?? []}
+					publishedEvents={eventsQuery.current?.data?.map(mapEvent) ?? []}
 					handleEventRegistration={(id) => goto(`/admin/events/${id}/registrations/`)}
 					handleBuyOptions={(id) => goto(`/admin/events/${id}/buy-options/`)}
 				/>
@@ -89,9 +104,9 @@
 						params.set('page', (pageNumber - 1).toString());
 						await goto(`?${params}`);
 					}}
-					page={Number(events?.page) + 1}
-					count={Number(events?.totalElements)}
-					perPage={events?.size}
+					page={Number(eventsQuery.current?.page) + 1}
+					count={Number(eventsQuery.current?.totalElements)}
+					perPage={eventsQuery.current?.size}
 				>
 					{#snippet children({ pages, currentPage })}
 						<Pagination.Content>
@@ -132,9 +147,5 @@
 				/>
 			{/if}
 		</section>
-	{:catch error}
-		<div class=" text-center text-stone-500">
-			{error.message}
-		</div>
-	{/await}
+	{/if}
 </div>

@@ -5,12 +5,10 @@
 	import { CalenderIcon, LocationIcon } from '@/@svelte/icons';
 	import { AddonList, LocalizedDate, LocalizedDateRange } from '@/@svelte/components';
 	import { BuyOptionPreview } from '@/@svelte/modules';
+	import { queryParameters, ssp } from 'sveltekit-search-params';
 
 	let selectedAddons: string[] = $state([]);
 	let selectedAddonPackages: string[] = $state([]);
-	let selectedPackageId: string = $state('');
-	let selectedAmountOfParticipationDays: string = $state('1');
-	let selectedEventDays: string[] = $state([]);
 	interface Props {
 		event: any;
 		buyOption: any;
@@ -19,22 +17,23 @@
 
 	let { event, buyOption, orgSlug = '' }: Props = $props();
 
-	let searchParams = $derived(
-		new URLSearchParams([
-			...selectedAddons.map((addon) => ['selectedAddon', addon]),
-			...selectedAddonPackages.map((addonPackage) => ['selectedAddonPackage', addonPackage]),
-			...(selectedPackageId ? [['selectedPackage', selectedPackageId]] : []),
-			...selectedEventDays.map((eventDay) => ['selectedEventDays', eventDay]),
-			...(selectedAmountOfParticipationDays
-				? [['selectedAmountOfParticipationDays', selectedAmountOfParticipationDays]]
-				: [])
-		])
+	let queryParams = queryParameters(
+		{
+			selectedPackage: ssp.string(''),
+			selectedEventDays: ssp.array<string>([]),
+			selectedAddons: ssp.array<string>([]),
+			selectedAddonPackages: ssp.array<string>([]),
+			selectedAmountOfParticipationDays: ssp.string('1')
+		},
+		{
+			showDefaults: false
+		}
 	);
 
 	const showCapacity = false;
 
 	function canProceed() {
-		return selectedPackageId !== '' && selectedEventDays.length > 0;
+		return queryParams.selectedPackage !== '' && queryParams.selectedEventDays.length > 0;
 	}
 </script>
 
@@ -100,9 +99,9 @@
 	</div>
 	<BuyOptionPreview
 		{buyOption}
-		bind:selectedPackageId
-		bind:selectedAmountOfParticipationDays
-		bind:selectedEventDays
+		bind:selectedPackageId={queryParams.selectedPackage}
+		bind:selectedAmountOfParticipationDays={queryParams.selectedAmountOfParticipationDays}
+		bind:selectedEventDays={queryParams.selectedEventDays}
 	/>
 
 	{#if buyOption.addonPackages.length > 0}
@@ -118,8 +117,14 @@
 	{/if}
 	<footer class=" flex mt-6 justify-end items-center">
 		{#if canProceed()}
-			<Button href={`${event?.id}/event-registration?${searchParams}`}
-				>{$_('common.continue')}</Button
+			<Button
+				href={`checkout?${new URLSearchParams({
+					selectedPackage: queryParams.selectedPackage!,
+					selectedEventDays: ssp.array<string>().encode(queryParams.selectedEventDays) ?? '[]',
+					selectedAddons: ssp.array<string>().encode(queryParams.selectedAddons) ?? '[]',
+					selectedAddonPackages:
+						ssp.array<string>().encode(queryParams.selectedAddonPackages) ?? '[]'
+				})}`}>{$_('common.continue')}</Button
 			>
 		{:else}
 			<Button disabled={true}>{$_('common.continue')}</Button>

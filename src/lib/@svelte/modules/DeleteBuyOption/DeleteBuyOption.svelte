@@ -1,31 +1,30 @@
 <script lang="ts">
-	import { _ } from '@services/i18n.js';
+	import { _ } from '@services/i18n';
 	import * as Dialog from '@/components/ui/dialog';
 	import { Button } from '@/components/ui/form';
 	import { page } from '$app/state';
 	import { TrashIcon } from '@/@svelte/icons';
 	import { LoaderCircle } from '@lucide/svelte';
 	import { buttonVariants } from '@/components/ui/button';
-	import { trpc } from '@/trpc/client';
-	import { goto } from '$app/navigation';
-	import { toast } from 'svelte-sonner';
+	import { cn } from '@/utils';
+
+	let {
+		onDelete
+	}: {
+		onDelete: () => Promise<void>;
+	} = $props();
 
 	let isOpen = $state(false);
-
-	const api = trpc(page);
-
-	const utils = api.createUtils();
-
-	const deleteBuyOption = api.admin.events.buyOptions.delete.createMutation();
 </script>
 
 <Dialog.Root bind:open={isOpen}>
 	<Dialog.Overlay />
 	<Dialog.Trigger
 		disabled={!page.params.buyOptionId}
-		class={[buttonVariants({ variant: 'ghost', size: 'icon' }), 'text-red-500 hover:text-red-700']}
+		class={cn([buttonVariants({ variant: 'destructive', size: 'default' })])}
 	>
 		<TrashIcon class="size-6" />
+		{$_('common.delete')}
 	</Dialog.Trigger>
 	<Dialog.Content>
 		<Dialog.Header>
@@ -47,32 +46,18 @@
 					>{$_('common.cancel')}</Dialog.Close
 				>
 				<Button
-					disabled={$deleteBuyOption.isPending}
+					disabled={!!$effect.pending()}
 					variant="destructive"
-					onclick={() => {
-						$deleteBuyOption.mutate(
-							{
-								buyOptionId: page.params.buyOptionId,
-								eventId: page.params.id
-							},
-							{
-								onSuccess(data, variables, context) {
-									goto(`/admin/events/${page.params.id}/buy-options`);
-									toast.success($_('modules.delete-buy-option.success'));
-									utils.admin.events.buyOptions.getAll.invalidate({
-										eventId: page.params.id,
-										page: '0',
-										limit: '10',
-										sortBy: 'creationDate',
-										sortDirection: 'desc'
-									});
-									isOpen = false;
-								}
-							}
-						);
+					onclick={async () => {
+						try {
+							await onDelete();
+							isOpen = false;
+						} catch (e) {
+							console.error(e);
+						}
 					}}
 				>
-					{#if $deleteBuyOption.isPending}
+					{#if $effect.pending()}
 						<LoaderCircle class="size-4 animate-spin" />
 					{:else}
 						{$_('common.delete')}

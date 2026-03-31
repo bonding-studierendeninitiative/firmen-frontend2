@@ -2,22 +2,17 @@
 	import * as Dialog from '@/components/ui/dialog';
 	import { Trash2 } from '@lucide/svelte';
 	import { Button, buttonVariants } from '@/components/ui/button';
-	import { toast } from 'svelte-sonner';
 	import { _ } from '@services';
-	import { trpc } from '@/trpc/client';
-	import { page } from '$app/state';
-	import type { AdvertisementOutput } from '@api/client';
+	import type { DetailedDocumentOutput } from '@api/client';
 
 	interface Props {
-		advertisement: AdvertisementOutput;
+		advertisement: DetailedDocumentOutput;
+		onDelete: (id: string) => Promise<void>;
 	}
 
-	let { advertisement }: Props = $props();
+	let { advertisement, onDelete }: Props = $props();
 	let open = $state(false);
-	const api = trpc(page);
-	const utils = api.createUtils();
-
-	const deleteAdvertisement = api.catalogueData.deleteDocument.createMutation();
+	let loading = $state(false);
 </script>
 
 <Dialog.Root bind:open>
@@ -43,20 +38,20 @@
 			>
 			<Button
 				onclick={() => {
-					if (advertisement.id) {
-						$deleteAdvertisement.mutate(advertisement.id, {
-							onError: (error) => {
-								toast.error(error.message);
-							},
-							onSuccess: () => {
-								toast.success('Advertisement deleted');
-								utils.catalogueData.getAll.invalidate();
-								open = false;
-							}
+					loading = true;
+					onDelete?.(advertisement.id!)
+						.then(async () => {
+							open = false;
+						})
+						.catch((e) => {
+							console.error(e);
+						})
+						.finally(() => {
+							loading = false;
 						});
-					}
 				}}
 				variant="destructive"
+				disabled={loading}
 			>
 				<Trash2 class="mr-2 size-5" />
 				{$_('common.delete')}

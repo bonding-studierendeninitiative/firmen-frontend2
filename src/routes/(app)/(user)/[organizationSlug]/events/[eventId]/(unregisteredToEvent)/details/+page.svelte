@@ -1,15 +1,20 @@
 <script lang="ts">
-	import { page } from '$app/state';
 	import { EventDetails } from '@/@svelte/modules';
+	import { getActiveBuyOption, getEventDetails } from '@/remote/functions/events.remote.js';
 	import { LoaderCircle } from '@lucide/svelte';
 
-	let { data } = $props();
+	let { params } = $props();
+
+	let eventQuery = getEventDetails(params.eventId);
+	let eventBuyOptions = getActiveBuyOption(params.eventId);
 </script>
 
-{#await data.eventDetails}
+{#if eventQuery.loading || eventBuyOptions.loading}
 	<LoaderCircle class="size-16 mx-auto animate-spin" />
-{:then {event, buyOption }}
-	<EventDetails {event} {buyOption} orgSlug={page.params.organizationSlug} />
-{:catch error}
-	<p>{error.message}</p>
-{/await}
+{:else if eventQuery.ready && eventBuyOptions.ready}
+	<EventDetails
+		event={eventQuery.current}
+		buyOption={eventBuyOptions.current}
+		orgSlug={params.organizationSlug}
+	/>
+{/if}

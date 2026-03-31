@@ -1,7 +1,52 @@
 import * as v from "valibot";
 
-export type DetailedPortraitTemplateResponse = v.InferOutput<typeof DetailedPortraitTemplateResponse>;
-export const DetailedPortraitTemplateResponse = v.object({
+export type PortraitTemplateInput_Detailed = v.InferOutput<typeof PortraitTemplateInput_Detailed>;
+export const PortraitTemplateInput_Detailed = v.object({
+  title: v.string(),
+  comment: v.string(),
+  industry: v.string(),
+  products: v.string(),
+  locations_worldwide: v.string(),
+  locations_europe: v.string(),
+  locations_germany: v.string(),
+  revenue_worldwide: v.string(),
+  revenue_europe: v.string(),
+  revenue_germany: v.string(),
+  employees_worldwide: v.string(),
+  employees_europe: v.string(),
+  employees_germany: v.string(),
+  graduates: v.string(),
+  desiredDisciplines: v.string(),
+  entryOptions: v.string(),
+  offersThesis: v.boolean(),
+  offersOutOfCountryWork: v.boolean(),
+  offersInternships: v.boolean(),
+  contactAddress: v.string(),
+  contactPersonStudents: v.string(),
+  contactPersonGraduates: v.string(),
+  website: v.string(),
+  additionalInformation: v.string(),
+  displayName: v.string(),
+});
+
+export type StatusType_Detailed = v.InferOutput<typeof StatusType_Detailed>;
+export const StatusType_Detailed = v.object({
+  statusCode: v.optional(v.number()),
+  reasonPhrase: v.optional(v.string()),
+});
+
+export type Problem_Detailed = v.InferOutput<typeof Problem_Detailed>;
+export const Problem_Detailed = v.object({
+  title: v.optional(v.string()),
+  status: v.optional(StatusType_Detailed),
+  detail: v.optional(v.string()),
+  instance: v.optional(v.string()),
+  type: v.optional(v.string()),
+  parameters: v.optional(v.record(v.string(), v.unknown())),
+});
+
+export type PortraitTemplateOutput_Detailed = v.InferOutput<typeof PortraitTemplateOutput_Detailed>;
+export const PortraitTemplateOutput_Detailed = v.object({
   id: v.optional(v.string()),
   title: v.optional(v.string()),
   comment: v.optional(v.string()),
@@ -32,51 +77,6 @@ export const DetailedPortraitTemplateResponse = v.object({
   createdAt: v.optional(v.string()),
 });
 
-export type PortraitTemplateInput = v.InferOutput<typeof PortraitTemplateInput>;
-export const PortraitTemplateInput = v.object({
-  title: v.string(),
-  comment: v.string(),
-  industry: v.string(),
-  products: v.string(),
-  locations_worldwide: v.string(),
-  locations_europe: v.string(),
-  locations_germany: v.string(),
-  revenue_worldwide: v.string(),
-  revenue_europe: v.string(),
-  revenue_germany: v.string(),
-  employees_worldwide: v.string(),
-  employees_europe: v.string(),
-  employees_germany: v.string(),
-  graduates: v.string(),
-  desiredDisciplines: v.string(),
-  entryOptions: v.string(),
-  offersThesis: v.boolean(),
-  offersOutOfCountryWork: v.boolean(),
-  offersInternships: v.boolean(),
-  contactAddress: v.string(),
-  contactPersonStudents: v.string(),
-  contactPersonGraduates: v.string(),
-  website: v.string(),
-  additionalInformation: v.string(),
-  displayName: v.string(),
-});
-
-export type StatusType = v.InferOutput<typeof StatusType>;
-export const StatusType = v.object({
-  reasonPhrase: v.optional(v.string()),
-  statusCode: v.optional(v.number()),
-});
-
-export type Problem = v.InferOutput<typeof Problem>;
-export const Problem = v.object({
-  parameters: v.optional(v.record(v.string(), v.unknown())),
-  instance: v.optional(v.string()),
-  type: v.optional(v.string()),
-  title: v.optional(v.string()),
-  status: v.optional(StatusType),
-  detail: v.optional(v.string()),
-});
-
 export type BillingAddressTemplateResponse = v.InferOutput<typeof BillingAddressTemplateResponse>;
 export const BillingAddressTemplateResponse = v.object({
   id: v.optional(v.string()),
@@ -101,6 +101,22 @@ export const EditBillingAddressTemplateInput = v.object({
   organizationName: v.optional(v.string()),
 });
 
+export type StatusType = v.InferOutput<typeof StatusType>;
+export const StatusType = v.object({
+  statusCode: v.optional(v.number()),
+  reasonPhrase: v.optional(v.string()),
+});
+
+export type Problem = v.InferOutput<typeof Problem>;
+export const Problem = v.object({
+  title: v.optional(v.string()),
+  status: v.optional(StatusType),
+  detail: v.optional(v.string()),
+  instance: v.optional(v.string()),
+  type: v.optional(v.string()),
+  parameters: v.optional(v.record(v.string(), v.unknown())),
+});
+
 export type CreateDocumentRequest = v.InferOutput<typeof CreateDocumentRequest>;
 export const CreateDocumentRequest = v.object({
   organizationId: v.optional(v.string()),
@@ -108,6 +124,7 @@ export const CreateDocumentRequest = v.object({
   mimeType: v.optional(v.string()),
   type: v.optional(v.union([v.literal("portrait"), v.literal("logo"), v.literal("advert")])),
   title: v.optional(v.string()),
+  uploaderId: v.optional(v.string()),
 });
 
 export type UploadUrlResponse = v.InferOutput<typeof UploadUrlResponse>;
@@ -202,65 +219,193 @@ export const ChangeContactPeopleInput = v.object({
   contactPeople: v.optional(v.array(v.string())),
 });
 
-export type GetPortraitTemplatesByOrganizationOutput = v.InferOutput<typeof GetPortraitTemplatesByOrganizationOutput>;
-export const GetPortraitTemplatesByOrganizationOutput = v.object({
-  portraitTemplates: v.optional(v.array(DetailedPortraitTemplateResponse)),
+export type SendMagicLinkRequest = v.InferOutput<typeof SendMagicLinkRequest>;
+export const SendMagicLinkRequest = v.object({
+  email: v.string(),
+  link: v.string(),
+  locale: v.optional(v.union([v.string(), v.undefined()])),
+});
+
+export type StatusType_Simple = v.InferOutput<typeof StatusType_Simple>;
+export const StatusType_Simple = v.object({
+  statusCode: v.optional(v.number()),
+  reasonPhrase: v.optional(v.string()),
+});
+
+export type Problem_Simple = v.InferOutput<typeof Problem_Simple>;
+export const Problem_Simple = v.object({
+  title: v.optional(v.string()),
+  status: v.optional(StatusType_Simple),
+  detail: v.optional(v.string()),
+  instance: v.optional(v.string()),
+  type: v.optional(v.string()),
+  parameters: v.optional(v.record(v.string(), v.unknown())),
+});
+
+export type PortraitTemplateOutput_Simple = v.InferOutput<typeof PortraitTemplateOutput_Simple>;
+export const PortraitTemplateOutput_Simple = v.object({
+  id: v.optional(v.string()),
+  title: v.optional(v.string()),
+  displayName: v.optional(v.string()),
+  modifiedAt: v.optional(v.string()),
+});
+
+export type GetPortraitTemplatesByOrganizationOutput_Simple = v.InferOutput<
+  typeof GetPortraitTemplatesByOrganizationOutput_Simple
+>;
+export const GetPortraitTemplatesByOrganizationOutput_Simple = v.object({
+  portraitTemplates: v.optional(v.array(PortraitTemplateOutput_Simple)),
   totalPages: v.optional(v.number()),
   totalElements: v.optional(v.number()),
   pageNumber: v.optional(v.number()),
   pageSize: v.optional(v.number()),
 });
 
-export type DocumentFeedbackOutput = v.InferOutput<typeof DocumentFeedbackOutput>;
-export const DocumentFeedbackOutput = v.object({
+export type StatusType_DetailedDocument_or_SimpleDocumentVersion = v.InferOutput<
+  typeof StatusType_DetailedDocument_or_SimpleDocumentVersion
+>;
+export const StatusType_DetailedDocument_or_SimpleDocumentVersion = v.object({
+  statusCode: v.optional(v.number()),
+  reasonPhrase: v.optional(v.string()),
+});
+
+export type Problem_DetailedDocument_or_SimpleDocumentVersion = v.InferOutput<
+  typeof Problem_DetailedDocument_or_SimpleDocumentVersion
+>;
+export const Problem_DetailedDocument_or_SimpleDocumentVersion = v.object({
+  title: v.optional(v.string()),
+  status: v.optional(StatusType_DetailedDocument_or_SimpleDocumentVersion),
+  detail: v.optional(v.string()),
+  instance: v.optional(v.string()),
+  type: v.optional(v.string()),
+  parameters: v.optional(v.record(v.string(), v.unknown())),
+});
+
+export type DocumentFeedbackOutput_DetailedDocument_or_SimpleDocumentVersion = v.InferOutput<
+  typeof DocumentFeedbackOutput_DetailedDocument_or_SimpleDocumentVersion
+>;
+export const DocumentFeedbackOutput_DetailedDocument_or_SimpleDocumentVersion = v.object({
   feedbackType: v.optional(v.string()),
   message: v.optional(v.string()),
   timestamp: v.optional(v.string()),
 });
 
-export type SimpleDocumentVersionOutput = v.InferOutput<typeof SimpleDocumentVersionOutput>;
-export const SimpleDocumentVersionOutput = v.object({
-  versionId: v.optional(v.string()),
-  size: v.optional(v.number()),
-  contentType: v.optional(v.string()),
-  isLatest: v.optional(v.boolean()),
+export type DocumentVersionOutput_DetailedDocument_or_SimpleDocumentVersion = v.InferOutput<
+  typeof DocumentVersionOutput_DetailedDocument_or_SimpleDocumentVersion
+>;
+export const DocumentVersionOutput_DetailedDocument_or_SimpleDocumentVersion = v.object({
+  versionId: v.string(),
+  size: v.optional(v.union([v.number(), v.undefined()])),
+  contentType: v.optional(v.union([v.string(), v.undefined()])),
   uploadStatus: v.optional(
     v.union([
-      v.literal("PENDING_METADATA"),
-      v.literal("PENDING_UPLOAD"),
-      v.literal("UPLOADED"),
-      v.literal("PROCESSING_DERIVATIVES"),
-      v.literal("COMPLETED"),
-      v.literal("ERROR_UPLOAD"),
-      v.literal("ERROR_PROCESSING"),
-      v.literal("ARCHIVED"),
-      v.literal("DELETED"),
+      v.union([
+        v.literal("PENDING_METADATA"),
+        v.literal("PENDING_UPLOAD"),
+        v.literal("UPLOADED"),
+        v.literal("PROCESSING_DERIVATIVES"),
+        v.literal("COMPLETED"),
+        v.literal("ERROR_UPLOAD"),
+        v.literal("ERROR_PROCESSING"),
+        v.literal("ARCHIVED"),
+        v.literal("DELETED"),
+      ]),
+      v.undefined(),
     ]),
   ),
-  createdAt: v.optional(v.string()),
-  modifiedAt: v.optional(v.string()),
-  history: v.optional(v.array(DocumentFeedbackOutput)),
+  createdAt: v.optional(v.union([v.string(), v.undefined()])),
+  modifiedAt: v.optional(v.union([v.string(), v.undefined()])),
+  history: v.optional(
+    v.union([v.array(DocumentFeedbackOutput_DetailedDocument_or_SimpleDocumentVersion), v.undefined()]),
+  ),
 });
 
-export type DetailedDocumentOutput = v.InferOutput<typeof DetailedDocumentOutput>;
-export const DetailedDocumentOutput = v.object({
-  id: v.optional(v.string()),
+export type DocumentOutput_DetailedDocument_or_SimpleDocumentVersion = v.InferOutput<
+  typeof DocumentOutput_DetailedDocument_or_SimpleDocumentVersion
+>;
+export const DocumentOutput_DetailedDocument_or_SimpleDocumentVersion = v.object({
+  id: v.string(),
+  title: v.optional(v.union([v.string(), v.undefined()])),
+  documentType: v.optional(
+    v.union([v.union([v.literal("portrait"), v.literal("logo"), v.literal("advert")]), v.undefined()]),
+  ),
+  activeVersion: v.optional(v.union([DocumentVersionOutput_DetailedDocument_or_SimpleDocumentVersion, v.undefined()])),
+  organizationId: v.string(),
+});
+
+export type StatusType_SimpleDocumentVersion = v.InferOutput<typeof StatusType_SimpleDocumentVersion>;
+export const StatusType_SimpleDocumentVersion = v.object({
+  statusCode: v.optional(v.number()),
+  reasonPhrase: v.optional(v.string()),
+});
+
+export type Problem_SimpleDocumentVersion = v.InferOutput<typeof Problem_SimpleDocumentVersion>;
+export const Problem_SimpleDocumentVersion = v.object({
   title: v.optional(v.string()),
-  documentType: v.optional(v.union([v.literal("portrait"), v.literal("logo"), v.literal("advert")])),
-  activeVersion: v.optional(SimpleDocumentVersionOutput),
-  organizationId: v.optional(v.string()),
+  status: v.optional(StatusType_SimpleDocumentVersion),
+  detail: v.optional(v.string()),
+  instance: v.optional(v.string()),
+  type: v.optional(v.string()),
+  parameters: v.optional(v.record(v.string(), v.unknown())),
 });
 
-export type UnknownContentTypeDocumentVersionOutput = v.InferOutput<typeof UnknownContentTypeDocumentVersionOutput>;
-export const UnknownContentTypeDocumentVersionOutput = v.object({
-  versionId: v.optional(v.string()),
-  lastModified: v.optional(v.string()),
-  size: v.optional(v.number()),
-  isLatest: v.optional(v.boolean()),
+export type DocumentFeedbackOutput_SimpleDocumentVersion = v.InferOutput<
+  typeof DocumentFeedbackOutput_SimpleDocumentVersion
+>;
+export const DocumentFeedbackOutput_SimpleDocumentVersion = v.object({
+  feedbackType: v.optional(v.string()),
+  message: v.optional(v.string()),
+  timestamp: v.optional(v.string()),
 });
 
-export type BaseDocumentOutput = v.InferOutput<typeof BaseDocumentOutput>;
-export const BaseDocumentOutput = v.object({
+export type DocumentVersionOutput_SimpleDocumentVersion = v.InferOutput<
+  typeof DocumentVersionOutput_SimpleDocumentVersion
+>;
+export const DocumentVersionOutput_SimpleDocumentVersion = v.object({
+  versionId: v.string(),
+  size: v.optional(v.union([v.number(), v.undefined()])),
+  contentType: v.optional(v.union([v.string(), v.undefined()])),
+  uploadStatus: v.optional(
+    v.union([
+      v.union([
+        v.literal("PENDING_METADATA"),
+        v.literal("PENDING_UPLOAD"),
+        v.literal("UPLOADED"),
+        v.literal("PROCESSING_DERIVATIVES"),
+        v.literal("COMPLETED"),
+        v.literal("ERROR_UPLOAD"),
+        v.literal("ERROR_PROCESSING"),
+        v.literal("ARCHIVED"),
+        v.literal("DELETED"),
+      ]),
+      v.undefined(),
+    ]),
+  ),
+  createdAt: v.optional(v.union([v.string(), v.undefined()])),
+  modifiedAt: v.optional(v.union([v.string(), v.undefined()])),
+  history: v.optional(v.union([v.array(DocumentFeedbackOutput_SimpleDocumentVersion), v.undefined()])),
+});
+
+export type StatusType_DetailedDocumentVersion = v.InferOutput<typeof StatusType_DetailedDocumentVersion>;
+export const StatusType_DetailedDocumentVersion = v.object({
+  statusCode: v.optional(v.number()),
+  reasonPhrase: v.optional(v.string()),
+});
+
+export type Problem_DetailedDocumentVersion = v.InferOutput<typeof Problem_DetailedDocumentVersion>;
+export const Problem_DetailedDocumentVersion = v.object({
+  title: v.optional(v.string()),
+  status: v.optional(StatusType_DetailedDocumentVersion),
+  detail: v.optional(v.string()),
+  instance: v.optional(v.string()),
+  type: v.optional(v.string()),
+  parameters: v.optional(v.record(v.string(), v.unknown())),
+});
+
+export type BaseDocumentOutput_DetailedDocumentVersion = v.InferOutput<
+  typeof BaseDocumentOutput_DetailedDocumentVersion
+>;
+export const BaseDocumentOutput_DetailedDocumentVersion = v.object({
   id: v.string(),
   title: v.optional(v.union([v.string(), v.undefined()])),
   documentType: v.optional(
@@ -269,9 +414,20 @@ export const BaseDocumentOutput = v.object({
   organizationId: v.optional(v.union([v.string(), v.undefined()])),
 });
 
-export type DetailedDocumentVersionOutput = v.InferOutput<typeof DetailedDocumentVersionOutput>;
-export const DetailedDocumentVersionOutput = v.object({
-  versionId: v.optional(v.union([v.string(), v.undefined()])),
+export type DocumentFeedbackOutput_DetailedDocumentVersion = v.InferOutput<
+  typeof DocumentFeedbackOutput_DetailedDocumentVersion
+>;
+export const DocumentFeedbackOutput_DetailedDocumentVersion = v.object({
+  feedbackType: v.optional(v.string()),
+  message: v.optional(v.string()),
+  timestamp: v.optional(v.string()),
+});
+
+export type DocumentVersionOutput_DetailedDocumentVersion = v.InferOutput<
+  typeof DocumentVersionOutput_DetailedDocumentVersion
+>;
+export const DocumentVersionOutput_DetailedDocumentVersion = v.object({
+  versionId: v.string(),
   size: v.optional(v.union([v.number(), v.undefined()])),
   contentType: v.optional(v.union([v.string(), v.undefined()])),
   isLatest: v.optional(v.union([v.boolean(), v.undefined()])),
@@ -291,35 +447,60 @@ export const DetailedDocumentVersionOutput = v.object({
       v.undefined(),
     ]),
   ),
-  document: BaseDocumentOutput,
+  document: BaseDocumentOutput_DetailedDocumentVersion,
   createdAt: v.optional(v.union([v.string(), v.undefined()])),
   modifiedAt: v.optional(v.union([v.string(), v.undefined()])),
-  history: v.optional(v.union([v.array(DocumentFeedbackOutput), v.undefined()])),
+  history: v.optional(v.union([v.array(DocumentFeedbackOutput_DetailedDocumentVersion), v.undefined()])),
 });
 
-export type DocumentVersionDescription = v.InferOutput<typeof DocumentVersionDescription>;
-export const DocumentVersionDescription = v.object({
+export type DocumentVersionDescription_SimpleDocumentVersion = v.InferOutput<
+  typeof DocumentVersionDescription_SimpleDocumentVersion
+>;
+export const DocumentVersionDescription_SimpleDocumentVersion = v.object({
   id: v.optional(v.string()),
   title: v.optional(v.string()),
   documentType: v.optional(v.union([v.literal("portrait"), v.literal("logo"), v.literal("advert")])),
-  version: v.optional(SimpleDocumentVersionOutput),
+  version: v.optional(DocumentVersionOutput_SimpleDocumentVersion),
   organizationId: v.optional(v.string()),
 });
 
-export type SimpleDocumentOutput = v.InferOutput<typeof SimpleDocumentOutput>;
-export const SimpleDocumentOutput = v.object({
+export type StatusType_BareDocumentVersion_or_SimpleDocument = v.InferOutput<
+  typeof StatusType_BareDocumentVersion_or_SimpleDocument
+>;
+export const StatusType_BareDocumentVersion_or_SimpleDocument = v.object({
+  statusCode: v.optional(v.number()),
+  reasonPhrase: v.optional(v.string()),
+});
+
+export type Problem_BareDocumentVersion_or_SimpleDocument = v.InferOutput<
+  typeof Problem_BareDocumentVersion_or_SimpleDocument
+>;
+export const Problem_BareDocumentVersion_or_SimpleDocument = v.object({
+  title: v.optional(v.string()),
+  status: v.optional(StatusType_BareDocumentVersion_or_SimpleDocument),
+  detail: v.optional(v.string()),
+  instance: v.optional(v.string()),
+  type: v.optional(v.string()),
+  parameters: v.optional(v.record(v.string(), v.unknown())),
+});
+
+export type DocumentOutput_BareDocumentVersion_or_SimpleDocument = v.InferOutput<
+  typeof DocumentOutput_BareDocumentVersion_or_SimpleDocument
+>;
+export const DocumentOutput_BareDocumentVersion_or_SimpleDocument = v.object({
   id: v.string(),
   title: v.optional(v.union([v.string(), v.undefined()])),
   documentType: v.optional(
     v.union([v.union([v.literal("portrait"), v.literal("logo"), v.literal("advert")]), v.undefined()]),
   ),
-  activeVersion: v.optional(v.union([SimpleDocumentVersionOutput, v.undefined()])),
-  organizationId: v.optional(v.union([v.string(), v.undefined()])),
+  organizationId: v.string(),
 });
 
-export type GetAllDocumentsForOrganizationOutput = v.InferOutput<typeof GetAllDocumentsForOrganizationOutput>;
-export const GetAllDocumentsForOrganizationOutput = v.object({
-  documents: v.optional(v.array(SimpleDocumentOutput)),
+export type GetAllDocumentsForOrganizationOutput_BareDocumentVersion_or_SimpleDocument = v.InferOutput<
+  typeof GetAllDocumentsForOrganizationOutput_BareDocumentVersion_or_SimpleDocument
+>;
+export const GetAllDocumentsForOrganizationOutput_BareDocumentVersion_or_SimpleDocument = v.object({
+  documents: v.optional(v.array(DocumentOutput_BareDocumentVersion_or_SimpleDocument)),
   pageNumber: v.optional(v.number()),
   pageSize: v.optional(v.number()),
   totalPages: v.optional(v.number()),
@@ -364,6 +545,51 @@ export const DetailedEventResponse = v.object({
   modifiedAt: v.optional(v.string()),
 });
 
+export type BaseDocumentOutput = v.InferOutput<typeof BaseDocumentOutput>;
+export const BaseDocumentOutput = v.object({
+  id: v.string(),
+  title: v.optional(v.union([v.string(), v.undefined()])),
+  documentType: v.optional(
+    v.union([v.union([v.literal("portrait"), v.literal("logo"), v.literal("advert")]), v.undefined()]),
+  ),
+  organizationId: v.optional(v.union([v.string(), v.undefined()])),
+});
+
+export type DocumentFeedbackOutput = v.InferOutput<typeof DocumentFeedbackOutput>;
+export const DocumentFeedbackOutput = v.object({
+  feedbackType: v.optional(v.string()),
+  message: v.optional(v.string()),
+  timestamp: v.optional(v.string()),
+});
+
+export type DocumentVersionOutput = v.InferOutput<typeof DocumentVersionOutput>;
+export const DocumentVersionOutput = v.object({
+  versionId: v.string(),
+  size: v.optional(v.union([v.number(), v.undefined()])),
+  contentType: v.optional(v.union([v.string(), v.undefined()])),
+  isLatest: v.optional(v.union([v.boolean(), v.undefined()])),
+  uploadStatus: v.optional(
+    v.union([
+      v.union([
+        v.literal("PENDING_METADATA"),
+        v.literal("PENDING_UPLOAD"),
+        v.literal("UPLOADED"),
+        v.literal("PROCESSING_DERIVATIVES"),
+        v.literal("COMPLETED"),
+        v.literal("ERROR_UPLOAD"),
+        v.literal("ERROR_PROCESSING"),
+        v.literal("ARCHIVED"),
+        v.literal("DELETED"),
+      ]),
+      v.undefined(),
+    ]),
+  ),
+  document: BaseDocumentOutput,
+  createdAt: v.optional(v.union([v.string(), v.undefined()])),
+  modifiedAt: v.optional(v.union([v.string(), v.undefined()])),
+  history: v.optional(v.union([v.array(DocumentFeedbackOutput), v.undefined()])),
+});
+
 export type EventRegistrationAddonOutput = v.InferOutput<typeof EventRegistrationAddonOutput>;
 export const EventRegistrationAddonOutput = v.object({
   id: v.optional(v.string()),
@@ -404,7 +630,7 @@ export const SimpleEventResponse = v.object({
 
 export type RegistrationDocumentOutput = v.InferOutput<typeof RegistrationDocumentOutput>;
 export const RegistrationDocumentOutput = v.object({
-  documentVersion: DetailedDocumentVersionOutput,
+  documentVersion: DocumentVersionOutput,
   status: v.optional(
     v.union([
       v.union([v.literal("unreviewed"), v.literal("changes-requested"), v.literal("rejected"), v.literal("confirmed")]),
@@ -469,16 +695,10 @@ export const AddonPackageOutput = v.object({
 
 export type EventDayOutput = v.InferOutput<typeof EventDayOutput>;
 export const EventDayOutput = v.object({
+  id: v.optional(v.string()),
   dayDate: v.optional(v.string()),
   totalCapacity: v.optional(v.number()),
   remainingCapacity: v.optional(v.number()),
-});
-
-export type PackageBenefitOutput = v.InferOutput<typeof PackageBenefitOutput>;
-export const PackageBenefitOutput = v.object({
-  stringValue: v.optional(v.string()),
-  numericValue: v.optional(v.number()),
-  booleanValue: v.optional(v.boolean()),
 });
 
 export type PackageV3Output = v.InferOutput<typeof PackageV3Output>;
@@ -486,14 +706,24 @@ export const PackageV3Output = v.object({
   id: v.optional(v.string()),
   name: v.optional(v.string()),
   price: v.optional(v.number()),
-  benefits: v.optional(v.array(PackageBenefitOutput)),
 });
 
 export type ServiceOutput = v.InferOutput<typeof ServiceOutput>;
 export const ServiceOutput = v.object({
+  id: v.optional(v.string()),
   name: v.optional(v.string()),
   description: v.optional(v.string()),
   valueType: v.optional(v.string()),
+});
+
+export type PackageBenefitOutput = v.InferOutput<typeof PackageBenefitOutput>;
+export const PackageBenefitOutput = v.object({
+  id: v.optional(v.string()),
+  serviceId: v.optional(v.string()),
+  packageId: v.optional(v.string()),
+  stringValue: v.optional(v.string()),
+  numericValue: v.optional(v.number()),
+  booleanValue: v.optional(v.boolean()),
 });
 
 export type GetActiveEventBuyOptionOutput = v.InferOutput<typeof GetActiveEventBuyOptionOutput>;
@@ -504,6 +734,7 @@ export const GetActiveEventBuyOptionOutput = v.object({
   services: v.optional(v.array(ServiceOutput)),
   eventDays: v.optional(v.array(EventDayOutput)),
   addonPackages: v.optional(v.array(AddonPackageOutput)),
+  benefits: v.optional(v.array(PackageBenefitOutput)),
   active: v.optional(v.boolean()),
   allowedSignUpDays: v.optional(v.number()),
 });
@@ -532,7 +763,7 @@ export const GetEventRegistrationsForOrganizationOutput = v.object({
 export type AdminRegistrationDocumentOutput = v.InferOutput<typeof AdminRegistrationDocumentOutput>;
 export const AdminRegistrationDocumentOutput = v.object({
   id: v.optional(v.string()),
-  documentVersion: v.optional(DetailedDocumentVersionOutput),
+  documentVersion: v.optional(DocumentVersionOutput),
   status: v.optional(
     v.union([v.literal("unreviewed"), v.literal("changes-requested"), v.literal("rejected"), v.literal("confirmed")]),
   ),
@@ -555,6 +786,16 @@ export const GetEventRegistrationForEventOutput = v.object({
   purchasedPackage: v.optional(PurchasedPackageOutput),
   addonPackages: v.optional(v.array(EventRegistrationAddonPackageOutput)),
   registrationDocuments: v.optional(v.array(AdminRegistrationDocumentOutput)),
+  portraitStatus: v.optional(
+    v.union([
+      v.literal("missing"),
+      v.literal("draft"),
+      v.literal("submitted"),
+      v.literal("changes-requested"),
+      v.literal("rejected"),
+      v.literal("confirmed"),
+    ]),
+  ),
   desiredEventRegistrationDays: v.optional(v.array(v.string())),
   organizationId: v.optional(v.string()),
   contactPeople: v.optional(v.array(v.string())),
@@ -608,11 +849,14 @@ export const get_Load = v.object({
   path: v.literal("/api/v2/portrait-template/{portraitTemplateId}"),
   requestFormat: v.literal("json"),
   parameters: v.object({
+    query: v.object({
+      organizationId: v.string(),
+    }),
     path: v.object({
       portraitTemplateId: v.string(),
     }),
   }),
-  response: DetailedPortraitTemplateResponse,
+  response: PortraitTemplateOutput_Detailed,
 });
 
 export type put_SaveOrUpdatePortrait = v.InferOutput<typeof put_SaveOrUpdatePortrait>;
@@ -624,9 +868,9 @@ export const put_SaveOrUpdatePortrait = v.object({
     path: v.object({
       portraitTemplateId: v.string(),
     }),
-    body: PortraitTemplateInput,
+    body: PortraitTemplateInput_Detailed,
   }),
-  response: DetailedPortraitTemplateResponse,
+  response: PortraitTemplateOutput_Detailed,
 });
 
 export type delete_DeletePortraitTemplate = v.InferOutput<typeof delete_DeletePortraitTemplate>;
@@ -635,6 +879,9 @@ export const delete_DeletePortraitTemplate = v.object({
   path: v.literal("/api/v2/portrait-template/{portraitTemplateId}"),
   requestFormat: v.literal("json"),
   parameters: v.object({
+    query: v.object({
+      organizationId: v.string(),
+    }),
     path: v.object({
       portraitTemplateId: v.string(),
     }),
@@ -699,7 +946,7 @@ export const get_GetPortraitTemplatesForOrganization = v.object({
       sortDirection: v.optional(v.union([v.string(), v.undefined()])),
     }),
   }),
-  response: GetPortraitTemplatesByOrganizationOutput,
+  response: GetPortraitTemplatesByOrganizationOutput_Simple,
 });
 
 export type post_SaveOrUpdatePortrait_1 = v.InferOutput<typeof post_SaveOrUpdatePortrait_1>;
@@ -711,9 +958,9 @@ export const post_SaveOrUpdatePortrait_1 = v.object({
     query: v.object({
       organizationId: v.string(),
     }),
-    body: PortraitTemplateInput,
+    body: PortraitTemplateInput_Detailed,
   }),
-  response: DetailedPortraitTemplateResponse,
+  response: PortraitTemplateOutput_Detailed,
 });
 
 export type post_RestoreVersion = v.InferOutput<typeof post_RestoreVersion>;
@@ -886,6 +1133,17 @@ export const post_ChangeContactPeople = v.object({
   response: v.unknown(),
 });
 
+export type post_SendMagicLink = v.InferOutput<typeof post_SendMagicLink>;
+export const post_SendMagicLink = v.object({
+  method: v.literal("POST"),
+  path: v.literal("/api/auth/magic_link"),
+  requestFormat: v.literal("json"),
+  parameters: v.object({
+    body: SendMagicLinkRequest,
+  }),
+  response: v.unknown(),
+});
+
 export type get_GetDocument = v.InferOutput<typeof get_GetDocument>;
 export const get_GetDocument = v.object({
   method: v.literal("GET"),
@@ -897,7 +1155,7 @@ export const get_GetDocument = v.object({
       organizationId: v.string(),
     }),
   }),
-  response: DetailedDocumentOutput,
+  response: DocumentOutput_DetailedDocument_or_SimpleDocumentVersion,
 });
 
 export type delete_DeleteDocument = v.InferOutput<typeof delete_DeleteDocument>;
@@ -928,7 +1186,7 @@ export const get_GetDocumentVersions = v.object({
       organizationId: v.string(),
     }),
   }),
-  response: v.array(UnknownContentTypeDocumentVersionOutput),
+  response: v.array(DocumentVersionOutput_SimpleDocumentVersion),
 });
 
 export type get_GetDocumentVersion = v.InferOutput<typeof get_GetDocumentVersion>;
@@ -943,7 +1201,7 @@ export const get_GetDocumentVersion = v.object({
       organizationId: v.string(),
     }),
   }),
-  response: DetailedDocumentVersionOutput,
+  response: DocumentVersionOutput_DetailedDocumentVersion,
 });
 
 export type get_GetVersionDownloadUrl = v.InferOutput<typeof get_GetVersionDownloadUrl>;
@@ -973,7 +1231,7 @@ export const get_GetDocumentVersionDescription = v.object({
       organizationId: v.string(),
     }),
   }),
-  response: DocumentVersionDescription,
+  response: DocumentVersionDescription_SimpleDocumentVersion,
 });
 
 export type get_GetThumbnailUrl = v.InferOutput<typeof get_GetThumbnailUrl>;
@@ -1024,7 +1282,7 @@ export const get_GetAllDocumentsForOrganization = v.object({
       documentType: v.string(),
     }),
   }),
-  response: GetAllDocumentsForOrganizationOutput,
+  response: GetAllDocumentsForOrganizationOutput_BareDocumentVersion_or_SimpleDocument,
 });
 
 export type get_LoadEventById = v.InferOutput<typeof get_LoadEventById>;
@@ -1187,6 +1445,7 @@ export const EndpointByMethod = {
     "/api/v2/event-registration/{eventRegistrationId}/pick-document/{documentId}/{versionId}":
       post_PickDocumentForEventRegistration,
     "/api/v2/event-registration/{eventRegistrationId}/change-contact-people": post_ChangeContactPeople,
+    "/api/auth/magic_link": post_SendMagicLink,
   },
 };
 export type EndpointByMethod = typeof EndpointByMethod;
@@ -1215,6 +1474,7 @@ type RequestFormat = "json" | "form-data" | "form-url" | "binary" | "text";
 export type DefaultEndpoint = {
   parameters?: EndpointParameters | undefined;
   response: unknown;
+  responseHeaders?: Record<string, unknown>;
 };
 
 export type Endpoint<TConfig extends DefaultEndpoint = DefaultEndpoint> = {
@@ -1229,6 +1489,7 @@ export type Endpoint<TConfig extends DefaultEndpoint = DefaultEndpoint> = {
     areParametersRequired: boolean;
   };
   response: TConfig["response"];
+  responseHeaders?: TConfig["responseHeaders"];
 };
 
 export type Fetcher = (method: Method, url: string, parameters?: EndpointParameters | undefined) => Promise<Response>;

@@ -2,49 +2,49 @@
 	import { _ } from '@services';
 	import { DeleteLogoDialog, FileHistory, FileInformation } from '@/@svelte/modules';
 	import { Button } from '@/components/ui/button';
-	import { trpc } from '@/trpc/client';
-	import { page } from '$app/state';
+	import {
+		deleteDocument,
+		getDocument,
+		generateDownloadLink as getDownload,
+		generateThumbnailLink as getThumbnail
+	} from '@/remote/functions';
 	import { LoaderCircle } from '@lucide/svelte';
 	import * as Breadcrumb from '@/components/ui/breadcrumb';
+	import { toast } from 'svelte-sonner';
+	import { goto } from '$app/navigation';
+	import SuperDebug from 'sveltekit-superforms';
 
-	let { data } = $props();
+	let { params } = $props();
 
-	let logo = $derived(data.document);
+	let logoFilter = $derived({
+		documentId: params.documentId!
+	});
 
-	const download = $derived(
-		trpc(page).catalogueData.generateDownloadLink.createQuery(
-			{
-				documentId: logo.id,
-				organizationId: logo.organizationId
-			},
-			{
-				staleTime: 15 * 60 * 1000
-			}
-		)
-	);
+	let thumbnailFilter = $derived({
+		documentId: params.documentId!,
+		resolution: 'large' as const
+	});
 
-	const thumbnail = $derived(
-		trpc(page).catalogueData.generateThumbnailLink.createQuery(
-			{
-				documentId: logo.id,
-				organizationId: logo.organizationId,
-				resolution: 'large'
-			},
-			{
-				enabled: logo.activeVersion?.uploadStatus === 'COMPLETED',
-				staleTime: 60 * 60 * 1000,
-				refetchOnWindowFocus: false
-			}
-		)
-	);
+	let logoQuery = $derived(getDocument(logoFilter));
+
+	let downloadFilter = $derived.by(() => {
+		if (!logoQuery.ready) return null;
+		else {
+			return {
+				documentId: params.documentId!,
+				organizationId: logoQuery.current?.organizationId!
+			};
+		}
+	});
 
 	async function handleDownload() {
-		const url = $download.data;
+		if (downloadFilter == null) return;
+		const url = await getDownload(downloadFilter);
 		if (url && url.length > 0) {
 			const a = document.createElement('a');
 			a.href = url;
 			a.target = '_blank';
-			a.download = url.split('/').pop();
+			a.download = url.split('/').pop()!;
 			document.body.appendChild(a);
 			a.click();
 			document.body.removeChild(a);
@@ -55,7 +55,7 @@
 <Breadcrumb.Root class="pt-4">
 	<Breadcrumb.List>
 		<Breadcrumb.Item>
-			<Breadcrumb.Link href={`.`}>
+			<Breadcrumb.Link href={`..`}>
 				{$_('user-pages.catalogue-data.base')}
 			</Breadcrumb.Link>
 		</Breadcrumb.Item>
@@ -67,38 +67,54 @@
 		</Breadcrumb.Item>
 		<Breadcrumb.Separator />
 		<Breadcrumb.Item>
-			<Breadcrumb.Page>{logo?.title}</Breadcrumb.Page>
+			<Breadcrumb.Page>{logoQuery.current?.title}</Breadcrumb.Page>
 		</Breadcrumb.Item>
 	</Breadcrumb.List>
 </Breadcrumb.Root>
-{#if logo}
+{#if logoQuery.ready}
 	<div class="grid gap-6 py-4 @container">
 		<header class="pt-4 flex justify-between">
-			<h2 class="text-2xl font-semibold text-slate-800">🖼️ {logo.title}</h2>
+			<h2 class="text-2xl font-semibold text-slate-800">
+				🖼️ {logoQuery.current?.title}
+			</h2>
 			<nav class="inline-flex gap-4">
 				<Button variant="secondary" onclick={handleDownload}>{$_('common.download')}</Button>
-				<DeleteLogoDialog {logo} />
+				<DeleteLogoDialog
+					logo={logoQuery.current!}
+					onDelete={async (id) => {
+						try {
+							await deleteDocument({ documentId: id }).updates(logoQuery);
+							await goto(`/${params.organizationSlug}/catalogue-data/logos`);
+							toast.success($_('modules.delete-logo-dialog.success'));
+						} catch (error) {
+							toast.error('Error deleting logo');
+							throw error;
+						}
+					}}
+				/>
 			</nav>
 		</header>
 		<div
 			class="aspect-video bg-gray-100 dark:bg-gray-700 rounded-md flex items-center justify-center overflow-hidden"
 		>
-			{#if $thumbnail.isLoading}
+			{#if getThumbnail(thumbnailFilter).loading}
 				<LoaderCircle class="mx-auto animate-spin size-8" />
-			{:else if $thumbnail.data}
+			{:else if getThumbnail(thumbnailFilter).ready}
 				<img
-					src={$thumbnail.data || '/placeholder.svg'}
-					alt={logo.title}
+					src={getThumbnail(thumbnailFilter).current || '/placeholder.svg'}
+					alt={logoQuery.current?.title}
 					class="object-contain size-full"
 				/>
 			{/if}
 		</div>
 
 		<div class="grid grid-cols-1 gap-8 text-sm @md:grid-cols-2">
-			<FileHistory history={logo.activeVersion?.history ?? []} />
+			<FileHistory history={logoQuery.current?.activeVersion?.history ?? []} />
 
-			<FileInformation documentVersion={logo.activeVersion} />
+			<FileInformation documentVersion={logoQuery.current?.activeVersion!} />
 		</div>
 	</div>
-	<footer></footer>
+	<footer>
+		<SuperDebug data={logoQuery.current} />
+	</footer>
 {/if}

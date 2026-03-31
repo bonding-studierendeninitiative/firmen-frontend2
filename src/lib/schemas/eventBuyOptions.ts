@@ -139,13 +139,23 @@ export const UpdateBuyOptionsRequestSchema = v.object({
 export type UpdateBuyOptionsRequest = typeof UpdateBuyOptionsRequestSchema;
 
 export const CreateBuyOptionRequestSchema = v.object({
+	eventId: v.string('Event ID is required'),
 	name: v.pipe(
 		v.string('Name is required'),
 		v.minLength(3, 'Mindestens 3 Zeichen'),
 		v.maxLength(30, 'Maximal 30 Zeichen')
 	),
 	packageCount: v.optional(v.pipe(v.number(), v.maxValue(10), v.minValue(0)), 0),
-	serviceCount: v.optional(v.number(), 0)
+	serviceCount: v.optional(
+		v.pipe(
+			v.union([v.string(), v.number()]),
+			v.transform((input) => Number(input)),
+			v.number(),
+			v.maxValue(10, 'Maximal 10 Leistungen'),
+			v.minValue(0, 'Mindestens 0 Leistungen')
+		),
+		0
+	)
 });
 
 export const SimpleCreateBuyOptionRequestSchema = v.object({
@@ -158,25 +168,31 @@ export type CreateBuyOptionRequest = typeof CreateBuyOptionRequestSchema;
 
 export const UpdateBuyOptionRequestSchema = v.object({
 	name: v.string(),
-	packages: v.array(
-		v.object({
-			name: v.string(),
-			price: v.nullable(v.number()),
-			benefits: v.array(
-				v.object({
-					numericValue: v.nullish(v.number()),
-					stringValue: v.nullish(v.string()),
-					booleanValue: v.nullish(v.boolean())
-				})
-			)
-		})
+	packages: v.nullish(
+		v.array(
+			v.object({
+				name: v.string(),
+				price: v.nullable(v.number()),
+				benefits: v.array(
+					v.object({
+						numericValue: v.nullish(v.number()),
+						stringValue: v.nullish(v.string()),
+						booleanValue: v.nullish(v.boolean())
+					})
+				)
+			})
+		),
+		[]
 	),
-	services: v.array(
-		v.object({
-			name: v.string(),
-			description: v.nullable(v.string(), ''),
-			valueType: v.enum(ValueType)
-		})
+	services: v.nullish(
+		v.array(
+			v.object({
+				name: v.string(),
+				description: v.nullable(v.string(), ''),
+				valueType: v.enum(ValueType)
+			})
+		),
+		[]
 	),
 	eventDays: v.array(
 		v.object({
@@ -185,7 +201,30 @@ export const UpdateBuyOptionRequestSchema = v.object({
 			totalCapacity: v.number()
 		})
 	),
-	allowedSignUpDays: v.number()
+	allowedSignUpDays: v.number(),
+	eventId: v.string(),
+	buyOptionId: v.string()
 });
 
 export type UpdateBuyOptionRequest = typeof UpdateBuyOptionRequestSchema;
+
+export const CreateBuyOptionEventDayInput = v.object({
+	eventId: v.string(),
+	buyOptionId: v.string(),
+	date: v.string(),
+	totalCapacity: v.optional(v.number(), 0),
+	version: v.number()
+});
+
+export type CreateBuyOptionEventDayInput = typeof CreateBuyOptionEventDayInput;
+
+export const UpdateEventDayInput = v.object({
+	eventId: v.string(),
+	buyOptionId: v.string(),
+	eventDayId: v.string(),
+	date: v.string(),
+	totalCapacity: v.optional(v.number(), 0),
+	version: v.number()
+});
+
+export type UpdateEventDayInput = typeof UpdateEventDayInput;

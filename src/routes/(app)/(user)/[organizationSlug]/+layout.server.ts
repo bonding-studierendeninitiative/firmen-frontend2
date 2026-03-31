@@ -1,39 +1,38 @@
-import { redirect } from '@sveltejs/kit';
+import { redirect, type LoadEvent } from '@sveltejs/kit';
 import { createLogger } from 'vite';
 import { PUBLIC_BONDING_ORG_ID } from '$env/static/public';
-import { createCaller } from '@/trpc/router';
+import { getDetails } from '@/remote/functions';
 
 const logger = createLogger();
 
-export const load = async (event) => {
-	const { initialState, user } = await event.parent();
-	if (!initialState?.orgId) {
+export async function load(event: LoadEvent) {
+	const { session, user } = await event.parent();
+	if (user?.banned) {
+		redirect(302, '/banned');
+	}
+	if (!session?.activeOrganizationId) {
 		redirect(302, '/select-org');
-	} else if (initialState?.orgId === PUBLIC_BONDING_ORG_ID) {
+	} else if (session?.activeOrganizationId === PUBLIC_BONDING_ORG_ID) {
 		logger.info('Member of bonding org detected. Redirecting to admin dashboard');
 		redirect(302, '/admin');
 	}
 
-	const userMetaDataMissing = Object.keys(user?.publicMetadata).length === 0;
+    const userMetaDataMissing = Object.keys(user?.metadata ?? {}).length === 0;
 	if (userMetaDataMissing) {
 		redirect(302, '/add-personal-details');
 	}
 
-	console.log('Organization slug:', event.params.organizationSlug);
+	logger.info(`Organization slug: ${event.params.organizationSlug}`);
 
-	event.depends('organization');
-
-	const api = await createCaller(event);
-
-	const organization = await api.organizations.getDetails({
-		slug: event.params.organizationSlug
+	const organization = await getDetails({
+		slug: event.params.organizationSlug!
 	});
 
 	if (!organization) {
-		redirect(302, "/select-org")
+		redirect(302, '/select-org');
 	}
 
 	return {
 		organization
 	};
-};
+}

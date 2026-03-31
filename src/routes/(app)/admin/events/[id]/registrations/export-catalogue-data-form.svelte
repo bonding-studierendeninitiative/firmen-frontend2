@@ -4,10 +4,10 @@
 	import * as Tabs from '@/components/ui/tabs';
 	import { toast } from 'svelte-sonner';
 	import { cn } from '@/utils';
-	import { trpc } from '@/trpc/client';
 	import { page } from '$app/state';
 	import { _ } from '@services';
 	import { goto } from '$app/navigation';
+	import { exportCatalogueData } from '@/remote/functions/admin';
 
 	interface Props {
 		selectedEventRegistrations: string[];
@@ -17,13 +17,7 @@
 	let { selectedEventRegistrations, disabled }: Props = $props();
 	let open = $state(false);
 
-	const api = trpc(page);
-
-	const utils = api.createUtils();
-
 	let documentType: 'advert' | 'logo' | 'portrait' = $state('logo');
-
-	const exportCatalogueData = api.admin.catalogueData.export.createMutation();
 </script>
 
 <Dialog.Root bind:open>
@@ -64,31 +58,21 @@
 			<div class="flex justify-end">
 				<Button
 					onclick={() => {
-						$exportCatalogueData.mutate(
-							{
-								documentType,
-								eventRegistrationIds: selectedEventRegistrations
-							},
-							{
-								onError: (error) => {
-									toast.error(error.message);
-								},
-								onSuccess: async () => {
-									open = false;
-									toast.success('Export eingereiht', {
-										action: {
-											label: 'Zu den Exporten',
-											onClick: () => {
-												goto(`/admin/events/${page.params.id}/exports`);
-											}
-										}
-									});
-									await utils.admin.export.getAll.invalidate({ eventId: page.params.id });
+						exportCatalogueData({
+							documentType,
+							eventRegistrationIds: selectedEventRegistrations
+						});
+						open = false;
+						toast.success('Export eingereiht', {
+							action: {
+								label: 'Zu den Exporten',
+								onClick: () => {
+									goto(`/admin/events/${page.params.id}/exports`);
 								}
 							}
-						);
+						});
 					}}
-					disabled={$exportCatalogueData.isPending}
+					disabled={!!$effect.pending()}
 					variant="default"
 					size="sm"
 					>{$_('admin-pages.events.event-registrations.export-catalogue-data.action')}

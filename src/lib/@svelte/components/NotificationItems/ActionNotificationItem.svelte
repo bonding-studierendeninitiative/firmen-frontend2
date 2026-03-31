@@ -1,23 +1,22 @@
 <script lang="ts">
 	import { _, dayjs } from '@services';
 	import { FilledCheckIcon, MessageIcon } from '$lib/@svelte/icons';
-	import { Button } from '../Button';
-	import { Button as ShadcnButton } from '@/components/ui/button';
+	import { Button } from '@/components/ui/button';
 
 	const onActionButtonClick = () => {};
 
-
 	export const notificationDate: Date | null = null;
 	interface Props {
-		notificationType: 
-		| 'registrationSuccess'
-		| 'registrationRejected'
-		| 'simpleNotification';
+		notificationType: 'registrationSuccess' | 'registrationRejected' | 'simpleNotification';
 		notificationContent?: string;
 		handleUpdatePortrait?: (() => void) | undefined;
 	}
 
-	let { notificationType, notificationContent = '', handleUpdatePortrait = undefined }: Props = $props();
+	let {
+		notificationType,
+		notificationContent = '',
+		handleUpdatePortrait = undefined
+	}: Props = $props();
 
 	const getNotificationIcon = (notificationType: string) => {
 		switch (notificationType) {
@@ -45,11 +44,11 @@
 			</h3>
 			<div class=" py-2">
 				{#if notificationType === 'registrationSuccess'}
-					<ShadcnButton variant="gradient" onclick={() => handleUpdatePortrait?.()}>
+					<Button variant="gradient" onclick={() => handleUpdatePortrait?.()}>
 						{$_('user-pages.notifications.updatePortrait')}
-					</ShadcnButton>
+					</Button>
 				{:else if notificationType === 'registrationRejected'}
-					<Button onClick={onActionButtonClick} classes="  shadow-custom  text-stone-800">
+					<Button onclick={onActionButtonClick} class="  shadow-custom  text-stone-800">
 						{$_('user-pages.notifications.contactSupport')}
 					</Button>
 				{/if}

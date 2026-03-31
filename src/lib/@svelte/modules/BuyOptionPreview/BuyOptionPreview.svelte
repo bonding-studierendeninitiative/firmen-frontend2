@@ -10,10 +10,11 @@
 	import { LocalizedDate } from '@/@svelte/components';
 	import { Label } from '@/components/ui/label';
 	import { CalendarDays, Check, Info } from '@lucide/svelte';
+	import type { GetEventBuyOptionOutput } from '@api/admin-client';
 
 	interface Props {
-		buyOption: any;
-		selectedAmountOfParticipationDays?: string;
+		buyOption: GetEventBuyOptionOutput;
+		selectedAmountOfParticipationDays?: string | null;
 		selectedEventDays?: string[];
 		selectedPackageId?: string;
 	}
@@ -24,6 +25,21 @@
 		selectedEventDays = $bindable([]),
 		selectedPackageId = $bindable('')
 	}: Props = $props();
+
+	function findBenefit(
+		packageId: string,
+		serviceId: string
+	): {
+		booleanValue?: boolean | null;
+		numericValue?: number | null;
+		stringValue?: string | null;
+	} | null {
+		return (
+			buyOption?.benefits?.find(
+				(benefit) => benefit.packageId === packageId && benefit.serviceId === serviceId
+			) ?? null
+		);
+	}
 </script>
 
 <section class=" my-10">
@@ -34,9 +50,9 @@
 	<Table.Root class=" w-full mt-6 rounded-lg">
 		<Table.Header>
 			<Table.Row>
-				<Table.Cell class={`w-1/${buyOption?.packages.length + 1}`}></Table.Cell>
-				{#each buyOption?.packages as pkg}
-					<Table.Cell class={`w-1/${buyOption?.packages.length + 1} p-3`}>
+				<Table.Cell class={`w-1/${Number(buyOption?.packages?.length) + 1}`}></Table.Cell>
+				{#each buyOption?.packages ?? [] as pkg}
+					<Table.Cell class={`w-1/${Number(buyOption?.packages?.length) + 1} p-3`}>
 						<div>
 							<p class=" text-brand text-sm font-medium">{pkg.name}</p>
 							<p class=" font-extrabold text-2xl mt-2">
@@ -52,12 +68,12 @@
 			</Table.Row>
 		</Table.Header>
 		<Table.Body>
-			{#each buyOption?.services as service, index (index)}
+			{#each buyOption?.services ?? [] as service, index (index)}
 				<Table.Row class="even:bg-stone-50">
 					<Table.Cell class="  p-3 border border-stone-200 text-sm">
 						<div class="flex items-center gap-1">
 							<span>{service.name}</span>
-							{#if service.description?.trim().length > 0}
+							{#if Number(service.description?.trim().length) > 0}
 								<Tooltip.Provider>
 									<Tooltip.Root>
 										<Tooltip.Trigger>
@@ -71,7 +87,8 @@
 							{/if}
 						</div>
 					</Table.Cell>
-					{#each buyOption?.packages as pkg}
+					{#each buyOption?.packages ?? [] as pkg (pkg.id)}
+						{@const benefit = findBenefit(pkg.id!, service.id!)}
 						<Table.Cell
 							class={selectedPackageId === pkg.id
 								? 'p-3 border border-stone-200 bg-slate-300'
@@ -79,18 +96,18 @@
 						>
 							<div class="flex justify-center items-center">
 								{#if service.valueType === 'BOOLEAN'}
-									{#if pkg.benefits[index].booleanValue}
+									{#if benefit?.booleanValue}
 										<OutlinedCheckIcon />
 									{:else}
 										<OutlinedCrossIcon />
 									{/if}
 								{/if}
 								{#if service.valueType === 'INTEGER'}
-									{pkg.benefits[index].numericValue}
+									{benefit?.numericValue}
 								{/if}
 
 								{#if service.valueType === 'STRING'}
-									{pkg.benefits[index].stringValue}
+									{benefit?.stringValue}
 								{/if}
 							</div>
 						</Table.Cell>
@@ -99,11 +116,11 @@
 			{/each}
 			<Table.Row>
 				<Table.Cell></Table.Cell>
-				{#each buyOption?.packages as pkg}
+				{#each buyOption?.packages ?? [] as pkg (pkg.id)}
 					<Table.Cell class=" p-3">
 						<div class=" flex justify-center items-center">
 							<Button
-								onclick={() => (selectedPackageId = pkg.id)}
+								onclick={() => (selectedPackageId = pkg.id!)}
 								variant={selectedPackageId === pkg.id ? 'default' : 'outline'}
 								class="py-1.5! px-4!"
 							>
@@ -116,7 +133,7 @@
 		</Table.Body>
 	</Table.Root>
 </section>
-{#if buyOption?.allowedSignUpDays > 1}
+{#if Number(buyOption?.allowedSignUpDays) > 1}
 	<section class=" my-10">
 		<h4 class=" font-extrabold text-sm text-stone-900">
 			{$_('user-pages.events.sign-up-days.header')}
@@ -127,7 +144,7 @@
 		<div class="my-4">
 			<Tabs.Root bind:value={selectedAmountOfParticipationDays}>
 				<Tabs.List>
-					{#each buyOption?.eventDays as _someDay, dayIndex}
+					{#each buyOption?.eventDays ?? [] as _someDay, dayIndex}
 						<Tabs.Trigger value={(dayIndex + 1).toString()}
 							>{$_('user-pages.events.sign-up-days.days', {
 								values: { days: (dayIndex + 1).toString() }
@@ -150,7 +167,7 @@
 			bind:value={selectedEventDays}
 			class="grid grid-cols-1 @xl/event-days:grid-cols-2 @3xl/event-days:grid-cols-3 gap-4"
 		>
-			{#each buyOption?.eventDays as day}
+			{#each buyOption?.eventDays ?? [] as day}
 				{@const dayjsData = dayjs(day.dayDate, { locale: $locale ?? 'de-DE' })}
 				{@const dayName = dayjsData.format('dddd')}
 				<Label
@@ -158,8 +175,8 @@
 					class="border-muted bg-popover cursor-pointer hover:bg-accent hover:text-accent-foreground [&:has([data-state=on])]:border-primary [&:has([disabled])]:cursor-not-allowed rounded-md border-2 p-4"
 				>
 					<ToggleGroup.Item
-						disabled={day.remainingCapacity < 1}
-						value={day.dayDate}
+						disabled={Number(day.remainingCapacity) < 1}
+						value={day.dayDate!}
 						id={day.dayDate}
 						class="sr-only"
 						aria-label={dayName}
@@ -182,7 +199,7 @@
 								class="text-muted-foreground text-nowrap"
 							/>
 						</div>
-						{#if selectedEventDays.includes(day.dayDate)}
+						{#if selectedEventDays?.includes(day.dayDate!)}
 							<div
 								class="size-6 rounded-full bg-primary shrink-0 grow-0 flex items-center justify-center"
 							>

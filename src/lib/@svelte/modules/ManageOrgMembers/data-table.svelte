@@ -1,56 +1,86 @@
 <script lang="ts">
-	import { derived, type Readable } from 'svelte/store';
 	import DataTableActions from './data-table-actions.svelte';
 	import DataTableUserIcon from './data-table-user-icon.svelte';
 	import { _ } from '@services';
 	import { cn } from '@/utils/ui';
-	import type { OrganizationMembership } from 'svelte-clerk/server';
 	import { LocalizedDate, SearchInput, QueryDataTable } from '@/@svelte/components';
 	import CreateOrgInviteDialog from './create-org-invite-dialog.svelte';
-	import AddMemberDialog from './add-member-dialog.svelte';
 	import DataTableRoleSwitcher from './data-table-role-switcher.svelte';
-	import { createColumnHelper } from '@tanstack/svelte-table';
+	import { createColumnHelper } from '@tanstack/table-core';
 	import { renderSnippet } from '@/@svelte/components/QueryDataTable/render-helpers';
+	import type { GetOrgMembersResponse } from '@/remote/functions';
+	import type { RemoteQuery } from '@sveltejs/kit';
 
+	type Data = {
+		user: {
+			id: string;
+			email: string;
+			name: string | null;
+			image: string | null;
+		};
+		role: string;
+		createdAt: Date;
+		id: string;
+		userId: string;
+		organizationId: string;
+	};
 	interface Props {
-		memberResponse: Readable<{ data: OrganizationMembership[]; totalCount: number }>;
+		membersResponse: RemoteQuery<GetOrgMembersResponse>;
 		organizationId: string;
 		class?: string;
+		onChangeUserRole?: (
+			userId: string,
+			role: 'admin' | 'member' | 'owner',
+			organizationId: string
+		) => void;
 		[key: string]: any;
+		onRemoveMember?: (userId: string, organizationId: string) => void;
+		onInviteMemberSuccess?: () => Promise<void>;
 	}
 
-	let { memberResponse, organizationId, class: className = '', ...rest }: Props = $props();
+	let {
+		membersResponse,
+		organizationId,
+		class: className = '',
+		onChangeUserRole,
+		onRemoveMember,
+		onInviteMemberSuccess,
+		...rest
+	}: Props = $props();
 
-	let data = derived([memberResponse], ([memberResponse]) => memberResponse.data);
-	let totalCount = derived([memberResponse], ([memberResponse]) => memberResponse.totalCount);
+	let { members: data, total: totalCount } = $derived.by(() => {
+		if (membersResponse.loading || membersResponse.error || !membersResponse.current) {
+			return { members: [], total: 0 };
+		}
+		return membersResponse.current;
+	});
 
-	let columnHelper = createColumnHelper<OrganizationMembership>();
+	let columnHelper = createColumnHelper<Data>();
 
 	let columns = [
-		columnHelper.accessor('publicUserData', {
+		columnHelper.accessor('user', {
 			id: 'user-profile',
-			header: '',
 			cell: ({ getValue }) =>
 				renderSnippet(userIcon, {
-					userName: `${getValue()?.firstName} ${getValue()?.lastName}`,
-					src: getValue()?.imageUrl
+					userName: `${getValue()?.name}`,
+					src: `/api/avatar/${getValue()?.id}.svg`
 				})
 		}),
-		columnHelper.accessor('publicUserData.firstName', {
-			header: $_('table-headings.firstName')
+		columnHelper.accessor('user.name', {
+			header: $_('table-headings.name'),
+			cell: ({ getValue }) => getValue()
 		}),
-		columnHelper.accessor('publicUserData.lastName', {
-			header: $_('table-headings.lastName')
-		}),
-		columnHelper.accessor('publicUserData.identifier', {
-			header: $_('table-headings.emailAddress')
+		columnHelper.accessor('user.email', {
+			header: $_('table-headings.email'),
+			cell: ({ getValue }) => getValue()
 		}),
 		columnHelper.accessor('role', {
 			header: $_('table-headings.role'),
 			cell: ({ row, getValue }) =>
 				renderSnippet(userRole, {
 					value: getValue(),
-					userId: row.original.publicUserData?.userId
+					orgId: row.original.organizationId,
+					userId: row.original.id
 				})
 		}),
 		columnHelper.accessor('createdAt', {
@@ -61,12 +91,11 @@
 					date: getValue()
 				})
 		}),
-		columnHelper.accessor('publicUserData.userId', {
-			header: '',
-			cell: ({ getValue }) =>
+		columnHelper.accessor('userId', {
+			cell: ({ row, getValue }) =>
 				renderSnippet(actions, {
 					id: getValue(),
-					orgId: organizationId
+					orgId: row.original.organizationId
 				})
 		})
 	];
@@ -77,11 +106,11 @@
 {/snippet}
 
 {#snippet userRole({ value, userId }: { value: string; userId: string; orgId: string })}
-	<DataTableRoleSwitcher {value} {organizationId} {userId} />
+	<DataTableRoleSwitcher {value} {organizationId} {userId} {onChangeUserRole} />
 {/snippet}
 
 {#snippet actions({ id, orgId }: { id: string; orgId: string })}
-	<DataTableActions {orgId} {id} />
+	<DataTableActions {orgId} {id} {onRemoveMember} />
 {/snippet}
 
 {#snippet localizedDate({ date }: { date: any })}
@@ -92,9 +121,14 @@
 	<div class={cn(`flex items-center justify-between gap-4`)}>
 		<SearchInput class="max-w-sm" placeholder={$_('common.search')} type="text" />
 		<div class="flex items-center gap-4">
-			<CreateOrgInviteDialog {organizationId} />
-			<AddMemberDialog orgId={organizationId} />
+			<CreateOrgInviteDialog {onInviteMemberSuccess} />
 		</div>
 	</div>
-	<QueryDataTable {columns} {totalCount} data={$data} />
+	<QueryDataTable
+		isLoading={membersResponse.loading}
+		{columns}
+		{totalCount}
+		{data}
+		{onChangeUserRole}
+	/>
 </div>

@@ -2,24 +2,15 @@
 	import { _ } from '@services';
 	import * as Dialog from '$lib/components/ui/dialog';
 	import CreateOrgInviteForm from './create-org-invite-form.svelte';
-	import { trpc } from '@/trpc/client';
-	import { page } from '$app/state';
 	import { cn } from '@/utils';
 	import { buttonVariants } from '@/components/ui/button';
 
 	let inviteMemberDialogOpen = $state(false);
 	interface Props {
-		organizationId: string;
+		onInviteMemberSuccess?: () => Promise<void>;
 	}
 
-	let { organizationId }: Props = $props();
-
-
-	const api = trpc(page);
-
-	const createInviteFormQuery = api.admin.orgs.members.createInviteForm.createQuery({
-		organizationId: organizationId
-	});
+	let { onInviteMemberSuccess }: Props = $props();
 </script>
 
 <Dialog.Root bind:open={inviteMemberDialogOpen}>
@@ -33,11 +24,6 @@
 				{$_('modules.manage-org-members.invite-dialog-description')}
 			</Dialog.Description>
 		</Dialog.Header>
-		{#if $createInviteFormQuery.data}
-			<CreateOrgInviteForm
-				bind:inviteMemberDialogOpen
-				createInviteForm={$createInviteFormQuery.data}
-			/>
-		{/if}
+		<CreateOrgInviteForm bind:inviteMemberDialogOpen onSuccess={onInviteMemberSuccess} />
 	</Dialog.Content>
 </Dialog.Root>

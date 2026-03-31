@@ -1,5 +1,5 @@
 <script lang="ts" module>
-	import type { EventRegistrationsForOrganizationOutput } from '@/trpc/client';
+	import { type EventRegistrationsOutput } from '@/remote/functions';
 	import { tv } from 'tailwind-variants';
 
 	import {
@@ -15,12 +15,13 @@
 	} from '@lucide/svelte';
 
 	interface Props {
-		registration: EventRegistrationsForOrganizationOutput['eventRegistrations'][number];
+		registration: EventRegistrationsOutput['eventRegistrations'][number];
+		orgSlug?: string;
 	}
 
 	// Calculate the completion percentage for catalogue data
 	function calculateCatalogueCompletion(
-		data: EventRegistrationsForOrganizationOutput['eventRegistrations'][number]
+		data: EventRegistrationsOutput['eventRegistrations'][number]
 	): number {
 		function getSingleCompletion(status: string): number {
 			switch (status) {
@@ -120,10 +121,11 @@
 	import QueryWrappedViewLogoDialog from '@/@svelte/modules/ViewLogoDialog/QueryWrappedViewLogoDialog.svelte';
 	import RegistrationDocumentPreview from './registration-document-preview.svelte';
 	import RegistrationDocumentMissing from './registration-document-missing.svelte';
+	import { forOrganization as getEventRegistrations } from '@/remote/functions';
 
 	let isAddonsOpen = $state(false);
 
-	let { registration }: Props = $props();
+	let { registration, orgSlug }: Props = $props();
 
 	let logo = $derived(registration.registrationDocuments?.find((d) => d.documentType === 'logo'));
 	let advertisement = $derived(
@@ -139,16 +141,8 @@
 </script>
 
 <Card class="w-full max-w-2xl shadow-md hover:shadow-lg transition-shadow">
-	<PickAdvertisementDialog
-		bind:open={pickAdvertisementOpen}
-		id={registration.id ?? ''}
-		orgId={registration.organizationId ?? ''}
-	/>
-	<PickLogoDialog
-		bind:open={pickLogoOpen}
-		id={registration.id ?? ''}
-		orgId={registration.organizationId ?? ''}
-	/>
+	<PickAdvertisementDialog bind:open={pickAdvertisementOpen} id={registration.id ?? ''} {orgSlug} />
+	<PickLogoDialog bind:open={pickLogoOpen} id={registration.id ?? ''} {orgSlug} />
 	{#if advertisement}
 		<ViewAdvertisementDialog bind:open={viewAdvertisementOpen} {advertisement} />
 	{/if}
@@ -167,6 +161,23 @@
 		id={registration.id ?? ''}
 		orgId={registration.organizationId ?? ''}
 		bind:open={submitPortraitOpen}
+		onSubmitPortrait={async ({ submit }) => {
+			await submit().updates(
+				getEventRegistrations({
+					orgId: registration.organizationId ?? '',
+					cursor: 0,
+					limit: 10
+				}).withOverride((prev) => {
+					return {
+						...prev,
+						eventRegistrations: (prev.eventRegistrations ?? []).map((er) =>
+							er.id === registration.id ? { ...er, portraitStatus: 'submitted' } : er
+						)
+					};
+				})
+			);
+			submitPortraitOpen = false;
+		}}
 	/>
 	<CardHeader class="pb-2">
 		<div class="flex justify-between items-start">
@@ -370,7 +381,7 @@
 							class="text-sm flex items-center gap-3 rounded-full border border-border bg-muted py-1 px-1.5"
 						>
 							<Avatar.Root class="size-8">
-								<Avatar.Image src={contact.image} />
+								<Avatar.Image src={`/api/avatar/${contact.id}.svg`} />
 								<Avatar.Fallback
 									>{contact.name
 										?.split(' ')

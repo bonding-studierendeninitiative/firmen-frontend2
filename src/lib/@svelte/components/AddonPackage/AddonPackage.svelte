@@ -6,32 +6,27 @@
 	import { TrashIcon } from '@/@svelte/icons';
 	import { LoaderCircle } from '@lucide/svelte';
 	import { _ } from '@services';
-	import { trpc } from '@/trpc/client';
-	import { page } from '$app/state';
 
 	interface Props {
 		addonPackage: {
-		id: string;
-		title: string;
-		description: string;
-		label: string;
-		price: number | null;
-		addons: [
-			{
-				title: string;
-				description: string;
-				label: string;
-				price: number | null;
-			}
-		];
-	};
+			id: string;
+			title: string;
+			description: string;
+			label: string;
+			price: number | null;
+			addons: [
+				{
+					title: string;
+					description: string;
+					label: string;
+					price: number | null;
+				}
+			];
+		};
+		onDelete: ({ addonPackageId }: { addonPackageId: string }) => Promise<void>;
 	}
 
-	let { addonPackage }: Props = $props();
-
-	const api = trpc(page);
-
-	const deleteAddonPackage = api.admin.events.addonPackages.delete.createMutation();
+	let { addonPackage, onDelete }: Props = $props();
 </script>
 
 <Card.Root>
@@ -84,17 +79,15 @@
 	<Card.Footer>
 		<Button
 			class="text-red-500 hover:text-red-700"
-			disabled={$deleteAddonPackage.isPending}
+			disabled={!!$effect.pending()}
 			variant="ghost"
-			onclick={() => {
-				$deleteAddonPackage.mutate({
-					addonPackageId: addonPackage.id,
-					buyOptionId: page.params.buyOptionId,
-					eventId: page.params.id
-				});
+			onclick={async () => {
+				{
+					await onDelete({ addonPackageId: addonPackage.id });
+				}
 			}}
 		>
-			{#if $deleteAddonPackage.isPending}
+			{#if !!$effect.pending()}
 				<LoaderCircle class="size-4 animate-spin" />
 			{:else}
 				<TrashIcon />

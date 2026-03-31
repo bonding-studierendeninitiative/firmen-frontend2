@@ -1,21 +1,18 @@
 <script lang="ts">
 	import * as Dialog from '@/components/ui/dialog';
-	import {
-		AdvertStatusIcon,
-		StatusBadge
-	} from '@/@svelte/components';
+	import { AdvertStatusIcon, StatusBadge } from '@/@svelte/components';
 	import { _ } from '@services';
 	import {
 		DeleteAdvertisementDialog,
 		FileHistory,
 		FileInformation,
-
 		ReviewRegistrationDocumentDialog
-
 	} from '@/@svelte/modules';
 	import { Button } from '@/components/ui/button';
-	import { trpc } from '@/trpc/client';
-	import { page } from '$app/state';
+	import {
+		generateDocumentDownloadLink as getDownload,
+		generateThumbnailLink as getThumbnail
+	} from '@/remote/functions/admin';
 	import type { AdminRegistrationDocumentOutput } from '@api/admin-client';
 
 	interface Props {
@@ -24,13 +21,13 @@
 
 	let { advertisement }: Props = $props();
 
-	const download = trpc(page).catalogueData.generateDownloadLink.createQuery({
-		documentId: advertisement.documentVersion?.document?.id,
-		organizationId: advertisement.documentVersion?.document?.organizationId
+	const download = getDownload({
+		documentId: advertisement.documentVersion?.document?.id!,
+		organizationId: advertisement.documentVersion?.document?.organizationId!
 	});
 
 	function handleDownload() {
-		const url = $download.data;
+		const url = download.current;
 		if (url) {
 			const a = document.createElement('a');
 			a.href = url;
@@ -41,33 +38,34 @@
 			document.body.removeChild(a);
 		}
 	}
-	
-	const thumbnail = trpc(page).catalogueData.generateThumbnailLink.createQuery({
+
+	const thumbnail = getThumbnail({
+		organizationId: advertisement?.documentVersion?.document?.organizationId ?? '',
 		documentId: advertisement?.documentVersion?.document?.id ?? '',
-		organizationId: "random",
-		resolution: "large"
-	}, {
-		enabled: advertisement?.documentVersion?.uploadStatus === "COMPLETED"
+		resolution: 'large'
 	});
 </script>
 
 <Dialog.Root>
 	{#if advertisement}
 		<Dialog.Trigger>
-			<AdvertStatusIcon variant={advertisement?.status ?? 'missing'} />
+			<AdvertStatusIcon
+				title={$_('status-text.' + advertisement.status)}
+				variant={advertisement.status ?? 'missing'}
+			/>
 		</Dialog.Trigger>
 	{:else}
 		<AdvertStatusIcon title={$_('status-text.missing')} variant={'missing'} />
 	{/if}
 	<Dialog.Content class="sm:max-w-4xl max-h-[80vh] overflow-y-auto">
-		{#if advertisement}
+		{#if advertisement.documentVersion}
 			<div class="grid grid-cols-2 gap-6">
 				<div
 					class="aspect-[1/1.41] bg-gray-100 dark:bg-gray-700 rounded-md flex items-center justify-center overflow-hidden"
 				>
-					{#if $thumbnail.data}
+					{#if thumbnail.current}
 						<img
-							src={$thumbnail.data || '/placeholder.svg'}
+							src={thumbnail.current || '/placeholder.svg'}
 							alt={advertisement?.documentVersion?.document?.title}
 							class="object-contain size-full"
 						/>
@@ -89,10 +87,10 @@
 					<div class="grow"></div>
 					<Dialog.Footer class="flex justify-end">
 						<ReviewRegistrationDocumentDialog document={advertisement} />
-						<Button disabled={$download.isPending} onclick={handleDownload}
+						<Button disabled={download.loading} onclick={handleDownload}
 							>{$_('common.download')}
 						</Button>
-						<DeleteAdvertisementDialog {advertisement} />
+						<DeleteAdvertisementDialog {advertisement} onDelete={async () => {}} />
 					</Dialog.Footer>
 				</div>
 			</div>

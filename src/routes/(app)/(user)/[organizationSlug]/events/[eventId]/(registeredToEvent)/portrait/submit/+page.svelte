@@ -32,8 +32,7 @@
 	import { SubmitPortraitRequest } from '@schema';
 	import { valibot } from 'sveltekit-superforms/adapters';
 	import { Label } from '@/components/ui/label';
-	import { trpc } from '@/trpc/client.js';
-	import { page } from '$app/state';
+	import { getAllPortraitTemplates as getPortraitTemplates } from '@/remote/functions/index.js';
 	import { toast } from 'svelte-sonner';
 
 	const firstStepSchema = v.pick(SubmitPortraitRequest, [
@@ -99,12 +98,7 @@
 		}
 	});
 
-	const api = trpc(page);
-
-	const portraitTemplatesQuery = api.portraitTemplates.getAll.createQuery({
-		page: 0,
-		query: ''
-	});
+	const portraitTemplatesQuery = getPortraitTemplates({ page: 0, query: '' });
 
 	// Step titles and icons for the wizard
 	const steps = [
@@ -124,7 +118,7 @@
 	// Load template data when selected
 	$effect(() => {
 		if (selectedTemplate) {
-			const template = $portraitTemplatesQuery.data?.portraitTemplates?.find(
+			const template = portraitTemplatesQuery.current?.portraitTemplates?.find(
 				(p) => p.id === selectedTemplate
 			);
 			if (template) {
@@ -285,10 +279,10 @@
 						<h3 class="text-xl font-medium">Select a template</h3>
 						<RadioGroup.Root bind:value={selectedTemplate}>
 							<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-								{#if $portraitTemplatesQuery.isLoading}
+								{#if portraitTemplatesQuery.loading}
 									<LoaderCircle class="size-6 mx-auto animate-spin" />
 								{:else}
-									{#each $portraitTemplatesQuery.data?.portraitTemplates ?? [] as template (template.id)}
+									{#each portraitTemplatesQuery.current?.portraitTemplates ?? [] as template (template.id)}
 										<Label for={`portrait-template-${template.id}`}>
 											<RadioGroup.Item
 												value={template.id}

@@ -3,8 +3,6 @@
 	import { Button } from '@/components/ui/button';
 	import * as Command from '@/components/ui/command';
 	import { Check, ChevronsUpDown } from '@lucide/svelte';
-	import { trpc } from '@/trpc/client';
-	import { page } from '$app/state';
 	import { _ } from '@services';
 	import { tick } from 'svelte';
 	import { cn } from '@/utils';
@@ -15,21 +13,27 @@
 		value: string;
 		organizationId: string;
 		userId: string;
+		onChangeUserRole?: (
+			userId: string,
+			role: 'admin' | 'member' | 'owner',
+			organizationId: string
+		) => void;
 	}
 
-	let { value = $bindable(), organizationId, userId }: Props = $props();
-
-	const api = trpc(page);
-	const updateRole = api.admin.orgs.members.updateRole.createMutation();
+	let { value = $bindable(), organizationId, userId, onChangeUserRole }: Props = $props();
 
 	const roles = [
 		{
-			value: 'org:member',
+			value: 'member',
 			label: $_('modules.manage-org-members.member')
 		},
 		{
-			value: 'org:admin',
+			value: 'admin',
 			label: $_('modules.manage-org-members.admin')
+		},
+		{
+			value: 'owner',
+			label: $_('modules.manage-org-members.owner')
 		}
 	] as const;
 	let valueLabel = $state(roles.find((row) => row.value === value)?.label);
@@ -52,7 +56,7 @@
 		<Popover.Trigger>
 			{#snippet child({ props })}
 				<Button
-					disabled={$updateRole.isPending}
+					disabled={!!$effect.pending()}
 					{...props}
 					variant="outline"
 					role="combobox"
@@ -71,19 +75,7 @@
 						<Command.Item
 							value={role.value}
 							onSelect={() => {
-								$updateRole.mutate(
-									{
-										organizationId,
-										userId,
-										role: role.value
-									},
-									{
-										onSuccess(data, variables, context) {
-											value = role.value;
-											valueLabel = roles.find((row) => row.value === role.value)?.label;
-										}
-									}
-								);
+								onChangeUserRole?.(userId, role.value, organizationId);
 								closeAndFocusTrigger();
 							}}
 						>

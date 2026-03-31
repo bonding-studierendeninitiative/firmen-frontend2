@@ -1,27 +1,37 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { ReturnIcon } from '@/@svelte/icons';
-	import { LinkTabs } from '@/@svelte/components';
-	import { page } from '$app/state';
-	import { Event } from '@/@svelte/components';
+	import { Event, LinkTabs } from '@/@svelte/components';
 	import { Button } from '@/components/ui/button';
 	import { _ } from '@services';
-	import { LoaderCircle } from '@lucide/svelte';
 	import { toast } from 'svelte-sonner';
-	import { trpc } from '@/trpc/client';
 	import { cn } from '@/utils';
+	import { getEventDetails, publishEvent } from '@/remote/functions/admin';
+	import Skeleton from '@/components/ui/skeleton/skeleton.svelte';
+	import SuperDebug from 'sveltekit-superforms';
 
-	let { data, children } = $props();
+	let { data, children, params } = $props();
 
-	function getTabs(event: { id: string }) {
+	function getTabs(event: { id?: string | undefined }) {
+		const eventId = event.id;
+		if (eventId === undefined) {
+			return [];
+		}
 		return [
-			{ href: `/admin/events/${event?.id}/registrations`, name: 'registrations' },
-			{ name: 'buy-options', href: `/admin/events/${event?.id}/buy-options` },
-			{ name: 'exports', href: `/admin/events/${event?.id}/exports` }
+			{ href: `/admin/events/${eventId}/registrations`, name: 'registrations' },
+			{ name: 'buy-options', href: `/admin/events/${eventId}/buy-options` },
+			{ name: 'exports', href: `/admin/events/${eventId}/exports` },
+			{ name: 'emails', href: `/admin/events/${eventId}/emails` }
 		];
 	}
 
-	const publishEvent = trpc(page).admin.events.publish.createMutation();
+	let eventFilter = $derived({
+		eventId: params.id!
+	});
+
+	let getEventDetailsQuery = $derived(getEventDetails(eventFilter));
+
+	let pending = $state(false);
 </script>
 
 <div>
@@ -32,37 +42,35 @@
 		>
 			<ReturnIcon />
 		</button>
-		{#await data.event}
-			<LoaderCircle class="size-10 mx-auto animate-spin" />
-		{:then event}
-			<Event {event} />
-			<div class="grow"></div>
-			{#if event?.status === 'UNPUBLISHED'}
-				<Button class={cn($publishEvent.isPending && "animate-pulse")} disabled={$publishEvent.isPending} onclick={() => $publishEvent.mutate({
-					eventId: event.id
-					}, {
-						onError: (error) => {
-							toast.error(error.message);
-						},
-						onSuccess: () => {
-							toast.success('Event published successfully');
-						}
-					})}>{$_("common.publish")}</Button>
-			{/if}
-		{:catch error}
-			<div class="text-red-500">Error: {error.message}</div>
-		{/await}
+		<Event loading={getEventDetailsQuery.loading} event={getEventDetailsQuery.current} />
+		<div class="grow"></div>
+		{#if getEventDetailsQuery.current?.status === 'UNPUBLISHED'}
+			<Button
+				class={cn(pending && 'animate-pulse')}
+				disabled={pending}
+				onclick={async () => {
+					try {
+						pending = true;
+						await publishEvent(eventFilter);
+						toast.success('Event published successfully');
+					} catch (error: unknown) {
+						toast.error(error.body.message);
+						throw error;
+					} finally {
+						pending = false;
+					}
+				}}>{$_('common.publish')}</Button
+			>
+		{/if}
 	</div>
 
-	{#await data.event}
-		<LoaderCircle class="size-10 mx-auto animate-spin" />
-	{:then event}
+	{#if getEventDetailsQuery.loading}
+		<Skeleton class=" bg-gray-400 h-10 w-[40ch] mt-12 mb-2" />
+	{:else if getEventDetailsQuery.ready && getEventDetailsQuery.current}
 		<div class="mt-12">
-			<LinkTabs tabs={getTabs(event)} />
+			<LinkTabs tabs={getTabs(getEventDetailsQuery.current!)} />
 		</div>
-	{:catch error}
-		<div class="text-red-500">Error: {error.message}</div>
-	{/await}
+	{/if}
 
 	{@render children?.()}
 </div>

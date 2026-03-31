@@ -1,42 +1,33 @@
 <script lang="ts">
 	import { Button, buttonVariants } from '@/components/ui/button';
 	import * as Dialog from '@/components/ui/dialog';
-	import {
-		fileProxy,
-		type Infer,
-		superForm,
-		type SuperValidated
-	} from 'sveltekit-superforms';
 	import { toast } from 'svelte-sonner';
-	import { Control, Description, Field, FieldErrors, Label } from '@/components/ui/form';
 	import { _ } from '@services';
 	import { Input } from '@/components/ui/input';
-	import { valibotClient } from 'sveltekit-superforms/adapters';
-	import { UploadAdvertisementRequest } from '@schema';
 	import { cn } from '@/utils';
 	import { Plus } from '@lucide/svelte';
+	import { uploadCatalogueData } from '@/remote/functions';
+	import * as Field from '@/components/ui/field';
+	import { createUploader } from '@/utils/uploadthing';
+	import { Uploader } from '@uploadthing/svelte';
 
 	interface Props {
 		open: boolean;
-		advertisementUploadForm: SuperValidated<Infer<UploadAdvertisementRequest>>;
+		onSuccess?: () => void;
 	}
 
-	let { open = $bindable(), advertisementUploadForm }: Props = $props();
+	let { open = $bindable(false), onSuccess }: Props = $props();
 
-	const superform = superForm(advertisementUploadForm, {
-		validators: valibotClient(UploadAdvertisementRequest),
-		onResult({ result }) {
-			if (result.type === 'success') {
-				open = false;
-				toast.success('Advertisement uploaded successfully');
-			} else {
-				toast.error(`Error: ${result.status}`);
-			}
-		}
+	const { title, file, documentType } = uploadCatalogueData.fields;
+
+	const uploader = createUploader("imageUploader", {
+		onClientUploadComplete: (res) => {
+			console.log('Upload Complete', res);
+		},
+		onUploadError: (error) => {
+			console.error('Upload Error', error);
+		},
 	});
-	const { enhance, form: formData, submitting, tainted, isTainted } = superform;
-
-	const file = fileProxy(superform, 'file');
 </script>
 
 <Dialog.Root bind:open>
@@ -46,52 +37,67 @@
 	</Dialog.Trigger>
 	<Dialog.Content>
 		<form
-			action="?/uploadAdvertisement"
+			{...uploadCatalogueData.enhance(async ({ submit }) => {
+				try {
+					await submit();
+					if (uploadCatalogueData.result) {
+						toast.success('Advertisement uploaded successfully');
+						open = false;
+						if (onSuccess) {
+							onSuccess();
+						}
+					}
+				} catch (e) {
+					toast.error((e as any)?.message ?? 'Error uploading');
+					console.error('Error uploading advertisment:', e);
+				}
+			})}
 			enctype="multipart/form-data"
-			method="post"
-			use:enhance
 			class="space-y-4"
 		>
 			<Dialog.Header class="space-y-4">
 				<Dialog.Title>{$_('modules.upload-advertisement.title')}</Dialog.Title>
 				<Dialog.Description>{$_('modules.upload-advertisement.description')}</Dialog.Description>
 			</Dialog.Header>
-			<Field class="flex-col flex justify-start" form={superform} name="title">
-				<Control>
-					{#snippet children({ props })}
-						<Label>{$_('modules.upload-advertisement.name')}</Label>
-						<Input bind:value={$formData.title} {...props} />
-					{/snippet}
-				</Control>
-				<Description />
-				<FieldErrors />
-			</Field>
-			<Field class="flex-col flex justify-start" form={superform} name="file">
-				<Control>
-					{#snippet children({ props })}
-						<Label>{$_('modules.upload-advertisement.file')}</Label>
-						<!-- Due to some weird bug, we can't use Input here! (02.07.2025) -->
-						<input
-						class="focus-within:ring-2 focus-within:ring-offset-2 text-sm font-medium ring-offset-background border-input focus-visible:outline-hidden h-10 bg-background  border rounded-md px-3 py-2"
-						accept="image/*, application/pdf"
-							{...props}
-							type="file"
-							bind:files={$file}
-						/>
-					{/snippet}
-				</Control>
-				<Description>{$_("modules.upload-advertisement.file-description")}</Description>
-				<FieldErrors />
-			</Field>
-			<Field form={superform} name="orgId">
-				<Control>
-					{#snippet children({ props })}
-						<input type="hidden" value={$formData.orgId} name={props.name} />
-					{/snippet}
-				</Control>
-			</Field>
+			<Field.Field>
+				<Field.Label for="title">{$_('modules.upload-advertisement.name')}</Field.Label>
+				<Input
+					id="title"
+					{...title.as('text')}
+					placeholder={$_('auth.sign-up.placeholders.name')}
+					disabled={uploadCatalogueData.pending > 0}
+				/>
+				<Field.Error>
+					{#each uploadCatalogueData.fields.title.issues() ?? [] as issue}
+						<div class="text-red-500 text-sm">{issue.message}</div>
+					{/each}
+				</Field.Error>
+			</Field.Field>
+
+			<Field.Field>
+				<Field.Label for="file">{$_('modules.upload-advertisement.file')}</Field.Label>
+				<input
+					id="file"
+					class="focus-within:ring-2 focus-within:ring-offset-2 text-sm font-medium ring-offset-background border-input focus-visible:outline-hidden h-10 bg-background border rounded-md px-3 py-2"
+					accept="image/*, application/pdf"
+					{...file.as('file')}
+					disabled={uploadCatalogueData.pending > 0}
+				/>
+				<Field.Error>
+					{#each uploadCatalogueData.fields.file.issues() ?? [] as issue}
+						<div class="text-red-500 text-sm">{issue.message}</div>
+					{/each}
+				</Field.Error>
+			</Field.Field>
+
+			<input {...documentType.as('hidden', 'advert')} />
+
+			<Uploader {uploader} />
+
 			<Dialog.Footer>
-				<Button disabled={$file.length !== 1} type="submit">{$_('common.upload')}</Button>
+				<Button disabled={uploadCatalogueData.pending > 0} type="submit"
+					>{$_('common.upload')}</Button
+				>
 			</Dialog.Footer>
 		</form>
 	</Dialog.Content>

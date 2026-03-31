@@ -4,29 +4,19 @@
 	import { LoaderCircle } from '@lucide/svelte';
 	import { fade } from 'svelte/transition';
 	import RegistrationCard from './registration-card.svelte';
-	import { trpc } from '@/trpc/client';
-	import { page } from '$app/state';
+	import { forOrganization as getEventRegistrations } from '@/remote/functions';
 
-	let { data } = $props();
+	let { data, params: pageParams } = $props();
 
-	const api = trpc(page);
-
-	const [eventRegistrationsQuery, resolveEventRegistrationsQuery] = api.eventRegistrations.forOrganization.createInfiniteQuery(
-		{ limit: 10, orgId: data.orgId },
-		{
-			getNextPageParam: (lastPage) => Math.max(lastPage.pageNumber + 1, lastPage.totalPages - 1),
-			lazy: true
-		}
-	);
+	const params = { limit: 10, orgId: data.orgId, cursor: 0 } as const;
 </script>
 
 <div>
-
 	<h1 class=" text-stone-950 text-3xl font-extrabold">{$_('user-pages.dashboard.dashboard')}</h1>
 	<h4 class=" text-stone-500">
 		{$_('user-pages.dashboard.subHeading', {
 			values: {
-				name: data.user?.fullName ?? data.user?.firstName + " " + data.user?.lastName
+				name: data.user?.name
 			}
 		})}
 	</h4>
@@ -37,29 +27,32 @@
 				{$_('user-pages.dashboard.registeredEvents')}
 			</h2>
 		</div>
-		{#await resolveEventRegistrationsQuery(data.eventRegistrations)}
+		{#if getEventRegistrations(params).loading}
 			<LoaderCircle class="size-10 mx-auto animate-spin" />
-		{:then _ignored}
-			{@const allEventRegistrations = $eventRegistrationsQuery?.data?.pages.flatMap(page => page.eventRegistrations) ?? []}
+		{:else}
+			{@const allEventRegistrations =
+				getEventRegistrations(params).current?.eventRegistrations ?? []}
 			<div in:fade class="mt-2 @container/registrations">
 				{#if allEventRegistrations.length > 0}
 					<div class="grid grid-cols-1 @4xl/registrations:grid-cols-2 gap-8 items-start">
 						{#each allEventRegistrations as eventRegistration, index}
-							<RegistrationCard registration={eventRegistration}
+							<RegistrationCard
+								registration={eventRegistration}
+								orgSlug={pageParams.organizationSlug}
 							/>
 						{/each}
 					</div>
-				{:else }
+				{:else}
 					<NoDataFound
 						heading={$_('user-pages.dashboard.noEventsRegistered')}
 						subHeading={$_('user-pages.dashboard.noEventsRegisteredDetail')}
-						buttonText={$_('common.viewEvents')}
-						onButtonClick={()=> {}}
+						action={{
+							label: $_('common.viewEvents'),
+							href: `/${pageParams.organizationSlug}/events`
+						}}
 					/>
 				{/if}
 			</div>
-		{:catch error}
-			<p>{error.message}</p>
-		{/await}
+		{/if}
 	</section>
 </div>

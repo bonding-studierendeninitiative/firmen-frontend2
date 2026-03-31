@@ -2,24 +2,18 @@
 	import * as Dialog from '@/components/ui/dialog';
 	import { LoaderCircle, Trash2 } from '@lucide/svelte';
 	import { Button, buttonVariants } from '@/components/ui/button';
-	import { toast } from 'svelte-sonner';
 	import { _ } from '@services';
-	import { trpc } from '@/trpc/client';
-	import { page } from '$app/state';
 	import { Switch } from '@/components/ui/switch';
 	import { Label } from '@/components/ui/label';
-
-	const api = trpc(page);
-	const utils = api.createUtils();
-	const removeMember = api.admin.orgs.members.remove.createMutation();
 
 	interface Props {
 		id: string;
 		orgId: string;
 		open?: boolean;
+		onRemoveMember?: (userId: string, organizationId: string) => void;
 	}
 
-	let { id, orgId, open = $bindable(false) }: Props = $props();
+	let { id, orgId, open = $bindable(false), onRemoveMember }: Props = $props();
 
 	let sendNotification = $state(false);
 </script>
@@ -38,7 +32,7 @@
 			<Dialog.Close class={buttonVariants({ variant: 'outline' })}
 				>{$_('common.cancel')}</Dialog.Close
 			>
-			{#if $removeMember.isPending}
+			{#if $effect.pending()}
 				<Button disabled variant="destructive">
 					<Trash2 class="mr-2 size-5" />
 
@@ -47,19 +41,8 @@
 			{:else}
 				<Button
 					onclick={() => {
-						$removeMember.mutate(
-							{ userId: id, organizationId: orgId, sendNotification },
-							{
-								onError: (error) => {
-									toast.error(error.message);
-								},
-								onSuccess: () => {
-									toast.success('Member removed');
-									utils.admin.orgs.members.getAll.invalidate();
-									open = false;
-								}
-							}
-						);
+						onRemoveMember?.(id, orgId);
+						open = false;
 					}}
 					variant="destructive"
 				>

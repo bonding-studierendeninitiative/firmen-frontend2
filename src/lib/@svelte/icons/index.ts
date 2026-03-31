@@ -37,3 +37,6 @@ export { default as CloudUploadIcon } from './CloudUploadIcon.svelte';
 export { default as EyeIcon } from './EyeIcon.svelte';
 export { default as CrossEyeIcon } from './CrossEyeIcon.svelte';
 export { default as SettingsIcon } from './SettingsIcon.svelte';
+export { default as LinkedinIcon } from './linkedin.svelte';
+export { default as GithubIcon } from './github-mark.svelte';
+export { default as MicrosoftEntraIcon } from './microsoft-entra.svelte';

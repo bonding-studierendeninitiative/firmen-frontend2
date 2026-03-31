@@ -76,7 +76,7 @@
 		<Command.List>
 			{#if open && selectables.length > 0}
 				<div
-					class="absolute top-0 z-10 w-full rounded-md border bg-popover text-popover-foreground shadow-md outline-none animate-in"
+                    class="absolute top-0 z-10 w-full rounded-md border bg-popover text-popover-foreground shadow-md outline-none animate-in max-h-64 overflow-auto"
 				>
 					<Command.Group class="h-full overflow-auto">
 						{#each selectables as selectable}

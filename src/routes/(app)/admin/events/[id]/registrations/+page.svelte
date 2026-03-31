@@ -1,55 +1,206 @@
 <script lang="ts">
 	import { _ } from '@services';
 	import { NoDataFound } from '@/@svelte/components';
-	import { LoaderCircle } from '@lucide/svelte';
+	import { ChevronLeft, ChevronRight } from '@lucide/svelte';
 	import { fade } from 'svelte/transition';
-	import { trpc } from '@/trpc/client';
-	import { page } from '$app/state';
-	import { derived } from 'svelte/store';
 	import DataTable from './data-table.svelte';
+	import {
+		confirmEventRegistration,
+		createEventRegistration,
+		deleteEventRegistration,
+		getEventRegistrations,
+		rejectEventRegistration
+	} from '@/remote/functions/admin';
+	import { toast } from 'svelte-sonner';
+	import * as Pagination from '@/components/ui/pagination';
+	import { goto } from '$app/navigation';
+	import type { AdminRegisterOrganizationToEventInput } from '@api/admin-client';
+	import CreateEventRegistrationForm from './create-event-registration-form.svelte';
 
-	let { data } = $props();
+	let { params } = $props();
 
-	const api = trpc(page);
+	let eventRegistrationFilters = $derived({
+		limit: 10,
+		eventId: params.id,
+		page: 0
+	});
 
-	const [eventRegistrationsQuery, resolveEventRegistrations] =
-		api.admin.events.getEventRegistrations.createInfiniteQuery(
-			{
-				limit: 10,
-				eventId: page.params.id
-			},
-			{
-				getNextPageParam: (lastPage) =>
-					Math.max(Number(lastPage.pageNumber) + 1, Number(lastPage.totalPages) - 1),
-				lazy: true,
-				
-			}
-		);
+	const onCreateEventRegistration = async (input: AdminRegisterOrganizationToEventInput) => {
+		try {
+			await createEventRegistration(input).updates(
+				eventRegistrationsQuery.withOverride((prev) => {
+					const eventId = input.eventId;
+					const organizationId = input.organizationId;
+					const contactPeople = input.contactPeople;
+					const canUploadAdvertisement = input.canUploadAdvertisement;
+					const confirmedRegistration = input.confirmedRegistration;
+					return {
+						...prev,
+						eventRegistrations: [
+							...prev.eventRegistrations,
+							{
+								id: 'new-id',
+								eventId,
+								organization: {
+									id: organizationId,
+									name: 'Loading...',
+									logo: null,
+									address: ''
+								},
+								contactPeople,
+								canUploadAdvertisement,
+								confirmedRegistration
+							}
+						]
+					};
+				})
+			);
+			console.log('Created event registration');
+			toast.success('Die Anmeldung wurde erfolgreich erstellt');
+		} catch (error) {
+			toast.error('Fehler beim Erstellen der Anmeldung');
+			// Re-throw so the dialog component can keep the dialog open on failure
+			throw error;
+		}
+	};
 
-	const allEventRegistrations = derived(eventRegistrationsQuery, (query)=> query.data?.pages.flatMap(
-		(page) => page.eventRegistrations ?? []
-	) ?? [])
+	let eventRegistrationDialogOpen = $state(false);
+	let eventRegistrationsQuery = $derived(getEventRegistrations(eventRegistrationFilters));
 </script>
 
-{#await resolveEventRegistrations(data.tableData)}
-	<LoaderCircle class="size-10 mx-auto animate-spin" />
-{:then ignored}
-	<section in:fade class=" mt-6">
-		{#if !allEventRegistrations}
-			<section class=" mt-10">
-				<NoDataFound
-					heading={$_('admin-pages.events.noRegistrationsFound')}
-					subHeading={$_('admin-pages.events.noDataToDisplay')}
-					buttonText={$_('admin-pages.events.backToEvents')}
-					onButtonClick={() => {}}
-				/>
-			</section>
-		{:else}
-			<section class=" mt-10">
-				<DataTable isLoading={$eventRegistrationsQuery.isLoading} data={$allEventRegistrations} />
-			</section>
-		{/if}
-	</section>
-{:catch error}
-	<p>{error.message}</p>
-{/await}
+<section in:fade class=" mt-6">
+	<CreateEventRegistrationForm
+		bind:open={eventRegistrationDialogOpen}
+		{onCreateEventRegistration}
+	/>
+
+	{#if Number(eventRegistrationsQuery.current?.eventRegistrations.length) < 1}
+		<section class=" mt-10">
+			<NoDataFound
+				heading={$_('admin-pages.events.noRegistrationsFound')}
+				subHeading={$_('admin-pages.events.noDataToDisplay')}
+				buttonText={$_('admin-pages.events.backToEvents')}
+				onButtonClick={() => {}}
+			/>
+		</section>
+	{:else}
+		<section class=" mt-10 space-y-4">
+			<DataTable
+				onEmailSent={async ({ submit }) => {
+					try {
+						await submit();
+						toast.success('Die E-Mails wurden erfolgreich versendet', {
+							action: {
+								label: 'Zu den E-Mails',
+								onClick: async () => {
+									await goto(`/admin/events/${params.id}/emails`);
+								}
+							}
+						});
+					} catch (error) {
+						toast.error('Fehler beim Versenden der E-Mails');
+						throw error; // Re-throw so the dialog component can keep the dialog open on failure
+					}
+				}}
+				eventId={params.id}
+				isLoading={eventRegistrationsQuery.loading}
+				data={eventRegistrationsQuery.current?.eventRegistrations ?? []}
+				onDelete={async ({ eventRegistrationId }) => {
+					try {
+						await deleteEventRegistration({ eventRegistrationId }).updates(
+							eventRegistrationsQuery.withOverride((prev) => {
+								return {
+									...prev,
+									eventRegistrations: prev.eventRegistrations.filter(
+										(reg) => reg.id !== eventRegistrationId
+									),
+									totalElements: Number(prev.totalElements) - 1
+								};
+							})
+						);
+						console.log('Delete event registration:', eventRegistrationId);
+						toast.success('Die Anmeldung wurde erfolgreich gelöscht');
+					} catch (error) {
+						console.error('Error deleting event registration:', error);
+						toast.error('Fehler beim Löschen der Anmeldung');
+					}
+				}}
+				onReject={async ({ eventRegistrationId }) => {
+					try {
+						await rejectEventRegistration({ eventRegistrationId }).updates(
+							eventRegistrationsQuery.withOverride((prev) => {
+								return {
+									...prev,
+									eventRegistrations: prev.eventRegistrations.map((reg) =>
+										reg.id === eventRegistrationId ? { ...reg, status: 'rejected' } : reg
+									)
+								};
+							})
+						);
+						console.log('Rejected event registration:', eventRegistrationId);
+						toast.success('Die Anmeldung wurde erfolgreich abgelehnt');
+					} catch (error) {
+						console.error('Error rejecting event registration:', error);
+						toast.error('Fehler beim Ablehnen der Anmeldung');
+					}
+				}}
+				onConfirm={async ({ eventRegistrationId }) => {
+					try {
+						await confirmEventRegistration({ eventRegistrationId }).updates(
+							eventRegistrationsQuery.withOverride((prev) => {
+								return {
+									...prev,
+									eventRegistrations: prev.eventRegistrations.map((reg) =>
+										reg.id === eventRegistrationId ? { ...reg, status: 'confirmed' } : reg
+									)
+								};
+							})
+						);
+						console.log('Confirmed event registration:', eventRegistrationId);
+						toast.success('Die Anmeldung wurde erfolgreich bestätigt');
+					} catch (error) {
+						toast.error('Fehler beim Bestätigen der Anmeldung');
+						// Re-throw so the dialog component can keep the dialog open on failure
+						throw error;
+					}
+				}}
+			/>
+			<Pagination.Root
+				perPage={eventRegistrationFilters.limit ?? 10}
+				page={(eventRegistrationFilters.page ?? 0) + 1}
+				count={eventRegistrationsQuery.current?.totalElements ?? 0}
+				onPageChange={(pageNumber) => {
+					eventRegistrationFilters.page = pageNumber - 1;
+				}}
+			>
+				{#snippet children({ pages, currentPage })}
+					<Pagination.Content>
+						<Pagination.Item>
+							<Pagination.PrevButton>
+								<ChevronLeft class="size-4" />
+							</Pagination.PrevButton>
+						</Pagination.Item>
+						{#each pages as page (page.key)}
+							{#if page.type === 'ellipsis'}
+								<Pagination.Item>
+									<Pagination.Ellipsis />
+								</Pagination.Item>
+							{:else}
+								<Pagination.Item>
+									<Pagination.Link {page} isActive={currentPage === page.value}>
+										{page.value}
+									</Pagination.Link>
+								</Pagination.Item>
+							{/if}
+						{/each}
+						<Pagination.Item>
+							<Pagination.NextButton>
+								<ChevronRight class="size-4" />
+							</Pagination.NextButton>
+						</Pagination.Item>
+					</Pagination.Content>
+				{/snippet}
+			</Pagination.Root>
+		</section>
+	{/if}
+</section>

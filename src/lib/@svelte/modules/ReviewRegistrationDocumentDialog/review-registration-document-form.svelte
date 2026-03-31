@@ -2,44 +2,22 @@
 	import { Button } from '@/components/ui/button';
 	import * as Dialog from '@/components/ui/dialog';
 	import * as Tabs from '@/components/ui/tabs';
-	import { type Infer, superForm, type SuperValidated } from 'sveltekit-superforms';
-	import { type ReviewDocumentRequest } from '@schema';
 	import { toast } from 'svelte-sonner';
-	import { Control, Description, Field, FieldErrors, Label } from '@/components/ui/form';
+	import { Label } from '@/components/ui/label';
 	import { _ } from '@services';
 	import { Textarea } from '@/components/ui/textarea';
 	import { CheckIcon, MessageCircleX, RefreshCwIcon } from '@lucide/svelte';
 	import type { AdminRegistrationDocumentOutput } from '@api/admin-client';
 	import AdminRegistrationDocumentPreview from '@/@svelte/components/AdminRegistrationDocumentPreview/admin-registration-document-preview.svelte';
+	import { reviewDocument } from '@/remote/functions/admin';
 
 	interface Props {
 		open: boolean;
 		document: AdminRegistrationDocumentOutput;
-		catalogueDataReviewForm: SuperValidated<Infer<ReviewDocumentRequest>>;
 	}
 
-	let { open = $bindable(), document, catalogueDataReviewForm }: Props = $props();
+	let { open = $bindable(), document }: Props = $props();
 
-	const superCatalogueDataReviewForm = superForm(catalogueDataReviewForm, {
-		dataType: 'json',
-		onSubmit({ jsonData }) {
-			jsonData({
-				...$formData,
-				documentId: document.id
-			});
-		},
-		onResult({ result }) {
-			if (result.type === 'success') {
-				open = false;
-				toast.success('Logo reviewed successfully');
-			} else if (result.type === 'error') {
-				toast.error(`Error: ${result.error.message}`);
-			} else if (result.type === 'failure') {
-				toast.error(`Unknown error ${result.data}`);
-			}
-		}
-	});
-	const { enhance, form: formData } = superCatalogueDataReviewForm;
 	const feedbackTypeOptions = [
 		{
 			value: 'confirmation',
@@ -62,7 +40,19 @@
 	] as const;
 </script>
 
-<form action="?/reviewDocument" method="post" use:enhance>
+<form
+	{...reviewDocument.enhance(async ({ submit }) => {
+		try {
+			await submit();
+			if (reviewDocument.result) {
+				toast.success('Review submitted successfully');
+			}
+		} catch (error) {
+			console.error('Failed to submit review:', error);
+			toast.error('Failed to submit review. Please try again.');
+		}
+	})}
+>
 	<Dialog.Header class="space-y-4 mb-4">
 		<Dialog.Title>{$_('modules.review-catalogue-data.title')}</Dialog.Title>
 		<Dialog.Description>{$_('modules.review-catalogue-data.description')}</Dialog.Description>
@@ -71,44 +61,40 @@
 	<div class="space-y-4 py-2 col-span-2">
 		<AdminRegistrationDocumentPreview registrationDocument={document} />
 
-		<Field
-			class="flex-col flex justify-start"
-			form={superCatalogueDataReviewForm}
-			name="documentChangeType"
-		>
-			<Control>
-				{#snippet children({ props })}
-					<Label>{$_('modules.review-catalogue-data.feedback-type')}</Label>
-					<Tabs.Root class="p-1" bind:value={$formData.documentChangeType}>
-						<Tabs.List class="space-x-1">
-							{#each feedbackTypeOptions as { value, label, icon, clazz }}
-								<Tabs.Trigger {...props} class={clazz} {value}>
-									{@const SvelteComponent = icon}
-									<SvelteComponent class="size-4 mr-2" />{label}</Tabs.Trigger
-								>
-							{/each}
-						</Tabs.List>
-					</Tabs.Root>
-				{/snippet}
-			</Control>
-			<Description />
-			<FieldErrors />
-		</Field>
+		<input {...reviewDocument.fields.documentId.as('hidden', document.id)} />
 
-		<Field class="flex-col flex justify-start" form={superCatalogueDataReviewForm} name="feedback">
-			<Control>
-				{#snippet children({ props })}
-					<Label>{$_('admin-pages.events.feedback.placeholders.feedback')}</Label>
-					<Textarea
-						{...props}
-						bind:value={$formData.feedback}
-						disabled={!$formData.documentChangeType}
-					/>
-				{/snippet}
-			</Control>
-			<Description />
-			<FieldErrors />
-		</Field>
+		<div>
+			<Label>{$_('modules.review-catalogue-data.feedback-type')}</Label>
+			<Tabs.Root
+				class="p-1"
+				bind:value={
+					() => reviewDocument.fields.data.documentChangeType.value() ?? 'confirmation',
+					(a) => {
+						if (a) reviewDocument.fields.data.documentChangeType.set(a);
+					}
+				}
+			>
+				<Tabs.List class="space-x-1">
+					{#each feedbackTypeOptions as { value, label, icon, clazz }}
+						<Tabs.Trigger class={clazz} {value}>
+							{@const SvelteComponent = icon}
+							<SvelteComponent class="size-4 mr-2" />{label}</Tabs.Trigger
+						>
+					{/each}
+				</Tabs.List>
+			</Tabs.Root>
+		</div>
+
+		<div>
+			<Label>{$_('admin-pages.events.feedback.placeholders.feedback')}</Label>
+			<Textarea
+				{...reviewDocument.fields.data.feedback.as('text')}
+				bind:value={
+					reviewDocument.fields.data.feedback.value, reviewDocument.fields.data.feedback.set
+				}
+				disabled={!reviewDocument.fields.data.documentChangeType.value()}
+			/>
+		</div>
 
 		<Dialog.Footer>
 			<Button type="submit">{$_('modules.review-catalogue-data.proceed')}</Button>

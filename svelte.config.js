@@ -6,7 +6,9 @@ const config = {
 	// Consult https://kit.svelte.dev/docs/integrations#preprocessors
 	// for more information about preprocessors
 	preprocess: vitePreprocess(),
-
+	vitePlugin: {
+		inspector: true
+	},
 	kit: {
 		// adapter-auto only supports some environments, see https://kit.svelte.dev/docs/adapter-auto for a list.
 		// If your environment is not supported or you settled on a specific environment, switch out the adapter.
@@ -19,7 +21,18 @@ const config = {
 			'@constant': './src/lib/constants',
 			'@/*': './src/lib/*'
 		},
-		adapter: adapter({})
+		adapter: adapter({}),
+		csrf: {
+			trustedOrigins: [process.env.PUBLIC_BACKEND_HOST ?? '', process.env.PUBLIC_APP_URL ?? '']
+		},
+		experimental: {
+			remoteFunctions: true
+		}
+	},
+	compilerOptions: {
+		experimental: {
+			async: true
+		}
 	}
 };
 

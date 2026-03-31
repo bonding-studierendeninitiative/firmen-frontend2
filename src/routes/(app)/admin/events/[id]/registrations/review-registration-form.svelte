@@ -1,5 +1,16 @@
 <script lang="ts">
-	import { Calendar, Check, ChevronRight, Clock, Edit, MapPin, Package, Plus, Users, X } from '@lucide/svelte';
+	import {
+		Calendar,
+		Check,
+		ChevronRight,
+		Clock,
+		Edit,
+		MapPin,
+		Package,
+		Plus,
+		Users,
+		X
+	} from '@lucide/svelte';
 
 	import { Badge } from '@/components/ui/badge';
 	import { Button } from '@/components/ui/button';
@@ -28,8 +39,20 @@
 			logo: '/placeholder.svg?height=50&width=50'
 		},
 		contacts: [
-			{ id: '1', name: 'Jane Smith', email: 'jane@techcorp.com', role: 'Primary Contact', phone: '+1 555-123-4567' },
-			{ id: '2', name: 'John Doe', email: 'john@techcorp.com', role: 'Technical Contact', phone: '+1 555-987-6543' },
+			{
+				id: '1',
+				name: 'Jane Smith',
+				email: 'jane@techcorp.com',
+				role: 'Primary Contact',
+				phone: '+1 555-123-4567'
+			},
+			{
+				id: '2',
+				name: 'John Doe',
+				email: 'john@techcorp.com',
+				role: 'Technical Contact',
+				phone: '+1 555-987-6543'
+			},
 			{
 				id: '3',
 				name: 'Alex Johnson',
@@ -98,8 +121,10 @@
 		});
 	};
 
+	let open = $state(false);
 </script>
-<Dialog open={open} onOpenChange={() => console.log('open changed')} class="max-w-4xl">
+
+<Dialog {open} onOpenChange={() => console.log('open changed')}>
 	<DialogContent class="max-w-4xl max-h-[90vh] p-0">
 		<DialogHeader class="p-6 pb-2">
 			<div class="flex items-center justify-between">
@@ -110,7 +135,11 @@
 					</DialogDescription>
 				</div>
 				<Badge
-					variant={registrationData.status === "confirmed" ? "success" : registrationData.status === "rejected" ? "destructive" : "outline"}
+					variant={registrationData.status === 'confirmed'
+						? 'success'
+						: registrationData.status === 'rejected'
+							? 'destructive'
+							: 'outline'}
 					class="text-sm px-3 py-1 capitalize"
 				>
 					{registrationData.status}
@@ -118,7 +147,7 @@
 			</div>
 		</DialogHeader>
 
-		<Tabs defaultValue="overview" class="w-full">
+		<Tabs value="overview" class="w-full">
 			<div class="px-6">
 				<TabsList class="grid grid-cols-4 w-full">
 					<TabsTrigger value="overview">Overview</TabsTrigger>
@@ -143,7 +172,7 @@
 									<div class="flex items-start">
 										<div class="mr-3 mt-1">
 											<img
-												src={registrationData.organization.logo || "/placeholder.svg"}
+												src={registrationData.organization.logo || '/placeholder.svg'}
 												alt={registrationData.organization.name}
 												class="size-10 rounded-md"
 											/>
@@ -181,7 +210,6 @@
 											</li>
 										{/each}
 										{#if registrationData.package.benefits.length > 3}
-
 											<li class="text-sm text-muted-foreground">
 												+{registrationData.package.benefits.length - 3} more benefits
 											</li>
@@ -255,7 +283,9 @@
 					<Card>
 						<CardHeader>
 							<CardTitle>Organization Details</CardTitle>
-							<CardDescription>Complete information about the registered organization</CardDescription>
+							<CardDescription
+								>Complete information about the registered organization</CardDescription
+							>
 						</CardHeader>
 						<CardContent class="space-y-6">
 							<div>
@@ -265,7 +295,7 @@
 										<div class="flex items-start">
 											<div class="mr-3 mt-1">
 												<img
-													src={registrationData.organization.logo || "/placeholder.svg"}
+													src={registrationData.organization.logo || '/placeholder.svg'}
 													alt={registrationData.organization.name}
 													class="size-16 rounded-md"
 												/>
@@ -293,9 +323,11 @@
 											<div class="flex justify-between">
 												<span class="text-muted-foreground">Status:</span>
 												<Badge
-													variant={
-	registrationData.status === "confirmed" ? "success" : registrationData.status === "rejected" ? "destructive" : "outline"
-	}
+													variant={registrationData.status === 'confirmed'
+														? 'success'
+														: registrationData.status === 'rejected'
+															? 'destructive'
+															: 'outline'}
 													class="text-xs px-2 capitalize"
 												>
 													{registrationData.status}
@@ -385,7 +417,7 @@
 										<div>
 											<div class="flex justify-between items-center mb-2">
 												<h3 class="text-lg font-medium">{addon.name}</h3>
-												{#if addon.type === "package"}
+												{#if addon.type === 'package'}
 													<Badge>{addon.price}</Badge>
 												{/if}
 											</div>
@@ -398,8 +430,8 @@
 																{item.name}
 																{#if item?.quantity}
 																	<span class="text-muted-foreground ml-1">x{item.quantity}</span>
-																	{/if}
-	</span>
+																{/if}
+															</span>
 														</div>
 														<Badge variant="outline">{item.price}</Badge>
 													</div>
@@ -482,7 +514,8 @@
 										</Badge>
 									</div>
 									<p class="text-sm text-muted-foreground">
-										The organization has registered for {registrationData.eventDays.length} days with a total of{" "}
+										The organization has registered for {registrationData.eventDays.length} days with
+										a total of{' '}
 										{registrationData.registrationCount} registration(s).
 									</p>
 								</div>
@@ -495,9 +528,7 @@
 
 		<DialogFooter class="p-6 pt-2 border-t">
 			<div class="flex justify-between w-full">
-				<Button variant="outline" onclick={() => {}}>
-					Close
-				</Button>
+				<Button variant="outline" onclick={() => {}}>Close</Button>
 				<div class="flex gap-2">
 					<Button variant="destructive" onclick={handleReject}>
 						<X class="size-4 mr-2" />

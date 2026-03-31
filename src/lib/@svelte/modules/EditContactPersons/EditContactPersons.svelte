@@ -5,56 +5,48 @@
 	import * as Avatar from '@/components/ui/avatar';
 	import { cn } from '@/utils';
 	import { LoaderCircle, Users } from '@lucide/svelte';
-	import { page } from '$app/state';
 	import { Button } from '@/components/ui/button';
 	import { _ } from '@services';
-	import { trpc } from '@/trpc/client';
-	import {toast} from 'svelte-sonner';
+	import { getOrgMembers } from '@/remote/functions';
 
-
-	const api = trpc(page);
-
-	const utils = api.createUtils();
-
-	let organizationMembers = api.orgMembers.getMembers.createQuery({
-		limit: "10",
-		offset: "0"
+	let organizationMembersQuery = getOrgMembers({
+		limit: '100',
+		offset: '0',
+		orderBy: 'name',
+		orderDirection: 'asc'
 	});
-	let changeContactPeople = api.eventRegistrations.changeContactPeople.createMutation();
-
 
 	interface Props {
 		eventRegistrationId: any;
 		open?: boolean;
 		contactPeople: string[];
+		onChange?: (contactPeople: string[]) => Promise<void>;
 	}
 
-	let { eventRegistrationId, open = $bindable(false), contactPeople = $bindable() }: Props = $props();
-
+	let { open = $bindable(false), contactPeople = $bindable(), onChange }: Props = $props();
 </script>
 
 <Dialog.Root bind:open>
 	<Dialog.Content class="w-full max-w-lg">
 		<Dialog.Header>
-			<Dialog.Title>{$_("modules.edit-contact-persons.title")}</Dialog.Title>
-			<Dialog.Description>{$_("modules.edit-contact-persons.description")}
-			</Dialog.Description>
+			<Dialog.Title>{$_('modules.edit-contact-persons.title')}</Dialog.Title>
+			<Dialog.Description>{$_('modules.edit-contact-persons.description')}</Dialog.Description>
 		</Dialog.Header>
 		<div class="space-y-4 w-full">
 			<Card.Root>
 				<Card.Header class="pb-2">
 					<Card.Title class="text-lg flex items-center">
 						<Users class="size-5 mr-2" />
-						{$_("modules.edit-contact-persons.members-card-header")}
+						{$_('modules.edit-contact-persons.members-card-header')}
 					</Card.Title>
 					<Card.Description></Card.Description>
 				</Card.Header>
 				<Card.Content class="space-y-6 pt-2">
-					{#if $organizationMembers.isLoading}
+					{#if organizationMembersQuery.loading}
 						<LoaderCircle class="size-5 text-primary animate-spin mx-auto" />
 					{/if}
-					{#if ($organizationMembers.data?.data.length ?? 0) < 1 && !$organizationMembers.isLoading}
-						<p>{$_("modules.edit-contact-persons.no-members")}</p>
+					{#if organizationMembersQuery.ready && organizationMembersQuery.current.members.length === 0}
+						<p>{$_('modules.edit-contact-persons.no-members')}</p>
 					{:else}
 						<ToggleGroup.Root
 							type="multiple"
@@ -62,47 +54,45 @@
 							class="flex flex-wrap gap-2"
 							bind:value={contactPeople}
 						>
-							{#each $organizationMembers.data?.data ?? [] as member}
+							{#each organizationMembersQuery.current?.members ?? [] as member}
 								<ToggleGroup.Item
-									value={member.publicUserData?.userId}
+									value={member.userId}
 									class={cn(
-										"flex items-center gap-2 rounded-full px-3 py-1 text-sm",
-										"data-[state=on]:bg-primary data-[state=on]:text-primary-foreground",
+										'flex items-center gap-2 rounded-full px-3 py-1 text-sm',
+										'data-[state=on]:bg-primary data-[state=on]:text-primary-foreground'
 									)}
-									aria-label={`Select ${member.publicUserData?.firstName} ${member.publicUserData?.lastName}`}
+									aria-label={`Select ${member.user.name}`}
 								>
 									<Avatar.Root class="size-6">
-										<Avatar.Image src={member.publicUserData?.imageUrl}
-																	alt={member.publicUserData?.firstName + " " + member.publicUserData?.lastName} />
+										<Avatar.Image src={member.user.image} alt={member.user.name} />
 										<Avatar.Fallback class="text-xs">
-											{[member.publicUserData?.firstName[0], member.publicUserData?.lastName[0]].join("")}
+											{member.user.name
+												.split(' ')
+												.map((n) => n[0])
+												.join('')}
 										</Avatar.Fallback>
 									</Avatar.Root>
-									<span>{member.publicUserData?.firstName + " " + member.publicUserData?.lastName}</span>
+									<span>{member.user.name}</span>
 								</ToggleGroup.Item>
 							{/each}
 						</ToggleGroup.Root>
 					{/if}
 					<div class="text-sm text-muted-foreground">
-						<p>{$_("modules.edit-contact-persons.members-selected", { values: { members: contactPeople.length } })}</p>
+						<p>
+							{$_('modules.edit-contact-persons.members-selected', {
+								values: { members: contactPeople.length }
+							})}
+						</p>
 					</div>
 				</Card.Content>
 			</Card.Root>
 		</div>
 		<Dialog.Footer>
-			<Button disabled={$changeContactPeople.isPending || !contactPeople.length}
-							onclick={() => $changeContactPeople.mutate({ eventRegistrationId, contactPeople }, {
-				onError: (err) => {
-					console.error(err);
-					toast.error(err.message);
-				},
-				onSuccess: () => {
-					toast.success("Contact people updated")
-					open = false;
-					// utils.event
-				}
-			})}>
-				{$_("common.continue")}
+			<Button
+				disabled={!!$effect.pending() || !contactPeople.length}
+				onclick={() => onChange?.(contactPeople)}
+			>
+				{$_('common.continue')}
 			</Button>
 		</Dialog.Footer>
 	</Dialog.Content>

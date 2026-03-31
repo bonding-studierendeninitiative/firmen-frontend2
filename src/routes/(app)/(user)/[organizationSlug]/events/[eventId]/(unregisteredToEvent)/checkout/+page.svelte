@@ -1,20 +1,37 @@
 <script lang="ts">
 	import { EventRegistrationCheckout } from '@/@svelte/modules';
+	import { getActiveBuyOption, getEventDetails } from '@/remote/functions';
 	import { LoaderCircle } from '@lucide/svelte';
+	import { queryParameters, ssp } from 'sveltekit-search-params';
+	import SuperDebug from 'sveltekit-superforms';
 
-	let { data } = $props();
+	let { params } = $props();
+
+	let queryParams = queryParameters(
+		{
+			selectedPackage: ssp.string(),
+			selectedEventDays: ssp.array<string>(),
+			selectedAddons: ssp.array<string>(),
+			selectedAddonPackages: ssp.array<string>()
+		},
+		{
+			showDefaults: false
+		}
+	);
+
+	let eventQuery = getEventDetails(params.eventId);
+	let eventBuyOptions = getActiveBuyOption(params.eventId);
 </script>
 
-{#await data.eventRegistrationData}
+{#if eventQuery.loading || eventBuyOptions.loading}
 	<LoaderCircle class="size-10 mx-auto animate-spin" />
-{:then eventDetails}
+{:else if eventQuery.ready && eventBuyOptions.ready}
 	<EventRegistrationCheckout
-		event={eventDetails?.event}
-		buyOption={eventDetails?.buyOption}
-		addonPackages={eventDetails?.addons}
-		orgSlug={eventDetails?.orgSlug}
-		createEventRegistrationForm={eventDetails?.createEventRegistrationForm}
+		event={eventQuery.current}
+		buyOption={eventBuyOptions.current}
+		addonPackages={eventBuyOptions.current?.addonPackages}
+		orgSlug={params.organizationSlug}
 	/>
-{:catch error}
-	<p>{error.message}</p>
-{/await}
+{/if}
+
+<SuperDebug data={queryParams} />

@@ -45,3 +45,6 @@ Thumbs.db
 
 # Sentry Config File
 .env.sentry-build-plugin
+
+/generated/prisma
+prisma/db-dev.sqlite3

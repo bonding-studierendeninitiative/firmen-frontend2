@@ -1,48 +1,31 @@
 <script lang="ts">
-	import * as Dialog from '@/components/ui/dialog/index.js';
-	import { LocalizedDate, StatusBadge } from '@/@svelte/components';
+	import * as Dialog from '@/components/ui/dialog';
 	import { _ } from '@services';
-	import { Badge } from '@/components/ui/badge';
-	import { getHumanReadableFileSize } from '@/utils';
 	import { DeleteAdvertisementDialog, FileInformation } from '@/@svelte/modules';
 	import { Button } from '@/components/ui/button';
-	import { trpc } from '@/trpc/client';
-	import { page } from '$app/state';
-	import type { DetailedDocumentOutput } from '@api/client';
+	import {
+		generateDownloadLink as getDownload,
+		generateThumbnailLink as getThumbnail
+	} from '@/remote/functions';
+	import type { DocumentOutput_Detailed } from '@api/client';
 	import { LoaderCircle } from '@lucide/svelte';
 	import FileHistory from '../FileHistory/file-history.svelte';
 	interface Props {
 		open?: boolean;
-		advertisement: DetailedDocumentOutput;
+		advertisement: DocumentOutput_Detailed;
 	}
 
 	let { open = $bindable(false), advertisement }: Props = $props();
 
-	const download = trpc(page).catalogueData.generateDownloadLink.createQuery(
-		{
-			documentId: advertisement.id ?? '',
-			organizationId: advertisement.organizationId ?? ''
-		},
-		{
-			enabled:
-				advertisement.activeVersion?.uploadStatus !== 'PENDING_UPLOAD' &&
-				advertisement.activeVersion?.uploadStatus !== 'PENDING_METADATA'
-		}
-	);
+	const download = getDownload({
+		documentId: advertisement.id ?? '',
+		organizationId: advertisement.organizationId ?? ''
+	});
 
-	const thumbnail = trpc(page).catalogueData.generateThumbnailLink.createQuery(
-		{
-			documentId: advertisement.id ?? '',
-			organizationId: advertisement.organizationId ?? '',
-			resolution: 'large'
-		},
-		{
-			enabled: advertisement.activeVersion?.uploadStatus === 'COMPLETED'
-		}
-	);
+	const thumbnail = getThumbnail({ documentId: advertisement.id ?? '', resolution: 'large' });
 
-	function handleDownload() {
-		const downloadUrl = $download.data;
+	async function handleDownload() {
+		const downloadUrl = await download;
 		if (downloadUrl && Number(downloadUrl?.length) > 0) {
 			const a = document.createElement('a');
 			a.href = downloadUrl;
@@ -59,14 +42,14 @@
 	<Dialog.Content class="sm:max-w-4xl max-h-[80vh] overflow-y-auto">
 		{#if advertisement}
 			<div class="grid grid-cols-2 gap-6">
-				{#if $thumbnail.isLoading}
+				{#if thumbnail.loading}
 					<LoaderCircle class="mx-auto animate-spin size-8" />
-				{:else if $thumbnail.data}
+				{:else if thumbnail.current}
 					<div
 						class="aspect-[1/1.41] bg-gray-100 dark:bg-gray-700 rounded-md flex items-center justify-center overflow-hidden"
 					>
 						<img
-							src={$thumbnail.data || '/placeholder.svg'}
+							src={thumbnail.current || '/placeholder.svg'}
 							alt={advertisement.title}
 							class="object-contain size-full"
 						/>
@@ -76,18 +59,17 @@
 				<div class="flex flex-col gap-4 text-sm">
 					<Dialog.Header class="space-y-4">
 						<Dialog.Title>{advertisement.title}</Dialog.Title>
-						<Dialog.Description class="@container">
-						</Dialog.Description>
+						<Dialog.Description class="@container"></Dialog.Description>
 					</Dialog.Header>
-					<FileInformation documentVersion={advertisement.activeVersion} />
-					
-					<FileHistory history={advertisement.activeVersion?.history??[]} />
-					
+					{#if advertisement?.activeVersion}
+						<FileInformation documentVersion={advertisement.activeVersion} />
+					{/if}
+
+					<FileHistory history={advertisement.activeVersion?.history ?? []} />
+
 					<div class="grow"></div>
 					<Dialog.Footer>
-						<Button disabled={$download.isPending} onclick={handleDownload}
-							>{$_('common.download')}
-						</Button>
+						<Button onclick={handleDownload}>{$_('common.download')}</Button>
 						<DeleteAdvertisementDialog {advertisement} />
 					</Dialog.Footer>
 				</div>

@@ -4,47 +4,71 @@
 	import { LoaderCircle } from '@lucide/svelte';
 	import { fade } from 'svelte/transition';
 	import { UploadAdvertisementDialog } from '@/@svelte/modules/UploadAdvertisementDialog';
-	import { Button } from '@/components/ui/button';
-	import { trpc } from '@/trpc/client';
-	import { page } from '$app/state';
 	import { _ } from '@services';
 	import AdvertItem from './advert-item.svelte';
+	import { getCatalogueByType as getAllCatalogueData } from '@/remote/functions/catalogueData.remote';
+	import * as Pagination from '$lib/components/ui/pagination';
 
-	let { data } = $props();
 	let isUploadOpen = $state(false);
+
+	let { params } = $props();
 
 	let tabs = $derived([
 		{
 			name: 'catalogue-data-portraits',
-			href: `/${data.orgSlug}/catalogue-data/portraits`
+			href: `/${params.organizationSlug!}/catalogue-data/portraits`
 		},
 		{
 			name: 'catalogue-data-logos',
-			href: `/${data.orgSlug}/catalogue-data/logos`
+			href: `/${params.organizationSlug!}/catalogue-data/logos`
 		},
 		{
 			name: 'catalogue-data-adverts',
-			href: `/${data.orgSlug}/catalogue-data/adverts`
+			href: `/${params.organizationSlug!}/catalogue-data/adverts`
 		}
 	]);
 
-	const api = trpc(page);
-	const utils = api.createUtils();
+	const pageSize = 8;
+	let currentPage = $state(1);
 
-	const [advertsQuery, resolveAdverts] = api.catalogueData.getAll.createInfiniteQuery(
-		{ limit: '10', documentType: 'advert' },
-		{
-			getNextPageParam: (lastPage) =>
-				Math.max(Number(lastPage.pageNumber) + 1, Number(lastPage.totalPages) - 1).toString(),
-			lazy: true
-		}
+	// Use $derived instead of calling the function directly
+	// This will automatically refresh when currentPage changes
+	const advertsQuery = $derived(
+		getAllCatalogueData({
+			limit: String(pageSize),
+			cursor: String(currentPage - 1),
+			documentType: 'advert'
+		})
 	);
-	const uploadFormQuery = api.catalogueData.uploadForm.createQuery(undefined, {
-		staleTime: Infinity
+
+	const allAdverts = $derived.by(() => {
+		return advertsQuery.current?.documents ?? [];
 	});
 
-	const uploadForm = $uploadFormQuery.data;
+	const totalElements = $derived.by(() => advertsQuery.current?.totalElements ?? 0);
+
+	$inspect(advertsQuery);
+	$inspect(totalElements);
+
+	const groupedAdvertisements = $derived.by(() => {
+		return allAdverts
+			.filter((advert) => advert != undefined)
+			.reduce((acc: Record<number, typeof allAdverts>, advertisement) => {
+				const year = dayjs(advertisement.activeVersion?.createdAt).year();
+
+				if (!acc[year]) {
+					acc[year] = [];
+				}
+				acc[year].push(advertisement);
+				return acc;
+			}, {});
+	});
+
+	const onCreate = () => {
+		advertsQuery.refresh();
+	};
 </script>
+
 <div class="size-full flex flex-col justify-start items-stretch min-h-max">
 	<h1 class=" text-stone-950 text-3xl font-extrabold">{$_('user-pages.portraits.portraits')}</h1>
 	<h4 class=" text-stone-500">{$_('user-pages.portraits.portraitsSubHeading')}</h4>
@@ -52,69 +76,75 @@
 		<div class=" my-6">
 			<LinkTabs {tabs} />
 		</div>
-<div in:fade class="space-y-4">
-	<div class="flex justify-end">
-		{#if $uploadFormQuery.isLoading}
-			<Button class="min-w-32 mr-2" disabled>
-				<LoaderCircle class="size-5 mx-auto animate-spin" />
-			</Button>
-		{:else if $uploadFormQuery.data}
-			<UploadAdvertisementDialog
-				bind:open={isUploadOpen}
-				advertisementUploadForm={$uploadFormQuery.data}
-			/>
-		{/if}
-	</div>
-	{#await resolveAdverts(data.advertisementData)}
-		<LoaderCircle class="size-10 mx-auto animate-spin" />
-	{:then _ignored}
-		{#if $advertsQuery?.data}
-			{@const allAdverts = $advertsQuery.data.pages.flatMap((page) => page.documents)}
-			{#if allAdverts.length === 0}
-				<NoDataFound
-					heading="No advertisements found"
-					subHeading="You can create one from the advertisements page"
-					buttonText="Upload an advertisement"
-					onButtonClick={() => {
-						isUploadOpen = true;
-					}}
-				/>
-			{:else}
-				{@const groupedAdvertisements = allAdverts
-					.filter((advert) => advert != undefined)
-					.reduce((acc, advertisement) => {
-						const year = dayjs(advertisement.activeVersion?.createdAt).year();
-
-						if (!acc[year]) {
-							acc[year] = [];
-						}
-						acc[year].push(advertisement);
-						return acc;
-					}, {})}
-				{#each Object.entries(groupedAdvertisements).sort( ([ayear, aadverts], [byear, badverts]) => byear.localeCompare(ayear) ) as [year, advertisements]}
-					<div class="space-y-4 @container/adverts">
-						<h2 class="text-xl font-bold border-b">{year}</h2>
-						<div
-							class="grid grid-cols-1 @lg:grid-cols-2 @3xl/adverts:grid-cols-3 @5xl/adverts:grid-cols-4 gap-4"
-						>
-							{#each advertisements as advertisement}
-								<AdvertItem advert={advertisement} />
+		<div in:fade class="space-y-4">
+			<div class="flex justify-end">
+				<UploadAdvertisementDialog bind:open={isUploadOpen} onSuccess={onCreate} />
+			</div>
+			{#if advertsQuery.loading}
+				<LoaderCircle class="size-10 mx-auto animate-spin" />
+			{:else if advertsQuery.ready}
+				{#if allAdverts}
+					{#if allAdverts.length === 0}
+						<NoDataFound
+							heading={$_('user-pages.catalogue-data.adverts-data.no-data-heading')}
+							subHeading={$_('user-pages.catalogue-data.adverts-data.no-data-subheading')}
+							buttonText={$_('user-pages.catalogue-data.adverts-data.no-data-action')}
+							onButtonClick={() => {
+								isUploadOpen = true;
+							}}
+						/>
+					{:else}
+						<div in:fade class="space-y-8">
+							{#each Object.entries(groupedAdvertisements).sort( ([ayear, aadverts], [byear, badverts]) => byear.localeCompare(ayear) ) as [year, advertisements] (year)}
+								<div class="space-y-4 @container/adverts">
+									<h2 class="text-xl font-bold border-b">{year}</h2>
+									<div
+										class="grid grid-cols-1 @lg:grid-cols-2 @3xl/adverts:grid-cols-3 @5xl/adverts:grid-cols-4 gap-4"
+									>
+										{#each advertisements as advertisement (advertisement.id)}
+											<AdvertItem advert={advertisement} />
+										{/each}
+									</div>
+								</div>
 							{/each}
+							<Pagination.Root count={totalElements} perPage={pageSize} bind:page={currentPage}>
+								{#snippet children({ pages, currentPage })}
+									<Pagination.Content>
+										<Pagination.Item>
+											<Pagination.PrevButton />
+										</Pagination.Item>
+										{#each pages as page (page.key)}
+											{#if page.type === 'ellipsis'}
+												<Pagination.Item>
+													<Pagination.Ellipsis />
+												</Pagination.Item>
+											{:else}
+												<Pagination.Item>
+													<Pagination.Link
+														{page}
+														isActive={currentPage === page.value}
+														class={currentPage === page.value ? 'border-1 border-stone-950' : ''}
+													>
+														{page.value}
+													</Pagination.Link>
+												</Pagination.Item>
+											{/if}
+										{/each}
+										<Pagination.Item>
+											<Pagination.NextButton />
+										</Pagination.Item>
+									</Pagination.Content>
+								{/snippet}
+							</Pagination.Root>
 						</div>
-					</div>
-				{/each}
+					{/if}
+				{/if}
+				{#if advertsQuery.error}
+					<article>
+						Error loading adverts: {advertsQuery.error}
+					</article>
+				{/if}
 			{/if}
-		{/if}
-		{#if $advertsQuery.isLoading || $advertsQuery.isFetching}
-			<LoaderCircle class="size-10 mx-auto animate-spin" />
-		{:else if $advertsQuery.isError}
-			<article>
-				Error loading adverts: {$advertsQuery.error}
-			</article>
-		{/if}
-	{:catch error}
-		<p>{error.message}</p>
-	{/await}
-</div>
-</section>
+		</div>
+	</section>
 </div>

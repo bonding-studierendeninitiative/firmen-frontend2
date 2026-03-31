@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { LanguageSelect } from '@/@svelte/components';
 	interface Props {
 		children?: import('svelte').Snippet;
 	}

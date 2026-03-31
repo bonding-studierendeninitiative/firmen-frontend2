@@ -3,6 +3,40 @@
     "footer": {
       "privacyPolicy": "Datenschutzrichtlinie",
       "imprint": "Impressum"
+    },
+    "signIn": {
+      "fieldsRequired": "E-Mail ist erforderlich",
+      "emailSent": "Überprüfen Sie Ihr E-Mail-Postfach!",
+      "emailSentMessage": "Ein Anmelde-Link wurde gesendet an {email}. Sie können diesen Tab schließen.",
+      "changeEmail": "E-Mail ändern",
+      "signInWithMicrosoft": "Mit Microsoft anmelden",
+      "signInWithGithub": "Mit GitHub anmelden",
+      "signInWithLinkedin": "Mit LinkedIn anmelden",
+      "or": "Oder",
+      "email": "E-Mail-Adresse",
+      "emailPlaceholder": "Geben Sie Ihre E-Mail-Adresse ein",
+      "rememberMe": "Angemeldet bleiben",
+      "sending": "Wird gesendet...",
+      "sendMagicLink": "Weiter",
+      "adminSignIn": "Admin-Anmeldung",
+      "backToRegular": "Zurück zur normalen Anmeldung"
+    },
+    "sign-up": {
+      "title": "Registrieren",
+      "description": "weiter zum bonding Firmenintranet",
+      "action": "Konto erstellen",
+      "sending": "Konto wird erstellt...",
+      "placeholders": {
+        "email": "Ihre Arbeits-E-Mail-Adresse",
+        "name": "Ihr vollständiger Name"
+      },
+      "email": "E-Mail-Adresse",
+      "fields-required": "Diese Felder sind erforderlich",
+      "name": "Name"
+    },
+    "sign-in": {
+      "title": "Einloggen",
+      "magic-link-error": "Der Anmelde-Link konnte nicht versendet werden"
     }
   },
   "common": {
@@ -80,7 +114,12 @@
     "create": "Erstellen",
     "view-details": "Details anzeigen",
     "export": "Katalogdaten exportieren…",
-    "add": "Hinzufügen"
+    "add": "Hinzufügen",
+    "reset": "Zurücksetzen",
+    "user": "Nutzer",
+    "notifications": "Benachrichtigungen",
+    "menu": "Menü",
+    "sign-out": "Abmelden"
   },
   "components": {
     "addonPackage": {
@@ -129,7 +168,10 @@
       "preview": "Vorschau",
       "generalInformation": "Grundinformationen",
       "saveBuyOption": "Kaufoption speichern",
-      "packageBenefitConfiguration": "Paketvorteile"
+      "packageBenefitConfiguration": "Paketvorteile",
+      "addon-packages": "Zusatzleistungen",
+      "settings": "Einstellungen",
+      "event-days": "Buchbare Tage"
     },
     "table": {
       "no-records": "Es wurden keine Datensätze gefunden."
@@ -207,6 +249,45 @@
     },
     "export-item": {
       "entries": "{ entries, plural, =0 {Keine Einträge} one {Ein Eintrag} other {{entries, number} Einträge} }"
+    },
+    "edit-buy-options": {
+      "update-success": "Die Kaufoption wurde erfolgreich aktualisiert",
+      "danger-zone": {
+        "title": "Gefahrenzone",
+        "description": "Unwiderrufbare Handlungen, die diese Kaufoption nachhalting beeinflussen."
+      },
+      "buy-option-version": {
+        "label": "Version der Kaufoption",
+        "description": "Jede Änderung erhöht die Versionsnummer der Kaufoption um eins."
+      }
+    },
+    "auth": {
+      "organization": {
+        "leave": {
+          "action-label": "Verlassen",
+          "title": "Organisation verlassen",
+          "description": "Dauerhaft diese Organisation verlassen. Dadurch verlieren Sie Zugriff auf Ressourcen dieser Organisation."
+        },
+        "delete": {
+          "title": "Organisation löschen",
+          "description": "Löschen Sie diese Organisation und alle zugehörigen Daten dauerhaft",
+          "instructions": "Diese Aktion kann nicht rückgängig gemacht werden. \nAlle Daten werden dauerhaft entfernt.",
+          "warning": {
+            "label": "Warnung: Dadurch wird alles gelöscht",
+            "members": "Alle Mitglieder werden entfernt",
+            "data": "Sämtliche Organisationsdaten gehen verloren",
+            "irreversible": "Diese Aktion ist irreversibel"
+          },
+          "type-name": "Geben Sie zur Bestätigung „{orgName}“ ein",
+          "delete-failed": "Organisation konnte nicht gelöscht werden",
+          "deleted-successfully": "Organisation erfolgreich gelöscht"
+        }
+      },
+      "organizations": {
+        "members": {
+          "count": "{count, plural, =0 {Keine Mitglieder} one {Ein Mitglied} other {{count} Mitglieder}}"
+        }
+      }
     }
   },
   "modules": {
@@ -218,7 +299,8 @@
       "active": "aktiv",
       "search-placeholder": "Nach einer Kaufoption suchen…",
       "create-new": "Erstelle eine neue Kaufoption…",
-      "select": "Wähle eine Kaufoption aus..."
+      "select": "Wähle eine Kaufoption aus...",
+      "unnamed": "Unbenannte Kaufoption"
     },
     "contact-person": {
       "full-name": "Ansprechperson:"
@@ -231,12 +313,14 @@
       "service-count": "Anzahl der maximalen Leistungen pro Paket",
       "error": "Beim Laden dieses Formulars is ein Fehler aufgetreten: {error}",
       "package-count-description": "Das kann später noch geändert werden",
-      "service-count-description": "Das kann später noch geändert werden"
+      "service-count-description": "Das kann später noch geändert werden",
+      "success": "Die Kaufoption wurde erfolgreich erstellt"
     },
     "delete-buy-option": {
       "title": "Kaufoption löschen",
       "description": "Möchtest du wirklich diese Kaufoption löschen?",
-      "success": "Die Kaufoption wurde erfolgreich gelöscht"
+      "success": "Die Kaufoption wurde erfolgreich gelöscht",
+      "error": "Die Kaufoption konnte nicht gelöscht werden."
     },
     "organization": {
       "name": "Organisation:"
@@ -365,11 +449,15 @@
       "description": "Sollte die ausgewählte Imageanzeige noch nicht überprüft sein, kümmert sich das Veranstaltungsteam darum.",
       "no-data-heading": "Keine Imageanzeigen gefunden",
       "no-data-sub-heading": "Ihre Organization hat noch keine Imageanzeigen hinterlegt",
-      "no-data-action": "Jetzt Imageanzeige hochladen"
+      "no-data-action": "Jetzt Imageanzeige hochladen",
+      "no-data": "Noch nichts hier",
+      "success-toast": "Die Imageanzeige wurde erfolgreich ausgewählt!",
+      "error-toast": "Die Imageanzeige konnte nicht ausgewählt werden!"
     },
     "delete-logo-dialog": {
       "title": "Logo \"{logoName}\" löschen",
-      "description": "Möchten Sie dieses Logo wirklich löschen?"
+      "description": "Möchten Sie dieses Logo wirklich löschen?",
+      "success": "Das Logo wurde erfolgreich gelöscht!"
     },
     "delete-advertisement-dialog": {
       "title": "Imageanzeige \"{advertisementName}\" löschen",
@@ -377,9 +465,9 @@
     },
     "admin-import-legacy-org": {
       "trigger": "Organisation importieren",
-      "title": "Eine Organisation importieren",
-      "description": "Du kannst Organisationen aus Notes importieren",
-      "org-card-header": "Wähle eine Organisation aus",
+      "title": "Diese Organisation importieren",
+      "description": "Du kannst diese Organisation aus Notes importieren",
+      "org-card-header": "Lade eine Import-Datei hoch",
       "select-org-placeholder": "Wähle eine Organisation aus",
       "no-orgs-found": "Keine Organisationen gefunden!",
       "contact-people": "Kontaktpersonen",
@@ -399,7 +487,7 @@
       "title": "Dateihistorie"
     },
     "submit-portrait-dialog": {
-      "description": "Hier kommt noch eine gute Beschriebung rein",
+      "description": "Erstellen Sie Ihr Firmenportrait, um die Aufmerksamkeit von Studierenden zu gewinnen.",
       "title": "Jetzt Portrait auswählen"
     },
     "submit-portrait-form": {
@@ -411,7 +499,7 @@
       },
       "use-a-template": {
         "title": "Vorlage",
-        "description": "Eine Vorlage aus existierenden Ausstellerdaten wählen",
+        "description": "Ein existierendes Portrait als Vorlage verwenden",
         "body": "Das Formular wird mit den Daten eines existierenden Portraits befüllt"
       },
       "select-template": "Eine Vorlage auswählen",
@@ -421,7 +509,8 @@
       },
       "step-0": {
         "short-title": "Start",
-        "title": "Start"
+        "title": "Start",
+        "short-title-template": "Vorlage"
       },
       "step-2": {
         "short-title": "Standorte"
@@ -441,23 +530,58 @@
     },
     "remove-member-dialog": {
       "title": "Nutzer aus Organisation entfernen",
-      "description": "Möchtest du den:die Nutzer:in benachrichtigen?"
+      "description": "Möchtest du den:die Nutzer:in benachrichtigen?",
+      "success": "Das Mitglied wurde erfolgreich aus der Organisation entfernt!"
+    },
+    "manage-users": {
+      "user": "Nutzer:in",
+      "manager": "Verwalter:in",
+      "admin": "Admininstrator:in"
+    },
+    "manage-user-orgs": {
+      "member": "Mitglied",
+      "owner": "Besitzer:in",
+      "admin": "Administrator:in"
+    },
+    "activate-buy-option": {
+      "success": "Kaufoption aktiviert!",
+      "error": "Kaufoption konnte nicht aktiviert werden."
+    },
+    "admin-bulk-import-legacy-org": {
+      "org-card-description": "Wähle eine CSV-Datei aus, die eine Spalte (z. B. „FirmenID“) mit den IDs der gewünschten Organisationen enthält",
+      "title": "Massenimport älterer Organisationen",
+      "description": "Importiere mehrere Organisationen aus einer von HCL Notes generierten CSV-Datei"
+    }
+  },
+  "onboarding": {
+    "organizations": "Organisationen",
+    "chooseorganization": "Wählen Sie Ihre Organisation",
+    "emptydescription": "Erstellen Sie Ihre erste Organisation, um mit Ihrem Team zusammenzuarbeiten",
+    "createorg": "Erstellen",
+    "createfirstorg": "Erstellen Sie Ihre erste Organisation",
+    "select-org": {
+      "empty": {
+        "title": "Keine Organisationen gefunden"
+      }
     }
   },
   "sidebar": {
-    "dashboard": "Dashboard",
+    "dashboard": "Mein Dashboard",
     "events": "Veranstaltungen",
-    "catalogue-data": "Ausstellerdaten",
+    "catalogue-data": "Meine Ausstellerdaten",
     "notifications": "Benachrichtigungen",
-    "settings": "Einstellungen",
-    "account": "Konto",
+    "settings": "Meine Einstellungen",
+    "account": "Mein Konto",
     "categories": "Kategorien",
     "packages": "Pakete",
     "addons": "Add-ons",
     "company": "Organisationen",
-    "logout": "Abmelden"
+    "logout": "Abmelden",
+    "users": "Nutzer:innen",
+    "legacy": "Notes-Firmen"
   },
   "tab-headings": {
+    "account": "Konto",
     "published": "Veröffentlicht",
     "unpublished": "Nicht veröffentlicht",
     "archived": "Archiviert",
@@ -484,7 +608,8 @@
     "portrait-contact": "Kontaktinformationen",
     "registrations": "Anmeldungen",
     "buy-options": "Kaufoptionen",
-    "exports": "Katalogdaten-Exporte"
+    "exports": "Katalogdaten-Exporte",
+    "emails": "E-Mails & Vorlagen"
   },
   "table-headings": {
     "company": "Firma",
@@ -506,7 +631,10 @@
     "role": "Rolle",
     "joined": "Trat bei",
     "firstName": "Vorname",
-    "lastName": "Nachname"
+    "lastName": "Nachname",
+    "created": "Erstellt",
+    "expires": "Läuft ab",
+    "email": "E-Mail-Adresse"
   },
   "file-types": {
     "application/pdf": "Vektorgrafik (PDF)",
@@ -534,15 +662,26 @@
       },
       "org-details": {
         "title": "Juristische Anschrift",
-        "description": "Unter welchem Namen und an welcher Adresse ist ihre Organisation eingetragen?"
+        "description": "Unter welchem Namen und an welcher Adresse ist ihre Organisation eingetragen?",
+        "update-success": "Die juristische Adresse wurde erfolgreich aktualisiert"
       },
       "org-contact-details": {
         "title": "Kontaktdaten",
         "description": "Die allgemeinen Kontaktdaten ihrer Organisation."
       },
       "organizationAccountListDescription": "Eine Auflistung aller Konten, die mit Ihrer Organisation verknüpft sind.",
-      "account": "Konto",
-      "accountSubHeading": "Aktualisieren Sie Ihr Portrait und Ihre Organisationsdetails hier.",
+      "account": {
+        "title": "Kontodetails",
+        "description": "Verwalten Sie hier Ihr Konto und Ihre Organisationsdetails.",
+        "labels": {
+          "name": "Vollständiger Name",
+          "email": "Konto-E-Mail-Adresse"
+        },
+        "sessions": {
+          "title": "Anmeldungen"
+        }
+      },
+      "accountSubHeading": "Aktualisieren Sie Ihr Konto und Ihre Organisationsdetails hier.",
       "personalInformation": "Persönliche Informationen",
       "personalInformationSubHeading": "Aktualisieren Sie Ihr Portrait und Ihre Organisationsdetails hier.",
       "contactPerson": "Ansprechpartner",
@@ -589,7 +728,12 @@
       "archivedEvents": "Archivierte Veranstaltungen",
       "billingAddressAddedSuccessfully": "Rechnungsadresse erfolgreich hinzugefügt",
       "deleteAddress": "Addresse löschen",
-      "deleteAddressDescription": "Möchten Sie diese Adresse löschen?"
+      "deleteAddressDescription": "Möchten Sie diese Adresse löschen?",
+      "title": "Einstellungen",
+      "danger-zone": {
+        "title": "Gefahrenzone",
+        "description": "Permanente Handlungen, die nicht mehr widerrufen werden können."
+      }
     },
     "notifications": {
       "notifications": "Benachrichtigungen",
@@ -677,15 +821,15 @@
     "events": {
       "event-registration": {
         "labels": {
-          "contractLegalEntityName": "Name der juristischen Person (offizieller Firmenname)",
+          "contractLegalEntityName": "Name der juristischen Person",
           "contractAddressStreet": "Address des Vertragspartners",
-          "contractAddressZipCode": "Postleitzahl des Vertragspartners",
-          "contractAddressCity": "Stadt des Vertragspartners",
+          "contractAddressZipCode": "Postleitzahl",
+          "contractAddressCity": "Ortschaft",
           "contractAddressCountry": "Land des Vertragspartners",
           "billingOrganizationName": "Name auf Rechnung",
           "billingStreet": "Straße auf Rechnung",
-          "billingZipCode": "Postleitzahl auf Rechnung",
-          "billingCity": "Stadt auf Rechnung",
+          "billingZipCode": "Postleitzahl",
+          "billingCity": "Ortschaft",
           "billingCountry": "Land auf Rechnung",
           "billingVat": "Umsatzsteuer-Identifikationsnummer",
           "billingReference": "Referenz"
@@ -707,7 +851,11 @@
         "registration": "Anmeldung",
         "companyInformation": "Informationen zum Vertragspartner",
         "billingEqualCompany": "Rechnungsadress ist gleich Firmenadresse",
-        "billingInformation": "Rechnungsadresse (kann später bearbeitet werden)"
+        "billingInformation": "Rechnungsadresse",
+        "billingInformationDescription": "Kann später bearbeitet werden.",
+        "descriptions": {
+          "contractLegalEntityName": "Offizieller Firmenname"
+        }
       },
       "events": "Veranstaltungen",
       "noEvents": "Aktuell sind leider keine Veranstaltungen verfügbar.",
@@ -786,7 +934,8 @@
           "organizationZipCode": "Postleitzahl",
           "organizationLocality": "Ortschaft",
           "create": "Erstellen",
-          "organizationWebsite": "Website"
+          "organizationWebsite": "Website",
+          "organizationCountry": "Land"
         },
         "placeholders": {
           "organizationName": "ABC Firma GmbH",
@@ -801,7 +950,8 @@
           "organizationLocality": "Berlin",
           "create": "Erstellen",
           "searchOrganization": "Suche nach meinen Organisationen",
-          "organizationWebsite": "bonding.de"
+          "organizationWebsite": "bonding.de",
+          "organizationCountry": "Deutschland"
         }
       }
     },
@@ -835,7 +985,28 @@
     "catalogue-data": {
       "logos": "Logos",
       "base": "Ausstellerdaten",
-      "adverts": "Image-Anzeigen"
+      "adverts": "Image-Anzeigen",
+      "adverts-data": {
+        "no-data-heading": "Keine Imageanzeigen gefunden",
+        "no-data-subheading": "Auf dieser Seite werden alle Imageanzeigen angezeigt",
+        "no-data-action": "Eine Imageanzeige hochladen"
+      },
+      "logos-data": {
+        "no-data-heading": "Keine Logos gefunden",
+        "no-data-subheading": "Laden Sie Logos hoch, um sie hier zu sehen",
+        "no-data-action": "Ein Logo hochladen"
+      },
+      "advertisements": {
+        "delete-error": "Fehler beim Löschen der Imageanzeige"
+      },
+      "portraits": {
+        "delete-success": "Das Portrait wurde erfolgreich gelöscht",
+        "delete-error": "Fehler beim Löschen des Portraits"
+      }
+    },
+    "user-nav": {
+      "sign-out": "Ausloggen",
+      "language-selection": "Sprache: {lang}"
     }
   },
   "admin-pages": {
@@ -873,11 +1044,12 @@
         },
         "headers": {
           "type": "Typ",
-          "email": "E-Mail-Addresse",
+          "email": "E-Mail-Adresse",
           "phone": "Telefonnummer",
           "name": "Name",
           "last-modified": "Zuletzt bearbeitet",
-          "members-count": "Mitglieder"
+          "members-count": "Mitglieder",
+          "role": "Rolle"
         },
         "filters": {
           "type": {
@@ -889,6 +1061,36 @@
             }
           }
         }
+      },
+      "membersCount": "{count, plural, =0 {Keine Mitglieder} one {Ein Mitglied} other {{count} Mitglieder}}",
+      "sso": {
+        "title": "Single Sign-On (SSO)",
+        "none": "Es wurden keine SSO-Verbidung eingerichtet",
+        "hint": "Sie können Anmeldedienste zu dieser Organisation hinzufügen",
+        "add": "SSO-Anbieter hinzufügen",
+        "add-description": "Einen neuen SSO-Anbieter für diese Organisation anlegen",
+        "providerId": "Anbieter-ID",
+        "domain": "Domäne",
+        "authorizationEndpoint": "Authorisierungs-Endpunkt",
+        "tokenEndpoint": "Token-Endpunkt",
+        "jwksEndpoint": "JWKS-Endpunkt",
+        "discoveryEndpoint": "Discovery-Endpunkt",
+        "scopes": "Scopes (mit Komma getrennt)",
+        "pkce": "PKCE verwenden?",
+        "mapping": "Claim-Zuweisungen",
+        "issuer": "Aussteller (OIDC issuer)",
+        "clientId": "Client ID",
+        "clientSecret": "Client-Secret",
+        "create-success": "SSO-Anbieter erfolgreich erstellt!",
+        "bonding-warning": "Das ist die bonding org. Pass auf!"
+      },
+      "importOrganization": {
+        "trigger": "Importieren"
+      },
+      "importBulkOrganizations": "Massenimport …",
+      "legacy": {
+        "title": "Notes-Import von Organisationen",
+        "description": "Du kannst Organisationen aus HCL Notes importieren. Die hier aufgeführten Organisationen werden jede Nacht aktualisiert."
       }
     },
     "addons": {
@@ -958,15 +1160,19 @@
         "title": "Kaufoptionen",
         "publish": "Diese Kaufoption veröffentlichen",
         "addons": "Zusatzleistungspakete",
-        "no-addon-packages": "Keine Zusatzleistungspakete"
+        "no-addon-packages": "Keine Zusatzleistungspakete",
+        "update": {
+          "success": "Die Kaufoption wurde erfolgreich aktualisiert",
+          "error": "Die Kaufoption konnte nicht gelöscht werden"
+        }
       },
       "event-registrations": {
         "data-table": {
           "filters": {
-            "status": "Alle Status",
-            "package": "Alle Pakete",
-            "addon-packages": "Alle Zusatz-Pakete",
-            "addons": "Alle Zusatzleistungen"
+            "status": "Status",
+            "package": "Paket",
+            "addon-packages": "Zusatz-Pakete",
+            "addons": "Zusatzleistungen"
           },
           "headers": {
             "package": "Paket",
@@ -1066,13 +1272,101 @@
         "delete": {
           "title": "Export löschen",
           "description": "Bist du sicher, dass du diesen Export löschen möchtest?",
-          "success": "Export erfolgreich gelöscht"
+          "success": "Export erfolgreich gelöscht",
+          "error": "Beim Löschen des Exports ist ein Fehler aufgetreten"
+        }
+      },
+      "emails": {
+        "draftInfo": "Serienmail-Vorlagen",
+        "subject": "Betreffzeile",
+        "createDraft": "Neue E-Mail-Vorlage erstellen",
+        "createDraftDescription": "Du kannst Vorlagen verwenden, um Serienmails an Ansprechpersonen zu versenden.",
+        "reply-to": "Antwortadresse",
+        "body": "Nachrichtinhalt",
+        "send-email": {
+          "trigger": "Serienmail versenden...",
+          "title": "Eine Serienmail versenden",
+          "description": "Du kannst die mit den ausgewählten Anmeldungen verknüpften Ansprechpersonen mit einer Serienmail kontaktieren",
+          "select-draft": "Wähle eine E-Mail-Vorlage aus...",
+          "no-drafts": "Keine Vorlagen verfügbar",
+          "preview-for": "Vorschau für {contactName} ({email})",
+          "selected-draft": "Ausgewählte Vorlage:"
+        },
+        "markdown": {
+          "help": {
+            "title": "Anleitung"
+          }
         }
       }
     },
     "dashboard": {
       "dashboard": "Dashboard",
-      "events": "Veranstaltungen"
+      "events": "Veranstaltungen",
+      "organizations": "Organisationen",
+      "users": "Nutzer"
+    },
+    "users": {
+      "roles": {
+        "user": "Nutzer:in",
+        "admin": "Administrator:in",
+        "label": "Rolle"
+      },
+      "back-to-overview": "⮐ Zurück zu allen Nutzern",
+      "overview": {
+        "banUser": "Nutzer:in sperren",
+        "banUserDescription": "Möchtest du diese Nutzer:in sperren?",
+        "banReason": "Sperrgrund",
+        "banExpires": "Sperrdauer",
+        "banned": "Nutzer:in gesperrt",
+        "permanentBan": "dauerhaft",
+        "temporaryBan": "temporär",
+        "banExpiresDescription": "Wie lange soll der Nutzer/die Nutzerin gesperrt werden?",
+        "hours": "Stunden",
+        "days": "Tage",
+        "weeks": "Wochen",
+        "months": "Monate",
+        "years": "Jahre",
+        "ban-reason-placeholder": "Warum sollte der Nutzer/die Nutzerin gesperrt werden?",
+        "ban-expires-description": "Wie lange soll der Nutzer gesperrt werden?"
+      },
+      "orgs": {
+        "noOrganizations": "Der Nutzer/die Nutzerin ist kein Mitglied einer Organisation",
+        "orgMemberships": "Organisationsmitgliedschaften"
+      },
+      "allUsers": "Alle Nutzer:innen",
+      "sessions": {
+        "title": "Sitzungen",
+        "device": "Gerät",
+        "no-active-sessions": "Keine aktiven Sitzungen",
+        "revoke-all-sessions": "Alle Sitzungen widerrufen",
+        "revoke-session": "Sitzung widerrufen",
+        "refresh-sessions": "Sitzungen aktualisieren",
+        "session-revoked-successfully": "Die Sizung wurde erfolgreich widerrufen",
+        "failed-to-revoke-session": "Die Sitzung konnte nicht widerrufen werden",
+        "ip-address": "IP-Adresse",
+        "error": "Sitzungen konnten nicht abgerufen werden: {error}",
+        "revoke-all-sessions-successful": "Alle Sitzungen wurden erforlgreich widerrufen",
+        "revoke-all-sessions-error": "Es konnten nicht alle Sitzungen widerrufen werden"
+      },
+      "data-table": {
+        "headers": {
+          "role": "Rolle",
+          "created-at": "Beigetreten"
+        }
+      }
+    },
+    "edit-buy-options": {
+      "delete-buy-option": {
+        "title": "Kaufoption löschen",
+        "description": "Diese Aktion kann nicht widerrufen werden. Alle Daten werden vollständig gelöscht."
+      }
+    },
+    "legacy-organizations": {
+      "data-table": {
+        "headers": {
+          "contact-people-count": "Ansprechpersonen"
+        }
+      }
     }
   }
 }
