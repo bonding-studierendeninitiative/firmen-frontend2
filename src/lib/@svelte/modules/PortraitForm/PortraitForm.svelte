@@ -1,27 +1,18 @@
 <script lang="ts">
 	import { _, faker } from '@services';
 	import { FancyMultiSelect, InputWithPrefix } from '$lib/@svelte/components';
-	import { superForm, type SuperValidated, type Infer } from 'sveltekit-superforms';
 	import { page } from '$app/state';
-	import { toast } from 'svelte-sonner';
-	import { goto } from '$app/navigation';
 	import { disciplines } from '@constant';
 	import { Button } from '@/components/ui/button';
 	import { Input } from '@/components/ui/input';
 	import { ScrollArea } from '@/components/ui/scroll-area';
 	import { Textarea } from '@/components/ui/textarea';
 	import { Checkbox } from '@/components/ui/checkbox';
-	import {
-		type CreatePortraitTemplateRequest,
-		PortraitTemplateSchema,
-		type UpdatePortraitTemplateRequest,
-		UpdatePortraitTemplateRequestSchema
-	} from '@schema';
 	import * as Sheet from '@/components/ui/sheet';
-	import { Control, Description, Field, FieldErrors, Label } from '@/components/ui/form';
-	import { valibotClient } from 'sveltekit-superforms/adapters';
+	import * as Field from '@/components/ui/field';
 	import { cn } from '@/utils';
 	import { BookOpen, Briefcase, Globe, LoaderCircle } from '@lucide/svelte';
+	import { createPortraitTemplate, updatePortraitTemplate } from '@/remote/functions';
 
 	const isEditMode = page.url.searchParams.get('edit') !== null;
 	const portraitId = isEditMode ? page.url.searchParams.get('edit') : '';
@@ -29,67 +20,94 @@
 	interface Props {
 		isOpen?: boolean;
 		onDialogChange?: (open: boolean) => void;
-		validated:
-			| SuperValidated<Infer<CreatePortraitTemplateRequest>>
-			| SuperValidated<Infer<UpdatePortraitTemplateRequest>>;
 	}
 
-	let { isOpen = $bindable(false), onDialogChange = () => {}, validated }: Props = $props();
-	const superform = superForm(validated, {
-		dataType: 'json',
-		validators: isEditMode
-			? valibotClient(UpdatePortraitTemplateRequestSchema)
-			: valibotClient(PortraitTemplateSchema),
-		onSubmit: async ({ formData }) => {
-			if (isEditMode && portraitId) {
-				formData.set('id', portraitId);
-			}
-		},
-		onResult: async ({ result }) => {
-			if (result.status === 200) {
-				isOpen = false;
-				const q = new URLSearchParams(page.url.searchParams);
-				q.delete('create');
-				toast.success($_('user-pages.portraits.portraitAddedSuccessMessage'));
-				await goto(`?${q}`, { noScroll: true });
-			} else if (result.status === 204) {
-				const q = new URLSearchParams(page.url.searchParams);
-				q.delete('edit');
-				toast.success($_('user-pages.portraits.portraitEditedSuccessMessage'));
-				await goto(`?${q}`, { noScroll: true });
-			} else {
-				console.log(result);
-				if (isEditMode) {
-					toast.error($_('user-pages.portraits.portraitEditedErrorMessage'));
-				} else {
-					toast.error($_('user-pages.portraits.portraitAddedErrorMessage'));
-				}
-			}
-		}
-	});
+	let { isOpen = $bindable(false), onDialogChange = () => {} }: Props = $props();
+
+	// Use remote form functions - handle the different structures
+	const portraitForm = isEditMode ? updatePortraitTemplate : createPortraitTemplate;
+
+	// For edit mode, fields are nested under 'data', for create mode they're at the root
+	const formFields = isEditMode ? (portraitForm.fields as any).data : portraitForm.fields;
+
+	// Extract field references
+	let {
+		displayName,
+		comment,
+		title,
+		industry,
+		products,
+		revenue_germany,
+		revenue_europe,
+		revenue_worldwide,
+		locations_germany,
+		locations_europe,
+		locations_worldwide,
+		employees_germany,
+		employees_europe,
+		employees_worldwide,
+		entryOptions,
+		offersOutOfCountryWork,
+		offersInternships,
+		offersThesis,
+		graduates,
+		contactAddress,
+		contactPersonStudents,
+		contactPersonGraduates,
+		website,
+		additionalInformation,
+		desiredDisciplines
+	} = formFields;
 
 	function convertDisciplineLabelsToObjects(input: string) {
 		if (!input) return [];
-		const labels = input.split(',').map((label) => label.trim()); // Split und trimmen
+		const labels = input.split(',').map((label) => label.trim());
 		return disciplines.filter((discipline) => labels.includes(discipline.label));
 	}
 
-	const { form: formData, enhance, submitting } = superform;
-
 	function getSelectedIndustry() {
 		console.log('Getting selected Industries');
-
-		return convertDisciplineLabelsToObjects($formData.industry);
+		return convertDisciplineLabelsToObjects(desiredDisciplines.value() || '');
 	}
 
-	function setSelectedIndustry(values: {value: string; label: string}[]) {
+	function setSelectedIndustry(values: { value: string; label: string }[]) {
 		console.log('Setting selected Industries', values);
-		$formData.industry = values
-			? disciplines
-					.filter((discipline) => values.includes(discipline))
-					.map((selectedIndustry) => selectedIndustry.label)
-					.join(', ')
-			: '';
+		desiredDisciplines.set(
+			values
+				? disciplines
+						.filter((discipline) => values.includes(discipline))
+						.map((selectedIndustry) => selectedIndustry.label)
+						.join(', ')
+				: ''
+		);
+	}
+
+	function generateRandomData() {
+		industry.set($faker.lorem.sentence());
+		title.set($faker.lorem.sentence());
+		products.set($faker.lorem.sentence());
+		displayName.set($faker.lorem.sentence());
+		comment.set($faker.lorem.sentence());
+		revenue_germany.set($faker.number.int({ min: 0, max: 500000 }).toString());
+		revenue_europe.set($faker.number.int({ min: 0, max: 1000000 }).toString());
+		revenue_worldwide.set($faker.number.int({ min: 0, max: 2000000 }).toString());
+		contactAddress.set($faker.location.streetAddress());
+		contactPersonStudents.set($faker.person.fullName());
+		contactPersonGraduates.set($faker.person.fullName());
+		locations_worldwide.set($faker.number.int({ min: 0, max: 10000 }).toString());
+		locations_europe.set($faker.number.int({ min: 0, max: 10000 }).toString());
+		locations_germany.set($faker.number.int({ min: 0, max: 10000 }).toString());
+		employees_worldwide.set($faker.number.int({ min: 0, max: 10000 }).toString());
+		employees_europe.set($faker.number.int({ min: 0, max: 10000 }).toString());
+		employees_germany.set($faker.number.int({ min: 0, max: 10000 }).toString());
+		website.set($faker.internet.domainName());
+		additionalInformation.set($faker.lorem.sentence());
+		offersThesis.set($faker.datatype.boolean());
+		entryOptions.set($faker.lorem.sentence());
+		desiredDisciplines.set($faker.lorem.sentence());
+		graduates.set($faker.number.int({ min: 0, max: 10000 }).toString());
+		offersOutOfCountryWork.set($faker.datatype.boolean());
+		offersInternships.set($faker.datatype.boolean());
 	}
 </script>
 
@@ -106,280 +124,205 @@
 			</Sheet.Description>
 		</Sheet.Header>
 		<ScrollArea class="h-full pb-5">
-			<Button
-				disabled={isEditMode}
-				variant="secondary"
-				onclick={() => {
-					formData.set({
-						industry: disciplines[Math.floor(Math.random() * disciplines.length)].value,
-						title: $faker.lorem.sentence(),
-						products: $faker.lorem.sentence(),
-						displayName: $faker.lorem.sentence(),
-						comment: $faker.lorem.sentence(),
-						revenue_germany: $faker.number.int({ min: 0, max: 500000 }).toString(),
-						revenue_europe: $faker.number.int({ min: 0, max: 1000000 }).toString(),
-						revenue_worldwide: $faker.number.int({ min: 0, max: 2000000 }).toString(),
-						contactAddress: $faker.location.streetAddress(),
-						contactPersonStudents: $faker.person.fullName(),
-						contactPersonGraduates: $faker.person.fullName(),
-						locations_worldwide: $faker.number.int({ min: 0, max: 10000 }).toString(),
-						locations_europe: $faker.number.int({ min: 0, max: 10000 }).toString(),
-						locations_germany: $faker.number.int({ min: 0, max: 10000 }).toString(),
-						employees_worldwide: $faker.number.int({ min: 0, max: 10000 }).toString(),
-						employees_europe: $faker.number.int({ min: 0, max: 10000 }).toString(),
-						employees_germany: $faker.number.int({ min: 0, max: 10000 }).toString(),
-						website: $faker.internet.domainName(),
-						additionalInformation: $faker.lorem.sentence(),
-						offersThesis: $faker.datatype.boolean(),
-						entryOptions: $faker.lorem.sentence(),
-						desiredDisciplines: $faker.lorem.sentence(),
-						graduates: $faker.number.int({ min: 0, max: 10000 }).toString(),
-						offersOutOfCountryWork: $faker.datatype.boolean(),
-						offersInternships: $faker.datatype.boolean()
-					});
-				}}
+			<Button disabled={isEditMode} variant="secondary" onclick={generateRandomData}
 				>{$_('modules.add-portrait.generate-random-data')}
 			</Button>
 
 			<form
-				action={isEditMode ? '?/editPortrait' : '?/createPortrait'}
-				id={isEditMode ? `create-portrait-form-${portraitId}` : 'create-portrait-form'}
-				method="post"
-				use:enhance
+				id={isEditMode ? `portrait-form-${portraitId}` : 'portrait-form'}
+				{...portraitForm.enhance(async ({ submit }) => {
+					await submit();
+				})}
 			>
 				<div class="grid grid-cols-1 gap-y-4 w-full p-2">
-					{#if $submitting}
+					{#if portraitForm.pending > 0}
 						<LoaderCircle class="mr-2 size-4 animate-spin" />
 					{/if}
-					<Field form={superform} name="displayName">
-						<Control>
-							{#snippet children({ props })}
-								<Label>{$_('user-pages.portraits.nameOfPortrait')}</Label>
-								<Input
-									{...props}
-									bind:value={$formData.displayName}
-									placeholder={$_('user-pages.portraits.nameOfPortrait')}
-								/>
-							{/snippet}
-						</Control>
+					<Field.Field>
+						<Field.Label for="displayName">{$_('user-pages.portraits.nameOfPortrait')}</Field.Label>
+						<Input
+							id="displayName"
+							{...displayName.as('text')}
+							placeholder={$_('user-pages.portraits.nameOfPortrait')}
+						/>
+						{#each displayName.issues() ?? [] as issue}
+							<div class="text-red-500 text-sm">{issue.message}</div>
+						{/each}
+					</Field.Field>
 
-						<Description />
-						<FieldErrors />
-					</Field>
-
-					<Field form={superform} name="comment">
-						<Control>
-							{#snippet children({ props })}
-								<Label>{$_('user-pages.portraits.comments')}</Label>
-								<Textarea {...props} bind:value={$formData.comment} />
-							{/snippet}
-						</Control>
-
-						<Description />
-						<FieldErrors />
-					</Field>
+					<Field.Field>
+						<Field.Label for="comment">{$_('user-pages.portraits.comments')}</Field.Label>
+						<Textarea id="comment" {...comment.as('text')} />
+						{#each comment.issues() ?? [] as issue}
+							<div class="text-red-500 text-sm">{issue.message}</div>
+						{/each}
+					</Field.Field>
 
 					<hr />
 
-					<Field form={superform} name="title">
-						<Control>
-							{#snippet children({ props })}
-								<Label>{$_('user-pages.portraits.title')}</Label>
-								<Input {...props} bind:value={$formData.title} />
-							{/snippet}
-						</Control>
+					<Field.Field>
+						<Field.Label for="title">{$_('user-pages.portraits.title')}</Field.Label>
+						<Input id="title" {...title.as('text')} />
+						{#each title.issues() ?? [] as issue}
+							<div class="text-red-500 text-sm">{issue.message}</div>
+						{/each}
+					</Field.Field>
 
-						<Description />
-						<FieldErrors />
-					</Field>
-
-					<Field form={superform} name="industry">
-						<Control>
-							<Label>{$_('user-pages.portraits.branch')}</Label>
-							<FancyMultiSelect options={disciplines} bind:selected={getSelectedIndustry, setSelectedIndustry} placeholder={$_("user-pages.portraits.select-disciplines")} />
-						</Control>
-
-						<Description />
-						<FieldErrors />
-					</Field>
+					<Field.Field>
+						<Field.Label for="branch">{$_('user-pages.portraits.branch')}</Field.Label>
+						<FancyMultiSelect
+							options={disciplines}
+							bind:selected={getSelectedIndustry, setSelectedIndustry}
+							placeholder={$_('user-pages.portraits.select-disciplines')}
+						/>
+						{#each desiredDisciplines.issues() ?? [] as issue}
+							<div class="text-red-500 text-sm">{issue.message}</div>
+						{/each}
+					</Field.Field>
 					<hr />
 
-					<Field form={superform} name="products">
-						<Control>
-							{#snippet children({ props })}
-								<Label>{$_('user-pages.portraits.products')}</Label>
-								<Textarea {...props} bind:value={$formData.products} />
-							{/snippet}
-						</Control>
+					<Field.Field>
+						<Field.Label for="industry">Industry*</Field.Label>
+						<Textarea id="industry" {...industry.as('text')} />
+						{#each industry.issues() ?? [] as issue}
+							<div class="text-red-500 text-sm">{issue.message}</div>
+						{/each}
+					</Field.Field>
 
-						<Description />
-						<FieldErrors />
-					</Field>
+					<Field.Field>
+						<Field.Label for="products">{$_('user-pages.portraits.products')}</Field.Label>
+						<Textarea id="products" {...products.as('text')} />
+						{#each products.issues() ?? [] as issue}
+							<div class="text-red-500 text-sm">{issue.message}</div>
+						{/each}
+					</Field.Field>
 
-					<fieldset>
-						<legend class="data-fs-error:text-destructive text-sm font-medium leading-none"
-							>{$_('user-pages.portraits.revenue')}</legend
+					<Field.Set>
+						<Field.Legend class="data-fs-error:text-destructive text-sm font-medium leading-none"
+							>{$_('user-pages.portraits.revenue')}</Field.Legend
 						>
 
-						<Field form={superform} name="revenue_germany" class="mt-2">
-							<Control>
-								{#snippet children({ props })}
-									<InputWithPrefix
-										{...props}
-										bind:value={$formData.revenue_germany}
-										prefixText={$_('user-pages.portraits.inland')}
-									/>
-								{/snippet}
-							</Control>
-							<Description />
-							<FieldErrors />
-						</Field>
-						<Field form={superform} name="revenue_europe">
-							<Control>
-								{#snippet children({ props })}
-									<InputWithPrefix
-										{...props}
-										bind:value={$formData.revenue_europe}
-										prefixText={$_('user-pages.portraits.eu')}
-									/>
-								{/snippet}
-							</Control>
-							<Description />
-							<FieldErrors />
-						</Field>
-						<Field form={superform} name="revenue_germany">
-							<Control>
-								{#snippet children({ props })}
-									<InputWithPrefix
-										{...props}
-										bind:value={$formData.revenue_worldwide}
-										prefixText={$_('user-pages.portraits.global')}
-									/>
-								{/snippet}
-							</Control>
-							<Description />
-							<FieldErrors />
-						</Field>
-					</fieldset>
+						<Field.Field class="mt-2">
+							<InputWithPrefix
+								{...revenue_germany.as('text')}
+								prefixText={$_('user-pages.portraits.inland')}
+							/>
+							{#each revenue_germany.issues() ?? [] as issue}
+								<div class="text-red-500 text-sm">{issue.message}</div>
+							{/each}
+						</Field.Field>
+						<Field.Field>
+							<InputWithPrefix
+								{...revenue_europe.as('text')}
+								prefixText={$_('user-pages.portraits.eu')}
+							/>
+							{#each revenue_europe.issues() ?? [] as issue}
+								<div class="text-red-500 text-sm">{issue.message}</div>
+							{/each}
+						</Field.Field>
+						<Field.Field>
+							<InputWithPrefix
+								{...revenue_worldwide.as('text')}
+								prefixText={$_('user-pages.portraits.global')}
+							/>
+							{#each revenue_worldwide.issues() ?? [] as issue}
+								<div class="text-red-500 text-sm">{issue.message}</div>
+							{/each}
+						</Field.Field>
+					</Field.Set>
 
-					<fieldset>
-						<legend class="data-fs-error:text-destructive text-sm font-medium leading-none"
-							>{$_('user-pages.portraits.locations')}</legend
+					<Field.Set>
+						<Field.Legend class="data-fs-error:text-destructive text-sm font-medium leading-none"
+							>{$_('user-pages.portraits.locations')}</Field.Legend
 						>
 
-						<Field form={superform} name="locations_germany" class="mt-2">
-							<Control>
-								{#snippet children({ props })}
-									<InputWithPrefix
-										{...props}
-										bind:value={$formData.locations_germany}
-										prefixText={$_('user-pages.portraits.inland')}
-									/>
-								{/snippet}
-							</Control>
-							<Description />
-							<FieldErrors />
-						</Field>
-						<Field form={superform} name="locations_europe">
-							<Control>
-								{#snippet children({ props })}
-									<InputWithPrefix
-										{...props}
-										bind:value={$formData.locations_europe}
-										prefixText={$_('user-pages.portraits.eu')}
-									/>
-								{/snippet}
-							</Control>
-							<Description />
-							<FieldErrors />
-						</Field>
-						<Field form={superform} name="locations_worldwide">
-							<Control>
-								{#snippet children({ props })}
-									<InputWithPrefix
-										{...props}
-										bind:value={$formData.locations_worldwide}
-										prefixText={$_('user-pages.portraits.global')}
-									/>
-								{/snippet}
-							</Control>
-							<Description />
-							<FieldErrors />
-						</Field>
-					</fieldset>
+						<Field.Field class="mt-2">
+							<InputWithPrefix
+								{...locations_germany.as('text')}
+								prefixText={$_('user-pages.portraits.inland')}
+							/>
+							{#each locations_germany.issues() ?? [] as issue}
+								<div class="text-red-500 text-sm">{issue.message}</div>
+							{/each}
+						</Field.Field>
+						<Field.Field>
+							<InputWithPrefix
+								{...locations_europe.as('text')}
+								prefixText={$_('user-pages.portraits.eu')}
+							/>
+							{#each locations_europe.issues() ?? [] as issue}
+								<div class="text-red-500 text-sm">{issue.message}</div>
+							{/each}
+						</Field.Field>
+						<Field.Field>
+							<InputWithPrefix
+								{...locations_worldwide.as('text')}
+								prefixText={$_('user-pages.portraits.global')}
+							/>
+							{#each locations_worldwide.issues() ?? [] as issue}
+								<div class="text-red-500 text-sm">{issue.message}</div>
+							{/each}
+						</Field.Field>
+					</Field.Set>
 
-					<fieldset>
-						<legend class="data-fs-error:text-destructive text-sm font-medium leading-none"
-							>{$_('user-pages.portraits.numberOfEmployees')}</legend
+					<Field.Set>
+						<Field.Legend class="data-fs-error:text-destructive text-sm font-medium leading-none"
+							>{$_('user-pages.portraits.numberOfEmployees')}</Field.Legend
 						>
 
-						<Field form={superform} name="employees_germany" class="mt-2">
-							<Control>
-								{#snippet children({ props })}
-									<InputWithPrefix
-										{...props}
-										bind:value={$formData.employees_germany}
-										prefixText={$_('user-pages.portraits.inland')}
-									/>
-								{/snippet}
-							</Control>
-							<Description />
-							<FieldErrors />
-						</Field>
-						<Field form={superform} name="employees_europe">
-							<Control>
-								{#snippet children({ props })}
-									<InputWithPrefix
-										{...props}
-										bind:value={$formData.employees_europe}
-										prefixText={$_('user-pages.portraits.eu')}
-									/>
-								{/snippet}
-							</Control>
-							<Description />
-							<FieldErrors />
-						</Field>
-						<Field form={superform} name="employees_worldwide">
-							<Control>
-								{#snippet children({ props })}
-									<InputWithPrefix
-										{...props}
-										bind:value={$formData.employees_worldwide}
-										prefixText={$_('user-pages.portraits.global')}
-									/>
-								{/snippet}
-							</Control>
-							<Description />
-							<FieldErrors />
-						</Field>
-					</fieldset>
+						<Field.Field class="mt-2">
+							<InputWithPrefix
+								{...employees_germany.as('text')}
+								prefixText={$_('user-pages.portraits.inland')}
+							/>
+							{#each employees_germany.issues() ?? [] as issue}
+								<div class="text-red-500 text-sm">{issue.message}</div>
+							{/each}
+						</Field.Field>
+						<Field.Field>
+							<InputWithPrefix
+								{...employees_europe.as('text')}
+								prefixText={$_('user-pages.portraits.eu')}
+							/>
+							{#each employees_europe.issues() ?? [] as issue}
+								<div class="text-red-500 text-sm">{issue.message}</div>
+							{/each}
+						</Field.Field>
+						<Field.Field>
+							<InputWithPrefix
+								{...employees_worldwide.as('text')}
+								prefixText={$_('user-pages.portraits.global')}
+							/>
+							{#each employees_worldwide.issues() ?? [] as issue}
+								<div class="text-red-500 text-sm">{issue.message}</div>
+							{/each}
+						</Field.Field>
+					</Field.Set>
 
-					<Field form={superform} name="entryOptions">
-						<Control>
-							{#snippet children({ props })}
-								<Label>{$_('user-pages.portraits.entryOpportunities')}</Label>
-								<Input {...props} bind:value={$formData.entryOptions} />
-							{/snippet}
-						</Control>
+					<Field.Field>
+						<Field.Label for="entryOptions"
+							>{$_('user-pages.portraits.entryOpportunities')}</Field.Label
+						>
+						<Input id="entryOptions" {...entryOptions.as('text')} />
+						{#each entryOptions.issues() ?? [] as issue}
+							<div class="text-red-500 text-sm">{issue.message}</div>
+						{/each}
+					</Field.Field>
 
-						<Description />
-						<FieldErrors />
-					</Field>
-
-					<fieldset>
-						<legend class="data-fs-error:text-destructive text-sm font-medium leading-none"
-							>{$_('user-pages.portraits.offers')}</legend
+					<Field.Set>
+						<Field.Legend class="data-fs-error:text-destructive text-sm font-medium leading-none"
+							>{$_('user-pages.portraits.offers')}</Field.Legend
 						>
 						<div class="flex flex-wrap gap-4 mt-2">
 							<div
 								class={cn(
 									'flex items-center p-3 rounded-md border',
-									$formData.offersOutOfCountryWork ? 'bg-primary/5 border-primary/30' : 'bg-card'
+									offersOutOfCountryWork.value() ? 'bg-primary/5 border-primary/30' : 'bg-card'
 								)}
 							>
-								<Checkbox
-									bind:checked={$formData.offersOutOfCountryWork}
-									class="mr-3 data-[state=checked]:bg-primary"
+								<input
+									{...offersOutOfCountryWork.as('checkbox')}
+									class="mr-3 data-[state=checked]:bg-primary border-primary ring-offset-background focus-visible:ring-ring data-[state=checked]:text-primary-foreground peer box-content size-4 shrink-0 rounded-sm border focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 data-[disabled=true]:cursor-not-allowed data-[disabled=true]:opacity-50"
 									id="country-checkbox"
 								/>
 								<label for="country-checkbox" class="flex items-center cursor-pointer">
@@ -392,12 +335,12 @@
 							<div
 								class={cn(
 									'flex items-center p-3 rounded-md border',
-									$formData.offersInternships ? 'bg-primary/5 border-primary/30' : 'bg-card'
+									offersInternships.value() ? 'bg-primary/5 border-primary/30' : 'bg-card'
 								)}
 							>
-								<Checkbox
-									bind:checked={$formData.offersInternships}
-									class="mr-3 data-[state=checked]:bg-primary"
+								<input
+									{...offersInternships.as('checkbox')}
+									class="mr-3 data-[state=checked]:bg-primary border-primary ring-offset-background focus-visible:ring-ring data-[state=checked]:text-primary-foreground peer box-content size-4 shrink-0 rounded-sm border focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 data-[disabled=true]:cursor-not-allowed data-[disabled=true]:opacity-50"
 									id="internship-checkbox"
 								/>
 								<label for="internship-checkbox" class="flex items-center cursor-pointer">
@@ -410,12 +353,12 @@
 							<div
 								class={cn(
 									'flex items-center p-3 rounded-md border',
-									$formData.offersThesis ? 'bg-primary/5 border-primary/30' : 'bg-card'
+									offersThesis.value() ? 'bg-primary/5 border-primary/30' : 'bg-card'
 								)}
 							>
-								<Checkbox
-									bind:checked={$formData.offersThesis}
-									class="mr-3 data-[state=checked]:bg-primary"
+								<input
+									{...offersThesis.as('checkbox')}
+									class="mr-3 data-[state=checked]:bg-primary border-primary ring-offset-background focus-visible:ring-ring data-[state=checked]:text-primary-foreground peer box-content size-4 shrink-0 rounded-sm border focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 data-[disabled=true]:cursor-not-allowed data-[disabled=true]:opacity-50"
 									id="thesis-checkbox"
 								/>
 								<label for="thesis-checkbox" class="flex items-center cursor-pointer">
@@ -424,91 +367,70 @@
 								</label>
 							</div>
 						</div>
-					</fieldset>
+					</Field.Set>
 
-					<Field form={superform} name="graduates">
-						<Control>
-							{#snippet children({ props })}
-								<Label>{$_('user-pages.portraits.graduates')}</Label>
-								<Input {...props} bind:value={$formData.graduates} />
-							{/snippet}
-						</Control>
-
-						<Description />
-						<FieldErrors />
-					</Field>
+					<Field.Field>
+						<Field.Label for="graduates">{$_('user-pages.portraits.graduates')}</Field.Label>
+						<Input id="graduates" {...graduates.as('text')} />
+						{#each graduates.issues() ?? [] as issue}
+							<div class="text-red-500 text-sm">{issue.message}</div>
+						{/each}
+					</Field.Field>
 					<hr />
 
-					<div class=" grid grid-cols-1 gap-2">
-						<Field form={superform} name="contactAddress">
-							<Control>
-								{#snippet children({ props })}
-									<Label>{$_('user-pages.portraits.contactAddress')}</Label>
-									<Textarea
-										{...props}
-										bind:value={$formData.contactAddress}
-										placeholder={$_('user-pages.portraits.companyAddress')}
-									/>
-								{/snippet}
-							</Control>
-
-							<Description />
-							<FieldErrors />
-						</Field>
-						<Field form={superform} name="contactPersonStudents">
-							<Control>
-								{#snippet children({ props })}
-									<Label>{$_('user-pages.portraits.contactPerson')}</Label>
-									<Input {...props} bind:value={$formData.contactPersonStudents} />
-								{/snippet}
-							</Control>
-
-							<Description />
-							<FieldErrors />
-						</Field>
-						<Field form={superform} name="contactPersonGraduates">
-							<Control>
-								{#snippet children({ props })}
-									<Label>{$_('user-pages.portraits.contactPerson')}</Label>
-									<Input {...props} bind:value={$formData.contactPersonGraduates} />
-								{/snippet}
-							</Control>
-
-							<Description />
-							<FieldErrors />
-						</Field>
-						<Field form={superform} name="website">
-							<Control>
-								{#snippet children({ props })}
-									<Label>{$_('user-pages.portraits.website')}</Label>
-									<InputWithPrefix
-										{...props}
-										prefixText="https://"
-										{...props}
-										bind:value={$formData.website}
-									/>
-								{/snippet}
-							</Control>
-
-							<Description />
-							<FieldErrors />
-						</Field>
+					<div class="grid grid-cols-1 gap-2">
+						<Field.Field>
+							<Field.Label for="contactAddress"
+								>{$_('user-pages.portraits.contactAddress')}</Field.Label
+							>
+							<Textarea
+								id="contactAddress"
+								{...contactAddress.as('text')}
+								placeholder={$_('user-pages.portraits.companyAddress')}
+							/>
+							{#each contactAddress.issues() ?? [] as issue}
+								<div class="text-red-500 text-sm">{issue.message}</div>
+							{/each}
+						</Field.Field>
+						<Field.Field>
+							<Field.Label for="contactPersonStudents"
+								>{$_('user-pages.portraits.contactPerson')}</Field.Label
+							>
+							<Input id="contactPersonStudents" {...contactPersonStudents.as('text')} />
+							{#each contactPersonStudents.issues() ?? [] as issue}
+								<div class="text-red-500 text-sm">{issue.message}</div>
+							{/each}
+						</Field.Field>
+						<Field.Field>
+							<Field.Label for="contactPersonGraduates"
+								>{$_('user-pages.portraits.contactPerson')}</Field.Label
+							>
+							<Input id="contactPersonGraduates" {...contactPersonGraduates.as('text')} />
+							{#each contactPersonGraduates.issues() ?? [] as issue}
+								<div class="text-red-500 text-sm">{issue.message}</div>
+							{/each}
+						</Field.Field>
+						<Field.Field>
+							<Field.Label for="website">{$_('user-pages.portraits.website')}</Field.Label>
+							<InputWithPrefix prefixText="https://" {...website.as('url')} />
+							{#each website.issues() ?? [] as issue}
+								<div class="text-red-500 text-sm">{issue.message}</div>
+							{/each}
+						</Field.Field>
 					</div>
 
-					<Field form={superform} name="additionalInformation">
-						<Control>
-							{#snippet children({ props })}
-								<Label>{$_('user-pages.portraits.additionalInformation')}</Label>
-								<Textarea {...props} bind:value={$formData.additionalInformation} />
-							{/snippet}
-						</Control>
+					<Field.Field>
+						<Field.Label for="additionalInformation"
+							>{$_('user-pages.portraits.additionalInformation')}</Field.Label
+						>
+						<Textarea id="additionalInformation" {...additionalInformation.as('text')} />
+						{#each additionalInformation.issues() ?? [] as issue}
+							<div class="text-red-500 text-sm">{issue.message}</div>
+						{/each}
+					</Field.Field>
 
-						<Description />
-						<FieldErrors />
-					</Field>
-
-					<footer class=" mt-10 flex justify-end items-center mb-4">
-						<div class=" flex items-center">
+					<footer class="mt-10 flex justify-end items-center mb-4">
+						<div class="flex items-center">
 							<Button
 								variant="secondary"
 								class="mr-2"
@@ -517,11 +439,11 @@
 								}}
 								>{$_('common.cancel')}
 							</Button>
-							{#if $submitting}
+							{#if portraitForm.pending > 0}
 								<Button
 									variant="default"
 									type="submit"
-									form={isEditMode ? `create-portrait-form-${portraitId}` : 'create-portrait-form'}
+									form={isEditMode ? `portrait-form-${portraitId}` : 'portrait-form'}
 									disabled
 								>
 									<LoaderCircle class="mr-2 size-4 animate-spin" />{$_('common.save')}
@@ -530,9 +452,10 @@
 								<Button
 									variant="default"
 									type="submit"
-									form={isEditMode ? `create-portrait-form-${portraitId}` : 'create-portrait-form'}
-									>{$_('common.save')}</Button
+									form={isEditMode ? `portrait-form-${portraitId}` : 'portrait-form'}
 								>
+									{$_('common.save')}
+								</Button>
 							{/if}
 						</div>
 					</footer>

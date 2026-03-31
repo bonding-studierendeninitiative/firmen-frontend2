@@ -18,8 +18,8 @@ export function validateRequestSignature(event: RequestEvent) {
 	const canonicalString = event.request.method + event.url.pathname + searchParams.toString();
 	const expectedSignature = createHmac('sha256', secret).update(canonicalString).digest('base64');
 
-	// console.log(`Canonical String: ${canonicalString}`);
-	// console.log(`Expected Signature: ${expectedSignature}`);
+	console.log(`Canonical String: ${canonicalString}`);
+	console.log(`Expected Signature: ${expectedSignature}`);
 
 	// Optional: Check timestamp freshness (e.g., within 5 minutes)
 	if (Math.abs(Date.now() - parseInt(timestamp)) > 5 * 60 * 1000) {

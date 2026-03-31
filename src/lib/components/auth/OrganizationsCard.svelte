@@ -9,6 +9,7 @@
 	import { Input } from '@/components/ui/input';
 	import { toast } from 'svelte-sonner';
 	import { LoaderCircle } from '@lucide/svelte';
+	import * as Empty from '@/components/ui/empty';
 	import { _ } from '@services';
 
 	let createOrganisationOpen = $state(false);
@@ -20,12 +21,11 @@
 		name: string;
 		slug: string;
 		logo?: string | null | undefined | undefined;
-		members: Array[any];
+		members: Array<any>;
 		metadata?: any;
 	}
 
 	interface Props {
-		localization?: any;
 		organizations?: Organization[];
 		currentOrganization?: Organization;
 		onSelectOrganization?: (org: Organization) => void;
@@ -33,15 +33,11 @@
 	}
 
 	let {
-		localization = {},
 		organizations = [],
 		currentOrganization,
 		onSelectOrganization,
 		onManageOrganization
 	}: Props = $props();
-
-	// Filter out personal account from organizations list
-	let orgList = $derived(organizations.filter((org) => !org.isPersonal));
 </script>
 
 <Card.Root class="w-full h-96 flex flex-col">
@@ -56,19 +52,21 @@
 					{$_('onboarding.chooseorganization')}
 				</Card.Description>
 			</div>
-			{#if orgList.length > 0}
+			{#if organizations.length > 0}
 				<Button size="sm" class="ml-4" onclick={() => (createOrganisationOpen = true)}>
 					<Plus class="mr-2 size-4" />
-					{$_("onboarding.createorg")}
+					{$_('onboarding.createorg')}
 				</Button>
 			{/if}
 		</div>
 	</Card.Header>
 
-	<Card.Content class={cn(
-        'space-y-4 flex-1 w-full pr-2 min-w-90',
-        (orgList.length > 0 || createOrganisationOpen) && 'overflow-y-auto'
-    )}>
+	<Card.Content
+		class={cn(
+			'space-y-4 flex-1 w-full min-w-90',
+			(organizations.length > 0 || createOrganisationOpen) && 'overflow-y-auto'
+		)}
+	>
 		{#if createOrganisationOpen}
 			<form
 				{...createOrganizationByUserForm.enhance(async ({ submit }) => {
@@ -95,31 +93,29 @@
 					/>
 				</div>
 			</form>
-		{:else if orgList.length === 0}
+		{:else if organizations.length === 0}
 			<!-- Empty state -->
-			<div class="text-center py-8 space-y-4">
-				<div class="flex justify-center">
-					<div class="rounded-full bg-muted p-3">
-						<Building2 class="size-6 text-muted-foreground" />
-					</div>
-				</div>
-				<div class="space-y-2">
-					<h3 class="font-medium">
-						{$_('onboarding.organizations')}
-					</h3>
-					<p class="text-sm text-muted-foreground max-w-sm mx-auto">
-						{$_("onboarding.emptydescription")}
-					</p>
-				</div>
-					<Button onclick={() => (createOrganisationOpen = true)}>
-						<Plus class="mr-2 size-4" />
-						{$_("onboarding.createfirstorg")}
-					</Button>
-			</div>
+			<Empty.Root>
+				<Empty.Header>
+					<Empty.Media variant="icon">
+						<Building2 />
+					</Empty.Media>
+					<Empty.Title>
+						{$_('onboarding.select-org.empty.title')}
+					</Empty.Title>
+					<Empty.Description>
+						{$_('onboarding.emptydescription')}
+					</Empty.Description>
+				</Empty.Header>
+				<Button onclick={() => (createOrganisationOpen = true)}>
+					<Plus class="mr-2 size-4" />
+					{$_('onboarding.createfirstorg')}
+				</Button>
+			</Empty.Root>
 		{:else}
 			<!-- Organizations list -->
 			<div class="space-y-3">
-				{#each orgList as org}
+				{#each organizations as org}
 					{@const membersCount = org.members.length}
 
 					<button
@@ -158,10 +154,9 @@
 								<div class="flex items-center gap-2 text-sm text-muted-foreground">
 									<div class="flex items-center gap-1">
 										<Users class="size-3" />
-										{membersCount}
-										{membersCount === 1
-											? localization.MEMBER || 'member'
-											: localization.MEMBERS || 'members'}
+										{$_('components.auth.organizations.members.count', {
+											values: { count: membersCount }
+										})}
 									</div>
 								</div>
 							</div>

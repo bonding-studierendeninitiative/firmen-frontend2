@@ -6,7 +6,7 @@
 	import RegistrationCard from './registration-card.svelte';
 	import { forOrganization as getEventRegistrations } from '@/remote/functions';
 
-	let { data } = $props();
+	let { data, params: pageParams } = $props();
 
 	const params = { limit: 10, orgId: data.orgId, cursor: 0 } as const;
 </script>
@@ -36,15 +36,20 @@
 				{#if allEventRegistrations.length > 0}
 					<div class="grid grid-cols-1 @4xl/registrations:grid-cols-2 gap-8 items-start">
 						{#each allEventRegistrations as eventRegistration, index}
-							<RegistrationCard registration={eventRegistration} />
+							<RegistrationCard
+								registration={eventRegistration}
+								orgSlug={pageParams.organizationSlug}
+							/>
 						{/each}
 					</div>
 				{:else}
 					<NoDataFound
 						heading={$_('user-pages.dashboard.noEventsRegistered')}
 						subHeading={$_('user-pages.dashboard.noEventsRegisteredDetail')}
-						buttonText={$_('common.viewEvents')}
-						onButtonClick={() => {}}
+						action={{
+							label: $_('common.viewEvents'),
+							href: `/${pageParams.organizationSlug}/events`
+						}}
 					/>
 				{/if}
 			</div>

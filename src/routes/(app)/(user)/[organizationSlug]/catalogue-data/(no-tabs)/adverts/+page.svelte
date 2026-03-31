@@ -47,6 +47,9 @@
 
 	const totalElements = $derived.by(() => advertsQuery.current?.totalElements ?? 0);
 
+	$inspect(advertsQuery);
+	$inspect(totalElements);
+
 	const groupedAdvertisements = $derived.by(() => {
 		return allAdverts
 			.filter((advert) => advert != undefined)

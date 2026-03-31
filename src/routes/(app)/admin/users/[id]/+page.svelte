@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { Link } from '@/@svelte/components';
 	import * as Alert from '@/components/ui/alert';
-	import * as Avatar from '@/components/ui/avatar';
 	import { _ } from '@services';
 	import { LoaderCircle, RefreshCwIcon, TriangleAlert } from '@lucide/svelte';
 	import * as Table from '@/components/ui/table';
@@ -13,6 +12,7 @@
 	import SessionRow from './session-row.svelte';
 	import { toast } from 'svelte-sonner';
 	import { getOrgMemberships, getUser, updateRole } from '@/remote/functions/admin';
+	import UserAvatar from '@/components/auth/UserAvatar.svelte';
 
 	let { params } = $props();
 
@@ -69,16 +69,10 @@
 	{#if userQuery.ready}
 		<header class="bg-card shadow border shadow-card p-4 rounded-lg border-card">
 			<div class="flex gap-4 items-center">
-				<Avatar.Root class="size-20">
-					<Avatar.Image src={userQuery.current?.image} alt={userQuery.current?.name} />
-					<Avatar.Fallback class="text-3xl font-medium"
-						>{userQuery.current?.name
-							?.split(' ')
-							.slice(0, 2)
-							.map((word) => word.charAt(0))
-							.join('')}</Avatar.Fallback
-					>
-				</Avatar.Root>
+				<UserAvatar
+					user={{ id: userQuery.current?.id!, name: userQuery.current?.name! }}
+					size="lg"
+				/>
 				<div class="flex flex-col">
 					<h1 class=" text-stone-950 text-3xl font-extrabold">
 						{userQuery.current?.name}

@@ -56,7 +56,7 @@ export const createPortraitTemplate = form(PortraitTemplateSchema, async (input)
 		body: input
 	});
 
-	if (response.status != 201) {
+	if (!response.ok) {
 		const problem = (await response.json()) as Problem;
 		error(response.status, problem.detail || 'Portrait template could not be created');
 	}

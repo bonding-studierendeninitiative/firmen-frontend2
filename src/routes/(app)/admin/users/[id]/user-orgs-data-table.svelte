@@ -3,7 +3,7 @@
 	import { LocalizedDate, QueryDataTable } from '@/@svelte/components';
 	import DataTableActions from './data-table-actions.svelte';
 	import { Checkbox } from '@/components/ui/checkbox';
-	import { createColumnHelper, type Column, type ColumnDef } from '@tanstack/table-core';
+	import { createColumnHelper, type Column } from '@tanstack/table-core';
 	import DataTableSortToggle from './data-table-sort-toggle.svelte';
 	import * as Avatar from '@/components/ui/avatar';
 	import { renderSnippet } from '@/@svelte/components/QueryDataTable/render-helpers';

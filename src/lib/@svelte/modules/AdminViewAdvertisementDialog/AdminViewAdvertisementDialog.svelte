@@ -58,7 +58,7 @@
 		<AdvertStatusIcon title={$_('status-text.missing')} variant={'missing'} />
 	{/if}
 	<Dialog.Content class="sm:max-w-4xl max-h-[80vh] overflow-y-auto">
-		{#if advertisement}
+		{#if advertisement.documentVersion}
 			<div class="grid grid-cols-2 gap-6">
 				<div
 					class="aspect-[1/1.41] bg-gray-100 dark:bg-gray-700 rounded-md flex items-center justify-center overflow-hidden"

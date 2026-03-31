@@ -12,6 +12,7 @@
 	import { cn } from '@/utils';
 	import { Switch } from '@/components/ui/switch';
 	import { getUsers } from '@/remote/functions/admin';
+	import UserAvatar from '@/components/auth/UserAvatar.svelte';
 
 	interface Props {
 		orgId: string;
@@ -164,16 +165,7 @@
 				</div>
 				{#if user}
 					<div class="flex gap-x-4 p-2">
-						<Avatar.Root>
-							<Avatar.Image src={user.image} />
-							<Avatar.Fallback
-								>{user.name
-									?.split(' ')
-									.slice(0, 2)
-									.map((name) => name[0])
-									.join('')}</Avatar.Fallback
-							>
-						</Avatar.Root>
+						<UserAvatar user={{ id: user.id, name: user.name || 'N/A' }} size="lg" />
 						<div class="space-y-2">
 							<p class="text-md font-semibold">{user.name}</p>
 							<p class="text-sm">{user.email}</p>

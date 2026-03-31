@@ -3,7 +3,6 @@
 	import { SearchInput } from '@/@svelte/components';
 	import { CreateOrgDialog } from '@/@svelte/modules';
 	import OrganizationsDataTable from './organizations-data-table.svelte';
-	import ImportLegacyOrgDialog from './import-legacy-org-dialog.svelte';
 	import { fade } from 'svelte/transition';
 	import { getOrgs } from '@/remote/functions/admin';
 	import { queryParameters, ssp } from 'sveltekit-search-params';
@@ -48,7 +47,6 @@
 		/>
 		<div class="grow"></div>
 		<CreateOrgDialog />
-		<ImportLegacyOrgDialog />
 	</section>
 	<OrganizationsDataTable
 		isLoading={getOrgs(filters).loading}

@@ -2,13 +2,7 @@
 	import { cn } from '@/utils';
 	import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 	import { Skeleton } from '@/components/ui/skeleton';
-
-	interface User {
-		id: string;
-		name: string;
-		email: string;
-		image?: string;
-	}
+	import type { User } from 'better-auth';
 
 	interface Props {
 		className?: string;
@@ -17,7 +11,7 @@
 			fallback?: string;
 			skeleton?: string;
 		};
-		user?: User | null;
+		user?: Pick<User, 'id' | 'name'> | null;
 		size?: 'sm' | 'default' | 'lg';
 		showSkeleton?: boolean;
 	}
@@ -29,16 +23,6 @@
 		size = 'default',
 		showSkeleton = false
 	}: Props = $props();
-
-	// Mock user data if none provided
-	let displayUser = $derived(
-		user || {
-			id: '1',
-			name: 'John Doe',
-			email: 'john.doe@example.com',
-			image: undefined
-		}
-	);
 
 	function getInitials(name: string) {
 		return name
@@ -66,9 +50,9 @@
 	<Skeleton class={cn(getSizeClass(size), 'rounded-full', className, classNames?.skeleton)} />
 {:else}
 	<Avatar class={cn(getSizeClass(size), className, classNames?.base)}>
-		<AvatarImage src={displayUser.image} alt={displayUser.name} />
+		<AvatarImage src={`/api/avatar/${user?.id}.svg`} alt={user?.name} />
 		<AvatarFallback class={classNames?.fallback}>
-			{getInitials(displayUser.name)}
+			{getInitials(user?.name || '')}
 		</AvatarFallback>
 	</Avatar>
 {/if}

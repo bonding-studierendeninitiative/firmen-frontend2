@@ -198,7 +198,10 @@
 										aria-label={`Select ${member.user.name}`}
 									>
 										<Avatar.Root class="size-6">
-											<Avatar.Image src={member?.user.image} alt={member?.user.name} />
+											<Avatar.Image
+												src={`/api/avatar/${member?.userId}.svg`}
+												alt={member?.user.name}
+											/>
 											<Avatar.Fallback class="text-xs">
 												{member?.user.name
 													?.split(' ')

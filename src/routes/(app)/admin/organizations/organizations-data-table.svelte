@@ -18,7 +18,12 @@
 		organizations: OrganizationsResponse['data'];
 		totalCount: number;
 		isLoading: boolean;
-		params: any;
+		params: {
+			sortBy: string;
+			sortDirection: 'asc' | 'desc';
+			page: number;
+			limit: number;
+		};
 	} = $props();
 
 	const columnHelper = createColumnHelper<OrganizationsResponse['data'][0]>();
@@ -75,8 +80,9 @@
 					state: column
 				}),
 			cell: ({ getValue }) => {
-				const membersCount = getValue()?.length || 0;
-				return membersCount;
+				return renderSnippet(textSnippet, {
+					text: (getValue()?.length || 0).toString()
+				});
 			}
 		}),
 		columnHelper.accessor('createdAt', {
@@ -96,7 +102,6 @@
 		}),
 		columnHelper.accessor('id', {
 			id: 'actions',
-			header: '',
 			cell: ({ row }) =>
 				renderSnippet(actionsSnippet, {
 					id: row.original.id
@@ -108,6 +113,10 @@
 
 {#snippet actionsSnippet({ id }: { id: string })}
 	<DataTableActions {id} />
+{/snippet}
+
+{#snippet textSnippet({ text }: { text: string })}
+	<span>{text}</span>
 {/snippet}
 
 {#snippet sortSnippet({
@@ -166,4 +175,13 @@
 	{/if}
 {/snippet}
 
-<QueryDataTable data={organizations} {totalCount} {isLoading} {columns} {params} />
+<QueryDataTable
+	data={organizations}
+	{totalCount}
+	{isLoading}
+	{columns}
+	bind:page={params.page}
+	bind:pageSize={params.limit}
+	bind:sortBy={params.sortBy}
+	bind:sortDirection={params.sortDirection}
+/>

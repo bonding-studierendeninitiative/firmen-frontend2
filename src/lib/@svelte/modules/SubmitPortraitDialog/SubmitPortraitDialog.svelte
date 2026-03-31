@@ -1,5 +1,6 @@
 <script lang="ts">
 	import * as Dialog from '@/components/ui/dialog';
+	import * as Item from '@/components/ui/item';
 	import { _ } from '@services';
 	import { submitPortraitForm } from '@/remote/functions';
 	import type { RemoteQuery, RemoteQueryOverride } from '@sveltejs/kit';
@@ -10,6 +11,8 @@
 	import { Input } from '@/components/ui/input';
 	import { Textarea } from '@/components/ui/textarea';
 	import * as Card from '@/components/ui/card';
+	import * as InputGroup from '@/components/ui/input-group';
+	import * as Field from '@/components/ui/field';
 	import {
 		Loader2,
 		ArrowLeft,
@@ -26,16 +29,16 @@
 		Briefcase,
 		BookOpen,
 		Cross,
-		X
+		X,
+		Group,
+		File
 	} from '@lucide/svelte';
-	import * as v from 'valibot';
-	import { valibot } from 'sveltekit-superforms/adapters';
-	import { SubmitPortraitRequest } from '@schema';
 	import { getAllPortraitTemplates as getPortraitTemplates } from '@/remote/functions';
 	import { cn } from '@/utils';
-	import { FancyMultiSelect, InputWithPrefix } from '@/@svelte/components';
+	import { FancyMultiSelect } from '@/@svelte/components';
 	import { disciplines } from '@constant/portraitTemplates';
 	import SuperDebug from 'sveltekit-superforms';
+
 	let {
 		open = $bindable(false),
 		id,
@@ -53,37 +56,6 @@
 			data: FormData;
 		}) => Promise<void>;
 	} = $props();
-
-	const firstStepSchema = v.pick(SubmitPortraitRequest, [
-		'title',
-		'displayName',
-		'comment',
-		'industry',
-		'products',
-		'website'
-	]);
-	const secondStepSchema = v.pick(SubmitPortraitRequest, [
-		'locationsWorldwide',
-		'locationsEurope',
-		'locationsGermany',
-		'revenueWorldwide',
-		'revenueEurope',
-		'revenueGermany'
-	]);
-	const thirdStepSchema = v.pick(SubmitPortraitRequest, [
-		'employeesWorldwide',
-		'employeesEurope',
-		'employeesGermany',
-		'graduates',
-		'desiredDisciplines',
-		'entryOptions'
-	]);
-	const fourthStepSchema = v.pick(SubmitPortraitRequest, [
-		'contactAddress',
-		'contactPersonGraduates',
-		'contactPersonStudents',
-		'additionalInformation'
-	]);
 
 	const {
 		title,
@@ -113,28 +85,6 @@
 		displayName,
 		organization
 	} = submitPortraitForm.fields;
-	// let superform = superForm<Infer<SubmitPortraitRequest>>(submitPortraitForm, {
-	// 	validators: valibot(firstStepSchema),
-	// 	dataType: 'json',
-	// 	onResult({ result }) {
-	// 		if (result.type === 'error') {
-	// 			toast.error(result.error);
-	// 		} else if (result.type === 'success') {
-	// 			toast.success('Portrait submitted successfully');
-	// 		} else if (result.type === 'failure') {
-	// 			toast.warning('Failure' + JSON.stringify(result.data));
-	// 		}
-	// 	},
-	// 	onSubmit({ jsonData }) {
-	// 		jsonData({
-	// 			...$formData,
-	// 			eventRegistrationId: id
-	// 		});
-	// 	}
-	// });
-
-	// let { form: formData, enhance, reset, options, validateForm, submitting } = superform;
-	// TODO: HiddenInput event registration id
 
 	const portraitTemplatesQuery = getPortraitTemplates({ page: 0, query: '' });
 
@@ -169,34 +119,6 @@
 		}
 	});
 
-	let currentValidator: v.BaseSchema = undefined;
-
-	function updateValidator() {
-		switch (currentStep) {
-			case 1:
-				currentValidator = undefined;
-				break;
-			case 1:
-				currentValidator = undefined;
-				break;
-			case 2:
-				currentValidator = valibot(firstStepSchema);
-				break;
-			case 3:
-				currentValidator = valibot(secondStepSchema);
-				break;
-			case 4:
-				currentValidator = valibot(thirdStepSchema);
-				break;
-			case 5:
-				currentValidator = valibot(fourthStepSchema);
-				break;
-			case 6:
-				currentValidator = undefined;
-				break;
-		}
-	}
-
 	// Navigation functions
 	async function nextStep() {
 		if (currentStep >= 2 && currentStep <= 5) {
@@ -212,7 +134,10 @@
 			currentStep++;
 		}
 
-		updateValidator();
+		submitPortraitForm.validate({
+			includeUntouched: false,
+			preflightOnly: true
+		});
 	}
 
 	function prevStep() {
@@ -222,7 +147,6 @@
 		if (currentStep == 1 && startOption !== 'template') {
 			currentStep--;
 		}
-		updateValidator();
 	}
 
 	function resetForm() {
@@ -230,7 +154,6 @@
 		selectedTemplateId = '';
 		currentStep = 0;
 		startOption = '';
-		updateValidator();
 	}
 
 	function convertDisciplineLabelsToObjects(input: string) {
@@ -256,13 +179,13 @@
 </script>
 
 <Dialog.Root bind:open>
-	<Dialog.Content class="max-w-[80dvw] h-[90dvh] flex flex-col">
+	<Dialog.Content class="flex flex-col">
 		<Dialog.Header>
 			<Dialog.Title>{$_('modules.submit-portrait-dialog.title')}</Dialog.Title>
 			<Dialog.Description>{$_('modules.submit-portrait-dialog.description')}</Dialog.Description>
 		</Dialog.Header>
-		<SuperDebug data={submitPortraitForm} />
-		<div class="flex-1 overflow-auto">
+		<!--<SuperDebug data={submitPortraitForm} />-->
+		<div class="flex-1 overflow-visible">
 			{#if currentStep > 1}
 				<div class="mb-8 max-w-4xl mx-auto">
 					<div class="flex justify-between items-center">
@@ -304,7 +227,7 @@
 						if (submitPortraitForm.fields.allIssues()?.length == 0) {
 							await submit();
 							toast.success('Portrait submitted successfully');
-							open=false;
+							open = false;
 						} else {
 							console.log(submitPortraitForm.fields.allIssues());
 						}
@@ -313,8 +236,9 @@
 						console.error('Error uploading advertisment:', e);
 					}
 				})}
+				class="overflow-y-auto max-h-[60vh] overflow-x-visible"
 			>
-				<input {...submitPortraitForm.fields.eventRegistrationId.as("hidden")} value={id}/>
+				<input {...submitPortraitForm.fields.eventRegistrationId.as('hidden', id)} />
 				<div class="space-y-6 py-4 max-w-5xl mx-auto">
 					<!-- Step 0: Choose to start from scratch or use a template -->
 					{#if currentStep === 0}
@@ -323,69 +247,67 @@
 								{$_('modules.submit-portrait-form.firstHeading')}
 							</h2>
 
-							<RadioGroup.Root bind:value={startOption}>
-								<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-									<Label for="create-new-portrait">
-										<RadioGroup.Item id="create-new-portrait" value="new" class="sr-only" />
-										<Card.Root
-											class={`cursor-pointer transition-all ${startOption === 'new' ? 'ring-2 ring-primary' : 'hover:bg-muted/50'}`}
-										>
-											<Card.Header>
-												<Card.Title class="flex items-center">
-													<FileText class="size-5 mr-2" />
-													{$_('modules.submit-portrait-form.start-from-scratch.title')}
-												</Card.Title>
-												<Card.Description
-													>{$_(
-														'modules.submit-portrait-form.start-from-scratch.description'
-													)}</Card.Description
-												>
-											</Card.Header>
-											<Card.Content>
-												<p>{$_('modules.submit-portrait-form.start-from-scratch.body')}</p>
-											</Card.Content>
-											<Card.Footer class="justify-end">
-												<Check
-													class={cn(
-														'size-5 text-primary',
-														startOption !== 'new' ? 'opacity-0' : ''
-													)}
-													aria-hidden={startOption !== 'new'}
-												/>
-											</Card.Footer>
-										</Card.Root>
-									</Label>
-									<Label for="use-template">
-										<RadioGroup.Item id="use-template" value="template" class="sr-only" />
-										<Card.Root
-											class={`cursor-pointer transition-all ${startOption === 'template' ? 'ring-2 ring-primary' : 'hover:bg-muted/50'}`}
-										>
-											<Card.Header>
-												<Card.Title class="flex items-center">
-													<FileEdit class="size-5 mr-2" />
-													{$_('modules.submit-portrait-form.use-a-template.title')}
-												</Card.Title>
-												<Card.Description
-													>{$_(
-														'modules.submit-portrait-form.use-a-template.description'
-													)}</Card.Description
-												>
-											</Card.Header>
-											<Card.Content>
-												<p>{$_('modules.submit-portrait-form.use-a-template.body')}</p>
-											</Card.Content>
-											<Card.Footer class="justify-end">
-												<Check
-													class={cn(
-														'size-5 text-primary',
-														startOption !== 'template' ? 'opacity-0' : ''
-													)}
-													aria-hidden={startOption !== 'template'}
-												/>
-											</Card.Footer>
-										</Card.Root>
-									</Label>
-								</div>
+							<RadioGroup.Root
+								class="grid grid-cols-1 md:grid-cols-2 gap-6"
+								bind:value={startOption}
+							>
+								<Label for="create-new-portrait">
+									<RadioGroup.Item id="create-new-portrait" value="new" class="sr-only" />
+									<Item.Root
+										variant="outline"
+										class={`cursor-pointer transition-all ${startOption === 'new' ? 'ring-2 ring-primary' : 'hover:bg-muted/50'}`}
+									>
+										<Item.Media variant="icon">
+											<File class="text-muted-foreground" />
+										</Item.Media>
+										<Item.Content>
+											<Item.Title class="flex items-center">
+												{$_('modules.submit-portrait-form.start-from-scratch.title')}
+											</Item.Title>
+											<Item.Description
+												>{$_(
+													'modules.submit-portrait-form.start-from-scratch.description'
+												)}</Item.Description
+											>
+										</Item.Content>
+										<Item.Actions>
+											<Check
+												class={cn('size-5 text-primary', startOption !== 'new' ? 'opacity-0' : '')}
+												aria-hidden={startOption !== 'new'}
+											/>
+										</Item.Actions>
+									</Item.Root>
+								</Label>
+								<Label for="use-template">
+									<RadioGroup.Item id="use-template" value="template" class="sr-only" />
+									<Item.Root
+										variant="outline"
+										class={`cursor-pointer transition-all ${startOption === 'template' ? 'ring-2 ring-primary' : 'hover:bg-muted/50'}`}
+									>
+										<Item.Media variant="icon">
+											<FileInput class="text-muted-foreground" />
+										</Item.Media>
+										<Item.Content>
+											<Item.Title class="flex items-center">
+												{$_('modules.submit-portrait-form.use-a-template.title')}
+											</Item.Title>
+											<Item.Description
+												>{$_(
+													'modules.submit-portrait-form.use-a-template.description'
+												)}</Item.Description
+											>
+										</Item.Content>
+										<Item.Actions>
+											<Check
+												class={cn(
+													'size-5 text-primary',
+													startOption !== 'template' ? 'opacity-0' : ''
+												)}
+												aria-hidden={startOption !== 'template'}
+											/>
+										</Item.Actions>
+									</Item.Root>
+								</Label>
 							</RadioGroup.Root>
 						</div>
 					{/if}
@@ -441,160 +363,161 @@
 					{/if}
 					<!-- Step 2: Basic Information -->
 					{#if currentStep === 2}
-						<div>
+						<Field.Set>
 							<h2 class="text-2xl font-semibold mb-6">
 								{$_('modules.submit-portrait-form.step-1.title')}
 							</h2>
-							<div class="w-full">
-									<Label>Title of Portrait (internal)</Label>
-									<Input class="w-full" {...submitPortraitForm.fields.title.as('text')} />
-									{#each submitPortraitForm.fields.title.issues() ?? [] as issue}
-										<div class="text-red-500 text-sm">{issue.message}</div>
-									{/each}
-								</div>
-							<div class="flex w-full gap-6">
-								
-								<div class="flex-1">
-									<Label>Display Name for Students*</Label>
-									<Input class="w-full" {...displayName.as('text')} />
+							<Field.Field class="w-full">
+								<Field.Label for="title">Title of Portrait (internal)</Field.Label>
+								<Input id="title" class="w-full" {...submitPortraitForm.fields.title.as('text')} />
+								{#each submitPortraitForm.fields.title.issues() ?? [] as issue}
+									<div class="text-red-500 text-sm">{issue.message}</div>
+								{/each}
+							</Field.Field>
+							<Field.Group class="grid grid-cols-2 w-full gap-6">
+								<Field.Field>
+									<Field.Label for="display-name">Display Name for Students*</Field.Label>
+									<Input id="display-name" class="w-full" {...displayName.as('text')} />
 									{#each displayName.issues() ?? [] as issue}
 										<div class="text-red-500 text-sm">{issue.message}</div>
 									{/each}
-								</div>
-								<div class="flex-1">
-									<Label>Official Company Name</Label>
-									<Input class="w-full" {...organization.as('text')} />
+								</Field.Field>
+								<Field.Field>
+									<Field.Label for="organization">Official Company Name</Field.Label>
+									<Input id="organization" class="w-full" {...organization.as('text')} />
 									{#each organization.issues() ?? [] as issue}
 										<div class="text-red-500 text-sm">{issue.message}</div>
 									{/each}
-								</div>
-							</div>
-							<Label>
-								Comment (internal)
-								<Textarea {...comment.as('text')} class="resize-none" />
+								</Field.Field>
+							</Field.Group>
+							<Field.Field>
+								<Field.Label for="comment">Comment (internal)</Field.Label>
+								<Textarea id="comment" {...comment.as('text')} class="resize-none" />
 								{#each comment.issues() ?? [] as issue}
 									<div class="text-red-500 text-sm">{issue.message}</div>
 								{/each}
-							</Label>
-							<div class="flex w-full gap-6">
-								<div class="flex-1">
-									<Label>Industry*</Label>
-									<Input {...industry.as('text')} />
+							</Field.Field>
+							<Field.Group class="grid grid-cols-2 w-full gap-6">
+								<Field.Field>
+									<Field.Label for="industry">Industry*</Field.Label>
+									<Input id="industry" {...industry.as('text')} />
 									{#each industry.issues() ?? [] as issue}
 										<div class="text-red-500 text-sm">{issue.message}</div>
 									{/each}
-								</div>
-								<div class="flex-1">
-									<Label>Products</Label>
-									<Input {...products.as('text')} />
+								</Field.Field>
+								<Field.Field>
+									<Field.Label for="products">Products</Field.Label>
+									<Input id="products" {...products.as('text')} />
 									{#each products.issues() ?? [] as issue}
 										<div class="text-red-500 text-sm">{issue.message}</div>
 									{/each}
-								</div>
-							</div>
+								</Field.Field>
+							</Field.Group>
 
-							<div>
-								<Label>{$_('user-pages.portraits.branch')}</Label>
+							<Field.Field>
+								<Field.Label for="branch">{$_('user-pages.portraits.branch')}</Field.Label>
 								<FancyMultiSelect
+									id="branch"
 									options={disciplines}
 									bind:selected={getSelectedIndustry, setSelectedIndustry}
 									placeholder={$_('user-pages.portraits.select-disciplines')}
 								/>
-							</div>
-						</div>
+							</Field.Field>
+						</Field.Set>
 					{/if}
 
 					<!-- Step 3: Locations & Revenue -->
 					{#if currentStep === 3}
-						<div>
-							<h2 class="text-2xl font-semibold mb-6">Locations</h2>
+						<Field.Set>
+							<Field.Legend class="text-2xl font-semibold mb-6">Locations</Field.Legend>
 
-							<div class="space-y-8">
-								<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-									<fieldset class="space-y-2">
-										<legend class="data-fs-error:text-destructive text-sm font-medium leading-none"
-											>{$_('user-pages.portraits.locations')}</legend
-										>
-										<InputWithPrefix
-											{...locationsGermany.as('text')}
-											prefixText={$_('user-pages.portraits.inland')}
-										/>
-										{#each locationsGermany.issues() ?? [] as issue}
-											<div class="text-red-500 text-sm">{issue.message}</div>
-										{/each}
-										<InputWithPrefix
-											{...locationsEurope.as('text')}
-											prefixText={$_('user-pages.portraits.eu')}
-										/>
-										{#each locationsEurope.issues() ?? [] as issue}
-											<div class="text-red-500 text-sm">{issue.message}</div>
-										{/each}
-										<InputWithPrefix
-											{...locationsWorldwide.as('text')}
-											prefixText={$_('user-pages.portraits.global')}
-										/>
-										{#each locationsWorldwide.issues() ?? [] as issue}
-											<div class="text-red-500 text-sm">{issue.message}</div>
-										{/each}
-									</fieldset>
-									<fieldset class="space-y-2">
-										<legend class="data-fs-error:text-destructive text-sm font-medium leading-none"
-											>{$_('user-pages.portraits.revenue')}</legend
-										>
+							<Field.Group class="grid grid-cols-1 md:grid-cols-3 gap-6">
+								<Field.Field>
+									<Field.Label
+										class="data-fs-error:text-destructive text-sm font-medium leading-none"
+										>{$_('user-pages.portraits.locations')}</Field.Label
+									>
+									<InputGroup.Root>
+										<InputGroup.Input {...locationsGermany.as('text')} />
+										<InputGroup.Addon>{$_('user-pages.portraits.inland')}</InputGroup.Addon>
+									</InputGroup.Root>
+									{#each locationsGermany.issues() ?? [] as issue}
+										<div class="text-red-500 text-sm">{issue.message}</div>
+									{/each}
+									<InputGroup.Root>
+										<InputGroup.Input {...locationsEurope.as('text')} />
+										<InputGroup.Addon>{$_('user-pages.portraits.eu')}</InputGroup.Addon>
+									</InputGroup.Root>
+									{#each locationsEurope.issues() ?? [] as issue}
+										<div class="text-red-500 text-sm">{issue.message}</div>
+									{/each}
+									<InputGroup.Root>
+										<InputGroup.Input {...locationsWorldwide.as('text')} />
+										<InputGroup.Addon>{$_('user-pages.portraits.global')}</InputGroup.Addon>
+									</InputGroup.Root>
+									{#each locationsWorldwide.issues() ?? [] as issue}
+										<div class="text-red-500 text-sm">{issue.message}</div>
+									{/each}
+								</Field.Field>
+								<Field.Field>
+									<Field.Label
+										class="data-fs-error:text-destructive text-sm font-medium leading-none"
+										>{$_('user-pages.portraits.revenue')}</Field.Label
+									>
 
-										<InputWithPrefix
-											{...revenueGermany.as('text')}
-											prefixText={$_('user-pages.portraits.inland')}
-										/>
-										{#each revenueGermany.issues() ?? [] as issue}
-											<div class="text-red-500 text-sm">{issue.message}</div>
-										{/each}
-										<InputWithPrefix
-											{...revenueEurope.as('text')}
-											prefixText={$_('user-pages.portraits.eu')}
-										/>
-										{#each revenueEurope.issues() ?? [] as issue}
-											<div class="text-red-500 text-sm">{issue.message}</div>
-										{/each}
-										<InputWithPrefix
-											{...revenueWorldwide.as('text')}
-											prefixText={$_('user-pages.portraits.global')}
-										/>
-										{#each revenueWorldwide.issues() ?? [] as issue}
-											<div class="text-red-500 text-sm">{issue.message}</div>
-										{/each}
-									</fieldset>
+									<InputGroup.Root>
+										<InputGroup.Input {...revenueGermany.as('text')} />
+										<InputGroup.Addon>{$_('user-pages.portraits.inland')}</InputGroup.Addon>
+									</InputGroup.Root>
+									{#each revenueGermany.issues() ?? [] as issue}
+										<div class="text-red-500 text-sm">{issue.message}</div>
+									{/each}
+									<InputGroup.Root>
+										<InputGroup.Input {...revenueEurope.as('text')} />
+										<InputGroup.Addon>{$_('user-pages.portraits.eu')}</InputGroup.Addon>
+									</InputGroup.Root>
+									{#each revenueEurope.issues() ?? [] as issue}
+										<div class="text-red-500 text-sm">{issue.message}</div>
+									{/each}
+									<InputGroup.Root>
+										<InputGroup.Input {...revenueWorldwide.as('text')} />
+										<InputGroup.Addon>{$_('user-pages.portraits.global')}</InputGroup.Addon>
+									</InputGroup.Root>
+									{#each revenueWorldwide.issues() ?? [] as issue}
+										<div class="text-red-500 text-sm">{issue.message}</div>
+									{/each}
+								</Field.Field>
 
-									<fieldset class="space-y-2">
-										<legend class="data-fs-error:text-destructive text-sm font-medium leading-none"
-											>{$_('user-pages.portraits.numberOfEmployees')}</legend
-										>
+								<Field.Field>
+									<Field.Label
+										class="data-fs-error:text-destructive text-sm font-medium leading-none"
+										>{$_('user-pages.portraits.numberOfEmployees')}</Field.Label
+									>
 
-										<InputWithPrefix
-											{...employeesGermany.as('text')}
-											prefixText={$_('user-pages.portraits.inland')}
-										/>
-										{#each employeesGermany.issues() ?? [] as issue}
-											<div class="text-red-500 text-sm">{issue.message}</div>
-										{/each}
-										<InputWithPrefix
-											{...employeesEurope.as('text')}
-											prefixText={$_('user-pages.portraits.eu')}
-										/>
-										{#each employeesEurope.issues() ?? [] as issue}
-											<div class="text-red-500 text-sm">{issue.message}</div>
-										{/each}
-										<InputWithPrefix
-											{...employeesWorldwide.as('text')}
-											prefixText={$_('user-pages.portraits.global')}
-										/>
-										{#each employeesWorldwide.issues() ?? [] as issue}
-											<div class="text-red-500 text-sm">{issue.message}</div>
-										{/each}
-									</fieldset>
-								</div>
-							</div>
-						</div>
+									<InputGroup.Root>
+										<InputGroup.Input {...employeesGermany.as('text')} />
+										<InputGroup.Addon>{$_('user-pages.portraits.inland')}</InputGroup.Addon>
+									</InputGroup.Root>
+									{#each employeesGermany.issues() ?? [] as issue}
+										<div class="text-red-500 text-sm">{issue.message}</div>
+									{/each}
+									<InputGroup.Root>
+										<InputGroup.Input {...employeesEurope.as('text')} />
+										<InputGroup.Addon>{$_('user-pages.portraits.eu')}</InputGroup.Addon>
+									</InputGroup.Root>
+									{#each employeesEurope.issues() ?? [] as issue}
+										<div class="text-red-500 text-sm">{issue.message}</div>
+									{/each}
+									<InputGroup.Root>
+										<InputGroup.Input {...employeesWorldwide.as('text')} />
+										<InputGroup.Addon>{$_('user-pages.portraits.global')}</InputGroup.Addon>
+									</InputGroup.Root>
+									{#each employeesWorldwide.issues() ?? [] as issue}
+										<div class="text-red-500 text-sm">{issue.message}</div>
+									{/each}
+								</Field.Field>
+							</Field.Group>
+						</Field.Set>
 					{/if}
 
 					<!-- Step 4: Employees & Offerings -->
@@ -604,136 +527,154 @@
 							<h2 class="text-2xl font-semibold mb-6">Employees & Offerings</h2>
 
 							<div class="space-y-8">
-								<div>
-									<h3 class="text-xl font-medium mb-4">Recruitment</h3>
-									<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-										<div>
-											<Label>Graduates</Label>
-											<Input {...graduates.as('url')} />
+								<Field.Set>
+									<Field.Legend class="text-xl font-medium mb-4">Recruitment</Field.Legend>
+									<Field.Group class="grid grid-cols-1 md:grid-cols-2 gap-6">
+										<Field.Field>
+											<Field.Label for="graduates-url">Graduates</Field.Label>
+											<Input id="graduates-url" {...graduates.as('url')} />
 											{#each graduates.issues() ?? [] as issue}
 												<div class="text-red-500 text-sm">{issue.message}</div>
 											{/each}
-										</div>
+										</Field.Field>
 
-										<div>
-											<Label>Entry Options</Label>
-											<Input {...entryOptions.as('url')} />
+										<Field.Field>
+											<Field.Label for="entry-options-url">Entry Options</Field.Label>
+											<Input id="entry-options-url" {...entryOptions.as('url')} />
 											{#each entryOptions.issues() ?? [] as issue}
 												<div class="text-red-500 text-sm">{issue.message}</div>
 											{/each}
-										</div>
-									</div>
-								</div>
+										</Field.Field>
+									</Field.Group>
+								</Field.Set>
 
-								<fieldset>
-									<legend class="data-fs-error:text-destructive text-sm font-medium leading-none"
-										>{$_('user-pages.portraits.offers')}</legend
+								<Field.Set>
+									<Field.Legend
+										class="data-fs-error:text-destructive text-sm font-medium leading-none"
+										>{$_('user-pages.portraits.offers')}</Field.Legend
 									>
-									<div class="flex flex-wrap gap-4 mt-2">
-										<div
-											class={cn(
-												'flex items-center p-3 rounded-md border',
-												offersOutOfCountryWork.value()
-													? 'bg-primary/5 border-primary/30'
-													: 'bg-card'
-											)}
-										>
-											<input
-												{...offersOutOfCountryWork.as('checkbox')}
-												class="mr-3 data-[state=checked]:bg-primary 'border-primary ring-offset-background focus-visible:ring-ring data-[state=checked]:text-primary-foreground peer box-content size-4 shrink-0 rounded-sm border focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 data-[disabled=true]:cursor-not-allowed data-[disabled=true]:opacity-50'"
-												id="country-checkbox"
-											/>
-											<label for="country-checkbox" class="flex items-center cursor-pointer">
+									<Field.Group class="grid grid-cols-3 gap-4 mt-2">
+										<Field.Field>
+											<label
+												for="country-checkbox"
+												class={cn(
+													'flex items-center cursor-pointer p-3 rounded-md border',
+													offersOutOfCountryWork.value()
+														? 'bg-primary/5 border-primary/30'
+														: 'bg-card'
+												)}
+											>
+												<input
+													{...offersOutOfCountryWork.as('checkbox')}
+													class="mr-3 data-[state=checked]:bg-primary 'border-primary ring-offset-background focus-visible:ring-ring data-[state=checked]:text-primary-foreground peer box-content size-4 shrink-0 rounded-sm border focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 data-[disabled=true]:cursor-not-allowed data-[disabled=true]:opacity-50'"
+													id="country-checkbox"
+												/>
 												<Globe class="size-5 mr-2 text-muted-foreground" />
 												<span class="text-sm font-medium"
 													>{$_('user-pages.portraits.offersOutOfCountryWork')}</span
 												>
 											</label>
-										</div>
-										<div
-											class={cn(
-												'flex items-center p-3 rounded-md border',
-												offersInternships.value() ? 'bg-primary/5 border-primary/30' : 'bg-card'
-											)}
-										>
-											<input
-												{...offersInternships.as('checkbox')}
-												class="mr-3 data-[state=checked]:bg-primary 'border-primary ring-offset-background focus-visible:ring-ring data-[state=checked]:text-primary-foreground peer box-content size-4 shrink-0 rounded-sm border focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 data-[disabled=true]:cursor-not-allowed data-[disabled=true]:opacity-50'"
-												id="internships-checkbox"
-											/>
-											<label for="internships-checkbox" class="flex items-center cursor-pointer">
+										</Field.Field>
+										<Field.Field>
+											<label
+												for="internships-checkbox"
+												class={cn(
+													'flex items-center cursor-pointer p-3 rounded-md border',
+													offersInternships.value() ? 'bg-primary/5 border-primary/30' : 'bg-card'
+												)}
+											>
+												<input
+													{...offersInternships.as('checkbox')}
+													class="mr-3 data-[state=checked]:bg-primary 'border-primary ring-offset-background focus-visible:ring-ring data-[state=checked]:text-primary-foreground peer box-content size-4 shrink-0 rounded-sm border focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 data-[disabled=true]:cursor-not-allowed data-[disabled=true]:opacity-50'"
+													id="internships-checkbox"
+												/>
 												<Briefcase class="size-5 mr-2 text-muted-foreground" />
 												<span class="text-sm font-medium"
 													>{$_('user-pages.portraits.offersInternships')}</span
 												>
 											</label>
-										</div>
-										<div
-											class={cn(
-												'flex items-center p-3 rounded-md border',
-												offersThesis.value() ? 'bg-primary/5 border-primary/30' : 'bg-card'
-											)}
-										>
-											<input
-												{...offersThesis.as('checkbox')}
-												class="mr-3 data-[state=checked]:bg-primary 'border-primary ring-offset-background focus-visible:ring-ring data-[state=checked]:text-primary-foreground peer box-content size-4 shrink-0 rounded-sm border focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 data-[disabled=true]:cursor-not-allowed data-[disabled=true]:opacity-50'"
-												id="thesis-checkbox"
-											/>
-											<label for="thesis-checkbox" class="flex items-center cursor-pointer">
+										</Field.Field>
+										<Field.Field>
+											<label
+												for="thesis-checkbox"
+												class={cn(
+													'flex items-center cursor-pointer p-3 rounded-md border',
+													offersThesis.value() ? 'bg-primary/5 border-primary/30' : 'bg-card'
+												)}
+											>
+												<input
+													{...offersThesis.as('checkbox')}
+													class="mr-3 data-[state=checked]:bg-primary 'border-primary ring-offset-background focus-visible:ring-ring data-[state=checked]:text-primary-foreground peer box-content size-4 shrink-0 rounded-sm border focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 data-[disabled=true]:cursor-not-allowed data-[disabled=true]:opacity-50'"
+													id="thesis-checkbox"
+												/>
 												<BookOpen class="size-5 mr-2 text-muted-foreground" />
 												<span class="text-sm font-medium"
 													>{$_('user-pages.portraits.offersThesis')}</span
 												>
 											</label>
-										</div>
-									</div>
-								</fieldset>
+										</Field.Field>
+									</Field.Group>
+								</Field.Set>
 							</div>
 						</div>
 					{/if}
 
 					<!-- Step 5: Contact & Additional -->
 					{#if currentStep === 5}
-						<div>
-							<h2 class="text-2xl font-semibold mb-6">Contact & Additional Information</h2>
-							<div class=" grid grid-cols-1 gap-2">
-								<div>
-									<Label>{$_('user-pages.portraits.contactAddress')}</Label>
-									<Input {...contactAddress.as('text')} />
+						<Field.Set>
+							<Field.Legend class="text-2xl font-semibold mb-6"
+								>Contact & Additional Information</Field.Legend
+							>
+							<Field.Group>
+								<Field.Field>
+									<Field.Label for="contact-address"
+										>{$_('user-pages.portraits.contactAddress')}</Field.Label
+									>
+									<Input id="contact-address" {...contactAddress.as('text')} />
 									{#each contactAddress.issues() ?? [] as issue}
 										<div class="text-red-500 text-sm">{issue.message}</div>
 									{/each}
-								</div>
-								<div>
-									<Label>{$_('user-pages.portraits.contactPerson')}</Label>
-									<Input {...contactPersonGraduates.as('text')} />
+								</Field.Field>
+								<Field.Field>
+									<Field.Label for="contact-person-graduates"
+										>{$_('user-pages.portraits.contactPerson')}</Field.Label
+									>
+									<Input id="contact-person-graduates" {...contactPersonGraduates.as('text')} />
 									{#each contactPersonGraduates.issues() ?? [] as issue}
 										<div class="text-red-500 text-sm">{issue.message}</div>
 									{/each}
-								</div>
-								<div>
-									<Label>{$_('user-pages.portraits.contactPersonStudents')}</Label>
-									<Input {...contactPersonStudents.as('text')} />
+								</Field.Field>
+								<Field.Field>
+									<Field.Label for="contact-person-students"
+										>{$_('user-pages.portraits.contactPersonStudents')}</Field.Label
+									>
+									<Input id="contact-person-students" {...contactPersonStudents.as('text')} />
 									{#each contactPersonStudents.issues() ?? [] as issue}
 										<div class="text-red-500 text-sm">{issue.message}</div>
 									{/each}
-								</div>
-								<div>
-									<Label>{$_('user-pages.portraits.website')}</Label>
-									<Input {...website.as('url')} />
+								</Field.Field>
+								<Field.Field>
+									<Field.Label for="website">{$_('user-pages.portraits.website')}</Field.Label>
+									<Input id="website" {...website.as('url')} />
 									{#each website.issues() ?? [] as issue}
 										<div class="text-red-500 text-sm">{issue.message}</div>
 									{/each}
-								</div>
-							</div>
-							<div>
-								<Label>{$_('user-pages.portraits.additionalInformation')}</Label>
-								<Textarea {...additionalInformation.as('text')} class="resize-none" />
+								</Field.Field>
+							</Field.Group>
+							<Field.Field>
+								<Field.Label for="additional-information"
+									>{$_('user-pages.portraits.additionalInformation')}</Field.Label
+								>
+								<Textarea
+									id="additional-information"
+									{...additionalInformation.as('text')}
+									class="resize-none"
+								/>
 								{#each additionalInformation.issues() ?? [] as issue}
 									<div class="text-red-500 text-sm">{issue.message}</div>
 								{/each}
-							</div>
-						</div>
+							</Field.Field>
+						</Field.Set>
 					{/if}
 
 					<!-- Step 6: Preview -->

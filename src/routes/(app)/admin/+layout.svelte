@@ -1,26 +1,26 @@
 <script lang="ts">
-	import { AdminJobs, Sidebar, SidebarItem } from '@/@svelte/modules';
-	import { ADMIN_SIDEBAR_LINKS } from '@constant';
-	import { page } from '$app/state';
+	import { AdminJobs } from '@/@svelte/modules';
+	import { SidebarProvider } from '@/components/ui/sidebar';
+	import AdminUserSidebar from './admin-user-sidebar.svelte';
 
-	let activeUrl = $derived(page.url.pathname);
-
-	let { children } = $props();
+	let { children, data } = $props();
 </script>
 
 <div class=" lg:flex w-full">
-	<Sidebar>
-		<div>
-			{#each ADMIN_SIDEBAR_LINKS as { label, route, Icon }}
-				<SidebarItem href={route} {label} icon={Icon} active={activeUrl.includes(route)} />
-			{/each}
-		</div>
-	</Sidebar>
+	<SidebarProvider>
+		<AdminUserSidebar
+			user={data.user ?? {
+				name: '',
+				email: '',
+				id: ''
+			}}
+		/>
 
-	<div class="h-dvh w-full grow overflow-y-scroll bg-white">
-		<AdminJobs />
-		<div class="w-full px-16 py-22">
-			{@render children?.()}
+		<div class="h-dvh w-full grow overflow-y-scroll bg-white">
+			<AdminJobs />
+			<div class="w-full px-16 py-22">
+				{@render children?.()}
+			</div>
 		</div>
-	</div>
+	</SidebarProvider>
 </div>

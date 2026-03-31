@@ -1,10 +1,11 @@
 <script lang="ts">
+	import { _ } from '@services';
 	import { cn } from '@/utils';
 	import SettingsCard from '../auth/shared/SettingsCard.svelte';
-	import { Button } from '@/components/ui/button';
 	import * as Dialog from '@/components/ui/dialog';
+	import * as Field from '@/components/ui/field';
+	import { Button } from '@/components/ui/button';
 	import { Input } from '@/components/ui/input';
-	import { Label } from '@/components/ui/label';
 	import { toast } from 'svelte-sonner';
 	import { Trash2 } from '@lucide/svelte';
 	import authClient from '@/auth-client';
@@ -17,7 +18,6 @@
 			button?: string;
 			destructiveButton?: string;
 		};
-		localization?: any;
 		// Mock props - would come from context in real implementation
 		activeOrganization?: { id: string; name: string } | null;
 		hasPermission?: boolean;
@@ -27,7 +27,6 @@
 	let {
 		className = '',
 		classNames = {},
-		localization = {},
 		activeOrganization = { id: '1', name: 'Test Organization' },
 		hasPermission = true,
 		isPending = false
@@ -52,11 +51,11 @@
 			await authClient.organization.delete({
 				organizationId: activeOrganization.id
 			});
-			toast.success(localization.ORGANIZATION_DELETED || 'Organization deleted successfully');
+			toast.success($_('components.auth.organization.delete.deleted-successfully'));
 			deleteDialogOpen = false;
 			await goto('/select-org');
 		} catch (error) {
-			toast.error(localization.DELETE_FAILED || 'Failed to delete organization');
+			toast.error($_('components.auth.organization.delete.delete-failed'));
 		} finally {
 			isDeleting = false;
 		}
@@ -68,16 +67,22 @@
 	});
 </script>
 
+{#snippet actionLabel()}
+	<Trash2 />
+	<p>{$_('common.delete')}</p>
+{/snippet}
+
 <SettingsCard
 	{className}
 	{classNames}
-	title={localization.DELETE_ORGANIZATION || 'Delete Organization'}
-	description={localization.DELETE_ORGANIZATION_DESCRIPTION ||
-		'Permanently delete this organization and all associated data'}
-	instructions={localization.DELETE_ORGANIZATION_INSTRUCTIONS ||
-		'This action cannot be undone. All data will be permanently removed.'}
-	actionLabel={localization.DELETE_ORGANIZATION || 'Delete Organization'}
-	action={handleDeleteClick}
+	title={$_('components.auth.organization.delete.title')}
+	description={$_('components.auth.organization.delete.description')}
+	instructions={$_('components.auth.organization.delete.instructions')}
+	action={{
+		fn: handleDeleteClick,
+		label: actionLabel,
+		variant: 'destructive'
+	}}
 	{isPending}
 	disabled={!hasPermission}
 />
@@ -87,11 +92,10 @@
 		<Dialog.Header>
 			<Dialog.Title class="flex items-center gap-2 text-destructive">
 				<Trash2 class="size-5" />
-				{localization.DELETE_ORGANIZATION || 'Delete Organization'}
+				{$_('components.auth.organization.delete.title')}
 			</Dialog.Title>
 			<Dialog.Description>
-				{localization.DELETE_ORGANIZATION_CONFIRM ||
-					'This action cannot be undone. This will permanently delete the organization and all associated data.'}
+				{$_('components.auth.organization.delete.description')}
 			</Dialog.Description>
 		</Dialog.Header>
 
@@ -99,35 +103,45 @@
 			<div class="space-y-4">
 				<div class="rounded-lg border border-destructive/20 bg-destructive/5 p-4">
 					<p class="text-sm font-medium text-destructive">
-						{localization.DELETE_WARNING || 'Warning: This will delete everything'}
+						{$_('components.auth.organization.delete.warning.label')}
 					</p>
 					<ul class="mt-2 list-disc list-inside text-sm text-muted-foreground">
-						<li>{localization.DELETE_WARNING_MEMBERS || 'All members will be removed'}</li>
-						<li>{localization.DELETE_WARNING_DATA || 'All organization data will be lost'}</li>
-						<li>{localization.DELETE_WARNING_IRREVERSIBLE || 'This action is irreversible'}</li>
+						<li>{$_('components.auth.organization.delete.warning.members')}</li>
+						<li>
+							{$_('components.auth.organization.delete.warning.data')}
+						</li>
+						<li>
+							{$_('components.auth.organization.delete.warning.irreversible')}
+						</li>
 					</ul>
 				</div>
 
-				<div class="space-y-2">
-					<Label for="confirm-name">
-						{localization.TYPE_ORGANIZATION_NAME || `Type "${activeOrganization.name}" to confirm`}
-					</Label>
-					<Input
-						id="confirm-name"
-						bind:value={confirmationText}
-						placeholder={activeOrganization.name}
-						class={cn(
-							'transition-colors',
-							confirmationText === activeOrganization.name ? 'border-destructive' : ''
-						)}
-					/>
-				</div>
+				<Field.Field class="space-y-2">
+					<Field.Content>
+						<Field.Label for="confirm-name">
+							{$_('components.auth.organization.delete.type-name', {
+								values: {
+									orgName: activeOrganization.name
+								}
+							})}
+						</Field.Label>
+						<Input
+							id="confirm-name"
+							bind:value={confirmationText}
+							placeholder={activeOrganization.name}
+							class={cn(
+								'transition-colors',
+								confirmationText === activeOrganization.name ? 'border-destructive' : ''
+							)}
+						/>
+					</Field.Content>
+				</Field.Field>
 			</div>
 
 			<Dialog.Footer class="gap-2">
-				<Button variant="outline" onclick={() => (deleteDialogOpen = false)} disabled={isDeleting}>
-					{localization.CANCEL || 'Cancel'}
-				</Button>
+				<Dialog.Close onclick={() => (deleteDialogOpen = false)} disabled={isDeleting}>
+					{$_('common.cancel')}
+				</Dialog.Close>
 				<Button
 					variant="destructive"
 					onclick={handleConfirmDelete}
@@ -141,7 +155,7 @@
 					{:else}
 						<Trash2 class="size-4" />
 					{/if}
-					{localization.DELETE_ORGANIZATION || 'Delete Organization'}
+					{$_('common.delete')}
 				</Button>
 			</Dialog.Footer>
 		{/if}

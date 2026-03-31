@@ -14,6 +14,8 @@ import { prismaAdapter } from 'better-auth/adapters/prisma';
 import { PrismaClient } from '@prisma-app/client'; // Adjust the import path if necessary
 import { sso } from '@better-auth/sso';
 import { createPublicContext } from './remote/context';
+import { sveltekitCookies } from 'better-auth/svelte-kit';
+import { getRequestEvent } from '$app/server';
 
 const prisma = new PrismaClient();
 export const auth = betterAuth({
@@ -79,13 +81,17 @@ export const auth = betterAuth({
 			jwt: {
 				audience: process.env.BETTER_AUTH_URL,
 				issuer: process.env.BETTER_AUTH_URL,
-				definePayload: ({ user }) => {
+				definePayload: ({ user, session }) => {
 					return {
-						id: user.id,
 						email: user.email,
-						role: user.role
+						role: user.role,
+						name: user.name,
+						banned: user.banned || false,
+						...(user.metadata ? { metadata: user.metadata } : {}),
+						activeOrganizationId: session.activeOrganizationId
 					};
-				}
+				},
+				expirationTime: '3m'
 			},
 			jwks: {
 				keyPairConfig: {
@@ -142,7 +148,8 @@ export const auth = betterAuth({
 					redirectURLs: [`${process.env.PUBLIC_BACKEND_URL}/api/auth/callback/blerk`]
 				}
 			]
-		})
+		}),
+		sveltekitCookies(getRequestEvent)
 	],
 	secret: process.env.BETTER_AUTH_SECRET,
 	hooks: {

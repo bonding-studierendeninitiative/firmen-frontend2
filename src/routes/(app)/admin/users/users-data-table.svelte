@@ -5,7 +5,6 @@
 	import { Checkbox } from '@/components/ui/checkbox';
 	import { createColumnHelper, type Column } from '@tanstack/table-core';
 	import DataTableSortToggle from './data-table-sort-toggle.svelte';
-	import * as Avatar from '@/components/ui/avatar';
 	import DataTableRoleSwitcher from './data-table-role-switcher.svelte';
 	import { ShieldBan } from '@lucide/svelte';
 	import type { UsersResponse } from '@/remote/functions/admin';
@@ -13,14 +12,24 @@
 		renderComponent,
 		renderSnippet
 	} from '@/@svelte/components/QueryDataTable/render-helpers';
+	import UserAvatar from '@/components/auth/UserAvatar.svelte';
 
 	let {
 		users,
 		totalCount,
 		isLoading,
 		params
-	}: { users: UsersResponse['data']; totalCount: number; isLoading: boolean; params: any } =
-		$props();
+	}: {
+		users: UsersResponse['data'];
+		totalCount: number;
+		isLoading: boolean;
+		params: {
+			sortBy: string;
+			sortDirection: 'asc' | 'desc';
+			page: number;
+			limit: number;
+		};
+	} = $props();
 
 	const columnHelper = createColumnHelper<UsersResponse['data'][0]>();
 
@@ -55,9 +64,8 @@
 				}),
 			cell: ({ row }) =>
 				renderSnippet(userLinkSnippet, {
-					name: row.original.name,
-					userId: row.original.id,
-					imageUrl: row.original.image
+					name: row.original.name ?? 'Unbekannter Nutzer',
+					userId: row.original.id
 				})
 		}),
 		columnHelper.accessor('email', {
@@ -88,7 +96,7 @@
 			cell: ({ row, getValue }) =>
 				renderSnippet(userRole, {
 					userId: row.original.id,
-					value: getValue()
+					value: getValue() ?? 'Keine Rolle'
 				})
 		}),
 		columnHelper.accessor('createdAt', {
@@ -147,7 +155,7 @@
 })}
 	<Checkbox checked={!!checked} indeterminate={checked === 'indeterminate'} {onCheckedChange} />
 {/snippet}
-{#snippet userRole({ value, userId }: { value: string; userId: string; orgId: string })}
+{#snippet userRole({ value, userId }: { value: string; userId: string })}
 	<DataTableRoleSwitcher {value} {userId} />
 {/snippet}
 {#snippet localizedDateSnippet({ date }: { date: any })}
@@ -156,31 +164,23 @@
 {#snippet banned()}
 	<ShieldBan />
 {/snippet}
-{#snippet userLinkSnippet({
-	userId,
-	name,
-	imageUrl
-}: {
-	userId: string;
-	name: string;
-	imageUrl?: string;
-})}
+{#snippet userLinkSnippet({ userId, name }: { userId: string; name: string })}
 	<a
 		href="/admin/users/{userId}"
 		class="hover:underline inline-flex gap-2 items-center align-middle"
 	>
-		<Avatar.Root class="size-6">
-			<Avatar.Image src={imageUrl} alt={name} />
-			<Avatar.Fallback
-				>{name
-					.split(' ')
-					.slice(0, 2)
-					.map((word) => word[0])
-					.join('')}</Avatar.Fallback
-			>
-		</Avatar.Root>
+		<UserAvatar user={{ id: userId, name }} />
 		{name}</a
 	>
 {/snippet}
 
-<QueryDataTable data={users} {totalCount} {isLoading} {columns} {params} />
+<QueryDataTable
+	data={users}
+	{totalCount}
+	{isLoading}
+	{columns}
+	bind:page={params.page}
+	bind:pageSize={params.limit}
+	bind:sortBy={params.sortBy}
+	bind:sortDirection={params.sortDirection}
+/>

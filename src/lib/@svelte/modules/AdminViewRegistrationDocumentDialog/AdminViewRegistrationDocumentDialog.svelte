@@ -1,8 +1,7 @@
 <script lang="ts">
 	import * as Dialog from '@/components/ui/dialog';
-	import { LocalizedDate, LogoStatusIcon, StatusBadge } from '@/@svelte/components';
+	import { LogoStatusIcon, StatusBadge } from '@/@svelte/components';
 	import { _ } from '@services';
-	import { getHumanReadableFileSize } from '@/utils';
 	import {
 		DeleteLogoDialog,
 		FileInformation,

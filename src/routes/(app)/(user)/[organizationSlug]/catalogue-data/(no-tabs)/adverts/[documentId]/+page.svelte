@@ -24,12 +24,14 @@
 		resolution: 'large' as const
 	});
 
+	let advertisementQuery = $derived(getDocument(advertisementFilter));
+
 	let downloadFilter = $derived.by(() => {
-		if (!getDocument(advertisementFilter).ready) return null;
+		if (!advertisementQuery.ready) return null;
 		else {
 			return {
 				documentId: params.documentId,
-				organizationId: getDocument(advertisementFilter).current?.organizationId!
+				organizationId: advertisementQuery.current?.organizationId!
 			};
 		}
 	});
@@ -52,7 +54,7 @@
 <Breadcrumb.Root class="pt-4">
 	<Breadcrumb.List>
 		<Breadcrumb.Item>
-			<Breadcrumb.Link href={`.`}>
+			<Breadcrumb.Link href={`..`}>
 				{$_('user-pages.catalogue-data.base')}
 			</Breadcrumb.Link>
 		</Breadcrumb.Item>
@@ -64,11 +66,11 @@
 		</Breadcrumb.Item>
 		<Breadcrumb.Separator />
 		<Breadcrumb.Item>
-			<Breadcrumb.Page>{getDocument(advertisementFilter).current?.title}</Breadcrumb.Page>
+			<Breadcrumb.Page>{advertisementQuery.current?.title}</Breadcrumb.Page>
 		</Breadcrumb.Item>
 	</Breadcrumb.List>
 </Breadcrumb.Root>
-{#if getDocument(advertisementFilter).ready}
+{#if advertisementQuery.ready}
 	<div class="grid grid-cols-2 gap-8 py-8 @container">
 		<div
 			class="-aspect-video col-span-2 bg-gray-100 dark:bg-gray-700 rounded-md flex items-center justify-center overflow-hidden p-4 @xl:col-span-1"
@@ -78,7 +80,7 @@
 			{:else if getThumbnail(thumbnailFilter).ready}
 				<img
 					src={getThumbnail(thumbnailFilter).current || '/placeholder.svg'}
-					alt={getDocument(advertisementFilter).current?.title}
+					alt={advertisementQuery.current?.title}
 					class="object-contain size-full"
 				/>
 			{/if}
@@ -87,15 +89,15 @@
 		<div class="col-span-2 @xl:col-span-1 grid grid-cols-2 gap-8 text-sm auto-rows-min @container">
 			<header class="flex flex-col justify-between col-span-2 @md:flex-row gap-4">
 				<h2 class="text-2xl font-semibold text-slate-800">
-					🖼️ {getDocument(advertisementFilter).current?.title}
+					🖼️ {advertisementQuery.current?.title}
 				</h2>
 				<nav class="inline-flex gap-4">
 					<Button variant="secondary" onclick={handleDownload}>{$_('common.download')}</Button>
 					<DeleteAdvertisementDialog
-						advertisement={getDocument(advertisementFilter).current!}
+						advertisement={advertisementQuery.current!}
 						onDelete={async (id) => {
 							try {
-								await deleteDocument({ documentId: id }).updates(getDocument(advertisementFilter));
+								await deleteDocument({ documentId: id }).updates(advertisementQuery);
 								await goto(`/${params.organizationSlug}/catalogue-data/adverts`);
 								toast.success($_('modules.delete-advertisement-dialog.success'));
 							} catch (error) {
@@ -108,12 +110,12 @@
 			</header>
 			<FileHistory
 				class="col-span-2 @md:col-span-1"
-				history={getDocument(advertisementFilter).current?.activeVersion?.history ?? []}
+				history={advertisementQuery.current?.activeVersion?.history ?? []}
 			/>
 
 			<FileInformation
 				class="col-span-2 @md:col-span-1"
-				documentVersion={getDocument(advertisementFilter).current?.activeVersion!}
+				documentVersion={advertisementQuery.current?.activeVersion!}
 			/>
 		</div>
 	</div>

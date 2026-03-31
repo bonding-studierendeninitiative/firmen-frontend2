@@ -82,10 +82,6 @@
 						<NoDataFound
 							heading={$_('user-pages.catalogue-data.logos-data.no-data-heading')}
 							subHeading={$_('user-pages.catalogue-data.logos-data.no-data-subheading')}
-							buttonText={$_('user-pages.catalogue-data.logos-data.no-data-action')}
-							onButtonClick={() => {
-								isUploadOpen = true;
-							}}
 						/>
 					{:else}
 						<div in:fade class="space-y-8">

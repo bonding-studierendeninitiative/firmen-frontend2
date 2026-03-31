@@ -118,7 +118,8 @@
     "reset": "Zurücksetzen",
     "user": "Nutzer",
     "notifications": "Benachrichtigungen",
-    "menu": "Menü"
+    "menu": "Menü",
+    "sign-out": "Abmelden"
   },
   "components": {
     "addonPackage": {
@@ -258,6 +259,34 @@
       "buy-option-version": {
         "label": "Version der Kaufoption",
         "description": "Jede Änderung erhöht die Versionsnummer der Kaufoption um eins."
+      }
+    },
+    "auth": {
+      "organization": {
+        "leave": {
+          "action-label": "Verlassen",
+          "title": "Organisation verlassen",
+          "description": "Dauerhaft diese Organisation verlassen. Dadurch verlieren Sie Zugriff auf Ressourcen dieser Organisation."
+        },
+        "delete": {
+          "title": "Organisation löschen",
+          "description": "Löschen Sie diese Organisation und alle zugehörigen Daten dauerhaft",
+          "instructions": "Diese Aktion kann nicht rückgängig gemacht werden. \nAlle Daten werden dauerhaft entfernt.",
+          "warning": {
+            "label": "Warnung: Dadurch wird alles gelöscht",
+            "members": "Alle Mitglieder werden entfernt",
+            "data": "Sämtliche Organisationsdaten gehen verloren",
+            "irreversible": "Diese Aktion ist irreversibel"
+          },
+          "type-name": "Geben Sie zur Bestätigung „{orgName}“ ein",
+          "delete-failed": "Organisation konnte nicht gelöscht werden",
+          "deleted-successfully": "Organisation erfolgreich gelöscht"
+        }
+      },
+      "organizations": {
+        "members": {
+          "count": "{count, plural, =0 {Keine Mitglieder} one {Ein Mitglied} other {{count} Mitglieder}}"
+        }
       }
     }
   },
@@ -436,9 +465,9 @@
     },
     "admin-import-legacy-org": {
       "trigger": "Organisation importieren",
-      "title": "Eine Organisation importieren",
-      "description": "Du kannst Organisationen aus Notes importieren",
-      "org-card-header": "Wähle eine Organisation aus",
+      "title": "Diese Organisation importieren",
+      "description": "Du kannst diese Organisation aus Notes importieren",
+      "org-card-header": "Lade eine Import-Datei hoch",
       "select-org-placeholder": "Wähle eine Organisation aus",
       "no-orgs-found": "Keine Organisationen gefunden!",
       "contact-people": "Kontaktpersonen",
@@ -470,7 +499,7 @@
       },
       "use-a-template": {
         "title": "Vorlage",
-        "description": "Eine Vorlage aus existierenden Ausstellerdaten wählen",
+        "description": "Ein existierendes Portrait als Vorlage verwenden",
         "body": "Das Formular wird mit den Daten eines existierenden Portraits befüllt"
       },
       "select-template": "Eine Vorlage auswählen",
@@ -517,6 +546,11 @@
     "activate-buy-option": {
       "success": "Kaufoption aktiviert!",
       "error": "Kaufoption konnte nicht aktiviert werden."
+    },
+    "admin-bulk-import-legacy-org": {
+      "org-card-description": "Wähle eine CSV-Datei aus, die eine Spalte (z. B. „FirmenID“) mit den IDs der gewünschten Organisationen enthält",
+      "title": "Massenimport älterer Organisationen",
+      "description": "Importiere mehrere Organisationen aus einer von HCL Notes generierten CSV-Datei"
     }
   },
   "onboarding": {
@@ -524,7 +558,12 @@
     "chooseorganization": "Wählen Sie Ihre Organisation",
     "emptydescription": "Erstellen Sie Ihre erste Organisation, um mit Ihrem Team zusammenzuarbeiten",
     "createorg": "Erstellen",
-    "createfirstorg": "Erstellen Sie Ihre erste Organisation"
+    "createfirstorg": "Erstellen Sie Ihre erste Organisation",
+    "select-org": {
+      "empty": {
+        "title": "Keine Organisationen gefunden"
+      }
+    }
   },
   "sidebar": {
     "dashboard": "Mein Dashboard",
@@ -538,7 +577,8 @@
     "addons": "Add-ons",
     "company": "Organisationen",
     "logout": "Abmelden",
-    "users": "Nutzer:innen"
+    "users": "Nutzer:innen",
+    "legacy": "Notes-Firmen"
   },
   "tab-headings": {
     "account": "Konto",
@@ -689,7 +729,11 @@
       "billingAddressAddedSuccessfully": "Rechnungsadresse erfolgreich hinzugefügt",
       "deleteAddress": "Addresse löschen",
       "deleteAddressDescription": "Möchten Sie diese Adresse löschen?",
-      "title": "Einstellungen"
+      "title": "Einstellungen",
+      "danger-zone": {
+        "title": "Gefahrenzone",
+        "description": "Permanente Handlungen, die nicht mehr widerrufen werden können."
+      }
     },
     "notifications": {
       "notifications": "Benachrichtigungen",
@@ -777,15 +821,15 @@
     "events": {
       "event-registration": {
         "labels": {
-          "contractLegalEntityName": "Name der juristischen Person (offizieller Firmenname)",
+          "contractLegalEntityName": "Name der juristischen Person",
           "contractAddressStreet": "Address des Vertragspartners",
-          "contractAddressZipCode": "Postleitzahl des Vertragspartners",
-          "contractAddressCity": "Stadt des Vertragspartners",
+          "contractAddressZipCode": "Postleitzahl",
+          "contractAddressCity": "Ortschaft",
           "contractAddressCountry": "Land des Vertragspartners",
           "billingOrganizationName": "Name auf Rechnung",
           "billingStreet": "Straße auf Rechnung",
-          "billingZipCode": "Postleitzahl auf Rechnung",
-          "billingCity": "Ortschaft auf Rechnung",
+          "billingZipCode": "Postleitzahl",
+          "billingCity": "Ortschaft",
           "billingCountry": "Land auf Rechnung",
           "billingVat": "Umsatzsteuer-Identifikationsnummer",
           "billingReference": "Referenz"
@@ -807,7 +851,11 @@
         "registration": "Anmeldung",
         "companyInformation": "Informationen zum Vertragspartner",
         "billingEqualCompany": "Rechnungsadress ist gleich Firmenadresse",
-        "billingInformation": "Rechnungsadresse (kann später bearbeitet werden)"
+        "billingInformation": "Rechnungsadresse",
+        "billingInformationDescription": "Kann später bearbeitet werden.",
+        "descriptions": {
+          "contractLegalEntityName": "Offizieller Firmenname"
+        }
       },
       "events": "Veranstaltungen",
       "noEvents": "Aktuell sind leider keine Veranstaltungen verfügbar.",
@@ -945,7 +993,7 @@
       },
       "logos-data": {
         "no-data-heading": "Keine Logos gefunden",
-        "no-data-subheading": "Auf dieser Seite werden alle Logos angezeigt",
+        "no-data-subheading": "Laden Sie Logos hoch, um sie hier zu sehen",
         "no-data-action": "Ein Logo hochladen"
       },
       "advertisements": {
@@ -955,6 +1003,10 @@
         "delete-success": "Das Portrait wurde erfolgreich gelöscht",
         "delete-error": "Fehler beim Löschen des Portraits"
       }
+    },
+    "user-nav": {
+      "sign-out": "Ausloggen",
+      "language-selection": "Sprache: {lang}"
     }
   },
   "admin-pages": {
@@ -1010,7 +1062,7 @@
           }
         }
       },
-      "membersCount": "{count} Mitglieder",
+      "membersCount": "{count, plural, =0 {Keine Mitglieder} one {Ein Mitglied} other {{count} Mitglieder}}",
       "sso": {
         "title": "Single Sign-On (SSO)",
         "none": "Es wurden keine SSO-Verbidung eingerichtet",
@@ -1031,6 +1083,14 @@
         "clientSecret": "Client-Secret",
         "create-success": "SSO-Anbieter erfolgreich erstellt!",
         "bonding-warning": "Das ist die bonding org. Pass auf!"
+      },
+      "importOrganization": {
+        "trigger": "Importieren"
+      },
+      "importBulkOrganizations": "Massenimport …",
+      "legacy": {
+        "title": "Notes-Import von Organisationen",
+        "description": "Du kannst Organisationen aus HCL Notes importieren. Die hier aufgeführten Organisationen werden jede Nacht aktualisiert."
       }
     },
     "addons": {
@@ -1109,10 +1169,10 @@
       "event-registrations": {
         "data-table": {
           "filters": {
-            "status": "Alle Status",
-            "package": "Alle Pakete",
-            "addon-packages": "Alle Zusatz-Pakete",
-            "addons": "Alle Zusatzleistungen"
+            "status": "Status",
+            "package": "Paket",
+            "addon-packages": "Zusatz-Pakete",
+            "addons": "Zusatzleistungen"
           },
           "headers": {
             "package": "Paket",
@@ -1241,7 +1301,9 @@
     },
     "dashboard": {
       "dashboard": "Dashboard",
-      "events": "Veranstaltungen"
+      "events": "Veranstaltungen",
+      "organizations": "Organisationen",
+      "users": "Nutzer"
     },
     "users": {
       "roles": {
@@ -1297,6 +1359,13 @@
       "delete-buy-option": {
         "title": "Kaufoption löschen",
         "description": "Diese Aktion kann nicht widerrufen werden. Alle Daten werden vollständig gelöscht."
+      }
+    },
+    "legacy-organizations": {
+      "data-table": {
+        "headers": {
+          "contact-people-count": "Ansprechpersonen"
+        }
       }
     }
   }

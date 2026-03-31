@@ -1,25 +1,38 @@
 <script lang="ts">
 	import { Button } from '@/components/ui/button';
+	import * as Empty from '@/components/ui/empty';
 
 	interface Props {
 		heading?: string;
 		subHeading?: string;
-		buttonText?: string;
-		onButtonClick: () => void;
+		action?:
+			| {
+					label: string;
+					onclick: () => void;
+			  }
+			| {
+					label: string;
+					href: string;
+			  };
 	}
 
-	let {
-		heading = '',
-		subHeading = '',
-		buttonText = '',
-		onButtonClick
-	}: Props = $props();
+	let { heading = '', subHeading = '', action }: Props = $props();
 </script>
 
-<div class=" py-10 flex flex-col justify-center items-center bg-stone-50">
-	<h2 class=" text-base font-extrabold text-stone-950 text-center lg:text-left">{heading}</h2>
-	<p class="text-balance w-2/6 text-center text-stone-500 mb-3">{subHeading}</p>
-	{#if buttonText.length > 0}
-		<Button variant="default" class="mt-2"  onclick={onButtonClick}>{buttonText}</Button>
-	{/if}
-</div>
+<Empty.Root class="bg-muted border border-dashed border-border">
+	<Empty.Header>
+		<Empty.Title>{heading}</Empty.Title>
+		<Empty.Description>{subHeading}</Empty.Description>
+	</Empty.Header>
+	<Empty.Content>
+		{#if action && 'onclick' in action}
+			<Button variant="default" onclick={action.onclick}>{action.label}</Button>
+		{:else if action && 'href' in action}
+			<Button variant="link">
+				<a href={action.href}>
+					{action.label}
+				</a>
+			</Button>
+		{/if}
+	</Empty.Content>
+</Empty.Root>

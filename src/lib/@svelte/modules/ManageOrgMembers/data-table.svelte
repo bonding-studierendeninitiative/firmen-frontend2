@@ -60,11 +60,10 @@
 	let columns = [
 		columnHelper.accessor('user', {
 			id: 'user-profile',
-			header: '',
 			cell: ({ getValue }) =>
 				renderSnippet(userIcon, {
 					userName: `${getValue()?.name}`,
-					src: getValue()?.image
+					src: `/api/avatar/${getValue()?.id}.svg`
 				})
 		}),
 		columnHelper.accessor('user.name', {
@@ -93,7 +92,6 @@
 				})
 		}),
 		columnHelper.accessor('userId', {
-			header: '',
 			cell: ({ row, getValue }) =>
 				renderSnippet(actions, {
 					id: getValue(),

@@ -16,6 +16,7 @@
 
 	interface Props {
 		registration: EventRegistrationsOutput['eventRegistrations'][number];
+		orgSlug?: string;
 	}
 
 	// Calculate the completion percentage for catalogue data
@@ -124,7 +125,7 @@
 
 	let isAddonsOpen = $state(false);
 
-	let { registration }: Props = $props();
+	let { registration, orgSlug }: Props = $props();
 
 	let logo = $derived(registration.registrationDocuments?.find((d) => d.documentType === 'logo'));
 	let advertisement = $derived(
@@ -140,16 +141,8 @@
 </script>
 
 <Card class="w-full max-w-2xl shadow-md hover:shadow-lg transition-shadow">
-	<PickAdvertisementDialog
-		bind:open={pickAdvertisementOpen}
-		id={registration.id ?? ''}
-		orgId={registration.organizationId ?? ''}
-	/>
-	<PickLogoDialog
-		bind:open={pickLogoOpen}
-		id={registration.id ?? ''}
-		orgId={registration.organizationId ?? ''}
-	/>
+	<PickAdvertisementDialog bind:open={pickAdvertisementOpen} id={registration.id ?? ''} {orgSlug} />
+	<PickLogoDialog bind:open={pickLogoOpen} id={registration.id ?? ''} {orgSlug} />
 	{#if advertisement}
 		<ViewAdvertisementDialog bind:open={viewAdvertisementOpen} {advertisement} />
 	{/if}
@@ -388,7 +381,7 @@
 							class="text-sm flex items-center gap-3 rounded-full border border-border bg-muted py-1 px-1.5"
 						>
 							<Avatar.Root class="size-8">
-								<Avatar.Image src={contact.image} />
+								<Avatar.Image src={`/api/avatar/${contact.id}.svg`} />
 								<Avatar.Fallback
 									>{contact.name
 										?.split(' ')

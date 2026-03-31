@@ -5,17 +5,19 @@
 	import { fade } from 'svelte/transition';
 	import { Skeleton } from '@/components/ui/skeleton';
 	import { Link } from '@/@svelte/components';
-	import { getEvents } from '@/remote/functions/admin';
+	import { getEvents, getOrgs, getUsers } from '@/remote/functions/admin';
 
 	let archivedEventsQuery = getEvents({ status: ['ARCHIVED'] });
 	let unpublishedEventsQuery = getEvents({ status: ['UNPUBLISHED'] });
 	let publishedEventsQuery = getEvents({ status: ['PUBLISHED'] });
+	let orgsQuery = getOrgs({ query: '', page: 0, limit: 1000 });
+	let usersQuery = getUsers({ query: '', page: 0, limit: 1000 });
 </script>
 
 <h1 class=" text-stone-950 text-3xl font-extrabold">{$_('admin-pages.dashboard.dashboard')}</h1>
 
-<main in:fade class="grid grid-cols-1 gap-4 lg:grid-cols-12">
-	<Card.Root class="col-span-12 lg:col-span-6">
+<main in:fade class="grid @container gap-4 grid-cols-12 py-8">
+	<Card.Root class="col-span-12 @lg:col-span-6 @3xl:col-span-4">
 		<Card.Header>
 			<Card.Title class="text-stone-950 text-xl font-extrabold"
 				>{$_('admin-pages.dashboard.events')}</Card.Title
@@ -59,6 +61,50 @@
 		</Card.Content>
 		<Card.Footer>
 			<Link href="/admin/events">&rarr; Zu den Veranstaltungen</Link>
+		</Card.Footer>
+	</Card.Root>
+	<Card.Root class="col-span-12 @lg:col-span-6 @3xl:col-span-4">
+		<Card.Header>
+			<Card.Title class="text-stone-950 text-xl font-extrabold"
+				>{$_('admin-pages.dashboard.organizations')}</Card.Title
+			>
+		</Card.Header>
+		<Card.Content class="space-y-4">
+			<div class="flex items-baseline flex-nowrap gap-2 flex-row">
+				{#if orgsQuery.loading}
+					<Skeleton class="w-6 h-12 text-muted-foreground" />
+				{:else if orgsQuery.current}
+					<span class="text-3xl font-semibold">{orgsQuery.current?.totalCount}</span>
+				{:else}
+					<span class="text-3xl font-semibold">NaN</span>
+				{/if}
+				<span>Organisationen</span>
+			</div>
+		</Card.Content>
+		<Card.Footer>
+			<Link href="/admin/organizations">&rarr; Zu den Organisationen</Link>
+		</Card.Footer>
+	</Card.Root>
+	<Card.Root class="col-span-12 @lg:col-span-6 @3xl:col-span-4">
+		<Card.Header>
+			<Card.Title class="text-stone-950 text-xl font-extrabold"
+				>{$_('admin-pages.dashboard.users')}</Card.Title
+			>
+		</Card.Header>
+		<Card.Content class="space-y-4">
+			<div class="flex items-baseline flex-nowrap gap-2 flex-row">
+				{#if usersQuery.loading}
+					<Skeleton class="w-6 h-12 text-muted-foreground" />
+				{:else if usersQuery.current}
+					<span class="text-3xl font-semibold">{usersQuery.current?.totalCount}</span>
+				{:else}
+					<span class="text-3xl font-semibold">NaN</span>
+				{/if}
+				<span>Nutzer</span>
+			</div>
+		</Card.Content>
+		<Card.Footer>
+			<Link href="/admin/users">&rarr; Zu den Nutzern</Link>
 		</Card.Footer>
 	</Card.Root>
 </main>

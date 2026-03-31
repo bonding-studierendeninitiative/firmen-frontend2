@@ -8,12 +8,12 @@
 		generateDownloadLink as getDownload,
 		generateThumbnailLink as getThumbnail
 	} from '@/remote/functions';
-	import { DetailedDocumentOutput } from '@api/client';
+	import { DocumentOutput_DetailedDocument_or_SimpleDocumentVersion } from '@api/client';
 	import { LoaderCircle } from '@lucide/svelte';
 
 	interface Props {
 		open?: boolean;
-		logo: DetailedDocumentOutput;
+		logo: DocumentOutput_DetailedDocument_or_SimpleDocumentVersion;
 	}
 
 	let { open = $bindable(false), logo }: Props = $props();
@@ -23,7 +23,7 @@
 	const thumbnail = getThumbnail({ documentId: logo.id, resolution: 'large' });
 
 	async function handleDownload() {
-		const url = download.current;
+		const url = await download;
 		if (url && url.length > 0) {
 			const a = document.createElement('a');
 			a.href = url;
@@ -38,14 +38,10 @@
 
 <Dialog.Root bind:open>
 	<Dialog.Content class="sm:max-w-4xl">
-		{#if logo}
+		{#if logo.activeVersion}
 			<Dialog.Header>
 				<Dialog.Title>{logo.title}</Dialog.Title>
 				<Dialog.Description class="@container">
-					<StatusBadge
-						variant={logo.activeVersion?.reviewStatus}
-						label={$_('status-text.' + logo.activeVersion?.reviewStatus)}
-					/>
 					<StatusBadge
 						variant={logo.activeVersion?.uploadStatus}
 						label={$_('status-text.' + logo.activeVersion?.uploadStatus)}
@@ -57,11 +53,11 @@
 				<div
 					class="aspect-video bg-gray-100 dark:bg-gray-700 rounded-md flex items-center justify-center overflow-hidden"
 				>
-					{#if $thumbnail.isLoading}
+					{#if thumbnail.loading}
 						<LoaderCircle class="mx-auto animate-spin size-8" />
-					{:else if $thumbnail.data}
+					{:else if thumbnail.current}
 						<img
-							src={$thumbnail.data || '/placeholder.svg'}
+							src={thumbnail.current || '/placeholder.svg'}
 							alt={logo.title}
 							class="object-contain size-full"
 						/>
@@ -69,7 +65,9 @@
 				</div>
 
 				<div class="grid grid-cols-2 gap-8 text-sm">
-					<FileInformation documentVersion={logo?.activeVersion} />
+					{#if logo?.activeVersion}
+						<FileInformation documentVersion={logo?.activeVersion} />
+					{/if}
 
 					<FileHistory history={logo.activeVersion?.history ?? []} />
 				</div>

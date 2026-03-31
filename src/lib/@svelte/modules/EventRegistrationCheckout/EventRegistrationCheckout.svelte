@@ -9,15 +9,17 @@
 	import * as Tabs from '@/components/ui/tabs';
 	import * as ToggleGroup from '@/components/ui/toggle-group';
 	import * as RadioGroup from '@/components/ui/radio-group';
+	import * as Field from '@/components/ui/field';
+	import * as Item from '@/components/ui/item';
 	import { Checkbox } from '@/components/ui/checkbox';
-	import { Label } from '@/components/ui/label';
 	import { goto } from '$app/navigation';
 	import SuperDebug from 'sveltekit-superforms';
 	import { toast } from 'svelte-sonner';
 	import { type GetBuyOptionResponse } from '@schema';
 	import { CalendarDays, Check } from '@lucide/svelte';
-	import type { InferOutput } from 'valibot';
+	import type { InferOutput, variant } from 'valibot';
 	import { registerOrganizationToEvent } from '@/remote/functions';
+	import { queryParameters, ssp } from 'sveltekit-search-params';
 
 	interface Props {
 		addonPackages: any;
@@ -99,6 +101,18 @@
 		}, 0);
 	}
 
+	let queryParams = queryParameters(
+		{
+			selectedPackage: ssp.string(),
+			selectedEventDays: ssp.array<string>(),
+			selectedAddons: ssp.array<string>(),
+			selectedAddonPackages: ssp.array<string>()
+		},
+		{
+			showDefaults: false
+		}
+	);
+
 	let selectedPackagePrice = $derived(
 		getPackagePrice(registerOrganizationToEvent.fields.packageId.value()) as number
 	);
@@ -144,7 +158,7 @@
 			<Breadcrumb.Separator />
 			<Breadcrumb.Item>
 				<Breadcrumb.Item>
-					<a href={`/${orgSlug}/events/${event?.id}`}>{event?.name}</a>
+					<a href={`/${orgSlug}/events/${event?.id}/details`}>{event?.name}</a>
 				</Breadcrumb.Item>
 			</Breadcrumb.Item>
 			<Breadcrumb.Separator />
@@ -167,166 +181,223 @@
 		<hr />
 	</div>
 
-	<div class=" grid grid-cols-1 gap-4">
-		<form
-			{...registerOrganizationToEvent.enhance(async ({ submit }) => {
-				try {
-					await submit();
-				} catch (e) {
-					console.error(e);
-					// @ts-expect-error
-					toast.error(e?.body?.message);
-				}
-			})}
-			id="create-event-registration-form"
-		>
-			<h4 class=" font-extrabold text-sm text-stone-900 mb-6">
-				{$_('user-pages.events.event-registration.companyInformation')}
-			</h4>
-			<div>
-				<Label>{$_('user-pages.events.event-registration.labels.contractLegalEntityName')}</Label>
-				<Input
-					{...registerOrganizationToEvent.fields.contractLegalEntityName.as('text')}
-					placeholder={$_(
-						'user-pages.events.event-registration.placeholders.contractLegalEntityName'
-					)}
-				/>
-			</div>
-			<div>
-				<Label>{$_('user-pages.events.event-registration.labels.contractAddressStreet')}</Label>
-				<Input
-					{...registerOrganizationToEvent.fields.contractAddressStreet.as('text')}
-					placeholder={$_(
-						'user-pages.events.event-registration.placeholders.contractAddressStreet'
-					)}
-				/>
-			</div>
-
-			<div class="flex gap-4">
-				<div class="max-w-2xl">
-					<div class="mt-1">
-						<Label>{$_('user-pages.events.event-registration.labels.contractAddressZipCode')}</Label
+	<form
+		{...registerOrganizationToEvent.enhance(async ({ submit }) => {
+			try {
+				await submit();
+			} catch (e) {
+				console.error(e);
+				// @ts-expect-error
+				toast.error(e?.body?.message);
+			}
+		})}
+		id="create-event-registration-form"
+	>
+		<div class=" grid grid-cols-1 lg:grid-cols-2 gap-4 items-start">
+			<Item.Root variant="outline">
+				<Field.Set class="max-w-96">
+					<Field.Legend>
+						{$_('user-pages.events.event-registration.companyInformation')}
+					</Field.Legend>
+					<Field.Field>
+						<Field.Label
+							>{$_(
+								'user-pages.events.event-registration.labels.contractLegalEntityName'
+							)}</Field.Label
+						>
+						<Field.Description>
+							{$_('user-pages.events.event-registration.descriptions.contractLegalEntityName')}
+						</Field.Description>
+						<Input
+							{...registerOrganizationToEvent.fields.contractLegalEntityName.as('text')}
+							placeholder={$_(
+								'user-pages.events.event-registration.placeholders.contractLegalEntityName'
+							)}
+							autocomplete="organization"
+						/>
+					</Field.Field>
+					<Field.Field>
+						<Field.Label
+							>{$_(
+								'user-pages.events.event-registration.labels.contractAddressStreet'
+							)}</Field.Label
 						>
 						<Input
-							{...registerOrganizationToEvent.fields.contractAddressZipCode.as('text')}
+							{...registerOrganizationToEvent.fields.contractAddressStreet.as('text')}
 							placeholder={$_(
-								'user-pages.events.event-registration.placeholders.contractAddressZipCode'
+								'user-pages.events.event-registration.placeholders.contractAddressStreet'
 							)}
+							autocomplete="street-address"
 						/>
-					</div>
-				</div>
-				<div class="grow">
-					<div class="mt-1">
-						<Label>{$_('user-pages.events.event-registration.labels.contractAddressCity')}</Label>
+					</Field.Field>
+
+					<Field.Group class="flex flex-row gap-4">
+						<Field.Field class="w-auto">
+							<Field.Label class="whitespace-nowrap">
+								{$_('user-pages.events.event-registration.labels.contractAddressZipCode')}
+							</Field.Label>
+							<Input
+								{...registerOrganizationToEvent.fields.contractAddressZipCode.as('text')}
+								placeholder={$_(
+									'user-pages.events.event-registration.placeholders.contractAddressZipCode'
+								)}
+								autocomplete="postal-code"
+							/>
+						</Field.Field>
+						<Field.Field class="grow">
+							<Field.Label
+								>{$_(
+									'user-pages.events.event-registration.labels.contractAddressCity'
+								)}</Field.Label
+							>
+							<Input
+								{...registerOrganizationToEvent.fields.contractAddressCity.as('text')}
+								placeholder={$_(
+									'user-pages.events.event-registration.placeholders.contractAddressCity'
+								)}
+								autocomplete="address-level2"
+							/>
+						</Field.Field>
+					</Field.Group>
+					<Field.Field>
+						<Field.Label
+							>{$_(
+								'user-pages.events.event-registration.labels.contractAddressCountry'
+							)}</Field.Label
+						>
 						<Input
-							{...registerOrganizationToEvent.fields.contractAddressCity.as('text')}
+							{...registerOrganizationToEvent.fields.contractAddressCountry.as('text')}
 							placeholder={$_(
-								'user-pages.events.event-registration.placeholders.contractAddressCity'
+								'user-pages.events.event-registration.placeholders.contractAddressCountry'
 							)}
+							autocomplete="country"
 						/>
-					</div>
-				</div>
-			</div>
-			<div>
-				<Label>{$_('user-pages.events.event-registration.labels.contractAddressCountry')}</Label>
-				<Input
-					{...registerOrganizationToEvent.fields.contractAddressCountry.as('text')}
-					placeholder={$_(
-						'user-pages.events.event-registration.placeholders.contractAddressCountry'
-					)}
-				/>
-			</div>
+					</Field.Field>
+				</Field.Set>
+			</Item.Root>
 
-			<h4 class=" font-extrabold text-sm text-stone-900 mt-10 mb-6">
-				{$_('user-pages.events.event-registration.billingInformation')}
-			</h4>
-			<div class="flex items-center space-x-2 mb-4">
-				<Checkbox
-					id="billingAddress"
-					aria-labelledby="terms-label"
-					bind:checked={billingEqualCompany}
-				/>
-				<Label
-					id="billingAddress-label"
-					for="billingAddress"
-					class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-				>
-					{$_('user-pages.events.event-registration.billingEqualCompany')}
-				</Label>
-			</div>
-			<div>
-				<Label>{$_('user-pages.events.event-registration.labels.billingOrganizationName')}</Label>
-				<Input
-					disabled={billingEqualCompany}
-					{...registerOrganizationToEvent.fields.billingOrganizationName.as('text')}
-					placeholder={$_(
-						'user-pages.events.event-registration.placeholders.billingOrganizationName'
-					)}
-				/>
-			</div>
+			<Item.Root variant="outline">
+				<Item.Content>
+					<Field.Set>
+						<Field.Legend>
+							{$_('user-pages.events.event-registration.billingInformation')}
+						</Field.Legend>
+						<Field.Description>
+							{$_('user-pages.events.event-registration.billingInformationDescription')}
+						</Field.Description>
+						<Field.Group>
+							<Field.Group data-slot="checkbox-group">
+								<Field.Field orientation="horizontal">
+									<Checkbox
+										id="billingAddress"
+										aria-labelledby="billingAddress-label"
+										bind:checked={billingEqualCompany}
+									/>
+									<Field.Label id="billingAddress-label" for="billingAddress">
+										{$_('user-pages.events.event-registration.billingEqualCompany')}
+									</Field.Label>
+								</Field.Field>
+							</Field.Group>
+							<Field.Field>
+								<Field.Label
+									>{$_(
+										'user-pages.events.event-registration.labels.billingOrganizationName'
+									)}</Field.Label
+								>
+								<Input
+									disabled={billingEqualCompany}
+									{...registerOrganizationToEvent.fields.billingOrganizationName.as('text')}
+									placeholder={$_(
+										'user-pages.events.event-registration.placeholders.billingOrganizationName'
+									)}
+									autocomplete="billing organization"
+								/>
+							</Field.Field>
 
-			<div>
-				<Label>{$_('user-pages.events.event-registration.labels.billingStreet')}</Label>
-				<Input
-					disabled={billingEqualCompany}
-					{...registerOrganizationToEvent.fields.billingStreet.as('text')}
-					placeholder={$_('user-pages.events.event-registration.placeholders.billingStreet')}
-				/>
-			</div>
+							<Field.Field>
+								<Field.Label
+									>{$_('user-pages.events.event-registration.labels.billingStreet')}</Field.Label
+								>
+								<Input
+									disabled={billingEqualCompany}
+									{...registerOrganizationToEvent.fields.billingStreet.as('text')}
+									placeholder={$_(
+										'user-pages.events.event-registration.placeholders.billingStreet'
+									)}
+									autocomplete="billing street-address"
+								/>
+							</Field.Field>
 
-			<div class="flex gap-4">
-				<div class="max-w-2xl">
-					<div class="mt-1">
-						<div>
-							<Label>{$_('user-pages.events.event-registration.labels.billingZipCode')}</Label>
-							<Input
-								disabled={billingEqualCompany}
-								{...registerOrganizationToEvent.fields.billingZipCode.as('text')}
-								placeholder={$_('user-pages.events.event-registration.placeholders.billingZipCode')}
-							/>
-						</div>
-					</div>
-				</div>
-				<div class="grow">
-					<div class="mt-1">
-						<div>
-							<Label>{$_('user-pages.events.event-registration.labels.billingCity')}</Label>
-							<Input
-								disabled={billingEqualCompany}
-								{...registerOrganizationToEvent.fields.billingCity.as('text')}
-								placeholder={$_('user-pages.events.event-registration.placeholders.billingCity')}
-							/>
-						</div>
-					</div>
-				</div>
-			</div>
-			<div>
-				<Label>{$_('user-pages.events.event-registration.labels.billingCountry')}</Label>
-				<Input
-					disabled={billingEqualCompany}
-					{...registerOrganizationToEvent.fields.billingCountry.as('text')}
-					placeholder={$_('user-pages.events.event-registration.placeholders.billingCountry')}
-				/>
-			</div>
+							<Field.Group class="flex flex-row gap-4">
+								<Field.Field class="w-auto">
+									<Field.Label class="whitespace-nowrap"
+										>{$_('user-pages.events.event-registration.labels.billingZipCode')}</Field.Label
+									>
+									<Input
+										disabled={billingEqualCompany}
+										{...registerOrganizationToEvent.fields.billingZipCode.as('text')}
+										placeholder={$_(
+											'user-pages.events.event-registration.placeholders.billingZipCode'
+										)}
+										autocomplete="billing postal-code"
+									/>
+								</Field.Field>
+								<Field.Field class="grow">
+									<Field.Label
+										>{$_('user-pages.events.event-registration.labels.billingCity')}</Field.Label
+									>
+									<Input
+										disabled={billingEqualCompany}
+										{...registerOrganizationToEvent.fields.billingCity.as('text')}
+										placeholder={$_(
+											'user-pages.events.event-registration.placeholders.billingCity'
+										)}
+										autocomplete="billing address-level2"
+									/>
+								</Field.Field>
+							</Field.Group>
+							<Field.Field>
+								<Field.Label
+									>{$_('user-pages.events.event-registration.labels.billingCountry')}</Field.Label
+								>
+								<Input
+									disabled={billingEqualCompany}
+									{...registerOrganizationToEvent.fields.billingCountry.as('text')}
+									placeholder={$_(
+										'user-pages.events.event-registration.placeholders.billingCountry'
+									)}
+									autocomplete="billing country"
+								/>
+							</Field.Field>
 
-			<hr class="my-8" />
-			<div>
-				<Label>{$_('user-pages.events.event-registration.labels.billingVat')}</Label>
-				<Input
-					{...registerOrganizationToEvent.fields.billingVat.as('text')}
-					placeholder={$_('user-pages.events.event-registration.placeholders.billingVat')}
-				/>
-			</div>
+							<Field.Separator />
+							<Field.Field>
+								<Field.Label
+									>{$_('user-pages.events.event-registration.labels.billingVat')}</Field.Label
+								>
+								<Input
+									{...registerOrganizationToEvent.fields.billingVat.as('text')}
+									placeholder={$_('user-pages.events.event-registration.placeholders.billingVat')}
+									autocomplete="off"
+								/>
+							</Field.Field>
 
-			<div>
-				<Label>{$_('user-pages.events.event-registration.labels.billingReference')}</Label>
-				<Input
-					{...registerOrganizationToEvent.fields.billingReference.as('text')}
-					placeholder={''}
-				/>
-			</div>
-		</form>
-	</div>
+							<Field.Field>
+								<Field.Label
+									>{$_('user-pages.events.event-registration.labels.billingReference')}</Field.Label
+								>
+								<Input
+									{...registerOrganizationToEvent.fields.billingReference.as('text')}
+									placeholder={''}
+									autocomplete="off"
+								/>
+							</Field.Field>
+						</Field.Group>
+					</Field.Set>
+				</Item.Content>
+			</Item.Root>
+		</div>
+	</form>
 	{#if Number(buyOption?.allowedSignUpDays) > 1}
 		<section class=" my-10">
 			<h4 class=" font-extrabold text-sm text-stone-900">
@@ -368,7 +439,10 @@
 			<ToggleGroup.Root
 				type="multiple"
 				bind:value={
-					registerOrganizationToEvent.fields.selectedEventDays.value,
+					() =>
+						registerOrganizationToEvent.fields.selectedEventDays.value() ??
+						queryParams.selectedEventDays ??
+						[],
 					registerOrganizationToEvent.fields.selectedEventDays.set
 				}
 				class="grid grid-cols-1 @xl/event-days:grid-cols-2 @3xl/event-days:grid-cols-3 gap-4"
@@ -376,9 +450,9 @@
 				{#each buyOption?.eventDays as day}
 					{@const dayjsData = dayjs(day.dayDate, { locale: $locale ?? 'de-DE' })}
 					{@const dayName = dayjsData.format('dddd')}
-					<Label
+					<Field.Label
 						for={day.dayDate}
-						class="border-muted bg-popover cursor-pointer hover:bg-accent hover:text-accent-foreground [&:has([data-state=on])]:border-primary [&:has([disabled])]:cursor-not-allowed rounded-md border-2 p-4"
+						class="border-muted bg-popover cursor-pointer hover:[&:not(:has([disabled]))]:bg-accent hover:[&:not(:has([disabled]))]:text-accent-foreground [&:has([data-state=on])]:border-primary [&:has([disabled])]:cursor-not-allowed rounded-md border-2 p-4"
 					>
 						<ToggleGroup.Item
 							disabled={day.remainingCapacity < 1}
@@ -403,9 +477,7 @@
 									class="text-muted-foreground text-nowrap"
 								/>
 							</div>
-							{#if registerOrganizationToEvent.fields.selectedEventDays
-								.value()
-								.includes(day.dayDate)}
+							{#if (registerOrganizationToEvent.fields.selectedEventDays.value() ?? queryParams.selectedEventDays ?? []).includes(day.dayDate)}
 								<div
 									class="size-6 rounded-full bg-primary shrink-0 grow-0 flex items-center justify-center"
 								>
@@ -413,7 +485,7 @@
 								</div>
 							{/if}
 						</div>
-					</Label>
+					</Field.Label>
 				{/each}
 			</ToggleGroup.Root>
 		</div>
@@ -428,12 +500,12 @@
 		<div class=" border border-stone-200 w-full rounded-lg mt-6">
 			<RadioGroup.Root
 				bind:value={
-					registerOrganizationToEvent.fields.packageId.value,
+					() => registerOrganizationToEvent.fields.packageId.value() ?? queryParams.selectedPackage,
 					registerOrganizationToEvent.fields.packageId.set
 				}
 			>
 				{#each buyOption?.packages ?? [] as pkg}
-					<Label
+					<Field.Label
 						for={`package-${pkg.id}`}
 						class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
 					>
@@ -452,7 +524,7 @@
 								})}
 							</span>
 						</div>
-					</Label>
+					</Field.Label>
 				{/each}
 			</RadioGroup.Root>
 		</div>
@@ -468,11 +540,11 @@
 		<AddonList
 			addons={addonPackages}
 			bind:selectedAddons={
-				registerOrganizationToEvent.fields.selectedAddons.value,
+				() => registerOrganizationToEvent.fields.selectedAddons.value() ?? [],
 				registerOrganizationToEvent.fields.selectedAddons.set
 			}
 			bind:selectedAddonPackages={
-				registerOrganizationToEvent.fields.selectedAddonPackages.value,
+				() => registerOrganizationToEvent.fields.selectedAddonPackages.value() ?? [],
 				registerOrganizationToEvent.fields.selectedAddonPackages.set
 			}
 		/>
@@ -534,7 +606,7 @@
 			</p>
 		</div>
 		<div class="flex items-center justify-end space-x-2 w-full">
-			<Label
+			<Field.Label
 				id="terms-label"
 				for="terms"
 				class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
@@ -542,7 +614,7 @@
 				<div class="undertaking-text">
 					{@html $_('user-pages.events.undertakingText')}
 				</div>
-			</Label>
+			</Field.Label>
 			<Checkbox bind:checked={termsAccepted} id="terms" aria-labelledby="terms-label" />
 		</div>
 	</section>
@@ -550,7 +622,7 @@
 		<Button
 			form="create-event-registration-form"
 			disabled={!termsAccepted || registerOrganizationToEvent.fields.packageId.value() === ''}
-			variant="gradient"
+			variant="default"
 			type="submit">{$_('common.submit')}</Button
 		>
 	</footer>

@@ -44,6 +44,7 @@
 	import type { GetEventRegistrationsOutput } from '@/remote/functions/admin';
 	import SendEmailDialog from './send-email-dialog.svelte';
 	import type { RemoteQuery, RemoteQueryOverride } from '@sveltejs/kit';
+	import DataTableMultiFacetedFilter from '@/@svelte/components/DataTableMultiFacetedFilter/data-table-multi-faceted-filter.svelte';
 
 	let {
 		data,
@@ -72,11 +73,18 @@
 	let packages = $derived([
 		...new Set(
 			data
-				.filter((value) => Boolean(value.purchasedPackage))
+				.filter((value) => Boolean(value.purchasedPackage?.name))
 				.map((eventRegistration) => eventRegistration.purchasedPackage?.name)
+				.filter((name): name is string => Boolean(name))
 		)
 	]);
-	let status = $derived([...new Set(data.map((eventRegistration) => eventRegistration.status))]);
+	let status = $derived([
+		...new Set(
+			data
+				.map((eventRegistration) => eventRegistration.status)
+				.filter((s): s is NonNullable<typeof s> => Boolean(s))
+		)
+	]);
 	let addonPackages = $derived([
 		...new Set(
 			data.flatMap(
@@ -96,10 +104,12 @@
 		)
 	]);
 
-	let selectedStatusValues = $state<string[]>([]);
-	let selectedPackageValues = $state<string[]>([]);
-	let selectedAddonPackageValues = $state<string[]>([]);
-	let selectedAddonValues = $state<string[]>([]);
+	let selectedValues = $state<{ [category: string]: string[] }>({
+		status: [],
+		package: [],
+		'addon-packages': [],
+		addons: []
+	});
 
 	let params = queryParameters(
 		{
@@ -129,10 +139,13 @@
 	let computedColumnFilters = $state<ColumnFiltersState>([]);
 	$effect(() => {
 		const next: ColumnFiltersState = [
-			...selectedStatusValues.map((value) => ({ id: 'status', value })),
-			...selectedPackageValues.map((value) => ({ id: 'package', value })),
-			...selectedAddonPackageValues.map((value) => ({ id: 'addon-packages', value })),
-			...selectedAddonValues.map((value) => ({ id: 'addons', value }))
+			...(selectedValues.status || []).map((value: string) => ({ id: 'status', value })),
+			...(selectedValues.package || []).map((value: string) => ({ id: 'package', value })),
+			...(selectedValues['addon-packages'] || []).map((value: string) => ({
+				id: 'addon-packages',
+				value
+			})),
+			...(selectedValues.addons || []).map((value: string) => ({ id: 'addons', value }))
 		];
 		// Only assign when changed to preserve referential equality
 		const sameLength = computedColumnFilters.length === next.length;
@@ -468,41 +481,44 @@
 		oninput={(e) => table.setGlobalFilter(e.currentTarget.value)}
 	/>
 	<div class="grow"></div>
-	<DataTableFacetedFilter
-		title={$_('admin-pages.events.event-registrations.data-table.filters.status')}
-		options={status.map((status) => ({
-			label: $_('common.event-registration-status.' + status),
-			value: status
-		}))}
-		bind:selectedValues={selectedStatusValues}
-		counts={counts.status}
-	/>
-	<DataTableFacetedFilter
-		title={$_('admin-pages.events.event-registrations.data-table.filters.package')}
-		options={packages.map((_package) => ({
-			label: _package,
-			value: _package
-		}))}
-		bind:selectedValues={selectedPackageValues}
-		counts={counts.package}
-	/>
-	<DataTableFacetedFilter
-		counts={counts.addonPackages}
-		options={addonPackages.map((addonPackage) => ({
-			label: addonPackage,
-			value: addonPackage
-		}))}
-		bind:selectedValues={selectedAddonPackageValues}
-		title={$_('admin-pages.events.event-registrations.data-table.filters.addon-packages')}
-	/>
-	<DataTableFacetedFilter
-		options={addons.map((addon) => ({
-			label: addon,
-			value: addon
-		}))}
-		bind:selectedValues={selectedAddonValues}
-		title={$_('admin-pages.events.event-registrations.data-table.filters.addons')}
-		counts={counts.addons}
+	<DataTableMultiFacetedFilter
+		categories={[
+			{
+				key: 'status',
+				label: $_('admin-pages.events.event-registrations.data-table.filters.status'),
+				options: status.filter(Boolean).map((status) => ({
+					label: $_('common.event-registration-status.' + status),
+					value: status ?? ''
+				}))
+			},
+			{
+				key: 'package',
+				label: $_('admin-pages.events.event-registrations.data-table.filters.package'),
+				options: packages.map((_package) => ({
+					label: _package,
+					value: _package
+				}))
+			},
+			{
+				key: 'addon-packages',
+				label: $_('admin-pages.events.event-registrations.data-table.filters.addon-packages'),
+				options: addonPackages.map((addonPackage) => ({
+					label: addonPackage,
+					value: addonPackage
+				}))
+			},
+			{
+				key: 'addons',
+				label: $_('admin-pages.events.event-registrations.data-table.filters.addons'),
+				options: addons.map((addon) => ({
+					label: addon,
+					value: addon
+				}))
+			}
+		]}
+		{counts}
+		bind:selectedValues
+		title="Filter"
 	/>
 	<SendEmailDialog {eventId} registrationIds={selectedEventRegistrationIds} {onEmailSent} />
 	<ExportCatalogueDataDialog

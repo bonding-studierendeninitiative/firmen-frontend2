@@ -17,6 +17,9 @@ import {
 import { error } from '@sveltejs/kit';
 import { generateId } from 'better-auth';
 import { createAdminContext } from '@/remote/context';
+import { createLogger } from 'vite';
+
+const logger = createLogger()
 
 export const getOrgs = query(
 	object({
@@ -72,18 +75,24 @@ export type OrganizationsResponse = Exclude<ReturnType<typeof getOrgs>['current'
 
 export const getLegacyOrgs = query(
 	object({
-		page: string(),
-		size: string(),
-		query: string()
+		page: number(),
+		size: number(),
+		query: string(),
+		sortBy: nullish(union([literal('name'), literal('contactPeopleCount')]), 'name'),
+		sortDirection: nullish(union([literal('asc'), literal('desc')]), 'asc')
 	}),
-	async ({ page, size, query }) => {
+	async ({ page, size, query, sortBy, sortDirection }) => {
 		const ctx = await createAdminContext();
+
+		logger.info(`Fetching legacy organizations with page=${page}, size=${size}, query=${query}, sortBy=${sortBy}, sortDirection=${sortDirection}`);
 
 		const response = await ctx.adminApi.get('/api/v2/admin/organization', {
 			query: {
-				page: Number(page),
-				query: query,
-				size: Number(size)
+				page,
+				query,
+				size,
+				sortBy,
+				sortDirection
 			}
 		});
 		return response;
@@ -308,6 +317,18 @@ export const getLegacyOrgDetails = query(
 		return response;
 	}
 );
+
+export const getLegacyOrgsByNotesIds = query.batch(
+	string(),
+	async (notesIds) => {
+		const ctx = await createAdminContext();
+		const response = await ctx.adminApi.post('/api/v2/admin/organization/find-by-notes-ids', {
+			body: {
+				notesIds
+		}});
+		return (_i, j) => response.legacyOrganizations?.[j];
+	}
+)
 
 export const createOrganizationByAdminForm = form(
 	object({

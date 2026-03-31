@@ -1,8 +1,10 @@
 <script lang="ts">
 	import { cn } from '@/utils';
-	import * as Card from '@/components/ui/card';
-	import { Button } from '@/components/ui/button';
+	import * as Card from '@/components/ui/item';
+	import { Button, buttonVariants } from '@/components/ui/button';
 	import { Skeleton } from '@/components/ui/skeleton';
+	import type { VariantProps } from 'tailwind-variants';
+	import type { Snippet } from 'svelte';
 
 	interface Props {
 		className?: string;
@@ -12,20 +14,19 @@
 			description?: string;
 			footer?: string;
 			header?: string;
-			title?: string;
-			instructions?: string;
 			button?: string;
 			skeleton?: string;
 		};
 		title?: string;
 		description?: string;
 		instructions?: string;
-		actionLabel?: string;
-		action?: () => void;
+		action?: VariantProps<typeof buttonVariants> & {
+			fn: () => void;
+			label: string | Snippet;
+		};
 		isPending?: boolean;
 		disabled?: boolean;
 		optimistic?: boolean;
-		children?: any;
 	}
 
 	let {
@@ -33,51 +34,43 @@
 		classNames = {},
 		title = '',
 		description = '',
-		instructions = '',
-		actionLabel = '',
 		action,
 		isPending = false,
 		disabled = false,
-		optimistic = false,
-		children
+		optimistic = false
 	}: Props = $props();
 </script>
 
-<Card.Root class={cn('w-full', className, classNames?.base)}>
-	<Card.Header class={cn('grid grid-cols-[1fr_auto] items-start gap-4', classNames?.header)}>
+<Card.Root variant="outline" class={cn('w-full', className, classNames?.base)}>
+	<Card.Content class={cn(classNames?.header)}>
 		<div class="space-y-1.5">
 			{#if title}
-				<Card.Title class={cn('text-lg', classNames?.title)}>
+				<Card.Title>
 					{title}
 				</Card.Title>
 			{/if}
 
 			{#if description}
-				<Card.Description class={cn('text-sm text-muted-foreground', classNames?.description)}>
+				<Card.Description>
 					{description}
 				</Card.Description>
 			{/if}
-
-			{#if instructions}
-				<p class={cn('text-xs text-muted-foreground', classNames?.instructions)}>
-					{instructions}
-				</p>
-			{/if}
 		</div>
-
-		{#if actionLabel && action}
-			<Button onclick={action} {disabled} class={cn('shrink-0', classNames?.button)}>
-				{actionLabel}
+	</Card.Content>
+	{#if action && action.label}
+		<Card.Actions>
+			<Button onclick={action.fn} {disabled} size={action.size} variant={action.variant}>
+				{#if action.label instanceof Function}
+					{@render action.label()}
+				{:else}
+					{action.label}
+				{/if}
 			</Button>
-		{/if}
-	</Card.Header>
-
-	{#if isPending && !children}
-		<Card.Content class={classNames?.content}>
-			<Skeleton class={cn('h-9 w-full', classNames?.skeleton)} />
-		</Card.Content>
-	{:else if children}
-		{@render children()}
+		</Card.Actions>
 	{/if}
-	<Card.Footer></Card.Footer>
+	{#if optimistic && isPending}
+		<Card.Footer class={cn(classNames?.footer)}>
+			<Skeleton class={cn('h-9 w-full', classNames?.skeleton)} />
+		</Card.Footer>
+	{/if}
 </Card.Root>

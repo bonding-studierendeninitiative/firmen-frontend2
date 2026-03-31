@@ -14,7 +14,7 @@
 
 	interface Props {
 		buyOption: GetEventBuyOptionOutput;
-		selectedAmountOfParticipationDays?: string;
+		selectedAmountOfParticipationDays?: string | null;
 		selectedEventDays?: string[];
 		selectedPackageId?: string;
 	}
@@ -199,7 +199,7 @@
 								class="text-muted-foreground text-nowrap"
 							/>
 						</div>
-						{#if selectedEventDays.includes(day.dayDate!)}
+						{#if selectedEventDays?.includes(day.dayDate!)}
 							<div
 								class="size-6 rounded-full bg-primary shrink-0 grow-0 flex items-center justify-center"
 							>

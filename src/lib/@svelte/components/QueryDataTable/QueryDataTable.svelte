@@ -6,12 +6,10 @@
 		isLoading?: boolean;
 		columns: ColumnDef<T>[];
 		pageSizes?: number[];
-		params?: {
-			sortBy: string;
-			sortDirection: string;
-			page: number;
-			limit: number;
-		};
+		page?: number;
+		pageSize?: number;
+		sortBy?: string | null;
+		sortDirection?: 'asc' | 'desc' | null;
 	}
 </script>
 
@@ -49,16 +47,21 @@
 		isLoading = false,
 		columns,
 		pageSizes = [10, 20, 50, 100],
-		params
+		page = $bindable(0),
+		pageSize = $bindable(10),
+		sortBy = $bindable(''),
+		sortDirection = $bindable('asc')
 	}: DataTableProps<any> = $props();
 
 	let rowSelection = $state<RowSelectionState>({});
 	let columnVisibility = $state<VisibilityState>({});
 	let columnFilters = $state<ColumnFiltersState>([]);
-	let sorting = $state<SortingState>([]);
-	let pagination = $state<PaginationState>({ pageIndex: 0, pageSize: 10 });
+	// let sorting = $state<SortingState>(sortBy ? [{ id: sortBy, desc: sortDirection === 'desc' }] : []);
+	let pagination = $derived<PaginationState>({ pageIndex: page, pageSize: pageSize });
 
 	const setSorting: OnChangeFn<SortingState> = (updater) => {
+		let sorting: SortingState = sortBy ? [{ id: sortBy, desc: sortDirection === 'desc' }] : [];
+
 		if (updater instanceof Function) {
 			sorting = updater(sorting);
 		} else {
@@ -68,25 +71,13 @@
 		if (sorting.length > 0) {
 			let firstSort = sorting[0];
 
-			params.sortBy = firstSort.id;
-			params.sortDirection = firstSort.desc ? 'desc' : 'asc';
+			sortBy = firstSort.id;
+			sortDirection = firstSort.desc ? 'desc' : 'asc';
 		} else {
-			params.sortBy = null;
-			params.sortDirection = null;
+			sortBy = null;
+			sortDirection = null;
 		}
 	};
-
-	let options: TableOptions<any> = $derived({
-		columns,
-		data,
-		getCoreRowModel: getCoreRowModel(),
-		getPaginationRowModel: getPaginationRowModel(),
-		manualSorting: true, //use pre-sorted row model instead of sorted row model
-		state: {
-			sorting
-		},
-		onSortingChange: setSorting
-	});
 
 	const table = createSvelteTable({
 		get data() {
@@ -97,7 +88,7 @@
 		},
 		state: {
 			get sorting() {
-				return sorting;
+				return sortBy ? [{ id: sortBy, desc: sortDirection === 'desc' }] : [];
 			},
 			get columnVisibility() {
 				return columnVisibility;
@@ -153,29 +144,29 @@
 
 	// Pagination functions
 	let selectedPageSize = $derived.by(() => ({
-		label: params?.limit ?? '10',
-		value: Number(params?.limit ?? '10')
+		label: pageSize ?? '10',
+		value: Number(pageSize ?? '10')
 	}));
 
 	function nextPage() {
-		const currentPage = Number(params?.page ?? '0');
-		params.page = currentPage + 1;
+		const currentPage = Number(page ?? '0');
+		page = currentPage + 1;
 	}
 
 	function previousPage() {
-		const currentPage = Number(params?.page ?? '0');
-		params.page = currentPage - 1;
+		const currentPage = Number(page ?? '0');
+		page = currentPage - 1;
 	}
 
 	let hasNextPage = $derived.by(() => {
-		const currentPage = Number(params?.page ?? '0');
-		const limit = Number(params?.limit ?? '10');
+		const currentPage = Number(page ?? '0');
+		const limit = Number(pageSize ?? '10');
 		console.log('Limit:', limit, 'Page:', currentPage);
 		return currentPage * limit + limit < totalCount;
 	});
 
 	let hasPreviousPage = $derived.by(() => {
-		const currentPage = Number(params?.page ?? '0');
+		const currentPage = Number(page ?? '0');
 		return currentPage > 0;
 	});
 </script>
@@ -215,7 +206,7 @@
 						</Table.Row>
 					{/each}
 				{:else}
-					{#each { length: Number(params?.limit) || 10 } as _, i}
+					{#each { length: Number(pageSize ?? '10') } as _, i}
 						<Table.Row>
 							{#each columns as column}
 								<Table.Cell>
@@ -234,7 +225,7 @@
 				type="single"
 				value={selectedPageSize.value.toString()}
 				onValueChange={(v) => {
-					params.limit = Number(v);
+					pageSize = Number(v);
 				}}
 			>
 				<Select.Trigger>

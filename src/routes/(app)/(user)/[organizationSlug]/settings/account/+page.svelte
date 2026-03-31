@@ -3,6 +3,7 @@
 	import { Button } from '@/components/ui/button';
 	import { Input } from '@/components/ui/input';
 	import { Label } from '@/components/ui/label';
+	import * as Field from '@/components/ui/field';
 	import { _ } from '@services/i18n';
 	import { useId } from 'bits-ui';
 
@@ -27,19 +28,19 @@
 			</h4>
 		</div>
 		<form class="flex flex-col gap-4 items-end">
-			<div class="w-full">
-				<Label for={nameId}>
+			<Field.Field class="w-full">
+				<Field.Label for={nameId}>
 					{$_('user-pages.settings.account.labels.name')}
-				</Label>
+				</Field.Label>
 				<Input id={nameId} type="text" placeholder="Name" name="name" bind:value={name} />
-			</div>
+			</Field.Field>
 
-			<div class="w-full">
-				<Label for={emailId}>
+			<Field.Field class="w-full">
+				<Field.Label for={emailId}>
 					{$_('user-pages.settings.account.labels.email')}
-				</Label>
+				</Field.Label>
 				<Input id={emailId} disabled type="email" placeholder="Email" name="email" value={email} />
-			</div>
+			</Field.Field>
 
 			<Button
 				type="submit"
@@ -54,6 +55,7 @@
 			</Button>
 		</form>
 	</section>
+	<Field.Separator class="my-4" />
 	<section>
 		<h3 class="text-stone-800 text-lg font-bold">
 			{$_('user-pages.settings.account.sessions.title')}

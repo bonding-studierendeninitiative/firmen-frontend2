@@ -41,12 +41,12 @@
 	<h2 class="text-lg font-medium text-stone-700">{$_('admin-pages.events.emails.draftInfo')}</h2>
 	<CreateDraftDialog {onCreateDraft} {eventId} />
 </div>
-{#if loading}
-	<ul class=" mt-4 space-y-4">
+<Item.Group class=" mt-4 space-y-4">
+	{#if loading}
 		{#each Array(size) as _ignored}
-			<Item.Root>
+			<Item.Root variant="outline">
 				<Item.Content>
-					<Skeleton class="h-5 bg-stone-200 rounded w-32 mb-3 animate-pulse" />
+					<Skeleton class="h-5 bg-stone-200 rounded w-32 mb-1 animate-pulse" />
 					<Skeleton class="h-4 bg-stone-200 rounded w-24 animate-pulse" />
 				</Item.Content>
 				<Item.Actions class=" space-x-3 inline-flex items-center">
@@ -56,22 +56,8 @@
 					</Button>
 				</Item.Actions>
 			</Item.Root>
-			<li class=" border border-stone-200 rounded p-4 flex justify-between items-center">
-				<div>
-					<Skeleton class="h-5 bg-stone-200 rounded w-32 mb-3 animate-pulse" />
-					<Skeleton class="h-4 bg-stone-200 rounded w-24 animate-pulse" />
-				</div>
-				<div class=" space-x-3 inline-flex items-center">
-					<Skeleton class="h-8 bg-stone-200 rounded w-22 animate-pulse" />
-					<Button variant="destructive" disabled>
-						{$_('common.delete')}
-					</Button>
-				</div>
-			</li>
 		{/each}
-	</ul>
-{:else}
-	<Item.Group class=" mt-4 space-y-4">
+	{:else}
 		{#each drafts as draft (draft.id)}
 			<Item.Root variant="outline">
 				<Item.Content>
@@ -102,5 +88,5 @@
 		{:else}
 			<p class="text-center text-stone-500">{$_('admin-pages.events.emails.noDrafts')}</p>
 		{/each}
-	</Item.Group>
-{/if}
+	{/if}
+</Item.Group>

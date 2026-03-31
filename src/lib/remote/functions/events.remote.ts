@@ -1,5 +1,6 @@
 import { object, string, nullish } from 'valibot';
 import { orgMemberQuery } from '../auth-guards';
+import type { GetActiveEventBuyOptionOutput } from '@api/client';
 
 export const unregisteredEvents = orgMemberQuery(
 	object({ cursor: string(), limit: string() }),
@@ -43,7 +44,7 @@ export const getActiveBuyOption = orgMemberQuery(string(), async ({ input: event
 		path: { eventId }
 	});
 	if (response.status === 404) return null;
-	return await response.json();
+	return (await response.json()) as GetActiveEventBuyOptionOutput;
 });
 
 export const isOrgRegistered = orgMemberQuery(string(), async ({ input: eventId, ctx }) => {

@@ -3,6 +3,7 @@ import { object, nullish, string, pipe, minLength } from 'valibot';
 import { error } from '@sveltejs/kit';
 import { createOrgMemberContext } from '@/remote/context';
 import { orgMemberCommand, orgMemberQuery } from '../auth-guards';
+import type { GetBillingAddressTemplatesOutput } from '@api/client';
 
 export const getBillingAddressTemplates = orgMemberQuery(
 	object({
@@ -28,7 +29,7 @@ export const getBillingAddressTemplates = orgMemberQuery(
 			error(500, `Could not get billing address templates: ${response.statusText}`);
 		}
 
-		return await response.json();
+		return (await response.json()) as GetBillingAddressTemplatesOutput;
 	}
 );
 

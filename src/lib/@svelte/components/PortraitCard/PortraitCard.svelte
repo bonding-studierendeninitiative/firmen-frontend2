@@ -1,11 +1,12 @@
 <script lang="ts">
 	import { Link } from '@/@svelte/components';
-	import * as Card from '@/components/ui/card';
-	import { Button } from '@/components/ui/button';
-	import { FileText, LoaderCircle, Trash2 } from '@lucide/svelte';
+	import * as Item from '@/components/ui/item';
+	import { Button, buttonVariants } from '@/components/ui/button';
+	import { FileText, LoaderCircle, PenLine, Trash2 } from '@lucide/svelte';
 	import * as Dialog from '@/components/ui/dialog';
 	import { _ } from '@services';
 	import type { GetPortraitTemplateSchema } from '@/remote/functions';
+	import { cn } from '@/utils';
 
 	interface Props {
 		portrait: GetPortraitTemplateSchema;
@@ -14,70 +15,61 @@
 
 	let { portrait, onDelete }: Props = $props();
 
-	let deleteDialogOpen = $state(false);
+	let open = $state(false);
 	let pending = $state(false);
 </script>
 
-<Card.Root class="h-full transition-all hover:shadow-md cursor-pointer relative group ">
-	<Button
-		onclick={() => (deleteDialogOpen = true)}
-		variant="ghost"
-		size="icon"
-		class="absolute top-2 right-2 p-0 max-w-6 max-h-6 text-muted-foreground hover:bg-destructive hover:text-destructive-foreground "
-	>
-		<Trash2 class="size-3.5" />
-	</Button>
-	<Link
-		data-sveltekit-replacestate
-		href={`portraits/${portrait.id}`}
-		class="size-full hover:no-underline"
-	>
-		<Card.Header class="flex-row gap-4">
-			<div
-				class="shrink-0 size-12 rounded-full bg-primary/10 inline-flex justify-center items-center"
+<Item.Root variant="outline">
+	<Item.Media variant="icon">
+		<FileText />
+	</Item.Media>
+	<Item.Content>
+		<Item.Title>{portrait.title}</Item.Title>
+	</Item.Content>
+	<Item.Actions>
+		<Link data-sveltekit-replacestate href={`portraits/${portrait.id}`}
+			><PenLine class="size-4" /></Link
+		>
+		<Dialog.Root bind:open>
+			<Dialog.Trigger
+				class={cn(
+					buttonVariants({ variant: 'ghost', size: 'icon' }),
+					'p-0 max-w-6 max-h-6 cursor-pointer text-muted-foreground hover:bg-destructive hover:text-destructive-foreground '
+				)}
+				type="button"
 			>
-				<FileText />
-			</div>
-			<Card.Title class="text-secondary-foreground font-medium text-base mb-1"
-				>{portrait.title}</Card.Title
-			>
-		</Card.Header>
-	</Link>
-	<Card.Footer></Card.Footer>
-</Card.Root>
-
-<Dialog.Root bind:open={deleteDialogOpen}>
-	<Dialog.Content class="sm:max-w-[425px]">
-		<Dialog.Title>{$_('user-pages.portraits.deletePortrait')}</Dialog.Title>
-		<Dialog.Description>
-			<p>{$_('user-pages.portraits.deletePortraitDescription')}</p>
-			<p class="mt-2 font-medium">{$_('user-pages.portraits.nameOfPortrait')}:</p>
-			<p>{portrait.title}</p>
-		</Dialog.Description>
-		<Dialog.Footer class="flex justify-end items-center w-full">
-			<Button variant="secondary" onclick={() => (deleteDialogOpen = false)}
-				>{$_('common.cancel')}</Button
-			>
-			{#if pending}
-				<Button form={`delete-portrait-form-${portrait.id}`} disabled variant="destructive">
-					<LoaderCircle class="mr-2 size-4 animate-spin" />{$_('common.delete')}
-				</Button>
-			{:else}
-				<Button
-					onclick={async () => {
-						try {
-							pending = true;
-							await onDelete?.({ portraitTemplateId: portrait.id! });
-							deleteDialogOpen = false;
-						} catch (error) {
-							console.error('Error in onDelete callback:', error);
-						} finally {
-							pending = false;
-						}
-					}}
-					variant="destructive">{$_('common.delete')}</Button
-				>
-			{/if}
-		</Dialog.Footer>
-	</Dialog.Content>
-</Dialog.Root>
+				<Trash2 class="size-3.5" />
+			</Dialog.Trigger>
+			<Dialog.Content class="sm:max-w-[425px]">
+				<Dialog.Title>{$_('user-pages.portraits.deletePortrait')}</Dialog.Title>
+				<Dialog.Description>
+					<p>{$_('user-pages.portraits.deletePortraitDescription')}</p>
+					<p class="mt-2 font-medium">{$_('user-pages.portraits.nameOfPortrait')}:</p>
+					<p>{portrait.title}</p>
+				</Dialog.Description>
+				<Dialog.Footer class="flex justify-end items-center w-full">
+					{#if pending}
+						<Button form={`delete-portrait-form-${portrait.id}`} disabled variant="destructive">
+							<LoaderCircle class="mr-2 size-4 animate-spin" />{$_('common.delete')}
+						</Button>
+					{:else}
+						<Button
+							onclick={async () => {
+								try {
+									pending = true;
+									await onDelete?.({ portraitTemplateId: portrait.id! });
+									open = false;
+								} catch (error) {
+									console.error('Error in onDelete callback:', error);
+								} finally {
+									pending = false;
+								}
+							}}
+							variant="destructive">{$_('common.delete')}</Button
+						>
+					{/if}
+				</Dialog.Footer>
+			</Dialog.Content>
+		</Dialog.Root>
+	</Item.Actions>
+</Item.Root>

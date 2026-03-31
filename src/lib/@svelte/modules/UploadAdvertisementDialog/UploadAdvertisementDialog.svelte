@@ -8,6 +8,8 @@
 	import { Plus } from '@lucide/svelte';
 	import { uploadCatalogueData } from '@/remote/functions';
 	import * as Field from '@/components/ui/field';
+	import { createUploader } from '@/utils/uploadthing';
+	import { Uploader } from '@uploadthing/svelte';
 
 	interface Props {
 		open: boolean;
@@ -17,6 +19,15 @@
 	let { open = $bindable(false), onSuccess }: Props = $props();
 
 	const { title, file, documentType } = uploadCatalogueData.fields;
+
+	const uploader = createUploader("imageUploader", {
+		onClientUploadComplete: (res) => {
+			console.log('Upload Complete', res);
+		},
+		onUploadError: (error) => {
+			console.error('Upload Error', error);
+		},
+	});
 </script>
 
 <Dialog.Root bind:open>
@@ -80,6 +91,8 @@
 			</Field.Field>
 
 			<input {...documentType.as('hidden', 'advert')} />
+
+			<Uploader {uploader} />
 
 			<Dialog.Footer>
 				<Button disabled={uploadCatalogueData.pending > 0} type="submit"

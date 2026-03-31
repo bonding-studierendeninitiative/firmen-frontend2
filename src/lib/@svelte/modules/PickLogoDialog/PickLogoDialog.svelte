@@ -13,17 +13,19 @@
 	interface Props {
 		open?: boolean;
 		id: string;
-		orgId: string;
+		orgSlug: string;
 		onPick?: (eventRegistrationId: string, documentId: string, versionId: string) => Promise<void>;
 	}
 
-	let { open = $bindable(false), id, orgId, onPick }: Props = $props();
+	let { open = $bindable(false), id, orgSlug, onPick }: Props = $props();
 
-	let logosQuery = getCatalogueByType({
-		limit: '10',
-		cursor: '0',
-		documentType: 'logo'
-	});
+	let logosQuery = $derived(
+		getCatalogueByType({
+			limit: '10',
+			cursor: '0',
+			documentType: 'logo'
+		})
+	);
 
 	let selectedLogo = $state('');
 </script>
@@ -37,12 +39,14 @@
 		<ScrollArea class="max-h-[65dvh]">
 			{#if logosQuery.loading}
 				<LoaderCircle class="size-10 mx-auto animate-spin" />
-			{:else if logosQuery.ready}
+			{:else if logosQuery.ready && (logosQuery.current?.documents?.length ?? 0) === 0}
 				<NoDataFound
 					heading={$_('modules.pick-logo-dialog.no-data')}
 					subHeading={$_('modules.pick-logo-dialog.no-data-sub-heading')}
-					buttonText={$_('modules.pick-logo-dialog.no-data-action')}
-					onButtonClick={() => goto(`/${orgId}/catalogue-data/logos`)}
+					action={{
+						label: $_('modules.pick-logo-dialog.no-data-action'),
+						href: `/${orgSlug}/catalogue-data/logos`
+					}}
 				/>
 			{:else}
 				<RadioGroup.Root bind:value={selectedLogo}>

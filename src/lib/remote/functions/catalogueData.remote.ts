@@ -58,6 +58,26 @@ export const uploadCatalogueData = form(
 	}
 );
 
+export const uploadCatalogueDataUploadThing = form(
+	object({
+		title: pipe(string(), nonEmpty('Cannot be empty')),
+		file: file(),
+		documentType: union([literal('logo'), literal('advert')])
+	}),
+	async (input) => {
+		try {
+			const data = input;
+			const buf = Buffer.from(data.file.name, 'utf-8');
+			const base64Enc = buf.toString('base64');
+			const ctx = await createOrgMemberContext();
+
+			
+		} catch (e) {
+			error(500, e instanceof Error ? e.message : 'Failed to upload');
+		}
+	}
+)
+
 export const getCatalogueByType = orgMemberQuery(
 	object({
 		documentType: union([literal('logo'), literal('advert')]),
@@ -65,7 +85,8 @@ export const getCatalogueByType = orgMemberQuery(
 		cursor: nullish(string(), '0')
 	}),
 	async ({ input, ctx }) => {
-		const response = await ctx.api.get(
+		const response = await ctx.api.request(
+			'get',
 			'/api/v2/organization/{organizationId}/catalogue-data/by-document-type/{documentType}',
 			{
 				path: {
@@ -75,7 +96,11 @@ export const getCatalogueByType = orgMemberQuery(
 				query: { limit: Number(input.limit), page: Number(input.cursor) }
 			}
 		);
-		return response;
+		if (!response.ok) {
+			error(500, 'Could not fetch catalogue data');
+		}
+		const body = await response.json();
+		return body;
 	}
 );
 

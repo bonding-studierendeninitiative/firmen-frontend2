@@ -1,52 +1,27 @@
 <script lang="ts">
-	import { Sidebar, SidebarItem } from '@/@svelte/modules';
-	import { USER_SIDEBAR_LINKS } from '@constant';
-	import { page } from '$app/state';
-	import { OrganizationSwitcher } from '@/components/organization';
+	import * as Sidebar from '@/components/ui/sidebar';
+	import AppUserSidebar from './app-user-sidebar.svelte';
 
-	let activeUrl = $derived(page.url.pathname);
 	let { data, children } = $props();
-
-	type Org = { slug: string | null };
-
-	function getOrgUrl(organization: Org): string {
-		return `/${organization.slug}/dashboard`;
-	}
 </script>
 
 <div class=" lg:flex w-full">
-	<Sidebar>
-		<!--<OrganizationSwitcher
-				createOrganizationMode="navigation"
-				createOrganizationUrl="/create-org/"
-				skipInvitationScreen={true}
-				appearance={{
-					elements: {
-						organizationSwitcherTrigger: 'text-white! hover:text-white/80!',
-						rootBox: 'ml-[0.45em]',
-						formButtonReset: "bg-primary!"
-					}
-				}}
-				afterSelectOrganizationUrl={getOrgUrl}
-				hidePersonal={true}
-			/>-->
-		<OrganizationSwitcher />
+	<Sidebar.Provider>
+		<AppUserSidebar user={data.user ?? {
+			name: '',
+			email: '',
+			id: ''
+		}} organization={{
+			slug: data.organization?.slug ?? ''
+		}} />
 
-		<div>
-			{#each USER_SIDEBAR_LINKS as { label, route, Icon }}
-				<SidebarItem
-					href={`/${data.organization.slug}${route}`}
-					{label}
-					icon={Icon}
-					active={activeUrl.includes(route)}
-				/>
-			{/each}
+		<div class="h-dvh w-full overflow-y-scroll @container">
+			<Sidebar.Trigger>
+				<span class="sr-only">Toggle Sidebar</span>
+			</Sidebar.Trigger>
+			<div class="w-full p-6 @xl:px-16 @xl:py-22 bg-white">
+				{@render children?.()}
+			</div>
 		</div>
-	</Sidebar>
-
-	<div class="h-dvh w-full overflow-y-scroll @container">
-		<div class="w-full p-6 @xl:px-16 @xl:py-22 bg-white">
-			{@render children?.()}
-		</div>
-	</div>
+	</Sidebar.Provider>
 </div>

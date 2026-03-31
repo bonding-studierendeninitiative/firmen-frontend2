@@ -1,21 +1,18 @@
 <script lang="ts">
 	import * as Dialog from '@/components/ui/dialog';
-	import { LocalizedDate, StatusBadge } from '@/@svelte/components';
 	import { _ } from '@services';
-	import { Badge } from '@/components/ui/badge';
-	import { getHumanReadableFileSize } from '@/utils';
 	import { DeleteAdvertisementDialog, FileInformation } from '@/@svelte/modules';
 	import { Button } from '@/components/ui/button';
 	import {
 		generateDownloadLink as getDownload,
 		generateThumbnailLink as getThumbnail
 	} from '@/remote/functions';
-	import type { DetailedDocumentOutput } from '@api/client';
+	import type { DocumentOutput_Detailed } from '@api/client';
 	import { LoaderCircle } from '@lucide/svelte';
 	import FileHistory from '../FileHistory/file-history.svelte';
 	interface Props {
 		open?: boolean;
-		advertisement: DetailedDocumentOutput;
+		advertisement: DocumentOutput_Detailed;
 	}
 
 	let { open = $bindable(false), advertisement }: Props = $props();
@@ -27,8 +24,8 @@
 
 	const thumbnail = getThumbnail({ documentId: advertisement.id ?? '', resolution: 'large' });
 
-	function handleDownload() {
-		const downloadUrl = download.current;
+	async function handleDownload() {
+		const downloadUrl = await download;
 		if (downloadUrl && Number(downloadUrl?.length) > 0) {
 			const a = document.createElement('a');
 			a.href = downloadUrl;
@@ -64,7 +61,9 @@
 						<Dialog.Title>{advertisement.title}</Dialog.Title>
 						<Dialog.Description class="@container"></Dialog.Description>
 					</Dialog.Header>
-					<FileInformation documentVersion={advertisement.activeVersion} />
+					{#if advertisement?.activeVersion}
+						<FileInformation documentVersion={advertisement.activeVersion} />
+					{/if}
 
 					<FileHistory history={advertisement.activeVersion?.history ?? []} />
 

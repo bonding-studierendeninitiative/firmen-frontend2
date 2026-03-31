@@ -14,11 +14,11 @@
 	interface Props {
 		open?: boolean;
 		id: string;
-		orgId: string;
+		orgSlug: string;
 		onPick?: (eventRegistrationId: string, documentId: string, versionId: string) => Promise<void>;
 	}
 
-	let { open = $bindable(false), id, orgId, onPick }: Props = $props();
+	let { open = $bindable(false), id, orgSlug, onPick }: Props = $props();
 
 	let selectedAdvertisement = $state('');
 	let advertisementsQuery = getCatalogueByType({
@@ -37,12 +37,14 @@
 		<ScrollArea class="max-h-[70dvh]">
 			{#if advertisementsQuery.loading}
 				<LoaderCircle class="size-10 mx-auto animate-spin" />
-			{:else if advertisementsQuery.ready}
+			{:else if advertisementsQuery.ready && (advertisementsQuery.current?.documents?.length ?? 0) === 0}
 				<NoDataFound
 					heading={$_('modules.pick-advertisement-dialog.no-data')}
 					subHeading={$_('modules.pick-advertisement-dialog.no-data-sub-heading')}
-					buttonText={$_('modules.pick-advertisement-dialog.no-data-action')}
-					onButtonClick={() => goto(`/${orgId}/catalogue-data/adverts`)}
+					action={{
+						label: $_('modules.pick-advertisement-dialog.no-data-action'),
+						href: `/${orgSlug}/catalogue-data/adverts`
+					}}
 				/>
 			{:else}
 				<RadioGroup.Root bind:value={selectedAdvertisement}>

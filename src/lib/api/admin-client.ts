@@ -1,34 +1,34 @@
 import * as v from "valibot";
 
-export type SimpleEmailDraftDTO = v.InferOutput<typeof SimpleEmailDraftDTO>;
-export const SimpleEmailDraftDTO = v.object({
-  id: v.optional(v.string()),
-  subject: v.optional(v.string()),
-  lastModifiedBy: v.optional(v.string()),
-  lastModifiedDate: v.optional(v.string()),
-});
-
-export type EmailDraftDTO = v.InferOutput<typeof EmailDraftDTO>;
-export const EmailDraftDTO = v.object({
+export type EmailDraftDTO_Simple = v.InferOutput<typeof EmailDraftDTO_Simple>;
+export const EmailDraftDTO_Simple = v.object({
   subject: v.string(),
   bodyMarkdown: v.optional(v.union([v.string(), v.undefined()])),
   replyToEmail: v.optional(v.union([v.string(), v.undefined()])),
 });
 
-export type StatusType = v.InferOutput<typeof StatusType>;
-export const StatusType = v.object({
+export type StatusType_Simple = v.InferOutput<typeof StatusType_Simple>;
+export const StatusType_Simple = v.object({
   reasonPhrase: v.optional(v.string()),
   statusCode: v.optional(v.number()),
 });
 
-export type Problem = v.InferOutput<typeof Problem>;
-export const Problem = v.object({
-  status: v.optional(StatusType),
-  detail: v.optional(v.string()),
+export type Problem_Simple = v.InferOutput<typeof Problem_Simple>;
+export const Problem_Simple = v.object({
   title: v.optional(v.string()),
+  status: v.optional(StatusType_Simple),
+  detail: v.optional(v.string()),
   instance: v.optional(v.string()),
   type: v.optional(v.string()),
   parameters: v.optional(v.record(v.string(), v.unknown())),
+});
+
+export type EmailDraftOutput_Simple = v.InferOutput<typeof EmailDraftOutput_Simple>;
+export const EmailDraftOutput_Simple = v.object({
+  id: v.optional(v.string()),
+  subject: v.optional(v.string()),
+  lastModifiedBy: v.optional(v.string()),
+  lastModifiedDate: v.optional(v.string()),
 });
 
 export type AddonOutput = v.InferOutput<typeof AddonOutput>;
@@ -74,6 +74,22 @@ export const EditAddonPackageInput = v.object({
   description: v.string(),
   price: v.number(),
   addons: v.array(AddonInput),
+});
+
+export type StatusType = v.InferOutput<typeof StatusType>;
+export const StatusType = v.object({
+  reasonPhrase: v.optional(v.string()),
+  statusCode: v.optional(v.number()),
+});
+
+export type Problem = v.InferOutput<typeof Problem>;
+export const Problem = v.object({
+  title: v.optional(v.string()),
+  status: v.optional(StatusType),
+  detail: v.optional(v.string()),
+  instance: v.optional(v.string()),
+  type: v.optional(v.string()),
+  parameters: v.optional(v.record(v.string(), v.unknown())),
 });
 
 export type UpdateServiceInput = v.InferOutput<typeof UpdateServiceInput>;
@@ -215,9 +231,9 @@ export const DocumentFeedbackOutput = v.object({
   timestamp: v.optional(v.string()),
 });
 
-export type DetailedDocumentVersionOutput = v.InferOutput<typeof DetailedDocumentVersionOutput>;
-export const DetailedDocumentVersionOutput = v.object({
-  versionId: v.optional(v.union([v.string(), v.undefined()])),
+export type DocumentVersionOutput = v.InferOutput<typeof DocumentVersionOutput>;
+export const DocumentVersionOutput = v.object({
+  versionId: v.string(),
   size: v.optional(v.union([v.number(), v.undefined()])),
   contentType: v.optional(v.union([v.string(), v.undefined()])),
   isLatest: v.optional(v.union([v.boolean(), v.undefined()])),
@@ -246,7 +262,7 @@ export const DetailedDocumentVersionOutput = v.object({
 export type AdminRegistrationDocumentOutput = v.InferOutput<typeof AdminRegistrationDocumentOutput>;
 export const AdminRegistrationDocumentOutput = v.object({
   id: v.optional(v.string()),
-  documentVersion: v.optional(DetailedDocumentVersionOutput),
+  documentVersion: v.optional(DocumentVersionOutput),
   status: v.optional(
     v.union([v.literal("unreviewed"), v.literal("changes-requested"), v.literal("rejected"), v.literal("confirmed")]),
   ),
@@ -261,13 +277,73 @@ export const ReviewDocumentOutput = v.object({
   documentOutput: v.optional(AdminRegistrationDocumentOutput),
 });
 
+export type NotesIdRequest_Detailed = v.InferOutput<typeof NotesIdRequest_Detailed>;
+export const NotesIdRequest_Detailed = v.object({
+  notesIds: v.optional(v.array(v.string())),
+});
+
+export type SimpleLegacyOrganizationAddress_Detailed = v.InferOutput<typeof SimpleLegacyOrganizationAddress_Detailed>;
+export const SimpleLegacyOrganizationAddress_Detailed = v.object({
+  addressType: v.optional(v.string()),
+  location: v.optional(v.string()),
+  postCode: v.optional(v.string()),
+  country: v.optional(v.string()),
+  pob: v.optional(v.string()),
+  pobplz: v.optional(v.string()),
+  phone: v.optional(v.string()),
+  street: v.optional(v.string()),
+});
+
+export type SimpleLegacyContactPerson_Detailed = v.InferOutput<typeof SimpleLegacyContactPerson_Detailed>;
+export const SimpleLegacyContactPerson_Detailed = v.object({
+  legacyId: v.string(),
+  department: v.optional(v.union([v.string(), v.undefined()])),
+  remarks: v.optional(v.union([v.string(), v.undefined()])),
+  foek: v.optional(v.union([v.string(), v.undefined()])),
+  fax: v.optional(v.union([v.string(), v.undefined()])),
+  gender: v.optional(v.union([v.string(), v.undefined()])),
+  email: v.optional(v.union([v.string(), v.undefined()])),
+  phone2: v.optional(v.union([v.string(), v.undefined()])),
+  lastName: v.optional(v.union([v.string(), v.undefined()])),
+  position: v.optional(v.union([v.string(), v.undefined()])),
+  phone: v.optional(v.union([v.string(), v.undefined()])),
+  title: v.optional(v.union([v.string(), v.undefined()])),
+  firstName: v.optional(v.union([v.string(), v.undefined()])),
+  responsible: v.optional(v.union([v.string(), v.undefined()])),
+  language: v.optional(v.union([v.string(), v.undefined()])),
+});
+
+export type LegacyOrganizationOutput_Detailed = v.InferOutput<typeof LegacyOrganizationOutput_Detailed>;
+export const LegacyOrganizationOutput_Detailed = v.object({
+  id: v.optional(v.string()),
+  name: v.optional(v.string()),
+  publicName: v.optional(v.string()),
+  fullName: v.optional(v.string()),
+  shortName: v.optional(v.string()),
+  email: v.optional(v.string()),
+  fax: v.optional(v.string()),
+  foek: v.optional(v.string()),
+  internet: v.optional(v.string()),
+  corporation: v.optional(v.string()),
+  supplierType: v.optional(v.string()),
+  address: v.optional(SimpleLegacyOrganizationAddress_Detailed),
+  contactPeople: v.optional(v.array(SimpleLegacyContactPerson_Detailed)),
+  contactPeopleCount: v.optional(v.number()),
+  notesId: v.optional(v.string()),
+});
+
+export type BulkLegacyOrganizationsOutput_Detailed = v.InferOutput<typeof BulkLegacyOrganizationsOutput_Detailed>;
+export const BulkLegacyOrganizationsOutput_Detailed = v.object({
+  legacyOrganizations: v.optional(v.array(LegacyOrganizationOutput_Detailed)),
+});
+
 export type TimeoutHandler = v.InferOutput<typeof TimeoutHandler>;
 export const TimeoutHandler = v.unknown();
 
 export type AsyncResponse = v.InferOutput<typeof AsyncResponse>;
 export const AsyncResponse = v.object({
-  timeoutHandler: v.optional(TimeoutHandler),
   suspended: v.optional(v.boolean()),
+  timeoutHandler: v.optional(TimeoutHandler),
   done: v.optional(v.boolean()),
   cancelled: v.optional(v.boolean()),
 });
@@ -615,22 +691,6 @@ export const ChangeAllowedSignUpDaysOutput = v.object({
   copyOnWrite: v.optional(CopyOnWriteMetadata),
 });
 
-export type SimpleLegacyOrganization = v.InferOutput<typeof SimpleLegacyOrganization>;
-export const SimpleLegacyOrganization = v.object({
-  id: v.optional(v.string()),
-  name: v.optional(v.string()),
-  publicName: v.optional(v.string()),
-  fullName: v.optional(v.string()),
-  shortName: v.optional(v.string()),
-});
-
-export type PagedLegacyOrganizationResponse = v.InferOutput<typeof PagedLegacyOrganizationResponse>;
-export const PagedLegacyOrganizationResponse = v.object({
-  organizations: v.optional(v.array(SimpleLegacyOrganization)),
-  totalElements: v.optional(v.number()),
-  totalPages: v.optional(v.number()),
-});
-
 export type SimpleLegacyOrganizationAddress = v.InferOutput<typeof SimpleLegacyOrganizationAddress>;
 export const SimpleLegacyOrganizationAddress = v.object({
   addressType: v.optional(v.string()),
@@ -662,13 +722,13 @@ export const SimpleLegacyContactPerson = v.object({
   language: v.optional(v.union([v.string(), v.undefined()])),
 });
 
-export type DetailedLegacyOrganization = v.InferOutput<typeof DetailedLegacyOrganization>;
-export const DetailedLegacyOrganization = v.object({
+export type LegacyOrganizationOutput = v.InferOutput<typeof LegacyOrganizationOutput>;
+export const LegacyOrganizationOutput = v.object({
   id: v.optional(v.string()),
   name: v.optional(v.string()),
-  publicname: v.optional(v.string()),
-  fullname: v.optional(v.string()),
-  shortname: v.optional(v.string()),
+  publicName: v.optional(v.string()),
+  fullName: v.optional(v.string()),
+  shortName: v.optional(v.string()),
   email: v.optional(v.string()),
   fax: v.optional(v.string()),
   foek: v.optional(v.string()),
@@ -677,6 +737,17 @@ export const DetailedLegacyOrganization = v.object({
   supplierType: v.optional(v.string()),
   address: v.optional(SimpleLegacyOrganizationAddress),
   contactPeople: v.optional(v.array(SimpleLegacyContactPerson)),
+  contactPeopleCount: v.optional(v.number()),
+  notesId: v.optional(v.string()),
+});
+
+export type PagedLegacyOrganizationResponse = v.InferOutput<typeof PagedLegacyOrganizationResponse>;
+export const PagedLegacyOrganizationResponse = v.object({
+  organizations: v.optional(v.array(LegacyOrganizationOutput)),
+  totalElements: v.optional(v.number()),
+  totalPages: v.optional(v.number()),
+  pageSize: v.optional(v.number()),
+  pageNumber: v.optional(v.number()),
 });
 
 export type JobOutput = v.InferOutput<typeof JobOutput>;
@@ -733,14 +804,6 @@ export const AllEventsOutput = v.object({
   status: v.optional(v.array(v.union([v.literal("UNPUBLISHED"), v.literal("PUBLISHED"), v.literal("ARCHIVED")]))),
 });
 
-export type LocalTime = v.InferOutput<typeof LocalTime>;
-export const LocalTime = v.object({
-  hour: v.optional(v.number()),
-  minute: v.optional(v.number()),
-  second: v.optional(v.number()),
-  nano: v.optional(v.number()),
-});
-
 export type DetailedEventResponse = v.InferOutput<typeof DetailedEventResponse>;
 export const DetailedEventResponse = v.object({
   id: v.optional(v.string()),
@@ -750,9 +813,9 @@ export const DetailedEventResponse = v.object({
   projectHSG: v.optional(v.string()),
   location: v.optional(v.string()),
   dateFrom: v.optional(v.string()),
-  timeFrom: v.optional(LocalTime),
+  timeFrom: v.optional(v.string()),
   dateTo: v.optional(v.string()),
-  timeTo: v.optional(LocalTime),
+  timeTo: v.optional(v.string()),
   comment: v.optional(v.string()),
   latestRegistration: v.optional(v.string()),
   notesCategory: v.optional(v.string()),
@@ -843,17 +906,33 @@ export const EmailJobStatusDTO = v.object({
   completedAt: v.optional(v.string()),
 });
 
-export type GetDraftsOutput = v.InferOutput<typeof GetDraftsOutput>;
-export const GetDraftsOutput = v.object({
-  drafts: v.optional(v.array(SimpleEmailDraftDTO)),
+export type GetDraftsOutput_Simple = v.InferOutput<typeof GetDraftsOutput_Simple>;
+export const GetDraftsOutput_Simple = v.object({
+  drafts: v.optional(v.array(EmailDraftOutput_Simple)),
   totalElements: v.optional(v.number()),
   totalPages: v.optional(v.number()),
   page: v.optional(v.number()),
   size: v.optional(v.number()),
 });
 
-export type DetailedEmailDraftDTO = v.InferOutput<typeof DetailedEmailDraftDTO>;
-export const DetailedEmailDraftDTO = v.object({
+export type StatusType_Detailed = v.InferOutput<typeof StatusType_Detailed>;
+export const StatusType_Detailed = v.object({
+  reasonPhrase: v.optional(v.string()),
+  statusCode: v.optional(v.number()),
+});
+
+export type Problem_Detailed = v.InferOutput<typeof Problem_Detailed>;
+export const Problem_Detailed = v.object({
+  title: v.optional(v.string()),
+  status: v.optional(StatusType_Detailed),
+  detail: v.optional(v.string()),
+  instance: v.optional(v.string()),
+  type: v.optional(v.string()),
+  parameters: v.optional(v.record(v.string(), v.unknown())),
+});
+
+export type EmailDraftOutput_Detailed = v.InferOutput<typeof EmailDraftOutput_Detailed>;
+export const EmailDraftOutput_Detailed = v.object({
   id: v.optional(v.string()),
   eventId: v.optional(v.string()),
   subject: v.optional(v.string()),
@@ -917,7 +996,7 @@ export const get_GetDraft = v.object({
       eventId: v.string(),
     }),
   }),
-  response: DetailedEmailDraftDTO,
+  response: v.unknown(),
 });
 
 export type put_UpdateDraft = v.InferOutput<typeof put_UpdateDraft>;
@@ -930,9 +1009,9 @@ export const put_UpdateDraft = v.object({
       eventId: v.string(),
       draftId: v.string(),
     }),
-    body: EmailDraftDTO,
+    body: EmailDraftDTO_Simple,
   }),
-  response: SimpleEmailDraftDTO,
+  response: v.unknown(),
 });
 
 export type delete_DeleteDraft = v.InferOutput<typeof delete_DeleteDraft>;
@@ -1187,6 +1266,17 @@ export const post_ReviewDocument = v.object({
   response: ReviewDocumentOutput,
 });
 
+export type post_GetLegacyOrganizationsByNotesIds = v.InferOutput<typeof post_GetLegacyOrganizationsByNotesIds>;
+export const post_GetLegacyOrganizationsByNotesIds = v.object({
+  method: v.literal("POST"),
+  path: v.literal("/api/v2/admin/organization/find-by-notes-ids"),
+  requestFormat: v.literal("json"),
+  parameters: v.object({
+    body: NotesIdRequest_Detailed,
+  }),
+  response: BulkLegacyOrganizationsOutput_Detailed,
+});
+
 export type post_RestartJob = v.InferOutput<typeof post_RestartJob>;
 export const post_RestartJob = v.object({
   method: v.literal("POST"),
@@ -1195,8 +1285,8 @@ export const post_RestartJob = v.object({
   parameters: v.object({
     query: v.object({
       asyncResponse: v.object({
-        timeoutHandler: v.optional(TimeoutHandler),
         suspended: v.optional(v.boolean()),
+        timeoutHandler: v.optional(TimeoutHandler),
         done: v.optional(v.boolean()),
         cancelled: v.optional(v.boolean()),
       }),
@@ -1216,8 +1306,8 @@ export const post_ImportEvents = v.object({
   parameters: v.object({
     query: v.object({
       asyncResponse: v.object({
-        timeoutHandler: v.optional(TimeoutHandler),
         suspended: v.optional(v.boolean()),
+        timeoutHandler: v.optional(TimeoutHandler),
         done: v.optional(v.boolean()),
         cancelled: v.optional(v.boolean()),
       }),
@@ -1300,7 +1390,7 @@ export const get_GetDrafts = v.object({
       eventId: v.string(),
     }),
   }),
-  response: GetDraftsOutput,
+  response: v.unknown(),
 });
 
 export type post_CreateDraft = v.InferOutput<typeof post_CreateDraft>;
@@ -1312,9 +1402,9 @@ export const post_CreateDraft = v.object({
     path: v.object({
       eventId: v.string(),
     }),
-    body: EmailDraftDTO,
+    body: EmailDraftDTO_Simple,
   }),
-  response: SimpleEmailDraftDTO,
+  response: v.unknown(),
 });
 
 export type post_SendBulkEmail = v.InferOutput<typeof post_SendBulkEmail>;
@@ -1604,6 +1694,8 @@ export const get_GetAllLegacyOrganizations = v.object({
       page: v.optional(v.number()),
       size: v.optional(v.number()),
       query: v.optional(v.string()),
+      sortBy: v.optional(v.string()),
+      sortDirection: v.optional(v.string()),
     }),
   }),
   response: PagedLegacyOrganizationResponse,
@@ -1619,7 +1711,7 @@ export const get_GetLegacyOrganization = v.object({
       id: v.string(),
     }),
   }),
-  response: DetailedLegacyOrganization,
+  response: LegacyOrganizationOutput_Detailed,
 });
 
 export type get_GetJobs = v.InferOutput<typeof get_GetJobs>;
@@ -1848,6 +1940,7 @@ export const EndpointByMethod = {
   },
   post: {
     "/api/v2/admin/registration-document/{registrationDocumentId}/review": post_ReviewDocument,
+    "/api/v2/admin/organization/find-by-notes-ids": post_GetLegacyOrganizationsByNotesIds,
     "/api/v2/admin/jobs/{jobId}/restart": post_RestartJob,
     "/api/v2/admin/jobs/import/events": post_ImportEvents,
     "/api/v2/admin/jobs/export/portraits": post_ExportPortraits,

@@ -19,12 +19,13 @@
 	const handleAddSubAddon = (e: Event) => {
 		e.preventDefault();
 		createAddonPackage.fields.addonPackage.addons.set([
-			...createAddonPackage.fields.addonPackage.addons.value(),
+			...(createAddonPackage.fields.addonPackage.addons.value() ?? []),
 			{
 				title: '',
 				price: '0',
 				description: '',
-				label: ''
+				label: '',
+				id: crypto.randomUUID()
 			}
 		]);
 	};

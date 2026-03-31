@@ -137,8 +137,4 @@
 
 {@render children?.()}
 
-{#await data.createForm then createForm}
-	<PortraitForm validated={createForm} isOpen={isDrawerOpen} onDialogChange={handleDialogChange} />
-{:catch error}
-	<p>{error.message}</p>
-{/await}
+<PortraitForm isOpen={isDrawerOpen} onDialogChange={handleDialogChange} />

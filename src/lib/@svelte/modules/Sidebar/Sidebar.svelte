@@ -4,6 +4,10 @@
 	import { cn } from '@/utils/ui';
 	import { _ } from '@services';
 	import { LanguageSelect } from '@/@svelte/components';
+	import Button from '@/components/ui/button/button.svelte';
+	import { DoorOpen } from '@lucide/svelte';
+	import authClient from '@/auth-client';
+	import { goto } from '$app/navigation';
 	interface Props {
 		children?: import('svelte').Snippet;
 	}
@@ -82,6 +86,18 @@
 				userButtonTrigger: 'text-white! hover:text-white/80!',
 				userButtonBox: 'flex-row-reverse',
 			}}} afterSignOutUrl="/" />-->
+				<Button
+					onclick={async () => {
+						await authClient.signOut();
+						await goto('/');
+					}}
+					variant="ghost"
+					size="icon"
+					title={$_('common.sign-out')}
+					class="text-white! hover:text-white/80!"
+				>
+					<DoorOpen />
+				</Button>
 
 				<LanguageSelect />
 			</div>

@@ -1,12 +1,13 @@
 <script lang="ts">
 	import { cn } from '@/utils';
+	import { _ } from '@services';
 	import SettingsCard from '../auth/shared/SettingsCard.svelte';
 	import { Button } from '@/components/ui/button';
 	import * as Dialog from '@/components/ui/dialog';
 	import { Input } from '@/components/ui/input';
 	import { Label } from '@/components/ui/label';
 	import { toast } from 'svelte-sonner';
-	import { Trash2 } from '@lucide/svelte';
+	import { DoorOpen, Trash2 } from '@lucide/svelte';
 	import authClient from '@/auth-client';
 	import { goto } from '$app/navigation';
 
@@ -68,16 +69,22 @@
 	});
 </script>
 
+{#snippet actionLabel()}
+	<DoorOpen />
+	<p>{$_('components.auth.organization.leave.action-label')}</p>
+{/snippet}
+
 <SettingsCard
 	{className}
 	{classNames}
-	title={localization.LEAVE_ORGANIZATION || 'Leave Organization'}
-	description={localization.LEAVE_ORGANIZATION_DESCRIPTION ||
-		'Permanently leave this organization and all associated data'}
-	instructions={localization.LEAVE_ORGANIZATION_INSTRUCTIONS ||
-		'This action cannot be undone. All data will be permanently removed.'}
-	actionLabel={localization.LEAVE_ORGANIZATION || 'Leave Organization'}
-	action={handleLeaveClick}
+	title={$_('components.auth.organization.leave.title')}
+	description={$_('components.auth.organization.leave.description')}
+	action={{
+		variant: 'destructive',
+		size: 'default',
+		fn: handleLeaveClick,
+		label: actionLabel
+	}}
 	{isPending}
 	disabled={!hasPermission}
 />

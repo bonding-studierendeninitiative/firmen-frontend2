@@ -1,14 +1,14 @@
 <script lang="ts">
-	import * as Card from '@/components/ui/card';
+	import * as Item from '@/components/ui/item';
 	import { _ } from '@services';
 	import { cn } from '@/utils';
 	import { Button } from '@/components/ui/button';
-	import { SimpleDocumentOutput } from '@api/client';
+	import { DocumentOutput_DetailedDocument_or_SimpleDocumentVersion } from '@api/client';
 	import { generateThumbnailLink as getThumbnail } from '@/remote/functions';
 	import { LoaderCircle } from '@lucide/svelte';
 
 	interface Props {
-		advert: SimpleDocumentOutput;
+		advert: DocumentOutput_DetailedDocument_or_SimpleDocumentVersion;
 		class?: string;
 	}
 
@@ -21,13 +21,8 @@
 </script>
 
 <section>
-	<Card.Root
-		class={cn(
-			'bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300',
-			className
-		)}
-	>
-		<Card.Header class="p-4">
+	<Item.Root variant="outline" class={cn(className)}>
+		<Item.Header>
 			<div
 				class="-aspect-video bg-gray-100 dark:bg-gray-700 rounded-md flex items-center justify-center overflow-hidden relative"
 			>
@@ -48,12 +43,10 @@
 					/>
 				{/if}
 			</div>
-		</Card.Header>
-		<Card.Content class="p-4 pt-0">
-			<div class="flex justify-between items-center gap-2 @container">
-				<h3 title={advert.title} class="font-semibold text-lg truncate">{advert.title}</h3>
-				<!--<StatusBadge variant={advert.activeVersion?.uploadStatus} label={$_('status-text.' + advert.activeVersion?.uploadStatus)} />-->
-			</div>
-		</Card.Content>
-	</Card.Root>
+		</Item.Header>
+		<Item.Content>
+			<Item.Title title={advert.title}>{advert.title}</Item.Title>
+			<!--<StatusBadge variant={advert.activeVersion?.uploadStatus} label={$_('status-text.' + advert.activeVersion?.uploadStatus)} />-->
+		</Item.Content>
+	</Item.Root>
 </section>

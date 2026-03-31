@@ -153,7 +153,7 @@
 	<Card.Root class={cn('w-full max-w-sm', className, classNames?.base)}>
 		<Card.Content class={cn('flex items-center space-x-4 p-6', classNames?.content)}>
 			<Avatar class={cn('size-12', classNames?.avatar)}>
-				<AvatarImage src={displayUser.image} alt={displayUser.name} />
+				<AvatarImage src={`/api/avatar/${displayUser.id}.svg`} alt={displayUser.name} />
 				<AvatarFallback>
 					{getInitials(displayUser.name)}
 				</AvatarFallback>

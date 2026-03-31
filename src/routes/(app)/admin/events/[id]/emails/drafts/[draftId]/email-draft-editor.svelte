@@ -8,7 +8,7 @@
 	import type { DetailedEmailDraftDTO, SimpleEmailDraftDTO } from '@api/admin-client';
 	import type { RemoteQuery, RemoteQueryOverride } from '@sveltejs/kit';
 	import { Carta, MarkdownEditor } from 'carta-md';
-	import { _ } from 'svelte-i18n';
+	import { _ } from '@services';
 
 	let carta = new Carta({
 		shikiOptions: {

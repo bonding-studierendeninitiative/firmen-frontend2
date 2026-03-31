@@ -57,7 +57,6 @@
 	let columns = [
 		columnHelper.display({
 			id: 'user-profile',
-			header: '',
 			cell: ({ row }) =>
 				renderSnippet(userIcon, {
 					userName: `${row.original.user.name}`,
@@ -101,8 +100,7 @@
 			cell: (props) =>
 				renderSnippet(actions, {
 					id: props.row.original.id,
-					userId: props.row.original.userId,
-					orgId: props.row.original.organizationId
+					userId: props.row.original.userId
 				})
 		})
 	];
@@ -120,8 +118,8 @@
 	/>
 {/snippet}
 
-{#snippet actions({ id, orgId, userId }: { id: string; orgId: string; userId: string })}
-	<DataTableActions {orgId} {id} {userId} {onRemoveMember} />
+{#snippet actions({ id, userId }: { id: string; userId: string })}
+	<DataTableActions {id} {userId} {onRemoveMember} />
 {/snippet}
 
 {#snippet banned()}
